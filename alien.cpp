@@ -3,7 +3,7 @@
 #include "EmeraldMine.h"
 #include "alien.h"
 #include "mystd.h"
-
+#include "sound.h"
 
 extern PLAYFIELD Playfield;
 
@@ -25,6 +25,10 @@ void ControlAlien(uint32_t I) {
     uint32_t uCatchXpos;
     uint32_t uCatchYpos;
 
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
+        // Alien kann vom Replikator geboren werden, dann hier nichts machen
+        return;
+    }
     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_ALIEN_MOVED) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     } else {
@@ -49,6 +53,7 @@ void ControlAlien(uint32_t I) {
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ALIEN | EMERALD_ANIM_CLEAN_LEFT | EMERALD_ANIM_ALIEN_MOVED;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                    PreparePlaySound(SOUND_ALIEN,I);
                 } else {                        // rechts ist nicht frei
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
@@ -61,6 +66,7 @@ void ControlAlien(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ALIEN | EMERALD_ANIM_CLEAN_RIGHT | EMERALD_ANIM_ALIEN_MOVED;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                    PreparePlaySound(SOUND_ALIEN,I);
                 } else {                        // links ist nicht frei
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
@@ -77,6 +83,13 @@ void ControlAlien(uint32_t I) {
                     Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ALIEN | EMERALD_ANIM_CLEAN_UP | EMERALD_ANIM_ALIEN_MOVED;
                     // Aktuelles Element auf Animation "unten"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+                    PreparePlaySound(SOUND_ALIEN,I);
+                } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Alien ins Säurebecken?
+                        SDL_Log("Alien falls in pool");
+                        Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
+                        Playfield.pStatusAnimation[I] = EMERALD_ALIEN;
+                        PreparePlaySound(SOUND_POOL_BLUB,I);
+                        return;
                 } else {                        // unten ist nicht frei
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
@@ -89,6 +102,7 @@ void ControlAlien(uint32_t I) {
                     Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ALIEN | EMERALD_ANIM_CLEAN_DOWN | EMERALD_ANIM_ALIEN_MOVED;
                     // Aktuelles Element auf Animation "oben"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+                    PreparePlaySound(SOUND_ALIEN,I);
                 } else {                        // oben ist nicht frei
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }

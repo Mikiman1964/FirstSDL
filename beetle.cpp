@@ -1,5 +1,6 @@
 #include "EmeraldMine.h"
 #include "beetle.h"
+#include "sound.h"
 
 extern PLAYFIELD Playfield;
 
@@ -78,8 +79,8 @@ void ControlBeetleRight(uint32_t I) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_UP;
         }
     }
-    else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE)   // Hat Käfer rechts Führung?
-    {
+    else if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) &&   // Hat Käfer rechts Führung? AcidPool ist wie Space.
+              (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL) ) {
         if (Playfield.pLevel[I + 1] == EMERALD_SPACE)    // Ist nach rechts frei?
         {
             // neuen Platz mit ungültigem Element besetzen
@@ -114,9 +115,11 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBeetleDown(uint32_t I) {
-    // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
-    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE)
-    {
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
+        // BeetleDown kann vom Replikator geboren werden, dann hier nichts machen
+        return;
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
+        // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
         Playfield.pStatusAnimation[I] = 0;
         if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE)    // Ist nach unten frei?
         {
@@ -126,6 +129,12 @@ void ControlBeetleDown(uint32_t I) {
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_BEETLE_DOWN | EMERALD_ANIM_CLEAN_UP;
             // Aktuelles Element auf Animation "unten"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Käfer ins Säurebecken?
+            SDL_Log("Beetle falls in pool");
+            Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
+            Playfield.pStatusAnimation[I] = EMERALD_BEETLE_DOWN;
+            PreparePlaySound(SOUND_POOL_BLUB,I);
+            return;
         }
         else                            // Unten ist nicht frei
         {
@@ -143,6 +152,12 @@ void ControlBeetleDown(uint32_t I) {
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_BEETLE_DOWN | EMERALD_ANIM_CLEAN_UP;
             // Aktuelles Element auf Animation "unten"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Käfer ins Säurebecken?
+            SDL_Log("Beetle falls in pool");
+            Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
+            Playfield.pStatusAnimation[I] = EMERALD_BEETLE_DOWN;
+            PreparePlaySound(SOUND_POOL_BLUB,I);
+            return;
         }
         else                            // Unten ist nicht frei
         {
