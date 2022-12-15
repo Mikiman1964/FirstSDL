@@ -14,5 +14,6 @@ typedef struct {
 
 int InitInputStates(void);
 int UpdateInputStates(void);
+void WaitForKey(SDL_Scancode ScanCode);
 
 #endif // KEYBOARDMOUSE_H_INCLUDED

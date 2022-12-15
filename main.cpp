@@ -1,6 +1,8 @@
 #define SDL_MAIN_HANDLED // ansonsten kommt folgende Linker-Fehlermeldung: undefined reference to 'WinMain'
 #include <SDL2/SDL.h>
+#include <time.h>
 #include <math.h>
+#include "mystd.h"
 #include "mySDL.h"
 #include "asteroids.h"
 #include "scroller.h"
@@ -9,6 +11,7 @@
 #include "mystd.h"
 #include "copper.h"
 #include "EmeraldMine.h"
+#include "editor.h"
 
 SDL_DisplayMode ge_DisplayMode;
 extern INPUTSTATES InputStates;
@@ -30,11 +33,12 @@ int main(int argc, char *argv[]) {
     float fFDLogoAngle = 0;
     Uint32 uFDLogoLastShown = SDL_GetTicks();
     SDL_Rect DestR_FDLogo;
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022. MODPLAYER BY MICHAL PROCHAZKA. PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKA.ML). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991               "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3 OR 4 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... FONT BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
-    uint8_t szMessage3[] = {"HALLO MARKUS, NUN ALSO KAKERLAKE.EXE V 2.0.  ICH WERDE IN N{CHSTER ZEIT MAL SCHAUEN, OB ICH DAS SPIEL WEITER PORTIERE, \
-BIS JETZT GEHT ES GANZ GUT VON DER HAND.  BIS DENN ERSTMAL     9  8  7  6  5  4  3  2  1  0                                                    "};
+    uint8_t szMessage3[] = {"HALLO MANNI, ALLES GUTE ZUM 45. GEBURTSTAG ALTER JUNGE. ICH HOFFE BEI EUCH IST ALLES OK UND DIE ARBEIT BEI PUFF DADDY = MACHT NOCH SPASS.\
+     WOHNT IHR NOCH IN KAPPELN ODER SEID IHR NACH HAMBURG GEZOGEN ?     DIESES SCH|NE DEMO HABE ICH MIT SDL2 GEBASTELT, ES SIEHT ALLES EIN BISSCHEN WIE AUF DEM GUTEN ALTEN AMIGA AUS ! \
+  BIS DENN ERSTMAL     9  8  7  6  5  4  3  2  1  0                                                    "};
 
     Uint32 uLastKeyTime = 0;
     SDL_Window *pWindow = NULL;
@@ -65,6 +69,17 @@ BIS JETZT GEHT ES GANZ GUT VON DER HAND.  BIS DENN ERSTMAL     9  8  7  6  5  4 
     bool bCopperScoll = false;
     uint8_t uModVolume = 100;
 
+    /*
+    uint8_t *pMem;
+    uint32_t uFileLen;
+    pMem = ReadFile("LEVEL300.DAT",&uFileLen);
+    if (pMem != NULL) {
+        DumpMem(pMem,uFileLen);
+        SAFE_FREE(pMem);
+    }
+    */
+
+    srand(time(0));
     memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
     InitAsteroidLayer();
     InitVisibibleCopperSegments();
@@ -88,7 +103,15 @@ BIS JETZT GEHT ES GANZ GUT VON DER HAND.  BIS DENN ERSTMAL     9  8  7  6  5  4 
     if (InitInputStates() != 0) {
         return -1;
     }
+
+    // Editor(pWindow,pRenderer);
+
     RunGame(pWindow,pRenderer);             // Ein erster Entwurf für Emerald Mine
+
+    SDL_WarpMouseInWindow(pWindow,10,10);
+    do {
+        UpdateInputStates();
+    }  while(InputStates.bQuit);
     // Audiostruktur initialisieren
     InitAudioplayerStruct(&Audioplayer,3);      // Mit MOD 3 class_cracktro#15 starten
 

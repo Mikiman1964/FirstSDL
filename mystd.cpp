@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 #include "mystd.h"
 
 
@@ -14,7 +15,7 @@ Parameter
       Eingang: low, float, unterer Bereich für Zufallszahl
       Ausgang: high, float, oberer Bereich für Zufallszahl
 Rückgabewert:  float, Zufallswert
-Seiteneffekte:
+Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 float randf(float low,float high){
     return (rand()/(float)(RAND_MAX))*abs(low-high)+low;
@@ -30,7 +31,7 @@ Parameter
                nLen, int, Anzahl der auszugebenen Bytes ab Start-Zeiger
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte:
+Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void DumpMem(uint8_t *pcMem, int nLen)
 {
@@ -91,7 +92,7 @@ Parameter
                needle_len, const size_t, Länge in Bytes des zu suchenden Teilbereichs
       Ausgang: -
 Rückgabewert:  const char *, Zeiger auf gefundenen Speicher, NULL = nichts gefunden
-Seiteneffekte:
+Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 const char *memmem(const char *haystack, size_t haystack_len, const void *needle, const size_t needle_len)
 {
@@ -110,3 +111,54 @@ const char *memmem(const char *haystack, size_t haystack_len, const void *needle
     return NULL;
 }
 
+
+/*----------------------------------------------------------------------------
+Name:           ReadFile
+------------------------------------------------------------------------------
+Beschreibung: Liest Daten aus einer Datei und alloziert hierfür Speicher, der
+              außerhalb dieser Funktion wieder freigegeben werden muss.
+Parameter
+      Eingang: pszFilename, const char *, Zeiger auf Dateinamen (komplette Pfadangabe)
+      Ausgang: puLen, uint32_t *, Anzahl Bytes, die eingelesen bzw. alloziert wurden.
+Rückgabewert:  uint8_t *, NULL = Fehler, sonst Zeiger auf allozierten Speicher mit Daten.
+Seiteneffekte:
+------------------------------------------------------------------------------*/
+uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen)
+{
+    uint8_t *pRet = NULL;
+    FILE *Readfile = NULL;
+    struct stat Fileinfo;
+
+    if ( (pszFilename != NULL) && (puLen != NULL) ) {
+        if (stat(pszFilename,&Fileinfo) == 0) {
+            if (Fileinfo.st_size > 0) {
+                Readfile = fopen(pszFilename,"rb");
+                if (Readfile != NULL) {
+                    pRet = (uint8_t*)malloc(Fileinfo.st_size);
+                    if (pRet != NULL) {
+                        if (fread(pRet,1,Fileinfo.st_size,Readfile) == (size_t)Fileinfo.st_size) { // Datei lesen
+                            *puLen = Fileinfo.st_size;
+                        } else {
+                            printf("%s: read error, freeing memory\r\n",__FUNCTION__);
+                            SAFE_FREE(pRet);
+                        }
+                    } else {
+                        printf("%s: can not allocate memory for filesize: %ld\r\n",__FUNCTION__,Fileinfo.st_size);
+                    }
+                } else {
+                    printf("%s: can not open file: %s\r\n",__FUNCTION__,pszFilename);
+                }
+            } else {
+                printf("%s: file is empty\r\n",__FUNCTION__);
+            }
+        } else {
+            printf("%s: stat() failed\r\n",__FUNCTION__);
+        }
+    } else {
+        printf("%s: bad parameter\r\n",__FUNCTION__);
+    }
+    if (Readfile != NULL) {
+        fclose(Readfile);
+    }
+    return pRet;
+}

@@ -8,6 +8,9 @@ int g_nGfxCount = 0;         // gefundenen Grafiken
 SDL_Texture **g_pTextures;   // Pointer Array für Texturen
 
 extern SDL_DisplayMode ge_DisplayMode;
+extern uint8_t _binary_gfx_bin_start;extern uint8_t _binary_gfx_bin_end;
+extern uint32_t Gfx[];
+
 
 /*----------------------------------------------------------------------------
 Name:           InitSDL_Window
@@ -95,8 +98,22 @@ SDL_Renderer *CreateRenderer(SDL_Window * pWindow) {
     SDL_Renderer *pRenderer = NULL;
 
     pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (pRenderer == NULL) {
-        SDL_Log("%s: SDL_CreateWindow() failed: %s",__FUNCTION__,SDL_GetError());
+    if (pRenderer != NULL) {
+        // Set the blend mode used for drawing operations (Fill and Line).
+        // Anmerkung: Der eingestellte Modus wirkt nur auf Flächen (Fill) oder Linien (Line), die auf
+        // bestehende Grafiken drüber gemalt werden. Da die Copper-Linien (siehe copper.c und main.c) ganz
+        // "unten" liegen, hat der BlendMode dort keinen Einfluss.
+        // Falls das Setzen des BlendModes fehlt schlägt, wird trotzdem weiter gemacht.
+        // Mögliche Blendmodi:
+        // SDL_BLENDMODE_NONE
+        // SDL_BLENDMODE_BLEND
+        // SDL_BLENDMODE_ADD
+        // SDL_BLENDMODE_MOD
+        if (SDL_SetRenderDrawBlendMode(pRenderer,SDL_BLENDMODE_BLEND) != 0) {
+            SDL_Log("%s: Warning: SDL_SetRenderDrawBlendMode() failed: %s",__FUNCTION__,SDL_GetError());
+        }
+    } else {
+        SDL_Log("%s: SDL_CreateRenderer() failed: %s",__FUNCTION__,SDL_GetError());
     }
     return pRenderer;
 }
@@ -134,46 +151,47 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
       Rückgabewert:   int, 0 = alles OK, -1 = Fehler
-Seiteneffekte:  g_pGfxPointer[], g_pTextures, g_nGfxCount
+Seiteneffekte:  Gfx[], g_pTextures, g_nGfxCount
 ------------------------------------------------------------------------------*/
 int LoadTextures(SDL_Renderer *pRenderer) {
-    int nCount;         // Anzahl vorhandener Grafiken
+    int nCount;                 // Anzahl vorhandener Grafiken
     int nI;
-    int nGfxSize;       // Größe der Bitmap in Bytes
+    int nGfxSize;               // Größe der Bitmap in Bytes
     int nErrorCode;
     bool bFound;
     bool bOK;
-    uint8_t *pStartGfx;  // Start-Pointer der Grafik
-    uint8_t *pEndGfx;    // Endpointer-Pointer der Grafik
+    uint8_t *pStartGfxPacket;   // Start-Pointer des Grafikpaketes
+    uint8_t *pEndGfxPacket;     // Endpointer des Grafikpaketes
+    uint8_t *pStartGfx;         // Start-Pointer der Einzelgrafik
     void *pTextures = NULL;
+    uint32_t uOffset;           // Offset innerhalb des Grafikpaketes, wo Grafik zu finden ist
+    uint32_t uLen;              // Länge der Einzelgrafik
+
     SDL_RWops* pSDLStreamPointer; // Zeigt auf Grafikanfang
-    SDL_Surface *pSurface;     // Surface
-    SDL_Texture *pTexture;   // Texture
+    SDL_Surface *pSurface;      // Surface
+    SDL_Texture *pTexture;      // Texture
+
+    pStartGfxPacket = &_binary_gfx_bin_start;
+    pEndGfxPacket = &_binary_gfx_bin_end;
+    nGfxSize = pEndGfxPacket - pStartGfxPacket;
+    SDL_Log("%s: gfx packet size: %d Bytes",__FUNCTION__,nGfxSize);
 
     // Zunächst zählen, wieviele Grafiken vorhanden sind
     nErrorCode = -1;
     nCount = 0;
     nI = 0;
     do {
-        pStartGfx = g_pGfxPointer[nI + 0];
-        pEndGfx =  g_pGfxPointer[nI + 1];
-        if ( (pStartGfx != NULL) && (pEndGfx != NULL) ) {
-            nGfxSize = pEndGfx - pStartGfx;
-            if (nGfxSize > 0) {
-                bOK = true;
-                bFound = true;
-                nCount++;
-            } else {
-                bOK = false;
-                bFound = false;
-                SDL_Log("%s: bad gfx size: %d",__FUNCTION__,nGfxSize);
-            }
+        uOffset = Gfx[nI];
+        uLen = Gfx[nI + 1];
+        if ( (uOffset != 0xFFFFFFFF) && (uLen != 0xFFFFFFFF) ) {
+            bFound = true;
+            nCount++;
         } else {
             bFound = false;
         }
         nI = nI + 2;
-    } while (bOK && bFound);
-    bOK = ((bOK) && (nCount > 0));
+    } while (bFound);
+    bOK = (nCount > 0);
     if (bOK) {
         SDL_Log("%s: found %d gfx.",__FUNCTION__,nCount);
         // Speicher für Texturen erzeugen
@@ -186,11 +204,10 @@ int LoadTextures(SDL_Renderer *pRenderer) {
             g_pTextures = (SDL_Texture**)pTextures;   // Texturen
             g_nGfxCount = nCount;
             for (nI = 0; (nI < nCount) && (bOK); nI++) {
-                pStartGfx = g_pGfxPointer[nI * 2 + 0];
-                pEndGfx =  g_pGfxPointer[nI * 2 + 1];
-                nGfxSize = pEndGfx - pStartGfx;
+                pStartGfx = pStartGfxPacket + Gfx[nI * 2 + 0];  // Offset innerhalb des Paketes dazu addieren
+                nGfxSize =  Gfx[nI * 2 + 1];
                 //SDL_Log("%s: nI = %d   nGfxSize: %d",__FUNCTION__,nI,nGfxSize);
-                pSDLStreamPointer = SDL_RWFromMem((void*)g_pGfxPointer[nI * 2],nGfxSize);// Erzeugt SDL-Speicherstruktur für Speicher (Stream)
+                pSDLStreamPointer = SDL_RWFromMem((void*)pStartGfx,nGfxSize);// Erzeugt SDL-Speicherstruktur für Speicher (Stream)
                 if (pSDLStreamPointer != NULL) {
                     pSurface = SDL_LoadBMP_RW(pSDLStreamPointer,1);              // Surface aus Stream erzeugen, gibt Speicher für Stream frei
                     if (pSurface != NULL) {
@@ -369,3 +386,268 @@ int SetAllTextureColors(uint8_t uIntensityProzent) {
     return nErrorCode;
 }
 
+
+/*----------------------------------------------------------------------------
+Name:           PrintLittleFont
+------------------------------------------------------------------------------
+Beschreibung: Schreibt einen Text mit dem "kleinen Zeichensatz" in den Renderer.
+              Die Funktion berücksichtigt auch Zeilenumbrüche mit "\n".
+              Der Zeichensatz besitzt nur Großbuchstaben, Kleinbuchstaben werden
+              daher gewandelt.
+
+Parameter
+      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+               nXpos, int, Start-X-Position der oberen linke Ecke des Textfeldes
+               nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes
+               uColor, uint32_t, Farbe des Zeichensatzes, wird noch nicht berücksichtigt
+               pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
+      Ausgang: -
+      Rückgabewert: 0 = OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText) {
+    // Der komplette Zeichensatz liegt in Texture 347 vor. Für ein Darstellung eines Zeichens, muss die "richtige" Stelle ausgewählt werden.
+    // Der Zeichensatz ist so aufgebaut, dass alle vorhandenen Zeichen in einer Zeile vorliegen.
+    int nErrorCode;
+    uint32_t I;                         // Index auf Text
+    SDL_Rect SrcR;                      // Quellbereich aus Texture 347
+    SDL_Rect DestR;                     // Zielbereich, zum Kopieren in den Renderer
+    uint8_t cSign;
+    int nPrintXpos;
+    int nPrintYpos;
+    float fSizeFactor = 1;
+
+    nPrintXpos = nXpos;
+    nPrintYpos = nYpos;
+    if ((pRenderer != NULL) && (pszText != NULL)) {
+        nErrorCode = 0;
+        I = 0;
+        while ((nErrorCode == 0) && (pszText[I] != 0)) {
+            cSign = 0xFF;
+            // Kleinbuchstaben wandeln
+            if ((pszText[I] >= 'a') && (pszText[I] <= 'z')) {
+                cSign = pszText[I] - 64;
+            } else if (pszText[I] == 0x0A) {
+                nPrintXpos = nXpos;
+                nPrintYpos = nPrintYpos + 14 * fSizeFactor;
+                cSign = 0xFF;
+            } else if ((pszText[I] >= ' ') && (pszText[I] <= 'Z')) {
+                cSign = pszText[I] - 32;
+            }
+
+            if (cSign <= 70) {
+                // Quellbereich aus Texture 347 berechnen
+                SrcR.x =  uint32_t(cSign) * FONT_LITTLE_W;
+                SrcR.y =  0;        // Ist immer 0, da alle vorhandenen Zeichen in einer Zeile vorliegen
+                SrcR.w = FONT_LITTLE_W;
+                SrcR.h = FONT_LITTLE_H;
+                // Zielbereich im Renderer
+                DestR.x = nPrintXpos;
+                DestR.y = nPrintYpos;
+                DestR.w = FONT_LITTLE_W * fSizeFactor;
+                DestR.h = FONT_LITTLE_H * fSizeFactor;
+                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(347),&SrcR,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+                    SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+                    nErrorCode = -1;
+                }
+                // X-Position für nächstes Zeichen erhöhen
+                nPrintXpos = nPrintXpos + FONT_LITTLE_W * fSizeFactor;
+            }
+            I++;
+        }
+    } else {
+        SDL_Log("%s: bad input parameter, null pointer found.",__FUNCTION__);
+        nErrorCode = -1;
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetMessageWindowSize
+------------------------------------------------------------------------------
+Beschreibung: Berechnet anhand eines Textes die Fenstergröße (Breite u. Höhe)
+              Die Funktion berücksichtigt auch Zeilenumbrüche mit "\n".
+
+Parameter
+      Eingang: pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
+      Ausgang: puWinW, uint32_t *, Fensterbreite in Elementen
+               puWinH, uint32_t *, Fensterhöhe in Elementen
+               puLines, uint32_t *, Anzahl Text-Zeilen
+      Rückgabewert: -
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, char *pszText) {
+    uint32_t uCharsInLine;
+    uint32_t uXmax;
+    uint32_t I;
+    uint32_t uWinW;
+    uint32_t uWinH;
+
+    uXmax = 0;
+    uCharsInLine = 0;
+    *puLines = 0;
+    uWinW = 0;
+    uWinH = 0;
+    I = 0;
+    // Fensterbreite anhand des Textes berechnen
+    while (pszText[I] != 0) {
+        if (pszText[I] == 0x0A) {
+            uWinH++;
+            if (uCharsInLine > uXmax) {
+                uXmax = uCharsInLine;
+            }
+            uCharsInLine = 0;
+        } else {
+            if (uWinH == 0) {
+                uWinH++;
+            }
+            uCharsInLine++;
+        }
+        I++;
+    }
+    if (uCharsInLine > uXmax) {
+        uXmax = uCharsInLine;
+    }
+    *puLines = uWinH;
+    uWinW = ((uXmax * FONT_LITTLE_W) / (FONT_W / 2));
+    if ( ((uXmax * FONT_LITTLE_W) % (FONT_W / 2)) != 0) {
+        uWinW++;
+    }
+    uWinW = uWinW + 3;  // Seitenstücke dazu
+    if ( ((uWinH * FONT_LITTLE_H) % (FONT_H / 2)) == 0) {
+        uWinH = ((uWinH * FONT_LITTLE_H) / (FONT_H / 2));
+    } else {
+        uWinH = ((uWinH * FONT_LITTLE_H) / (FONT_H / 2)) + 1;
+    }
+    *puWinW = uWinW;
+    *puWinH = uWinH;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CreateMessageWindow
+------------------------------------------------------------------------------
+Beschreibung: Erzeugt ein Fenster mit Text.
+              Die Funktion berücksichtigt auch Zeilenumbrüche mit "\n".
+              Der Zeichensatz besitzt nur Großbuchstaben, Kleinbuchstaben werden
+              daher gewandelt.
+
+Parameter
+      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+               nXpos, int, Start-X-Position der oberen linke Ecke des Fensters, -1 = auf Fenster horizontal zentrieren
+               nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes, -1 = auf Fenster vertikal zentrieren
+               uColor, uint32_t, Farbe des Zeichensatzes, wird noch nicht berücksichtigt
+               pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
+      Ausgang: -
+      Rückgabewert: 0 = OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText) {
+    int nErrorCode;
+    uint32_t X,Y;
+    uint32_t uWinW;                     // benötigte Fensterbreite in Elementen
+    uint32_t uWinH;                     // benötigte Fensterhöhe in Elementen
+    SDL_Rect DestR;                     // Zielbereich, zum Kopieren in den Renderer
+    uint32_t uTextureIndex;
+    uint32_t uLines;
+    int nXoffset;
+    int nPrintXpos;
+    int nPrintYpos;
+
+    if ((pRenderer != NULL) && (pszText != NULL)) {
+        nErrorCode = 0;
+        GetMessageWindowSize(&uWinW,&uWinH,&uLines,pszText);
+        // Zentrierung
+        if (nXpos == -1) {      // horizontal zentrieren?
+            nXpos = (WINDOW_W - (uWinW * FONT_W / 2)) / 2;
+        }
+        if (nYpos == - 1) {     // vertikal zentrieren?
+            nYpos = (WINDOW_H - (uWinH * FONT_H / 2)) / 2;
+        }
+        nPrintXpos = nXpos;
+        nPrintYpos = nYpos;
+        // Oberste Zeile des Fensters zeichnen
+        for (X = 0; X < uWinW && (nErrorCode == 0); X++) {
+            if (X == 0) {
+                uTextureIndex = 348;
+            } else if ((X + 1) >= uWinW) {
+                uTextureIndex = 350;
+            } else {
+                uTextureIndex = 349;
+            }
+            DestR.x = nPrintXpos;
+            DestR.y = nPrintYpos;
+            DestR.w = FONT_W / 2;
+            DestR.h = FONT_H / 2;
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+                SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+                nErrorCode = -1;
+            }
+            nPrintXpos = nPrintXpos + FONT_W / 2;
+        }
+        nPrintXpos = nXpos;
+        nPrintYpos = nPrintYpos + FONT_H / 2;
+        // Seitenwände des Fensters zeichnen
+        for (Y = 0; Y < uWinH && (nErrorCode == 0); Y++) {
+            DestR.x = nPrintXpos;
+            DestR.y = nPrintYpos;
+            DestR.w = FONT_W / 2;
+            DestR.h = FONT_H / 2;
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(351),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+                SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+                nErrorCode = -1;
+            }
+            DestR.x = nPrintXpos + (uWinW - 1) * (FONT_W / 2);
+            DestR.y = nPrintYpos;
+            DestR.w = FONT_W / 2;
+            DestR.h = FONT_H / 2;
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(352),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+                SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+                nErrorCode = -1;
+            }
+            nPrintYpos = nPrintYpos + FONT_H / 2;
+        }
+        // Unterste Zeile des Fensters zeichnen
+        nPrintXpos = nXpos;
+        for (X = 0; X < uWinW && (nErrorCode == 0); X++) {
+            if (X == 0) {
+                uTextureIndex = 353;
+            } else if ((X + 1) >= uWinW) {
+                uTextureIndex = 355;
+            } else {
+                uTextureIndex = 354;
+            }
+            DestR.x = nPrintXpos;
+            DestR.y = nPrintYpos;
+            DestR.w = FONT_W / 2;
+            DestR.h = FONT_H / 2;
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+                SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+                nErrorCode = -1;
+            }
+            nPrintXpos = nPrintXpos + FONT_W / 2;
+        }
+        if (nErrorCode == 0) {
+            // Fensterfläche ausfüllen
+            DestR.x = nXpos + FONT_W / 2;
+            DestR.y = nYpos + FONT_H / 2;
+            DestR.w = (uWinW - 2) * FONT_W / 2;
+            DestR.h = uWinH * FONT_H / 2;
+            SDL_SetRenderDrawColor(pRenderer,0x20,0x20,0xF0,0xC0);  // dunkelblaue, halbtransparente Fensterfläche
+            nErrorCode = SDL_RenderFillRect(pRenderer,&DestR);
+            if (nErrorCode == 0) {
+                nXoffset = ((uWinH * (FONT_H / 2)) - (uLines * FONT_LITTLE_H)) / 2;
+                //SDL_Log("Lines: %u    WinH: %u    XOffset: %d",uLines,uWinH,nXoffset);
+                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, 0,pszText);
+            } else {
+                SDL_Log("%s: SDL_RenderFillRect() failed: %s",__FUNCTION__,SDL_GetError());
+            }
+            SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+        }
+    } else {
+        SDL_Log("%s: bad input parameter, null pointer found.",__FUNCTION__);
+        nErrorCode = -1;
+    }
+    return nErrorCode;
+}

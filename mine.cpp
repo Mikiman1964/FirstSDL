@@ -1,5 +1,6 @@
 #include "EmeraldMine.h"
 #include "mine.h"
+#include "sound.h"
 
 extern PLAYFIELD Playfield;
 
@@ -116,6 +117,12 @@ void ControlMineDown(uint32_t I) {
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_MINE_DOWN | EMERALD_ANIM_CLEAN_UP;
             // Aktuelles Element auf Animation "unten"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?
+            SDL_Log("Mine falls in pool");
+            Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
+            Playfield.pStatusAnimation[I] = EMERALD_MINE_DOWN;
+            PreparePlaySound(SOUND_POOL_BLUB,I);
+            return;
         } else {                            // Unten ist nicht frei
             // Mine bleibt zunächst auf "unten" muss sich aber bei Blockade nach links drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
@@ -128,6 +135,12 @@ void ControlMineDown(uint32_t I) {
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_MINE_DOWN | EMERALD_ANIM_CLEAN_UP;
             // Aktuelles Element auf Animation "unten"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?
+            SDL_Log("Mine falls in pool");
+            Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
+            Playfield.pStatusAnimation[I] = EMERALD_MINE_DOWN;
+            PreparePlaySound(SOUND_POOL_BLUB,I);
+            return;
         } else {                            // Unten ist nicht frei
             // Mine bleibt zunächst auf "unten" muss sich aber bei Blockade nach links drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
@@ -164,7 +177,8 @@ void ControlMineLeft(uint32_t I) {
             // Mine bleibt zunächst auf "links" muss sich aber bei Blockade nach oben drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_UP;
         }
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {   // Links von Mine irgendwas?
+    } else if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) &&
+                (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL) ) {   // Links von Mine irgendwas? AcidPool ist wie Space.
         if (Playfield.pLevel[I - 1] == EMERALD_SPACE)    // Ist nach links frei?
         {
             // neuen Platz mit ungültigem Element besetzen

@@ -13,7 +13,7 @@ float randf(float low,float high);
 // https://stackoverflow.com/questions/52988769/writing-own-memmem-for-windows
 const char *memmem(const char *haystack_start, size_t haystack_len, const void *needle_start, size_t needle_len);
 void DumpMem(uint8_t *pcMem, int nLen);
-
+uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen);
 
 
 

@@ -55,3 +55,23 @@ int UpdateInputStates(void) {
         return -1;
     }
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           WaitForKey
+------------------------------------------------------------------------------
+Beschreibung: Wartet auf einen bestimmten Tastendruck.
+Parameter
+      Eingang: Scancode, SDL_Scancode, Taste, auf die gewartet werden soll.
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: InputStates.x
+------------------------------------------------------------------------------*/
+void WaitForKey(SDL_Scancode ScanCode) {
+    UpdateInputStates();
+
+    while (InputStates.pKeyboardArray[ScanCode] == 0) {
+        UpdateInputStates();
+        SDL_Delay(5);
+    }
+}

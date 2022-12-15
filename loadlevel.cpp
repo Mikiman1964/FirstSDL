@@ -8,130 +8,229 @@
 extern PLAYFIELD Playfield;
 extern SDL_DisplayMode ge_DisplayMode;
 
- uint8_t ge_uLevel[] = {"LEVELHEADER01.00"                          // 0x0000 - 0x000F
-                        "LEVELDIMENSION_X"                          // 0x0010 - 0x001F
-                        "\x40\x00\x00\x00"                          // 0x0020 - 0x0023, X-Dimension (little Endian)
-                        "LEVELDIMENSION_Y"                          // 0x0024 - 0x0033
-                        "\x20\x00\x00\x00"                          // 0x0034 - 0x0037, Y-Dimension (little Endian)
-                        "___SCORE_EMERALD"                          // 0x0038 - 0x0047
-                        "\x64\x00\x00\x00"                          // 0x0048 - 0x004B, Score Emerald (little Endian)
-                        "SCORE_SAPHIR"                              // 0x004C - 0x0057
-                        "\xC8\x00\x00\x00"                          // 0x0058 - 0x005B, Score Saphir (little Endian)
-                        "___SCORE_KEY"                              // 0x005C - 0x0067
-                        "\x02\x00\x00\x00"                          // 0x0068 - 0x006B, Score Key (little Endian)
-                        "__SCORE_DYNAMITE"                          // 0x006C - 0x007B
-                        "\x03\x00\x00\x00"                          // 0x007C - 0x007F, Score Dynamite (little Endian)
-                        "___SCORE_NUTCRACKING"                      // 0x0080 - 0x0093
-                        "\x04\x00\x00\x00"                          // 0x0094 - 0x0097, Score Nutcracking (little Endian)
-                        "SCORE_STONING_BEETLE"                      // 0x0098 - 0x00AB
-                        "\x05\x00\x00\x00"                          // 0x00AC - 0x00AF, Score Stoning a Beetle (little Endian)
-                        "__SCORE_STONING_MINE"                      // 0x00B0 - 0x00C3
-                        "\x06\x00\x00\x00"                          // 0x00C4 - 0x00C7, Score Stoning a Mine (little Endian)
-                        "_SCORE_STONING_ALIEN"                      // 0x00C8 - 0x00DB
-                        "\x07\x00\x00\x00"                          // 0x00DC - 0x00DF, Score Stoning an Alien (little Endian)
-                        "___SCORE_STONING_YAM"                      // 0x00E0 - 0x00F3
-                        "\x08\x00\x00\x00"                          // 0x00F4 - 0x00F7, Score Stoning a Yam (little Endian)
-                        "___SCORE_TIME_FACTOR"                      // 0x00F8 - 0x010B
-                        "\x02\x00\x00\x00"                          // 0x010C - 0x010F, Time Score Factor (little Endian)
-                        "_EMERALDS_TO_COLLECT"                      // 0x0110 - 0x0123
-                        "\x2C\x01\x00\x00"                          // 0x0124 - 0x0127, Emerald to collect (little Endian)
-                        "TIME_TO_PLAY"                              // 0x0128 - 0x0133
-                        "\x90\x01\x00\x00"                          // 0x0134 - 0x0137, Time to play (little Endian)
-//                        "\x10\x00\x00\x00"                          // 0x0134 - 0x0137, Time to play (little Endian)
-                        "_TIME_WHEEL_ROTATION"                      // 0x0138 - 0x014B
-                        "\x14\x00\x00\x00"                          // 0x014C - 0x014F, Wheel rotation time (little Endian)
-                        "__TIME_BLUE_WALL"                          // 0x0150 - 0x015F
-                        "\x32\x00\x00\x00"                          // 0x0160 - 0x0163, Blue wall time (little Endian)
-                        "_SPEED_CHEESE_SPREAD"                      // 0x0164 - 0x0177
-                        "\x0A\x00\x00\x00"                          // 0x0178 - 0x017B, Cheese spread speed (little Endian)
-                        "__LEVELTITLE"                              // 0x017C - 0x0187
-                        "DER BUNKER                      "          // 0x0188 - 0x01A7  maximal 32 Zeichen für Level-Titel
-                        "_LEVELAUTHOR"                              // 0x01A8 - 0x01B3
-                        "MIKIMANN                        "          // 0x01B4 - 0x01D3  maximal 32 Zeichen für Level-Author
-                        "_LEVELHEADER_END"                          // 0x01D4 - 0x01E3
-                        "_LEVEL_START"                              // 0x01E4 - 0x01EF
+ uint8_t ge_uLevel[] = {"LEVELHEADER01.00"
+                        "LEVELDIMENSION_X"
+                        "\x40\x00\x00\x00"
+                        "LEVELDIMENSION_Y"
+                        "\x20\x00\x00\x00"
+                        "SCORE_EMERALD"
+                        "\x64\x00\x00\x00"
+                        "SCORE_RUBY"
+                        "\x30\x00\x00\x00"
+                        "SCORE_SAPHIR"
+                        "\xC8\x00\x00\x00"
+                        "SCORE_CRYSTAL"
+                        "\x08\x00\x00\x00"
+                        "SCORE_MESSAGE"
+                        "\x64\x00\x00\x00"
+                        "SCORE_KEY"
+                        "\x02\x00\x00\x00"
+                        "SCORE_DYNAMITE"
+                        "\x03\x00\x00\x00"
+                        "SCORE_HAMMER"
+                        "\x03\x00\x00\x00"
+                        "SCORE_NUTCRACKING"
+                        "\x04\x00\x00\x00"
+                        "SCORE_STONING_BEETLE"
+                        "\x05\x00\x00\x00"
+                        "SCORE_STONING_MINE"
+                        "\x06\x00\x00\x00"
+                        "SCORE_STONING_ALIEN"
+                        "\x07\x00\x00\x00"
+                        "SCORE_STONING_YAM"
+                        "\x08\x00\x00\x00"
+                        "SCORE_TIME_FACTOR"
+                        "\x02\x00\x00\x00"
+                        "EMERALDS_TO_COLLECT"
+                        "\x14\x00\x00\x00"
+                        "TIME_TO_PLAY"
+                        "\x90\x01\x00\x00"
+                        "TIME_WHEEL_ROTATION"
+                        "\x14\x00\x00\x00"
+                        "TIME_MAGIC_WALL"
+                        "\x10\x00\x00\x00"
+                        "SPEED_CHEESE_SPREAD"
+                        "\x00\x00\x00\x00"
+                        //"\xE8\x03\x00\x00"
+                        "TIME_COIN_SCORE"
+                        "\x03\x00\x00\x00"
+                        "TIME_COIN_TIME"
+                        "\x32\x00\x00\x00"
+                        "DYNAMITE_COUNT"
+                        "\x3C\x00\x00\x00"
+                        "HAMMER_COUNT"
+                        "\x02\x00\x00\x00"
+                        "LEVELTITLE"
+                        "DER BUNKER                      "
+                        "LEVELAUTHOR"
+                        "MIKIMANN                        "
+                        "REPLICATOR_RED"
+                        "\x00\x02\x00\x00"
+                        "REPLICATOR_GREEN"
+                        "\x00\x0A\x00\x00"
+                        "REPLICATOR_BLUE"
+                        "\x00\x04\x00\x00"
+                        "REPLICATOR_YELLOW"
+                        "\x00\x25\x00\x00"
+                        "LIGHTBARRIER_RED"
+                        "\x00\x00\x00\x00"
+                        "LIGHTBARRIER_GREEN"
+                        "\x01\x00\x00\x00"
+                        "LIGHTBARRIER_BLUE"
+                        "\x01\x00\x00\x00"
+                        "LIGHTBARRIER_YELLOW"
+                        "\x00\x00\x00\x00"
+                        "MESSAGE_1_TEXT"
+                        "Willkommen im ersten Testlevel!\nDie Monster sind zur Zeit noch harmlos,\naber es funktionieren bereits viele Elemente.\n\nPress Fire or Space to confirm!\0"
+                        "MESSAGE_2_TEXT"
+                        "Dies ist die zweite Textbox!\n\nPress Fire or Space to confirm!\0"
+                        "MESSAGE_3_TEXT"
+                        "\0"
+                        "MESSAGE_4_TEXT"
+                        "\0"
+                        "MESSAGE_5_TEXT"
+                        "\0"
+                        "MESSAGE_6_TEXT"
+                        "\0"
+                        "MESSAGE_7_TEXT"
+                        "\0"
+                        "MESSAGE_8_TEXT"
+                        "\0"
+                        "LEVELHEADER_END"
+                        "LEVEL_START"
 "\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83"
 "\x83\x80\xE7\xE6\xDA\x08\xDD\xE6\xE9\x80\xDC\xE4\xDC\xE9\xD8\xE3\xDB\x80\xE4\xE0\xE5\xDC\x80\xEE\xE0\xEB\xDF\x80\xEA\xDB\xE3\x15\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x83\x82\x82\x82\x80\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x83\x80\x80\x80\x83"
-"\x83\x80\x83\x80\xEC\xEA\xDC\x80\xDA\xEC\xE9\xEA\xE6\xE9\x80\xE2\xDC\xF0\xEA\x80\xEB\xE6\x80\xEA\xDA\xE9\xE6\xE3\xE3\x80\x80\x83\x80\x80\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83"
-"\x83\x80\x80\x83\x80\x80\x80\x80\x80\x93\x80\xEB\xDF\xE9\xE6\xEC\xDE\xDF\x80\xE3\xDC\xED\xDC\xE3\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x83\x80\x80\x80\x83\x83\x83\x83\x83\x80\x80\x80\x83"
-"\x83\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x40\x80\x80\x80\x80\x80\x80\x04\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x85\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x86\x83\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x15\x83\x83\x83"
-"\x83\x80\x83\x80\x80\x80\x83\x80\x80\x80\x80\x80\xE7\xE9\xDC\xEA\xEA\x80\xEA\xE7\xD8\xDA\xDC\x80\x80\x80\x80\x83\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x80\x83\x83\x80\x80\x80\x80\x80\x83\x80\x83\x80\x80\x83"
-"\x83\x80\x83\x83\x83\x80\x80\x83\x80\x80\x80\xDD\xE6\xE9\x80\xE4\xD8\xE0\xE5\x80\xE7\xD8\xE9\xEB\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x83\x83\x80\x80\x80\x80\x80\x83"
-"\x83\x82\x83\x82\x82\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x82\x80\x15\x83\x80\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x89\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83\x89\x80\x80\x80\x83\x83\x83\x80\x83"
-"\x83\x82\x83\x82\x82\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x18\x19\x1A\x80\x80\x80\x82\x80\x82\x83\x80\x80\x80\x83\x83\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x80\x83\x83\x80\x83\x80\x80\x80\x83"
-"\x83\x82\x83\x83\x83\x80\x83\x80\x80\x80\x83\x80\x80\x80\x80\x1B\x80\x1C\x80\x80\x80\x82\x0A\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x83\x83\x83\x89\x80\x80\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x83\x80\x89\x80\x80\x83\x80\x80\x80\x80\x83"
-"\x83\x82\x83\x09\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x83\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x80\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x83\x08\x80\x80\x80\x80\x80\x80\x0A\x83\x80\x80\x83\x89\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x89\x80\x80\x80\x83\x83\x80\x80\x80\x80\x80\x80\x80\x83\x86\x80\x80\x80\x80\x80\x80\x80\x80\x82\x83\x83\x83"
-"\x83\x15\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83\x1D\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x83\x83\x83\x89\x83\x83\x83\x83\x83\x80\x83\x15\x80\x80\x83"
-"\x83\x82\x82\x82\x83\x80\x83\x83\x83\x80\x83\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83\x80\x89\x80\x83\x80\x80\x80\x83\x80\x80\x80\x80\x80\x89\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83\x80\x80\x80\x09\x80\x80\x0B\x80\x80\x83\x83\x83\x83\x83\x83\x83"
-"\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x83\x80\x83\x80\x83\x80\x80\x83\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x83\x83\x83\x80\x80\x83\x83\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x09\x80\x80\x0B\x80\x80\x83\x80\x88\x80\x80\x09\x83"
-"\x83\x82\x82\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x89\x80\x83\x80\x80\x80\x83\x80\x83\x80\x80\x80\x89\x80\x80\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x80\x09\x80\x80\x0B\x80\x80\x83\x83\x83\x83\x83\x82\x83"
-"\x83\x80\x08\x83\x80\x80\x80\x80\x83\x83\x83\x80\x83\x80\x80\x80\x80\x80\x83\x80\x83\x83\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83\x80\x80\x83\x83\x83\x83\x83\x8C\x83\x83\x83\x83\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x83\x83\x83\x83\x83\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x83\x83\x83\x89\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x89\x80\x80\x83\x80\x80\x80\x83\x83\x83\x83\x80\x80\x83\x80\x80\x80\x83\x83\x80\x80\x83\x80\x80\x80\x80\x83"
-"\x83\x80\x80\x83\x80\x80\x83\x80\x83\x80\x83\x83\x80\x80\x80\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x83\x80\x83\x80\x83\x8A\x83\x80\x80\x83\x80\x83\x83\x83\x8B\x83"
-"\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x83\x80\x80\x80\x89\x80\x80\x80\x80\x83\x83\x83\x83\x83\x89\x83\x83\x83\x83\x83\x83\x80\x80\x80\x80\x80\x83\x83\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x83\x80\x83\x80\x83\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x80\x80\x80\x80\x80\x80\x83\x83\x80\x80\x80\x80\x80\x80\x80\x83\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x83\x80\x83\x83\x83\x83\x83\x83\x83\x83\x80\x83"
+"\x83\x83\x82\x82\x82\x80\x82\x80\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x83\x80\x80\x80\x83"
+"\x83\x80\x83\x80\xEC\xEA\xDC\x82\xDA\xEC\xE9\xEA\xE6\xE9\x80\xE2\xDC\xF0\xEA\x80\xEB\xE6\x80\xEA\xDA\xE9\xE6\xE3\xE3\x80\x02\x83\x80\x80\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83"
+"\x83\x80\x80\x83\x12\x80\x80\x80\x02\x93\x85\xEB\xDF\xE9\xE6\xEC\xDE\xDF\x01\xE3\xDC\xED\xDC\xE3\x01\x01\x99\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x83\x80\x80\x80\x83\x83\x83\x83\x83\x80\x80\x80\x83"
+"\x83\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x08\x80\x80\x80\x80\x80\x80\x80\x99\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83"
+"\x83\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x82\x80\x80\x80\x85\x86\x25\x80\x80\x25\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x15\x83\x83\x83"
+"\x83\x80\x83\x80\x13\x80\x83\x80\x80\x82\x80\x80\xE7\xE9\xDC\xEA\xEA\x80\xEA\xE7\xD8\xDA\xDC\x80\x80\x80\x80\x83\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x80\x83\x83\x80\x80\x80\x80\x80\x83\x80\x83\x80\x80\x83"
+"\x83\x80\x83\x83\x83\x80\x80\x83\x80\x80\x80\xDD\xE6\xE9\x80\xE4\xD8\xE0\xE5\x80\xE7\xD8\xE9\xEB\x80\x80\xA5\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x83\x83\x80\x80\x80\x80\x80\x83"
+"\x83\x82\x83\x82\x82\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x82\x80\x25\x82\x29\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x89\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83\x89\x80\x80\x80\x83\x83\x83\x80\x83"
+"\x83\x82\x83\x82\x82\x80\x83\x80\x80\x34\x35\x36\x2E\x2F\x30\x18\x19\x1A\x1E\x1F\x20\x82\x80\x82\x83\x02\x02\x80\x83\x83\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x80\x83\x83\x80\x83\x80\x80\x80\x83"
+"\x83\x82\x83\x83\x83\x80\x83\x80\x80\x37\x80\x38\x31\x80\x32\x1B\x80\x1C\x21\x80\x22\x82\x0A\xA0\x02\x02\x02\x02\x02\x02\x02\x02\x83\x83\x83\x83\x83\x89\x80\x80\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x83\x80\x89\x80\x80\x83\x80\x80\x80\x80\x83"
+"\x83\x82\x83\x09\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x25\x80\x83\x25\xA4\x02\x89\x02\x8E\x80\x8E\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x80\x80\x80\x80\x80\x80\x80\x83"
+"\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x83\x99\x83\x08\x80\x80\x11\x80\x80\x24\x0A\xA1\x80\x80\x83\x89\x83\x83\x83\x4A\x83\x83\x83\x83\x83\x83\x83\x89\x80\x80\x80\x57\x83\x80\x80\x80\x80\x80\x80\x80\x83\x86\x80\x80\x80\x80\x80\x80\x80\x80\x82\x83\x83\x83"
+"\x83\x15\x80\x80\x83\x9A\x9A\x84\x84\x84\x80\x80\x23\x83\x39\x80\x40\x80\x80\x13\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x83\x83\x83\x89\x83\x83\x83\x83\x83\x80\x83\x15\x80\x80\x83"
+"\x83\x82\x82\x82\x83\x9A\x9A\x02\x84\x84\x84\x11\x42\x80\x80\x13\x80\x80\x41\xAB\x80\x80\x80\x9E\x80\x89\x80\x54\x80\x80\x80\x0E\x80\x80\x80\x80\x80\x89\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83\x80\x80\x80\x09\x80\x80\x0B\x80\x80\x83\x83\x83\x83\x83\x83\x83"
+"\x83\x80\x80\x80\x80\x84\x84\x84\x84\x84\x84\x80\x33\x83\x1D\x83\x92\x92\x83\x03\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x0C\x83\x0D\x80\x80\x83\x83\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x09\x80\x80\x0B\x80\x80\x83\x80\x88\x80\x80\x09\x83"
+"\x83\x82\x82\x80\x83\x84\x84\x84\x84\x84\x84\x80\x80\x8D\x8D\x8D\x8D\x8D\x8D\x80\x9D\x80\x83\x80\x80\x89\x80\x83\x80\x80\x80\x0F\x80\x83\x80\x80\x80\x89\x80\x80\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x80\x09\x80\x80\x0B\x80\x80\x83\x83\x83\x83\x83\x82\x83"
+"\x83\x80\x08\x83\x80\x84\x84\x84\x83\x83\x83\x80\x83\x8D\x8D\x3A\x3A\x3A\x83\x80\x83\x83\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83\x80\x80\x83\x83\x83\x83\x83\x8C\x83\x83\x83\x83\x80\x80\x80\x80\x80\x80\x83"
+"\x83\x83\x83\x83\x83\x83\x84\x84\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x83\x83\x83\x8E\x83\x83\x83\x83\x83\x83\x83\x83\x4D\x83\x83\x89\x80\x80\x83\x80\x80\x80\x83\x83\x83\x83\x80\x80\x83\x80\x80\x80\x83\x83\x80\x80\x83\x80\x80\x80\x80\x83"
+"\x83\x80\x80\x83\x80\x02\x83\x80\x83\x80\xA3\x83\x80\x80\x80\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x83\x80\x83\x80\x83\x8A\x83\x80\x80\x83\x80\x83\x83\x83\x8B\x83"
+"\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x83\xA7\x80\x80\x89\x80\x80\x80\x80\xA2\x83\x83\x83\x83\x89\x83\x83\x83\x83\x83\x83\x80\x80\x80\x80\x80\x83\x83\x83\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x83\x80\x83\x80\x83\x80\x80\x80\x80\x80\x80\x83"
+"\x83\x80\x80\x80\x80\xAC\x80\x83\x83\x80\x98\x9F\x80\x80\x80\x80\xAA\x83\xA6\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x83\x80\x83\x83\x83\x83\x83\x83\x83\x83\x80\x83"
 "\x83\x83\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x80\x89\x82\x82\x83\x80\x83\x80\x80\x80\x83\x89\x80\x80\x80\x80\x83\x83\x83\x83\x83\x83\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x83\x80\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x87\x83\x80\x83"
-"\x83\x83\x82\x09\x80\x80\x80\x80\x80\x80\x80\x80\x17\x82\x80\x80\x82\x82\x83\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x83\x80\x80\x80\x80\x80\x83\x80\x83\x80\x80\x83\x80\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x83"
-"\x83\x80\x82\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x82\x80\x89\x80\x83\x83\x80\x83\x83\x83\x83\x83\x89\x83\x83\x83\x83\x83\x80\x83\x80\x80\x80\x80\x80\x83\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83"
-"\x83\x80\x82\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x82\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x83\x83\x83\x83\x80\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83"
-"\x83\x80\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x80\x89\x80\x80\x83\x83\x83\x83\x83\x80\x80\x89\x83\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x80\x83\x80\x83\x83\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83\x80\x80\x83"
-"\x83\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x80\x80\x83\x80\x80\x80\x83\x82\x80\x80\x83\x80\x80\x82\x83\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x83\x83\x83\x80\x80\x80\x80\x80\x83\x80\x83"
-"\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x83\x80\x83\x80\x82\x83\x80\x83\x82\x16\x83\x83\x83\x83\x83\x83\x83\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x82\x82\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x85\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x0A\x82\x80\x80\x80\x82\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x82\xDC\xE5\xDB\xDC\x80\xDE\xDC\xE3\xD8\xDC\xE5\xDB\xDC\x83"
+"\x83\x83\x82\x09\x80\x80\x80\x80\x80\x80\x80\x80\x17\x82\x80\x80\x1E\x1F\x20\x80\xA9\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x83\x83\x80\x80\x80\x80\x80\x83\x80\x83\x80\x80\x83\x80\x80\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x80\x83"
+"\x83\x80\x82\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x82\x80\x89\x21\x29\x22\x80\x83\x83\x83\x83\x83\x89\x83\x83\x83\x83\x83\x80\x83\x80\x80\x80\x80\x80\x83\x83\x83\x80\x80\x80\x80\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83"
+"\x83\x80\x82\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x82\x80\x80\x80\x82\x80\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x80\x83\x83\x83\x83\x80\x80\x83\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x83"
+"\x83\x80\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x82\x80\x89\x80\x80\x80\x80\x80\x80\x83\x80\x80\x89\x83\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x80\x83\x80\x83\x83\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x83\x80\x80\x83"
+"\x83\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x89\x80\x80\x80\x80\x80\x80\x80\x83\x82\x80\x80\x83\x80\x80\x82\x83\x80\x80\x83\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x83\x83\x83\x83\x83\x80\x80\x80\x80\x80\x83\x80\x83"
+"\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x23\x80\x80\x7A\x7B\x7B\x7B\x7C\x83\x80\x83\x80\x82\x83\x80\x83\x82\x16\x83\x83\x83\x83\x83\x83\x83\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x82\x82\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83"
+"\x83\x85\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x7D\x7E\x7E\x7E\x7F\x80\x80\x83\x0A\x82\x80\x80\x80\x82\x80\x83\x80\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x80\x80\x80\x83\x80\x80\x80\x82\xDC\xE5\xDB\xDC\x80\xDE\xDC\xE3\xD8\xDC\xE5\xDB\xDC\x83"
 "\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83"
 };
 
-/*
- uint8_t ge_uLevel[] = {"LEVELHEADER01.00"                          // 0x0000 - 0x000F
-                        "LEVELDIMENSION_X"                          // 0x0010 - 0x001F
-                        "\x1B\x00\x00\x00"                          // 0x0020 - 0x0023, X-Dimension (little Endian)
-                        "LEVELDIMENSION_Y"                          // 0x0024 - 0x0033
-                        "\x06\x00\x00\x00"                          // 0x0034 - 0x0037, Y-Dimension (little Endian)
-                        "___SCORE_EMERALD"                          // 0x0038 - 0x0047
-                        "\x64\x00\x00\x00"                          // 0x0048 - 0x004B, Score Emerald (little Endian)
-                        "SCORE_SAPHIR"                              // 0x004C - 0x0057
-                        "\xC8\x00\x00\x00"                          // 0x0058 - 0x005B, Score Saphir (little Endian)
-                        "___SCORE_KEY"                              // 0x005C - 0x0067
-                        "\x02\x00\x00\x00"                          // 0x0068 - 0x006B, Score Key (little Endian)
-                        "__SCORE_DYNAMITE"                          // 0x006C - 0x007B
-                        "\x03\x00\x00\x00"                          // 0x007C - 0x007F, Score Dynamite (little Endian)
-                        "___SCORE_NUTCRACKING"                      // 0x0080 - 0x0093
-                        "\x04\x00\x00\x00"                          // 0x0094 - 0x0097, Score Nutcracking (little Endian)
-                        "SCORE_STONING_BEETLE"                      // 0x0098 - 0x00AB
-                        "\x05\x00\x00\x00"                          // 0x00AC - 0x00AF, Score Stoning a Beetle (little Endian)
-                        "__SCORE_STONING_MINE"                      // 0x00B0 - 0x00C3
-                        "\x06\x00\x00\x00"                          // 0x00C4 - 0x00C7, Score Stoning a Mine (little Endian)
-                        "_SCORE_STONING_ALIEN"                      // 0x00C8 - 0x00DB
-                        "\x07\x00\x00\x00"                          // 0x00DC - 0x00DF, Score Stoning an Alien (little Endian)
-                        "___SCORE_STONING_YAM"                      // 0x00E0 - 0x00F3
-                        "\x08\x00\x00\x00"                          // 0x00F4 - 0x00F7, Score Stoning a Yam (little Endian)
-                        "___SCORE_TIME_FACTOR"                      // 0x00F8 - 0x010B
-                        "\x02\x00\x00\x00"                          // 0x010C - 0x010F, Time Score Factor (little Endian)
-                        "_EMERALDS_TO_COLLECT"                      // 0x0110 - 0x0123
-                        "\x2C\x01\x00\x00"                          // 0x0124 - 0x0127, Emerald to collect (little Endian)
-                        "TIME_TO_PLAY"                              // 0x0128 - 0x0133
-                        "\x14\x00\x00\x00"                          // 0x0134 - 0x0137, Time to play (little Endian)
-                        "_TIME_WHEEL_ROTATION"                      // 0x0138 - 0x014B
-                        "\x64\x00\x00\x00"                          // 0x014C - 0x014F, Wheel rotation time (little Endian)
-                        "__TIME_BLUE_WALL"                          // 0x0150 - 0x015F
-                        "\x32\x00\x00\x00"                          // 0x0160 - 0x0163, Blue wall time (little Endian)
-                        "_SPEED_CHEESE_SPREAD"                      // 0x0164 - 0x0177
-                        "\x0A\x00\x00\x00"                          // 0x0178 - 0x017B, Cheese spread speed (little Endian)
-                        "__LEVELTITLE"                              // 0x017C - 0x0187
-                        "12345678   DER BUNKER   56789012"          // 0x0188 - 0x01A7
-                        "_LEVELAUTHOR"                              // 0x01A8 - 0x01B3
-                        "123456789   MIKIMANN   456789012"          // 0x01B4 - 0x01D3
-                        "_LEVELHEADER_END"                          // 0x017C - 0x018B
-                        "_LEVEL_START"                              // 0x018C - 0x0197
 
+/*
+ uint8_t ge_uLevel[] = {"LEVELHEADER01.00"
+                        "LEVELDIMENSION_X"
+                        "\x1B\x00\x00\x00"
+                        "LEVELDIMENSION_Y"
+                        "\x09\x00\x00\x00"
+                        "SCORE_EMERALD"
+                        "\x64\x00\x00\x00"
+                        "SCORE_RUBY"
+                        "\x30\x00\x00\x00"
+                        "SCORE_SAPHIR"
+                        "\xC8\x00\x00\x00"
+                        "SCORE_CRYSTAL"
+                        "\x08\x00\x00\x00"
+                        "SCORE_MESSAGE"
+                        "\x64\x00\x00\x00"
+                        "SCORE_KEY"
+                        "\x02\x00\x00\x00"
+                        "SCORE_DYNAMITE"
+                        "\x03\x00\x00\x00"
+                        "SCORE_HAMMER"
+                        "\x03\x00\x00\x00"
+                        "SCORE_NUTCRACKING"
+                        "\x04\x00\x00\x00"
+                        "SCORE_STONING_BEETLE"
+                        "\x05\x00\x00\x00"
+                        "SCORE_STONING_MINE"
+                        "\x06\x00\x00\x00"
+                        "SCORE_STONING_ALIEN"
+                        "\x07\x00\x00\x00"
+                        "SCORE_STONING_YAM"
+                        "\x08\x00\x00\x00"
+                        "SCORE_TIME_FACTOR"
+                        "\x02\x00\x00\x00"
+                        "EMERALDS_TO_COLLECT"
+                        "\x2C\x01\x00\x00"
+                        "TIME_TO_PLAY"
+                        "\xFF\x00\x00\x00"
+                        "TIME_WHEEL_ROTATION"
+                        "\x64\x00\x00\x00"
+                        "TIME_MAGIC_WALL"
+                        "\x32\x00\x00\x00"
+                        "SPEED_CHEESE_SPREAD"
+                        "\x0A\x00\x00\x00"
+                        "TIME_COIN_SCORE"
+                        "\x03\x00\x00\x00"
+                        "TIME_COIN_TIME"
+                        "\x32\x00\x00\x00"
+                        "DYNAMITE_COUNT"
+                        "\x3C\x00\x00\x00"
+                        "HAMMER_COUNT"
+                        "\x50\x00\x00\x00"
+                        "LEVELTITLE"
+                        "12345678   DER BUNKER   56789012"
+                        "LEVELAUTHOR"
+                        "123456789   MIKIMANN   456789012"
+                        "REPLICATOR_RED"
+                        "\x00\x16\x00\x00"
+                        "REPLICATOR_GREEN"
+                        "\x00\x02\x00\x00"
+                        "REPLICATOR_BLUE"
+                        "\x00\x04\x00\x00"
+                        "REPLICATOR_YELLOW"
+                        "\x00\x12\x00\x00"
+                        "LIGHTBARRIER_RED"
+                        "\x00\x00\x00\x00"
+                        "LIGHTBARRIER_GREEN"
+                        "\x01\x00\x00\x00"
+                        "LIGHTBARRIER_BLUE"
+                        "\x01\x00\x00\x00"
+                        "LIGHTBARRIER_YELLOW"
+                        "\x00\x00\x00\x00"
+                        "MESSAGE_1_TEXT"
+                        "DIES IST DER TEXT FUER MESSAGE 1!\n\nPress Fire or Space to confirm!\0"
+                        "MESSAGE_2_TEXT"
+                        "\0"
+                        "MESSAGE_3_TEXT"
+                        "\0"
+                        "MESSAGE_4_TEXT"
+                        "\0"
+                        "MESSAGE_5_TEXT"
+                        "\0"
+                        "MESSAGE_6_TEXT"
+                        "\0"
+                        "MESSAGE_7_TEXT"
+                        "\0"
+                        "MESSAGE_8_TEXT"
+                        "\0"
+                        "LEVELHEADER_END"
+                        "LEVEL_START"
 "\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83"
-"\x83\x08\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x40\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83"
-"\x83\x80\x80\x80\x15\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x83"
+"\x83\x80\x25\x80\x80\x01\x80\x10\x80\x80\x01\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x2E\x2F\x30\x80\x80\x83"
+"\x83\x82\x82\x80\x80\x82\x82\x82\x82\x80\x82\x12\x12\x12\x82\x12\x12\x12\x12\x12\x82\x31\x80\x32\x80\x80\x83"
+"\x83\x82\x98\x80\x80\x94\x82\x40\x82\x12\x94\x12\x12\x82\x82\x01\x12\x12\x12\x12\x82\x80\x80\x80\x80\x80\x83"
+"\x83\x80\x80\x80\x80\x94\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x12\x12\x12\x85\x86\x87\x88\x80\x80\x33\x83"
+"\x83\x80\x80\x80\x80\x02\x80\x80\x80\x80\x82\x82\x80\x82\x80\x80\x12\x12\x12\x82\x82\x80\x80\x80\x80\x80\x83"
+"\x83\x80\x7A\x7B\x7B\x7B\x7C\x82\x82\x80\x80\x82\x80\x82\x80\x80\x12\x12\x12\x82\x82\x80\x80\x80\x80\x80\x83"
+"\x83\x14\x7D\x7E\x7E\x7E\x7F\x82\x82\x80\x0B\x82\x82\x82\x80\x02\x12\x12\x12\x12\x82\x80\x80\x80\x80\x08\x83"
 "\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83"
 };
 */
@@ -151,6 +250,8 @@ Seiteneffekte: Playfield.x, ge_DisplayMode
 ------------------------------------------------------------------------------*/
 int InitialisePlayfield(uint8_t *puLevel) {
     int nErrorCode;
+    uint32_t I;
+    uint32_t uMessageIndex;
     int nLabel;
     size_t nLabelLen;
     const char *pFound;
@@ -172,19 +273,47 @@ int InitialisePlayfield(uint8_t *puLevel) {
         ,"EMERALDS_TO_COLLECT"      // 13
         ,"TIME_TO_PLAY"             // 14
         ,"TIME_WHEEL_ROTATION"      // 15
-        ,"TIME_BLUE_WALL"           // 16
+        ,"TIME_MAGIC_WALL"          // 16
         ,"SPEED_CHEESE_SPREAD"      // 17
         ,"LEVELTITLE"               // 18
         ,"LEVELAUTHOR"              // 19
         ,"LEVELHEADER_END"          // 20
         ,"LEVEL_START"              // 21
+        ,"REPLICATOR_RED"           // 22
+        ,"REPLICATOR_GREEN"         // 23
+        ,"REPLICATOR_BLUE"          // 24
+        ,"REPLICATOR_YELLOW"        // 25
+        ,"SCORE_RUBY"               // 26
+        ,"SCORE_CRYSTAL"            // 27
+        ,"TIME_COIN_SCORE"          // 28
+        ,"TIME_COIN_TIME"           // 29
+        ,"DYNAMITE_COUNT"           // 30
+        ,"HAMMER_COUNT"             // 31
+        ,"SCORE_HAMMER"             // 32
+        ,"SCORE_MESSAGE"            // 33
+        ,"MESSAGE_1_TEXT"           // 34
+        ,"MESSAGE_2_TEXT"           // 35
+        ,"MESSAGE_3_TEXT"           // 36
+        ,"MESSAGE_4_TEXT"           // 37
+        ,"MESSAGE_5_TEXT"           // 38
+        ,"MESSAGE_6_TEXT"           // 39
+        ,"MESSAGE_7_TEXT"           // 40
+        ,"MESSAGE_8_TEXT"           // 41
+        ,"LIGHTBARRIER_RED"         // 42
+        ,"LIGHTBARRIER_GREEN"       // 43
+        ,"LIGHTBARRIER_BLUE"        // 44
+        ,"LIGHTBARRIER_YELLOW"      // 45
         ,NULL                       // Endekennung
     };
 
     if (puLevel == NULL) {
         return -1;
     }
+    uMessageIndex = 0;
     memset(&Playfield,0,sizeof(Playfield));
+    for (I = 0; I < EMERALD_MAX_MESSAGES; I++) {
+        Playfield.pMessage[I] = NULL;
+    }
     nErrorCode = 0;
     Playfield.bInitOK = false;
     Playfield.uTotalScore = 0;
@@ -247,16 +376,19 @@ int InitialisePlayfield(uint8_t *puLevel) {
                     Playfield.uEmeraldsToCollect = *(uint32_t *)(pFound);
                     break;
                 case(14):            // TIME_TO_PLAY
-                    Playfield.uTimeToPlay = *(uint32_t *)(pFound);
+                    Playfield.uTimeToPlay = *(uint32_t *)(pFound) * ge_DisplayMode.refresh_rate;
                     break;
                 case(15):            // TIME_WHEEL_ROTATION
                     Playfield.uTimeWheelRotation = (*(uint32_t *)(pFound)) * ge_DisplayMode.refresh_rate;
                     break;
                 case(16):            // TIME_BLUE_WALL
-                    Playfield.uTimeBlueWall = (*(uint32_t *)(pFound)) * ge_DisplayMode.refresh_rate;
+                    Playfield.uTimeMagicWall = (*(uint32_t *)(pFound)) * ge_DisplayMode.refresh_rate;
                     break;
                 case(17):            // SPEED_CHEESE_SPREAD
                     Playfield.uCheeseSpreadSpeed = *(uint32_t *)(pFound);
+                    if (Playfield.uCheeseSpreadSpeed > 1000) {
+                        Playfield.uCheeseSpreadSpeed = 1000;
+                    }
                     break;
                 case(18):            // LEVELTITLE
                     memset(Playfield.szLevelTitle,0,sizeof(Playfield.szLevelTitle));
@@ -271,10 +403,77 @@ int InitialisePlayfield(uint8_t *puLevel) {
                 case(21):            // LEVEL_START
                     pLevelStart = (uint8_t*)pFound;
                     break;
+                case(22):            // REPLICATOR_RED
+                    Playfield.bReplicatorRedOn = (pFound[0] != 0);
+                    Playfield.uReplicatorRedObject = pFound[1];
+                    break;
+                case(23):            // REPLICATOR_GREEN
+                    Playfield.bReplicatorGreenOn = (pFound[0] != 0);
+                    Playfield.uReplicatorGreenObject = pFound[1];
+                    break;
+                case(24):            // REPLICATOR_BLUE
+                    Playfield.bReplicatorBlueOn = (pFound[0] != 0);
+                    Playfield.uReplicatorBlueObject = pFound[1];
+                    break;
+                case(25):            // REPLICATOR_YELOW
+                    Playfield.bReplicatorYellowOn = (pFound[0] != 0);
+                    Playfield.uReplicatorYellowObject = pFound[1];
+                    break;
+                case(26):            // SCORE_RUBY
+                    Playfield.uScoreRuby = *(uint32_t *)(pFound);
+                    break;
+                case(27):            // SCORE_CRYSTAL
+                    Playfield.uScoreCrystal = *(uint32_t *)(pFound);
+                    break;
+                case(28):            // TIME_COIN_SCORE
+                    Playfield.uScoreTimeCoin = *(uint32_t *)(pFound);
+                    break;
+                case(29):            // TIME_COIN_TIME
+                    Playfield.uAdditonalTimeCoinTime = *(uint32_t *)(pFound) * ge_DisplayMode.refresh_rate;
+                    break;
+                case(30):            // DYNAMIT_COUNT
+                    Playfield.uDynamiteCount = *(uint32_t *)(pFound);
+                    break;
+                case(31):            // HAMMER_COUNT
+                    Playfield.uHammerCount = *(uint32_t *)(pFound);
+                    break;
+                case(32):            // HAMMER_SCORE
+                    Playfield.uScoreHammer = *(uint32_t *)(pFound);
+                    break;
+                case(33):            // SCORE_MESSAGE
+                    Playfield.uScoreMessage = *(uint32_t *)(pFound);
+                    break;
+                case(34):            // MESSAGE_1_TEXT
+                case(35):            // MESSAGE_2_TEXT
+                case(36):            // MESSAGE_3_TEXT
+                case(37):            // MESSAGE_4_TEXT
+                case(38):            // MESSAGE_5_TEXT
+                case(39):            // MESSAGE_6_TEXT
+                case(40):            // MESSAGE_7_TEXT
+                case(41):            // MESSAGE_8_TEXT
+                    uMessageIndex = nLabel - 34;
+                    if (strlen(pFound) > 0) {
+                        Playfield.pMessage[uMessageIndex] = (char*)malloc(strlen(pFound) + 1);
+                        if (Playfield.pMessage[uMessageIndex] != NULL) {
+                            strcpy(Playfield.pMessage[uMessageIndex],pFound);
+                        }
+                    }
+                    break;
+                case(42):           // LIGHTBARRIER_RED
+                    Playfield.bLightBarrierRedOn = (pFound[0] != 0);
+                    break;
+                case(43):           // LIGHTBARRIER_GREEN
+                    Playfield.bLightBarrierGreenOn = (pFound[0] != 0);
+                    break;
+                case(44):           // LIGHTBARRIER_BLUE
+                    Playfield.bLightBarrierBlueOn = (pFound[0] != 0);
+                    break;
+                case(45):           // LIGHTBARRIER_YELLOW
+                    Playfield.bLightBarrierYellowOn = (pFound[0] != 0);
+                    break;
                 default:
                     break;
             }
-
         } else {
             SDL_Log("%s: Label: %s   not found",__FUNCTION__,szLevelLabel[nLabel]);
             nErrorCode = -1;
@@ -286,27 +485,24 @@ int InitialisePlayfield(uint8_t *puLevel) {
     }
     if (nErrorCode == 0) {
         Playfield.pLevel = (uint8_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
-        if (Playfield.pLevel != NULL) {
+        Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
+        Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
+        if ((Playfield.pLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL)) {
+            memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
             memcpy(Playfield.pLevel,pLevelStart,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
-            Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-            if (Playfield.pStatusAnimation != NULL) {
-                memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-                // Sichtbaren Bereich berechnen
-                Playfield.uVisibleY = ((WINDOW_H - PANEL_H) / FONT_H);
-                Playfield.uVisibleX = WINDOW_W / FONT_W;
-                Playfield.uVisibleCenterY = Playfield.uVisibleY / 2;
-                Playfield.uVisibleCenterX = Playfield.uVisibleX / 2;
-                nErrorCode = GetManCoordinates();
-                if (nErrorCode == 0) {
-                    CheckLevelBorder();
-                }
-            } else {
-                nErrorCode = -1;
-                SDL_Log("%s: malloc failed for pStatusAnimation",__FUNCTION__);
+            memset(Playfield.pPostAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
+            // Sichtbaren Bereich berechnen
+            Playfield.uVisibleY = ((WINDOW_H - PANEL_H) / FONT_H);
+            Playfield.uVisibleX = WINDOW_W / FONT_W;
+            Playfield.uVisibleCenterY = Playfield.uVisibleY / 2;
+            Playfield.uVisibleCenterX = Playfield.uVisibleX / 2;
+            nErrorCode = GetManCoordinates();
+            if (nErrorCode == 0) {
+                CheckLevelBorder();
             }
         } else {
             nErrorCode = -1;
-            SDL_Log("%s: malloc failed for pLevel",__FUNCTION__);
+            SDL_Log("%s: malloc failed for pLevel (p = %p) or pStatusAnimation (p = %p)",__FUNCTION__,Playfield.pLevel,Playfield.pStatusAnimation);
         }
     }
     if (nErrorCode == 0) {
@@ -314,19 +510,23 @@ int InitialisePlayfield(uint8_t *puLevel) {
     } else {
         SAFE_FREE(Playfield.pLevel);
         SAFE_FREE(Playfield.pStatusAnimation);
+        SAFE_FREE(Playfield.pPostAnimation);
     }
     // Startposition im Level
     if (Playfield.uManXpos >= Playfield.uVisibleCenterX) {
-        Playfield.nXpos = (Playfield.uManXpos - Playfield.uVisibleCenterX) * FONT_W;
+        Playfield.nTopLeftXpos = (Playfield.uManXpos - Playfield.uVisibleCenterX) * FONT_W;
     } else {
-        Playfield.nXpos = 0;
+        Playfield.nTopLeftXpos = 0;
     }
     if (Playfield.uManYpos >= Playfield.uVisibleCenterY) {
-        Playfield.nYpos = (Playfield.uManYpos - Playfield.uVisibleCenterY) * FONT_H;
+        Playfield.nTopLeftYpos = (Playfield.uManYpos - Playfield.uVisibleCenterY) * FONT_H;
     } else {
-        Playfield.nYpos = 0;
+        Playfield.nTopLeftYpos = 0;
     }
     Playfield.uFrameCounter = 0;
+    Playfield.bMagicWallRunning = false;
+    Playfield.bMagicWallWasOn = false;
+    Playfield.uTimeMagicWallLeft = 0;
     Playfield.bWheelRunning = false;
     Playfield.uTimeWheelRotationLeft = 0;
     Playfield.uWheelRunningXpos = 0;      // nur gültig, wenn bWheelRunning = true
@@ -335,11 +535,10 @@ int InitialisePlayfield(uint8_t *puLevel) {
     Playfield.bHasGreenKey = false;
     Playfield.bHasBlueKey = false;
     Playfield.bHasYellowKey = false;
-    Playfield.bReplicatorRedOn = false;
-    Playfield.bReplicatorGreenOn = false;
-    Playfield.bReplicatorBlueOn = false;
-    Playfield.bReplicatorYellowOn = false;
+    Playfield.bManDead = false;
+    Playfield.uShowMessageNo = 0;   // TODO
     PrintPlayfieldValues();
+    InitRollUnderground();
     return nErrorCode;
 }
 
@@ -362,28 +561,28 @@ int CheckLevelBorder(void) {
     nErrorCode = 0;
     // Obere Zeile prüfen
     for (I = 0; (I < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); I++) {
-        if (Playfield.pLevel[I] != EMERALD_HARDWALL) {
+        if (Playfield.pLevel[I] != EMERALD_WALL_HARD) {
             SDL_Log("%s[top line]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
             nErrorCode = -1;
         }
     }
     // Untere Zeile prüfen
     for (I = Playfield.uLevel_X_Dimension * (Playfield.uLevel_Y_Dimension - 1); (I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); I++) {
-        if (Playfield.pLevel[I] != EMERALD_HARDWALL) {
+        if (Playfield.pLevel[I] != EMERALD_WALL_HARD) {
             SDL_Log("%s[buttom line]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
             nErrorCode = -1;
         }
     }
     // Rechte und linke Spalte prüfen
     for (I = 0; (I < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); I++) {
-        if (Playfield.pLevel[I * Playfield.uLevel_X_Dimension] != EMERALD_HARDWALL) {
+        if (Playfield.pLevel[I * Playfield.uLevel_X_Dimension] != EMERALD_WALL_HARD) {
             SDL_Log("%s[left column]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
             nErrorCode = -1;
         }
     }
     // Rechte Spalte prüfen
     for (I = 1; (I <= Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); I++) {
-        if (Playfield.pLevel[I * Playfield.uLevel_X_Dimension - 1] != EMERALD_HARDWALL) {
+        if (Playfield.pLevel[I * Playfield.uLevel_X_Dimension - 1] != EMERALD_WALL_HARD) {
             SDL_Log("%s[right column]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
             nErrorCode = -1;
         }
@@ -449,32 +648,39 @@ void PrintPlayfieldValues() {
     if (Playfield.bInitOK) {
         printf("Playfield-Values\r\n");
         printf("================\r\n");
-        printf("InitOK:                  %d\r\n",Playfield.bInitOK);
-        printf("Version:                 %s\r\n",Playfield.szVersion);       // z.B. "01.00"
-        printf("Level title:             %s\r\n",Playfield.szLevelTitle);
-        printf("Level author:            %s\r\n",Playfield.szLevelAuthor);
-        printf("Score Emerald:           %d\r\n",Playfield.uScoreEmerald);
-        printf("Score Saphire:           %d\r\n",Playfield.uScoreSaphir);
-        printf("Score Key:               %d\r\n",Playfield.uScoreKey);
-        printf("Score Dynamite:          %d\r\n",Playfield.uScoreDynamite);
-        printf("Score Nut cracking:      %d\r\n",Playfield.uScoreNutCracking);
-        printf("Score stoning beetle:    %d\r\n",Playfield.uScoreStoningBeetle);
-        printf("Score stoning mine:      %d\r\n",Playfield.uScoreStoningMine);
-        printf("Score stoning alien:     %d\r\n",Playfield.uScoreStoningAlien);
-        printf("Score stoning yam:       %d\r\n",Playfield.uScoreStoningYam);
-        printf("Emerald to collect:      %d\r\n",Playfield.uEmeraldsToCollect);
-        printf("Time Score Factor:       %d\r\n",Playfield.uTimeScoreFactor);
-        printf("Cheese spread speed:     %d\r\n",Playfield.uCheeseSpreadSpeed);
-        printf("Time to play:            %d\r\n",Playfield.uTimeToPlay);
-        printf("Time Wheel Rotation:     %d\r\n",Playfield.uTimeWheelRotation);
-        printf("Time blue wall:          %d\r\n",Playfield.uTimeBlueWall);
-        printf("Total Score:             %d\r\n",Playfield.uTotalScore);            // Total-Score
-        printf("Level Dimension:         X(%d) x Y(%d)\r\n",Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension);
-        printf("visible Dimension:       X(%d) x Y(%d)\r\n",Playfield.uVisibleX,Playfield.uVisibleY);   // Sichtbarer Bereich (nur von Fenstergröße abhängig)
-        printf("visible Center:          X(%d) / Y(%d)\r\n",Playfield.uVisibleCenterX,Playfield.uVisibleCenterY);   // Zentrum des sichtbaren Bereichs (nur von Fenstergröße abhängig)
-        printf("top left Pixel Position: X(%d) / Y(%d)\r\n",Playfield.nXpos,Playfield.nYpos);           // aktuelle X/Y-Pixelposition, abhängig von Man position
-        printf("Man Position:            X(%d) / Y(%d)\r\n",Playfield.uManXpos,Playfield.uManYpos);   // Man-X/Y-Element-Koordinate
-        printf("FrameCounter:            %u\r\n",Playfield.uFrameCounter);
+        printf("InitOK:                   %d\r\n",Playfield.bInitOK);
+        printf("Version:                  %s\r\n",Playfield.szVersion);       // z.B. "01.00"
+        printf("Level title:              %s\r\n",Playfield.szLevelTitle);
+        printf("Level author:             %s\r\n",Playfield.szLevelAuthor);
+        printf("Score Emerald:            %d\r\n",Playfield.uScoreEmerald);
+        printf("Score Ruby:               %d\r\n",Playfield.uScoreRuby);
+        printf("Score crystal:            %d\r\n",Playfield.uScoreCrystal);
+        printf("Score Saphire:            %d\r\n",Playfield.uScoreSaphir);
+        printf("Score Key:                %d\r\n",Playfield.uScoreKey);
+        printf("Score Dynamite:           %d\r\n",Playfield.uScoreDynamite);
+        printf("Score Hammer:             %d\r\n",Playfield.uScoreHammer);
+        printf("Score Nut cracking:       %d\r\n",Playfield.uScoreNutCracking);
+        printf("Score stoning beetle:     %d\r\n",Playfield.uScoreStoningBeetle);
+        printf("Score stoning mine:       %d\r\n",Playfield.uScoreStoningMine);
+        printf("Score stoning alien:      %d\r\n",Playfield.uScoreStoningAlien);
+        printf("Score stoning yam:        %d\r\n",Playfield.uScoreStoningYam);
+        printf("Score time coin:          %d\r\n",Playfield.uScoreTimeCoin);
+        printf("Additional time for coin: %d\r\n",Playfield.uAdditonalTimeCoinTime);
+        printf("Emerald to collect:       %d\r\n",Playfield.uEmeraldsToCollect);
+        printf("Dynamite Count:           %d\r\n",Playfield.uDynamiteCount);
+        printf("Hammer Count:             %d\r\n",Playfield.uHammerCount);
+        printf("Time Score Factor:        %d\r\n",Playfield.uTimeScoreFactor);
+        printf("Cheese spread speed:      %d\r\n",Playfield.uCheeseSpreadSpeed);
+        printf("Time to play:             %d\r\n",Playfield.uTimeToPlay);
+        printf("Time Wheel Rotation:      %d\r\n",Playfield.uTimeWheelRotation);
+        printf("Time magic wall:          %d\r\n",Playfield.uTimeMagicWall);
+        printf("Total Score:              %d\r\n",Playfield.uTotalScore);            // Total-Score
+        printf("Level Dimension:          X(%d) x Y(%d)\r\n",Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension);
+        printf("visible Dimension:        X(%d) x Y(%d)\r\n",Playfield.uVisibleX,Playfield.uVisibleY);   // Sichtbarer Bereich (nur von Fenstergröße abhängig)
+        printf("visible Center:           X(%d) / Y(%d)\r\n",Playfield.uVisibleCenterX,Playfield.uVisibleCenterY);   // Zentrum des sichtbaren Bereichs (nur von Fenstergröße abhängig)
+        printf("top left Pixel Position:  X(%d) / Y(%d)\r\n",Playfield.nTopLeftXpos,Playfield.nTopLeftYpos);           // aktuelle X/Y-Pixelposition, abhängig von Man position
+        printf("Man Position:             X(%d) / Y(%d)\r\n",Playfield.uManXpos,Playfield.uManYpos);   // Man-X/Y-Element-Koordinate
+        printf("FrameCounter:             %u\r\n",Playfield.uFrameCounter);
     } else {
         printf("Error in level data, can't show playfield values\r\n");
     }
