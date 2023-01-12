@@ -14,6 +14,6 @@ void ControlBarrierUp(uint32_t I, uint32_t uColor);
 void ControlBarrierDown(uint32_t I, uint32_t uColor);
 void ControlBarrierLeft(uint32_t I, uint32_t uColor);
 void ControlBarrierRight(uint32_t I, uint32_t uColor);
-uint32_t HandleBeam(uint32_t I, uint8_t uOwnElement, uint32_t uOwnColor);
+uint32_t HandleBeam(uint32_t I, uint16_t uOwnElement, uint32_t uOwnColor);
 
 #endif // LIGHTBARRIER_H_INCLUDED

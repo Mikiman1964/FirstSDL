@@ -7,4 +7,6 @@ void ControlMineRight(uint32_t I);
 void ControlMineDown(uint32_t I);
 void ControlMineLeft(uint32_t I);
 
+void ControlStandMine(uint32_t I);
+bool IsStandMineExplode(uint16_t uElement);
 #endif // MINE_H_INCLUDED

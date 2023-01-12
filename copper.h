@@ -2,6 +2,7 @@
 #define COPPER_H_INCLUDED
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 #define COPPER_COLORLINES_PER_SEGMENT       26                                              // Anzahl Faaben pro Segment
 #define COPPER_VISIBLE_SEGMENTS             ((WINDOW_H + 20) / COPPER_COLORLINES_PER_SEGMENT)        // sichtbare Segmente

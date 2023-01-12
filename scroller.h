@@ -2,6 +2,7 @@
 #define SCROLLER_H_INCLUDED
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 #include "mySDL.h"
 
 #define SCROLLER_BUFFER_LEN     ((WINDOW_W / FONT_W) + 1)   // + 1, für den rechten unsichtbaren Rand

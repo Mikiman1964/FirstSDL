@@ -2,6 +2,7 @@
 #define ASTEROIDS_H_INCLUDED
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 #define MAX_ASTEROIDS   30
 #define MAX_ASTEROIDLAYERS 3
