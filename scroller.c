@@ -8,10 +8,10 @@ Name:           InitScroller
 ------------------------------------------------------------------------------
 Beschreibung: Initialisiert die Sroller-Struktur
 Parameter
-      Eingang: SCROLLER *, pScroller, Zeiger auf Scroller-Struktur
+      Eingang: pScroller, SCROLLER *, Zeiger auf Scroller-Struktur
                uScrollSpeedPixel, uint32_t, Anzahl Pixel, die pro Aufruf gescrollt werden sollen (Scroll-Speed)
                          sollte ein Vielfaches von FONT_W sein, da der Scroller sonst ruckelt
-               nYpos, int, Y-Startposition
+               nYpos, int, Y-Startposition, hat scheinbar nur auf Sinusscroller Einfluss
                pszScrolltext, uint8_t *, Zeiger auf Scrolltext, null-terminiert
                fXfreq, float, X-Frequenz der Sinusfrequenz
                fYfreq, float, Y-Frequenz der Sinusfrequenz

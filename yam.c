@@ -16,7 +16,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlYam(uint32_t I) {
-    uint8_t uRandom;
+    int nRandom;
 
     // Zunächst prüfen, ob es um den YAM einen Saphir gibt, den er fressen kann
     if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND)) {
@@ -40,8 +40,8 @@ void ControlYam(uint32_t I) {
         switch (Playfield.pStatusAnimation[I]) {
             case (EMERALD_ANIM_STAND):
                 // Falls YAM steht und nichts frist, dann neue zufällige Richtung wählen
-                uRandom = randf(1,5);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = runter
-                switch (uRandom) {
+                nRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = runter)
+                switch (nRandom) {
                     case (1):   // Links
                         CheckYamGoLeft(I);
                         break;
