@@ -63,7 +63,10 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     uint32_t uRetDirection;
 
     uRetDirection = EMERALD_ANIM_STAND;
-    if (Playfield.bManDead) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
+        Playfield.pLevel[I] = EMERALD_SPACE;
+    }
+    if ((Playfield.bManDead) || (Playfield.bWellDone))  {
         return uRetDirection;
     }
     if (Playfield.uTimeToPlay > 0) {
@@ -73,6 +76,10 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
             case (MANKEY_UP):
                 if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
                     if (!ManKey.bFire) {
+                        if ((Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
+                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            return uRetDirection;
+                        }
                         PreparePlaySound(SOUND_MAN,I);
                         ManGoUp(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
                         uRetDirection = EMERALD_ANIM_UP;
@@ -84,6 +91,10 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
             case (MANKEY_RIGHT):
                 if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {  // Ist nach rechts frei?
                     if (!ManKey.bFire) {
+                        if ((Playfield.pStatusAnimation[I + 1] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
+                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            return uRetDirection;
+                        }
                         PreparePlaySound(SOUND_MAN,I);
                         ManGoRight(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
                         uRetDirection = EMERALD_ANIM_RIGHT;
@@ -94,8 +105,11 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                 break;
             case (MANKEY_DOWN):
                 if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach unten frei?
-
                     if (!ManKey.bFire) {
+                        if ((Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
+                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            return uRetDirection;
+                        }
                         PreparePlaySound(SOUND_MAN,I);
                         ManGoDown(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
                         uRetDirection = EMERALD_ANIM_DOWN;
@@ -107,6 +121,10 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
             case (MANKEY_LEFT):
                 if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {  // Ist nach links frei?
                     if (!ManKey.bFire) {
+                        if ((Playfield.pStatusAnimation[I - 1] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
+                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            return uRetDirection;
+                        }
                         PreparePlaySound(SOUND_MAN,I);
                         ManGoLeft(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
                         uRetDirection = EMERALD_ANIM_LEFT;
@@ -136,7 +154,7 @@ Parameter
                uAnimation, uint32_t, gewünschte Animation des Man
       Ausgang: -
 Rückgabewert:  uint32_t, tatsächlich ausgeführte Animation des Man
-Seiteneffekte: Playfield.x
+Seiteneffekte: Playfield.x, ge_szElementNames[]
 ------------------------------------------------------------------------------*/
 uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimation) {
     uint32_t uElement;      // Element, dass Man berührt bzw. anläuft
@@ -1010,7 +1028,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
                         ManGoUp(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
@@ -1019,7 +1037,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     break;
                 case (EMERALD_ANIM_DOWN):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
                         ManGoDown(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
@@ -1028,7 +1046,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     break;
                 case (EMERALD_ANIM_LEFT):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
                         ManGoLeft(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
@@ -1037,7 +1055,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     break;
                 case (EMERALD_ANIM_RIGHT):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
                         ManGoRight(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
@@ -1410,11 +1428,114 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_WALL_NOT_ROUND):
         case (EMERALD_MAGIC_WALL):
         case (EMERALD_WALL_INVISIBLE):
+        case (EMERALD_WALL_WITH_KEY_RED):
+        case (EMERALD_WALL_WITH_KEY_GREEN):
+        case (EMERALD_WALL_WITH_KEY_BLUE):
+        case (EMERALD_WALL_WITH_KEY_YELLOW):
+        case (EMERALD_WALL_WITH_KEY_WHITE):
+        case (EMERALD_WALL_WITH_KEY_GENERAL):
+        case (EMERALD_WALL_WITH_EMERALD):
+        case (EMERALD_WALL_WITH_RUBY):
+        case (EMERALD_WALL_WITH_SAPPHIRE):
+        case (EMERALD_WALL_WITH_PERL):
+        case (EMERALD_WALL_WITH_CRYSTAL):
+        case (EMERALD_WALL_WITH_BOMB):
+        case (EMERALD_WALL_WITH_MEGABOMB):
+        case (EMERALD_WALL_WITH_STONE):
+        case (EMERALD_WALL_WITH_NUT):
+        case (EMERALD_WALL_WITH_WHEEL):
+        case (EMERALD_WALL_WITH_DYNAMITE):
+        case (EMERALD_WALL_WITH_ENDDOOR):
+        case (EMERALD_WALL_WITH_ENDDOOR_READY):
+        case (EMERALD_WALL_WITH_MINE_UP):
+        case (EMERALD_WALL_WITH_MOLE_UP):
+        case (EMERALD_WALL_WITH_GREEN_CHEESE):
+        case (EMERALD_WALL_WITH_BEETLE_UP):
+        case (EMERALD_WALL_WITH_YAM):
+        case (EMERALD_WALL_WITH_ALIEN):
             if ((uAnimation != EMERALD_ANIM_STAND) && (ManKey.bFire) && (Playfield.uHammerCount > 0)) {
                 Playfield.uHammerCount--;
                 SetManArm(uActPos,uAnimation);
-                Playfield.pLevel[uTouchPos] = EMERALD_EXPLOSION_PHASE_1;
-                Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_STAND;
+                Playfield.pLevel[uTouchPos] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                switch (uElement) {
+                    case (EMERALD_WALL_WITH_KEY_RED):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_KEY_RED;
+                        break;
+                    case (EMERALD_WALL_WITH_KEY_GREEN):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_KEY_GREEN;
+                        break;
+                    case (EMERALD_WALL_WITH_KEY_BLUE):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_KEY_BLUE;
+                        break;
+                    case (EMERALD_WALL_WITH_KEY_YELLOW):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_KEY_YELLOW;
+                        break;
+                    case (EMERALD_WALL_WITH_KEY_WHITE):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_KEY_WHITE;
+                        break;
+                    case (EMERALD_WALL_WITH_KEY_GENERAL):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_KEY_GENERAL;
+                        break;
+                    case (EMERALD_WALL_WITH_EMERALD):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_EMERALD;
+                        break;
+                    case (EMERALD_WALL_WITH_RUBY):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_RUBY;
+                        break;
+                    case (EMERALD_WALL_WITH_SAPPHIRE):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_SAPPHIRE;
+                        break;
+                    case (EMERALD_WALL_WITH_PERL):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_PERL;
+                        break;
+                    case (EMERALD_WALL_WITH_CRYSTAL):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_CRYSTAL;
+                        break;
+                    case (EMERALD_WALL_WITH_BOMB):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_BOMB;
+                        break;
+                    case (EMERALD_WALL_WITH_MEGABOMB):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_MEGABOMB;
+                        break;
+                    case (EMERALD_WALL_WITH_STONE):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_STONE;
+                        break;
+                    case (EMERALD_WALL_WITH_NUT):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_NUT;
+                        break;
+                    case (EMERALD_WALL_WITH_WHEEL):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_WHEEL;
+                        break;
+                    case (EMERALD_WALL_WITH_DYNAMITE):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_DYNAMITE_OFF;
+                        break;
+                    case (EMERALD_WALL_WITH_ENDDOOR):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_DOOR_END_NOT_READY;
+                        break;
+                    case (EMERALD_WALL_WITH_ENDDOOR_READY):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_DOOR_END_READY;
+                        break;
+                    case (EMERALD_WALL_WITH_MINE_UP):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_MINE_UP;
+                        break;
+                    case (EMERALD_WALL_WITH_MOLE_UP):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_MOLE_UP;
+                        break;
+                    case (EMERALD_WALL_WITH_GREEN_CHEESE):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_GREEN_DROP;
+                        break;
+                    case (EMERALD_WALL_WITH_BEETLE_UP):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_BEETLE_UP;
+                        break;
+                    case (EMERALD_WALL_WITH_YAM):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_YAM;
+                        break;
+                    case (EMERALD_WALL_WITH_ALIEN):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ALIEN;
+                        break;
+                    default:
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_SPACE;
+                }
                 PreparePlaySound(SOUND_EXPLOSION,uTouchPos);
             }
             break;
@@ -1426,6 +1547,39 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             PreparePlaySound(SOUND_POOL_BLUB,uActPos);
             PreparePlaySound(SOUND_MAN_CRIES,uActPos);
             Playfield.bManDead = true;
+            break;
+        case (EMERALD_DOOR_END_READY):
+        case (EMERALD_DOOR_END_READY_STEEL):
+            switch (uAnimation) {
+                case (EMERALD_ANIM_UP):
+                    SDL_Log("Man reach enddoor -> go up");
+                    Playfield.pLevel[uActPos] = EMERALD_SPACE;  // Man in Space wandeln
+                    Playfield.pStatusAnimation[uActPos - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_UP | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    PreparePlaySound(SOUND_ENDDOOR,uActPos);
+                    Playfield.bWellDone = true;
+                    break;
+                case (EMERALD_ANIM_DOWN):
+                    SDL_Log("Man reach enddoor -> go down");
+                    Playfield.pLevel[uActPos] = EMERALD_SPACE;  // Man in Space wandeln
+                    Playfield.pStatusAnimation[uActPos + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    PreparePlaySound(SOUND_ENDDOOR,uActPos);
+                    Playfield.bWellDone = true;
+                    break;
+                case (EMERALD_ANIM_LEFT):
+                    SDL_Log("Man reach enddoor -> go left");
+                    Playfield.pLevel[uActPos] = EMERALD_SPACE;  // Man in Space wandeln
+                    Playfield.pStatusAnimation[uActPos - 1] = EMERALD_ANIM_LEFT | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    PreparePlaySound(SOUND_ENDDOOR,uActPos);
+                    Playfield.bWellDone = true;
+                    break;
+                case (EMERALD_ANIM_RIGHT):
+                    SDL_Log("Man reach enddoor -> go right");
+                    Playfield.pLevel[uActPos] = EMERALD_SPACE;  // Man in Space wandeln
+                    Playfield.pStatusAnimation[uActPos + 1] = EMERALD_ANIM_RIGHT | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    PreparePlaySound(SOUND_ENDDOOR,uActPos);
+                    Playfield.bWellDone = true;
+                    break;
+            }
             break;
         default:
             SDL_Log("%s:  unhandled element %u",__FUNCTION__,uElement);
@@ -1640,5 +1794,59 @@ void SetManArm(uint32_t I,uint32_t uAnimation) {
         case (EMERALD_ANIM_LEFT):
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_MAN_LEFT_ARM;
             break;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlEnddoorReady
+------------------------------------------------------------------------------
+Beschreibung: Steuert die blinkende Endtür, wenn der Man hineinläuft
+Parameter
+      Eingang: I, uint32_t, aktuelle Position der Tür.
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlEnddoorReady(uint32_t I) {
+    // Doppelte Steuerung vermeiden
+    if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
+        Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
+        SDL_Log("%s: ack double control",__FUNCTION__);
+        return;
+    } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_DOOR_READY_SHRINK) {
+        Playfield.pLevel[I] = EMERALD_SPACE;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+    }
+
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_READY_SHRINK;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlEnddoorReadySteel
+------------------------------------------------------------------------------
+Beschreibung: Steuert die blinkende Stahl-Endtür, wenn der Man hineinläuft
+Parameter
+      Eingang: I, uint32_t, aktuelle Position der Tür.
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlEnddoorReadySteel(uint32_t I) {
+    // Doppelte Steuerung vermeiden
+    if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
+        Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
+        SDL_Log("%s: ack double control",__FUNCTION__);
+        return;
+    } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_DOOR_READY_SHRINK) {
+        Playfield.pLevel[I] = EMERALD_STEEL_PLAYERHEAD;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+    }
+
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_READY_SHRINK;
     }
 }

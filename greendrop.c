@@ -70,13 +70,13 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlGreenCheese(uint32_t I) {
-    uint32_t uRandom;
-    uint8_t uDirectionRandom;
+    int nRandom;
+    int nDirectionRandom;
 
-    uRandom = randf(1,1001);       // Ergibt Zufallszahl zwischen 1-1000  (1 = links, 2 = oben, 3 = rechts, 4 = runter
-    if (Playfield.uCheeseSpreadSpeed > uRandom) {
-        uDirectionRandom = randf(1,5);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten
-        switch (uDirectionRandom) {
+    nRandom = randn(1,1000);       // Ergibt Zufallszahl zwischen 1-1000
+    if (Playfield.uCheeseSpreadSpeed >= nRandom) {
+        nDirectionRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten
+        switch (nDirectionRandom) {
             case (1):           // links prüfen
                 if ( (Playfield.pLevel[I - 1] == EMERALD_SPACE) || (Playfield.pLevel[I - 1] == EMERALD_SAND) ) {
                     Playfield.pLevel[I - 1] = EMERALD_GREEN_DROP_COMES;

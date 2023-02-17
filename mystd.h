@@ -8,16 +8,27 @@
 
 #define SAFE_FREE(x) { if (x != NULL) { free(x); x = NULL; } }
 
+
+typedef struct {
+    uint32_t x;
+    uint32_t y;
+    uint32_t z;
+    uint32_t w;
+} XORSHIFT;
+
+
 // https://stackoverflow.com/questions/22115241/how-to-generate-random-numbers-between-1-and-1-in-c
 // von SteveL
 float randf(float low,float high);
-// https://stackoverflow.com/questions/52988769/writing-own-memmem-for-windows
-const char *memmem(const char *haystack_start, size_t haystack_len, const void *needle_start, size_t needle_len);
+int randn(int low,int high);
+void InitXorShift(void);
+uint32_t xorshift128(void); // https://de.wikipedia.org/wiki/Xorshift
 void DumpMem(uint8_t *pcMem, int nLen);
 uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen);
 int WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppend);
 uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64Len, bool bNewLine);
-
+int GetLineFeedCount(char *pszText);
+int GetLineLen(char *pszText, int nCursorPos);
 
 /*
 Copyright (c) 2012, Cameron Harper

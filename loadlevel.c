@@ -12,94 +12,119 @@ extern PLAYFIELD Playfield;
 extern SDL_DisplayMode ge_DisplayMode;
 
 // Dieses interne Level wird verwendet, wenn die Datei Level.xml nicht gefunden wird
-uint8_t g_InternalLevel[] = {"<?xml version=\"1.0\"?>\n\
-<level>\n\
-  <title>DER BUNKER</title>\n\
-  <author>MIKIMAN</author>\n\
-  <version>01.00</version>\n\
-  <values>\n\
-    <emeralds_to_collect>20</emeralds_to_collect>\n\
-    <score_time_factor>2</score_time_factor>\n\
-    <speed_cheese_spread>0</speed_cheese_spread>\n\
-  </values>\n\
-  <leveldimension>\n\
-    <x>64</x>\n\
-    <y>32</y>\n\
-  </leveldimension>\n\
-  <scores>\n\
-    <emerald>100</emerald>\n\
-    <ruby>48</ruby>\n\
-    <sapphire>200</sapphire>\n\
-    <perl>5</perl>\n\
-    <crystal>8</crystal>\n\
-    <letter>100</letter>\n\
-    <key>2</key>\n\
-    <dynamite>3</dynamite>\n\
-    <hammer>3</hammer>\n\
-    <nutcracking>4</nutcracking>\n\
-    <stoning_beetle>5</stoning_beetle>\n\
-    <stoning_mine>6</stoning_mine>\n\
-    <stoning_alien>7</stoning_alien>\n\
-    <stoning_yam>8</stoning_yam>\n\
-    <timecoin>3</timecoin>\n\
-  </scores>\n\
-  <times>\n\
-    <to_play>500</to_play>\n\
-    <wheel_rotation>20</wheel_rotation>\n\
-    <magic_wall>30</magic_wall>\n\
-    <light>10</light>\n\
-    <timedoor>3</timedoor>\n\
-    <timecoin>50</timecoin>\n\
-  </times>\n\
-  <inventory>\n\
-    <dynamite>572</dynamite>\n\
-    <hammer>514</hammer>\n\
-    <white_key>4</white_key>\n\
-  </inventory>\n\
-  <replicators>\n\
-    <red>\n\
-      <active>0</active>\n\
-      <element>1</element>\n\
-    </red>\n\
-    <green>\n\
-      <active>0</active>\n\
-      <element>10</element>\n\
-    </green>\n\
-    <blue>\n\
-      <active>0</active>\n\
-      <element>38</element>\n\
-    </blue>\n\
-    <yellow>\n\
-      <active>0</active>\n\
-      <element>154</element>\n\
-    </yellow>\n\
-  </replicators>\n\
-  <lightbarriers>\n\
-    <red>\n\
-      <active>0</active>\n\
-    </red>\n\
-    <green>\n\
-      <active>1</active>\n\
-    </green>\n\
-    <blue>\n\
-      <active>1</active>\n\
-    </blue>\n\
-    <yellow>\n\
-      <active>0</active>\n\
-    </yellow>\n\
-  </lightbarriers>\n\
-  <messages>\n\
-    <m1>V2lsbGtvbW1lbiBpbSBlcnN0ZW4gVGVzdGxldmVsIQpEaWUgTW9uc3RlciBzaW5kIHp1ciBaZWl0IG5vY2ggaGFybWxvcywKYWJlciBlcyBmdW5rdGlvbmllcmVuIGJlcmVpdHMgdmllbGUgRWxlbWVudGUuCgpQcmVzcyBGaXJlIG9yIFNwYWNlIHRvIGNvbmZpcm0h</m1>\n\
-    <m2>RGllcyBpc3QgZGllIHp3ZWl0ZSBUZXh0Ym94IQoKUHJlc3MgRmlyZSBvciBTcGFjZSB0byBjb25maXJtIQ==</m2>\n\
-    <m3></m3>\n\
-    <m4></m4>\n\
-    <m5></m5>\n\
-    <m6></m6>\n\
-    <m7></m7>\n\
-    <m8></m8>\n\
-  </messages>\n\
-  <leveldata>eJzFV0dvFDEU/ryAFDoBhRo2m4SwIRGb0IuWekTigpC403vNiWqNaUs7wAUFiV5EOdNbfgL/iDcuM/YbbwgX0JNnn5/t973qmVVQ/5kk+kWfKIsWdNLvUiFREb2iQly7qIoOmveKRWIJSSSWEzcguomr0UpVtOnzhmIcJ75iLEg0STv+huKoiukPvfV3GEk6BkWNPExQFoPkec1GYjHJVtJMYoAkqddlkveR51WalaweNYrHo8dBZRpmWkkJ93AFaYxTnEHRRZxAlexYRqNKvMBwJJrcz42Bz6qwK8Q3NMPjf2VcC7M9ht488yFycTW3TkXyO0SxuIoevd7jnRvHfC/q3fiH+Lex6MzK9CT62U/xr1Dmazrr/dQLZd0BMa98TUW+GGff53ynr9d1Yi/hpr2X2tNOkgFtwYsmMW6MYXBL0qibyIcWODpB44zlE52FBNWIP0Z7MSPhvgZyXOe5w3d7V2IVVqOGAQxiLuZhPsroQMXeDoo6pMSiG8vvpoglynuG/vvSNTTWYhk9l2MBVVo7Oonvon2T8Fij+5RnnPsfu3MaEZtS/InM/kMFj3p0zffgOWE2aNwh2Z0x5twfPE6O3geVO4yD1PepFa06+4vI9ydZDs2+baz6nfZdhawo6mGOnGTn2vT8A2EO47KmdN5NK+s0t5nugKPZucM0hnCkSd5z2sT8a0AFHrZ58U/po8YvWQtasZXibW4FiS14a7U+tFHcaefTPMS8tiU2eHxKJr+TmU1hBV/2SGIFrSzEPvThLpZoW4y2Xs2ZeEwhydRMZ655Q0F7iC9x3Uqd/xKfGL7EbUsS+wNv6p5f0z2+4VkiMRb/E7u7RT8Ncp6h2ziF9frEgewU11skF33FsG4V4u3Wv+ArvuE7flj8EOM0jZPebkVdxzO43at//mbgstD6VPLZSkpwd9Azb8dujN7Pdcb7w7/tFG546Ma2mxGL0s48jmN4pfk9mexptJNiXyBuXg8i6Y/wjOPf2fl43MejTPqGJC8xAQ8sKfsr7TNeA8UaDG9k//0T++5wX5cN+2ZMMlxFfuW2xCNh8OpBbPn6tQCf3/8Sc+x3iHn3SbzOUONUzIZk+EVykUqiUTT+d1I+uvTOvZH85/l4QN3N8x/3vNgRzfFldFUxz3POaNwxauR5zTb/z2Hyz082vFrgOfD11rEUvBZ9z3P85v09nuEnnv+uJlUEf8RmwL8H4hXS7Cbt1tafxTlN57N6SiyXYDarJoPf6uG/zDIYz7DBv4KftP+nPePTUVzARU2X7O5JQVU0j/+IXp1md1boC7pDf7136f9Q7cJJYl3xb+k3Ca/FrQ==</leveldata>\n\
-  <leveldata_md5_hash>DA3D82D9548817D4BFCAB72E58A3C2BC</leveldata_md5_hash>\n\
+uint8_t g_InternalLevel[] = {"<?xml version=\"1.0\"?>\
+<level>\
+  <title>DER BUNKER</title>\
+  <author>MIKIMAN</author>\
+  <version>01.00</version>\
+  <values>\
+    <emeralds_to_collect>20</emeralds_to_collect>\
+    <score_time_factor>2</score_time_factor>\
+    <speed_cheese_spread>0</speed_cheese_spread>\
+  </values>\
+  <leveldimension>\
+    <x>64</x>\
+    <y>32</y>\
+  </leveldimension>\
+  <scores>\
+    <emerald>100</emerald>\
+    <ruby>48</ruby>\
+    <sapphire>200</sapphire>\
+    <perl>5</perl>\
+    <crystal>8</crystal>\
+    <letter>100</letter>\
+    <key>2</key>\
+    <dynamite>3</dynamite>\
+    <hammer>3</hammer>\
+    <nutcracking>4</nutcracking>\
+    <stoning_beetle>5</stoning_beetle>\
+    <stoning_mine>6</stoning_mine>\
+    <stoning_alien>7</stoning_alien>\
+    <stoning_yam>8</stoning_yam>\
+    <timecoin>3</timecoin>\
+  </scores>\
+  <times>\
+    <to_play>500</to_play>\
+    <wheel_rotation>20</wheel_rotation>\
+    <magic_wall>30</magic_wall>\
+    <light>10</light>\
+    <timedoor>3</timedoor>\
+    <timecoin>50</timecoin>\
+  </times>\
+  <inventory>\
+    <dynamite>572</dynamite>\
+    <hammer>514</hammer>\
+    <white_key>4</white_key>\
+  </inventory>\
+  <replicators>\
+    <red>\
+      <active>0</active>\
+      <element>18</element>\
+    </red>\
+    <green>\
+      <active>0</active>\
+      <element>2</element>\
+    </green>\
+    <blue>\
+      <active>0</active>\
+      <element>154</element>\
+    </blue>\
+    <yellow>\
+      <active>0</active>\
+      <element>10</element>\
+    </yellow>\
+  </replicators>\
+  <lightbarriers>\
+    <red>\
+      <active>0</active>\
+    </red>\
+    <green>\
+      <active>1</active>\
+    </green>\
+    <blue>\
+      <active>1</active>\
+    </blue>\
+    <yellow>\
+      <active>0</active>\
+    </yellow>\
+  </lightbarriers>\
+  <messages>\
+    <m1>V2lsbGtvbW1lbiBpbSBlcnN0ZW4gVGVzdGxldmVsIQpEaWUgTW9uc3RlciBzaW5kIHp1ciBaZWl0IG5vY2ggaGFybWxvcywKYWJlciBlcyBmdW5rdGlvbmllcmVuIGJlcmVpdHMgdmllbGUgRWxlbWVudGUuCgpQcmVzcyBGaXJlIG9yIFNwYWNlIHRvIGNvbmZpcm0h</m1>\
+    <m2>RGllcyBpc3QgZGllIHp3ZWl0ZSBUZXh0Ym94IQoKUHJlc3MgRmlyZSBvciBTcGFjZSB0byBjb25maXJtIQ==</m2>\
+    <m3></m3>\
+    <m4></m4>\
+    <m5></m5>\
+    <m6></m6>\
+    <m7></m7>\
+    <m8></m8>\
+  </messages>\
+  <max_yam_explosions>2</max_yam_explosions>\
+  <yam_explosions>\
+    <explosion01>\
+      <element01>18</element01>\
+      <element02>18</element02>\
+      <element03>18</element03>\
+      <element04>19</element04>\
+      <element05>19</element05>\
+      <element06>19</element06>\
+      <element07>2</element07>\
+      <element08>2</element08>\
+      <element09>2</element09>\
+    </explosion01>\
+    <explosion02>\
+      <element01>133</element01>\
+      <element02>136</element02>\
+      <element03>135</element03>\
+      <element04>133</element04>\
+      <element05>136</element05>\
+      <element06>135</element06>\
+      <element07>133</element07>\
+      <element08>136</element08>\
+      <element09>135</element09>\
+    </explosion02>\
+  </yam_explosions>\
+  <leveldata>eJzFV0dvFDEU/rwEKYS6RKGGzSYhbEiUTQgdLfWIxAUhcaeGHsqJas0kwFJygAtKJHpRgDO9/gT+EW9sz8yzx7PACT155vm5fK96PNMI/yNNU5PoF32iJJrRSe8BIVEWvaJMXLuoiA7q94qVYjVJJIaJGxTdxFVppCLa1HpNPs6ldKRVkdYiUCRN+xfyo3LOJXuGlkRtSFTJwgAlMUSWV40nVpFsHfUkBkkSWV0ieR9ZXqFewewTNrC4sR/CZIeFRlLAfYwj8nGEMyS6iBOokB5rqFWIF5j0+Nm1c5tlc5iZZeNrWsD4XwnX7OjuQ8+PvI3MR4qW/2WSB5wukC+uo0eN97C1Mxzbs6jb/uD/KHNHGX5rsk+gnv3k/zJFvqqi3k+1UFIV4LOK+znLZ/3MbU5n8n3jSuwl3Kj2In3aSTKoNHiR4+P6XzRXk8jr2vO2BjGdoXbe8IGKQoCKxx69ezYi9rw6UtzY/zF+PHcd1mMDqhjEEJZgKZahhA6UzekQUoUUHO/64rvdo0kIO+NS+7l0I7VNWEPPYSynTGtHJ/FdNK8FjxU6pzTirv2+M6fOdBpl+LMc/Y9lLOpROd+D54RZpzZBsom/jDlvo6xxHd9ZmTuJEar7SIuiiv5Ksv1JEkM9b7eT/bH9+zNRCamGXXuCZF2b6r8nzEmMKYr63TSyWXE76Aw4maw7Tu0CTuTEPaXtjn11hJaFbSz+EX1Q+AWjQRG7yN/6VJDYiTdm14fGi/tMfx5DTHNbYqviWhNP6PjOdnSyM3iMkcRaGlmBw+jDPaxWuuidexWn/TGHJHOTPdOdt2Z2t/ElbhppbL/ERwdf4q4hiSPMMoka0vqZz/g600Sa3Glsf2BmN6unRk4jdBdnsUWtOGpWfU98lf+9HTHeDwm9yLDuZPwd6/IZX/AV32h3jW9jnENcK7HmE5kI7mH5734ZXJmtfST5ZCQFxGfQMzbjABrXc83heeOnXYhbDF3rdtujUVSZp3EKrxR/MJE99VaS7wYS92uWJ3mz18T8W9NvwgM8SqSvSfISMzFlKDRvaZ4+8n2d7BM5zbL0BPDdLuvmyxgkuCHZleri94TGq1m+dcdvWPju+S+x2NxD9LdP0k19qiFlo6FvVPym4bc/vvG4pO3vpHh0qZmHPPFP4zFF1e3G3295tiLy8aV3NHQsTzm9496GnndzNv+fQ8ffXVlnueDGgO9bw4Di3udYnuLn13eTgx8w++OcDD34P00E+Dngz5C8k7RbaX8RlxRdTmo3SDJrkZNNGr/I8F8mEfRHWOOP4wfN/2HWcDqJK7iq6JqZ3WJlRb7/f6rReWZmmW7QHer23qX+odpFLNF/wP+PpvEbTBnCsg==</leveldata>\
+  <leveldata_md5_hash>5AC3012E387DAC41CAEDA23B21B128B5</leveldata_md5_hash>\
 </level>"};
 
 
@@ -154,6 +179,7 @@ Name:           GetMemoryForPlayfield
 ------------------------------------------------------------------------------
 Beschreibung: Erzeugt die Speicherbereiche für das Spielfeld.
               Hinweis: Die Level-Dimension (X/Y) muss bereits ermittelt worden sein.
+              Speicherbedarf S = X * Y * 2 * 2 * 4 * 8 = X * Y * 64
 Parameter
       Eingang: -
       Ausgang: -
@@ -167,7 +193,7 @@ int GetMemoryForPlayfield(void) {
     Playfield.pInvalidElement = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
     Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
-    if ((Playfield.pLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL) && (Playfield.pInvalidElement != NULL)) {
+    if ((Playfield.pLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL) && (Playfield.pInvalidElement != NULL))  {
         memset(Playfield.pLevel,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
         memset(Playfield.pInvalidElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
         memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
@@ -1147,6 +1173,7 @@ int InitialisePlayfield(char *pszLevelFilename) {
         Playfield.bHasYellowKey = false;
         Playfield.bHasGeneralKey = false;
         Playfield.bManDead = false;
+        Playfield.bWellDone = false;
         Playfield.bLightOn = false;
         Playfield.uTimeDoorTimeLeft = 0;
         Playfield.bSwitchDoorState = false;
@@ -1155,9 +1182,51 @@ int InitialisePlayfield(char *pszLevelFilename) {
         Playfield.uYamExplosion = 0;          // Aktuelle YAM-Explosion
         InitRollUnderground();
         PrintPlayfieldValues();
+        SetCentralExplosionCoordinates();
+        SetCentralMegaExplosionCoordinates();
     }
     return nErrorCode;
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           SetCentralExplosionCoordinates
+------------------------------------------------------------------------------
+Beschreibung: Hinterlegt die 3x3-Koordinaten für eine zentrale Explosion ab Mittelpunkt.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void SetCentralExplosionCoordinates() {
+    Playfield.nCentralExplosionCoordinates[0] = -(int)Playfield.uLevel_X_Dimension - 1;     // oben links
+    Playfield.nCentralExplosionCoordinates[1] = -(int)Playfield.uLevel_X_Dimension;         // oben mitte
+    Playfield.nCentralExplosionCoordinates[2] = -(int)Playfield.uLevel_X_Dimension + 1;     // oben rechts
+    Playfield.nCentralExplosionCoordinates[3] = -1;                                         // mitte links
+    Playfield.nCentralExplosionCoordinates[4] = 1;                                          // mitte rechts
+    Playfield.nCentralExplosionCoordinates[5] = (int)Playfield.uLevel_X_Dimension - 1;     // unten links
+    Playfield.nCentralExplosionCoordinates[6] = (int)Playfield.uLevel_X_Dimension;         // unten mitte
+    Playfield.nCentralExplosionCoordinates[7] = (int)Playfield.uLevel_X_Dimension + 1;     // unten rechts
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SetCentralMegaExplosionCoordinates
+------------------------------------------------------------------------------
+Beschreibung: Hinterlegt die  Koordinaten für eine zentrale Mega-Explosion ab Mittelpunkt.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void SetCentralMegaExplosionCoordinates(void) {
+// TODO
+
+}
+
+
 
 /*----------------------------------------------------------------------------
 Name:           InitYamExplosions

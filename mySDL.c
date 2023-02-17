@@ -11,7 +11,6 @@ extern SDL_DisplayMode ge_DisplayMode;
 extern uint8_t _binary_gfx_bin_start;extern uint8_t _binary_gfx_bin_end;
 extern uint32_t Gfx[];
 
-
 /*----------------------------------------------------------------------------
 Name:           InitSDL_Window
 ------------------------------------------------------------------------------
@@ -252,7 +251,7 @@ Name:           CopyTexture
 Beschreibung: Kopiert eine Texture in den Renderer.
 
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                uTextureIndex, uint32_t, Textureindex (siehe externalpointer.h)
                nXpos, int, X-Position im Render wo Texture positioniert werden soll
                nYpos, int, Y-Position im Render wo Texture positioniert werden soll
@@ -287,7 +286,7 @@ Name:           CopyColorRect
 Beschreibung: Kopiert eine gefülltes Rechteck  in den Renderer.
 
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                nRed, int, Rotanteil für Rechteck (0 - 255)
                nGreen, int, Grünanteil für Rechteck (0 - 255)
                nBlue, int, Blauanteil für Rechteck (0 - 255)
@@ -396,7 +395,7 @@ Beschreibung: Schreibt einen Text mit dem "kleinen Zeichensatz" in den Renderer.
               daher gewandelt.
 
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                nXpos, int, Start-X-Position der oberen linke Ecke des Textfeldes
                nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes
                uFont, uint32_t, Zeichensatzes
@@ -421,6 +420,7 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
     uint32_t uFontW;
     uint32_t uFontH;
     uint32_t uTextureIndex;
+    uint32_t uCharCountPerLine;
 
     if (uFont > 1) {
         uFont = 1;
@@ -439,18 +439,18 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
     if ((pRenderer != NULL) && (pszText != NULL)) {
         nErrorCode = 0;
         I = 0;
+        uCharCountPerLine = 0;
         while ((nErrorCode == 0) && (pszText[I] != 0)) {
             cSign = 0xFF;
             if (uFont == 0) {
-                // Kleinbuchstaben wandeln
-                if ((pszText[I] >= 'a') && (pszText[I] <= 'z')) {
-                    cSign = pszText[I] - 64;
-                } else if (pszText[I] == 0x0A) {
+                if (pszText[I] == 0x0A) {
                     nPrintXpos = nXpos;
                     nPrintYpos = nPrintYpos + uFontH * fSizeFactor;
                     cSign = 0xFF;
-                } else if ((pszText[I] >= ' ') && (pszText[I] <= 'Z')) {
+                    uCharCountPerLine = 0;
+                } else if ((pszText[I] >= ' ') && (pszText[I] <= 102)) {    // Cursor -> letztes Zeichen im Zeichensatz
                     cSign = pszText[I] - 32;
+                    uCharCountPerLine++;
                 }
             } else {
                 if ((pszText[I] >= 32) && (pszText[I] <= 125)) {
@@ -463,7 +463,7 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
                     cSign = 0xFF;
                 }
             }
-            if (cSign != 0xFF) {
+            if ((cSign != 0xFF) && (uCharCountPerLine <= EMERALD_MAX_CHARACTERS_PER_LINE)) {
                 // Quellbereich aus Texture berechnen
                 SrcR.x =  (uint32_t)(cSign) * uFontW;
                 SrcR.y =  0;        // Ist immer 0, da alle vorhandenen Zeichen in einer Zeile vorliegen
@@ -520,7 +520,7 @@ void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, 
     I = 0;
     // Fensterbreite anhand des Textes berechnen
     while (pszText[I] != 0) {
-        if (pszText[I] == 0x0A) {
+        if (pszText[I] == 0x0A)  {
             uWinH++;
             if (uCharsInLine > uXmax) {
                 uXmax = uCharsInLine;
@@ -537,6 +537,12 @@ void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, 
     if (uCharsInLine > uXmax) {
         uXmax = uCharsInLine;
     }
+
+    if (uXmax > EMERALD_MAX_CHARACTERS_PER_LINE) {
+        uXmax = EMERALD_MAX_CHARACTERS_PER_LINE;
+    }
+
+
     *puLines = uWinH;
     uWinW = ((uXmax * FONT_LITTLE_347_W) / (FONT_W / 2));
     if ( ((uXmax * FONT_LITTLE_347_W) % (FONT_W / 2)) != 0) {
@@ -562,7 +568,7 @@ Beschreibung: Erzeugt ein Fenster mit Text.
               daher gewandelt.
 
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                nXpos, int, Start-X-Position der oberen linke Ecke des Fensters, -1 = auf Fenster horizontal zentrieren
                nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes, -1 = auf Fenster vertikal zentrieren
                uColor, uint32_t, Farbe des Zeichensatzes, wird noch nicht berücksichtigt

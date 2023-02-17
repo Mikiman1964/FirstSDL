@@ -1,8 +1,64 @@
+#include <SDL2/SDL.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "mystd.h"
+
+XORSHIFT XorShift;
+
+/*----------------------------------------------------------------------------
+Name:           InitXorShift
+------------------------------------------------------------------------------
+Beschreibung: Initialisiert den XORSHIFT-Zufallszahlengenerator.
+              https://de.wikipedia.org/wiki/Xorshift
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: XorShift.x
+------------------------------------------------------------------------------*/
+void InitXorShift(void) {
+    int nErrorCode;
+    uint32_t I;
+
+    nErrorCode = -1;
+    srand(time(0));
+    XorShift.x = time(0) * 521288629;
+    XorShift.y = rand() * 88675123;
+    XorShift.z = (uint64_t)(&nErrorCode) * XorShift.y * XorShift.x;
+    XorShift.w = (uint64_t)(&XorShift) * rand();
+    SDL_Log("%s:\r\n x = %u\r\n y = %u\r\n z = %u\r\n w = %u\r\n i = %u",__FUNCTION__,XorShift.x,XorShift.y,XorShift.z,XorShift.w,XorShift.x & 0xFFFF);
+    I = (XorShift.x & 0xFFFF);
+    while (I > 0) {
+        xorshift128();
+        I--;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           randn
+------------------------------------------------------------------------------
+Beschreibung: Erzeugt Integer-Zufallszahl zwischen low und high.
+
+Parameter
+      Eingang: low, int, unterer Bereich für Zufallszahl
+      Ausgang: high, int, oberer Bereich für Zufallszahl
+Rückgabewert:  int, Zufallswert
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int randn (int low,int high) {
+    int nZ;
+
+    high++;     // Sehr unwahrscheinlich, dass high genau getroffen wird
+    low--;
+    do {
+        nZ = randf(low,high);
+    } while ((nZ >= high) || (nZ <=low));   // Falls high genau das maximum triffr, dann neue Zufallszahl holen
+    return nZ;
+}
 
 
 /*----------------------------------------------------------------------------
@@ -17,8 +73,35 @@ Parameter
 Rückgabewert:  float, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-float randf(float low,float high){
-    return (rand()/(float)(RAND_MAX))*abs(low-high)+low;
+float randf(float low,float high) {
+    uint32_t uR;
+    float fR;
+
+    uR = xorshift128();
+    fR = (float)uR / (float)0xFFFFFFFF;
+    return fR * abs(low - high) + low;
+    // Alter Code: rand() aus der glibc macht keine guten Zufallszahlen   return (rand()/(float)(RAND_MAX))*abs(low-high)+low;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           xorshift128
+------------------------------------------------------------------------------
+Beschreibung: Erzeugt eine Zufallszahl nach dem XORSHIFT-Verfahren.
+              https://de.wikipedia.org/wiki/Xorshift
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  uint32_t, Zufallszahl zwischen 0 und 0xFFFFFFFF
+Seiteneffekte: XorShift.x
+------------------------------------------------------------------------------*/
+uint32_t xorshift128(void) {
+  uint32_t t = XorShift.x ^ (XorShift.x << 11);
+  XorShift.x = XorShift.y;
+  XorShift.y = XorShift.z;
+  XorShift.z = XorShift.w;
+  XorShift.w ^= (XorShift.w >> 19) ^ t ^ (t >> 8);//https://de.wikipedia.org/wiki/Xorshift
+  return XorShift.w;
 }
 
 
@@ -80,39 +163,6 @@ void DumpMem(uint8_t *pcMem, int nLen)
 
 
 /*----------------------------------------------------------------------------
-Name:           memmem
-------------------------------------------------------------------------------
-Beschreibung: Durchsucht einen Speicherbereich "haystack" nach "needle".
-              Quelle: https://stackoverflow.com/questions/52988769/writing-own-memmem-for-windows
-              von KamilCuk
-Parameter
-      Eingang: haystack, const char *, Zeiger auf zu durchsuchenden Speicherbereich
-               haystack_len, size_t, Länge in Bytes des zu durchsuchenden Speicherbereichs
-               needle, const void * , Zeiger auf zu suchenden Teilbereich
-               needle_len, const size_t, Länge in Bytes des zu suchenden Teilbereichs
-      Ausgang: -
-Rückgabewert:  const char *, Zeiger auf gefundenen Speicher, NULL = nichts gefunden
-Seiteneffekte: -
-------------------------------------------------------------------------------*/
-const char *memmem(const char *haystack, size_t haystack_len, const void *needle, const size_t needle_len)
-{
-    if (haystack == NULL) return NULL; // or assert(haystack != NULL);
-    if (haystack_len == 0) return NULL;
-    if (needle == NULL) return NULL; // or assert(needle != NULL);
-    if (needle_len == 0) return NULL;
-
-    for (const char *h = haystack;
-            haystack_len >= needle_len;
-            ++h, --haystack_len) {
-        if (!memcmp(h, needle, needle_len)) {
-            return h;
-        }
-    }
-    return NULL;
-}
-
-
-/*----------------------------------------------------------------------------
 Name:           ReadFile
 ------------------------------------------------------------------------------
 Beschreibung: Liest Daten aus einer Datei und alloziert hierfür Speicher, der
@@ -167,7 +217,7 @@ uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen) {
 /*----------------------------------------------------------------------------
 Name:           WriteFile
 ------------------------------------------------------------------------------
-Beschreibung: Schreibt daten in eine Datei. Eine ggf. vorhandene Datei wird überschrieben.
+Beschreibung: Schreibt Daten in eine Datei. Eine ggf. vorhandene Datei wird überschrieben.
 
 Parameter
       Eingang: pszFilename, const char *, Zeiger auf Dateinamen (komplette Pfadangabe)
@@ -206,6 +256,95 @@ int WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppen
         printf("%s: bad parameter\r\n",__FUNCTION__);
     }
     return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLineFeedCount
+------------------------------------------------------------------------------
+Beschreibung: Zählt die Zeilenumbrüche (0x0A) in einem Text.
+
+Parameter
+      Eingang: pszText, char *, Zeiger auf Text
+      Ausgang: -
+Rückgabewert:  int, Anzahl LineFeeds
+Seiteneffekte:
+------------------------------------------------------------------------------*/
+int GetLineFeedCount(char *pszText) {
+    int nLineFeeds;
+    uint32_t I;
+
+    nLineFeeds = 0;
+    if (pszText != NULL) {
+        for (I = 0; I < strlen(pszText); I++) {
+            if (pszText[I] == 0x0A) {
+                nLineFeeds++;
+            }
+        }
+    }
+    return nLineFeeds;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLineLen
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt die aktuelle Zeilenlänge, in der der Cursor steht.
+
+Parameter
+      Eingang: pszText, char *, Zeiger auf Text
+               nCursorPos, int, Cursorposition im Text
+      Ausgang: -
+Rückgabewert:  int, Anzahl LineFeeds
+Seiteneffekte:
+------------------------------------------------------------------------------*/
+int GetLineLen(char *pszText, int nCursorPos) {
+    int nLineLen;
+    int nTextLen;
+    int nI;
+    bool bEnd;
+
+    nLineLen = 0;
+    if (pszText != NULL) {
+        nTextLen = (int)strlen(pszText);
+        // Liegt Cursorposition innerhalb des Textes?
+        if ((nTextLen > 0) && (nCursorPos >= 0) && (nCursorPos < nTextLen)) {
+            // Falls Cursor auf Linefeed steht, dann werden nur die Zeichen >vor< dem Cursor gezählt
+            if (pszText[nCursorPos] != 0x0A) {
+                // Zunächst ab Cursorposition + 1 bis Stringende oder Linefeed Zeichen zählen
+                nI = nCursorPos + 1;
+                bEnd = false;
+                do {
+                    if ((pszText[nI] != 0x0A) && (pszText[nI] != 0) && (nI < nTextLen)) {
+                        nLineLen++;
+                        nI++;
+                    } else {
+                        bEnd = true;
+                    }
+                } while (!bEnd);
+            }
+            // Dann ab Cursorposition bis Zeilenanfang/Linefeed bzw. Textanfang Zeichen zählen
+            nI = nCursorPos;
+            bEnd = false;
+            if (pszText[nCursorPos] == 0x0A) {
+                nI--;
+            }
+            if (nI > 0) {
+                do {
+                    if ((pszText[nI] != 0x0A) && (pszText[nI] != 0)) {
+                        nLineLen++;
+                        nI--;
+                        if (nI < 0) {
+                            bEnd = true;
+                        }
+                    } else {
+                        bEnd = true;
+                    }
+                } while (!bEnd);
+            }
+        }
+    }
+    return nLineLen;
 }
 
 

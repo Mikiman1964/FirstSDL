@@ -24,5 +24,6 @@ int CheckLevelBorder(void);
 int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim);
 int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim);
 void CloseAllDoors(void);
-
+void SetCentralExplosionCoordinates(void);
+void SetCentralMegaExplosionCoordinates(void);
 #endif // LOADLEVEL_H_INCLUDED

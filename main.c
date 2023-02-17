@@ -1,10 +1,10 @@
 #define SDL_MAIN_HANDLED // ansonsten kommt folgende Linker-Fehlermeldung: undefined reference to 'WinMain'
 #include <SDL2/SDL.h>
-#include <time.h>
 #include <math.h>
 #include "mystd.h"
 #include "mySDL.h"
 #include "asteroids.h"
+#include "buttons.h"
 #include "scroller.h"
 #include "KeyboardMouse.h"
 #include "modplay.h"
@@ -16,6 +16,7 @@
 
 SDL_DisplayMode ge_DisplayMode;
 extern INPUTSTATES InputStates;
+
 
 int main(int argc, char *argv[]) {
     bool bRun;
@@ -32,32 +33,32 @@ int main(int argc, char *argv[]) {
     bool bShowFDLogo = false;
     float fFDLogoSizeFactor = 0;
     float fFDLogoAngle = 0;
-    Uint32 uFDLogoLastShown = SDL_GetTicks();
+    uint32_t uFDLogoLastShown = SDL_GetTicks();
     SDL_Rect DestR_FDLogo;
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - JANUARY 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKA.ML). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - FEBRUARY 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991               "};
-    uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3 OR 4 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... FONT BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
+    uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3 OR 4 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
     uint8_t szMessage3[] = {"HALLO SASCHIMANN, ICH HABE NOCHMAL EIN BISSCHEN AN DIESEM SCH|NEN DEMO WEITER GEBAUT. ES SOLLTE DURCH DEN COPPER-EFFEKT NUN NOCH HYPNOTISCHER AUF DEN ZUSEHER WIRKEN. ICH WERDE IN N{CHSTER\
  ZEIT MAL SCHAUEN, OB ICH DAS SPIEL WEITER PORTIERE, BIS JETZT GEHT ES GANZ GUT VON DER HAND. BIS DENN ERSTMAL     9  8  7  6  5  4  3  2  1  0                                                    "};
 
-    Uint32 uLastKeyTime = 0;
+    uint32_t uLastKeyTime = 0;
     SDL_Window *pWindow = NULL;
     SDL_Renderer *pRenderer = NULL;
-    Uint32 uCurrentTicks;
+    uint32_t uCurrentTicks;
     SCROLLER Scroller1;
     SCROLLER Scroller2;
     SCROLLER Scroller3;
     bool bScroller1Started = false;
-    Uint32 uScroller1Timer;
+    uint32_t uScroller1Timer;
     bool bScroller2Started = false;
-    Uint32 uScroller2Timer;
+    uint32_t uScroller2Timer;
     bool bScroller3Started = false;
-    Uint32 uScroller3Timer;
+    uint32_t uScroller3Timer;
     bool bScroller3Vor = false;
     float fScroller3AlteSteigung;
     float fScroller3NeueSteigung;
     bool bAsteroidsStarted = false;
-    Uint32 uAsteroidsTimer;
+    uint32_t uAsteroidsTimer;
     AUDIOPLAYER Audioplayer;
     SDL_AudioDeviceID audio_device;
     int nWindowPosX;
@@ -65,14 +66,20 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     int nWindowDirection = 0;
     int nWindowSpeedX = 1;
     int nWindowSpeedY = 1;
-    Uint32 uCopperTimer;
+    int nMenuChoose;
+    uint32_t uCopperTimer;
     bool bCopperScoll = false;
     uint8_t uModVolume = 100;
 
-    srand(time(0));
+
+    InitXorShift();
+    InitButtons();
     memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
     InitAsteroidLayer();
     InitVisibibleCopperSegments();
+    if (InitInputStates() != 0) {
+        return -1;
+    }
     pWindow = InitSDL_Window(WINDOW_W, WINDOW_H, WINDOW_TITLE);     // Fenster erzeugen
     if (pWindow == NULL) {
         return -1;
@@ -90,14 +97,21 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     if (LoadTextures(pRenderer) != 0) {         // Für alle Bitmaps Texturen erzeugen
         return -1;
     }
-    if (InitInputStates() != 0) {
-        return -1;
+    nMenuChoose = Menu(pRenderer);
+    if ((nMenuChoose == 3) || (nMenuChoose == -1)) {
+        return nMenuChoose;
     }
-
-    Editor(pWindow,pRenderer);
-
-    RunGame(pWindow,pRenderer);             // Ein erster Entwurf für Emerald Mine
-
+    if (nMenuChoose == 0) {
+        Editor(pWindow,pRenderer);
+        nMenuChoose = 1;                         // Nach Editor das Spiel aufrufen
+    }
+    if (nMenuChoose == 1) {
+        RunGame(pWindow,pRenderer);              // Ein erster Entwurf für Emerald Mine
+        nMenuChoose = 2;
+    }
+    if (nMenuChoose == 2) {
+        SDL_Log("Start SDL2 Demo");
+    }
     SDL_WarpMouseInWindow(pWindow,10,10);
     do {
         UpdateInputStates();
@@ -124,11 +138,11 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         return -1;
     }
     uScroller2Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller2,1,WINDOW_H / 2,szMessage2,0,0,0,1,false,false) != 0) {
+    if (InitScroller(&Scroller2,1,0,szMessage2,0,0,0,1,false,false) != 0) {
         return -1;
     }
     uScroller3Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller3,2,WINDOW_H / 2,szMessage3,0,0,0,1,false,false) != 0) {
+    if (InitScroller(&Scroller3,2,0,szMessage3,0,0,0,1,false,false) != 0) {
         return -1;
     }
     uAsteroidsTimer = SDL_GetTicks();
@@ -208,8 +222,9 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         }
         // Scroller2 mit Sinus-Verlauf
         fAngle2 = fAngle2 + 0.01;
-        fSin2 = sin(fAngle2) * 300;
-        Scroller2.nYpos = 300 + (int)fSin2;
+        fSin2 = sin(fAngle2) * 365;
+        Scroller2.nYpos = 370 + (int)fSin2;
+
         // Scroller3 mit Sinus-Verlauf
         // Steigungsumkehr des sinus 3 für Scroller 3 erkennen -> Steigung für Sinus ist erste Ableitung, also Cosinus
         // hier ist fWinkel3 noch der bisherige Wert
@@ -222,7 +237,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
             bScroller3Vor = !bScroller3Vor;     // Scroller 3 umkreist den Rest
         }
 
-        if (uCurrentTicks - uAsteroidsTimer > 55000)
+        if (uCurrentTicks - uAsteroidsTimer > 35000)
             bAsteroidsStarted = true;
         if (bAsteroidsStarted) {
             if (bChangeBallonAsteroids) {

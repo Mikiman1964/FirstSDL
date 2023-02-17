@@ -25,6 +25,8 @@ void UpdateManKey(void);
 uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimation);
 void ControlWheels(uint32_t I);
 void CheckRunningWheel(void);
+void ControlEnddoorReady(uint32_t I);
+void ControlEnddoorReadySteel(uint32_t I);
 void ManGoUp(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);
 void ManGoLeft(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);
 void ManGoDown(uint32_t I,uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);

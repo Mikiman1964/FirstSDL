@@ -5,7 +5,7 @@
 
 #define WINDOW_W            1024
 #define WINDOW_H            768
-#define WINDOW_TITLE        "Meine erste SDL-Anwendung"
+#define WINDOW_TITLE        "My first SDL2 application"
 
 #define FONT_W              32
 #define FONT_H              32
@@ -20,6 +20,11 @@
 
 // Button-Höhe für Font 1
 #define BUTTON_H            (FONT_LITTLE_559_H + 5)
+
+// Für Messageboxen
+#define EMERALD_MAX_LINEFEEDS_IN_MESSAGE        30              // Maximal 30 Zeilenumbrüche in Message
+#define EMERALD_MAX_CHARACTERS_PER_LINE         96              // Maximal 96 Zeichen pro Zeile in Message
+
 
 // Prototypen
 SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char * pszWindowTitle);
