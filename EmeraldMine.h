@@ -176,8 +176,8 @@
 #define EMERALD_GREEN_DROP_COMES                0x0099            // grüner Tropfen, der zu Käse werden kann
 #define EMERALD_GREEN_DROP                      0x009A            // grüner Tropfen, der zu Käse werden kann
 #define EMERALD_GREEN_CHEESE                    0x009B            // grüner Käse, der sich über Tropfen ausbreiten kann
-#define EMERALD_EXPLOSION_PHASE_1               0x009C            // Explosion, Phase 1
-#define EMERALD_EXPLOSION_PHASE_2               0x009D            // Explosion, Phase 2
+#define EMERALD_EXPLOSION_TO_ELEMENT_1          0x009C            // Explosion wandelt sich in Element, Phase 1
+#define EMERALD_EXPLOSION_TO_ELEMENT_2          0x009D            // Explosion wandelt sich in Element, Phase 2
 #define EMERALD_WALL_ROUND_PIKE                 0x009E            // Mauer, rund, mit Spitze
 #define EMERALD_DOOR_END_READY                  0x009F            // Endtür, blinkend
 #define EMERALD_STEEL_ROUND_PIKE                0x00A0	          // Stahl, rund, mit Spitze
@@ -230,12 +230,12 @@
 #define EMERALD_WALL_WITH_ENDDOOR               0x00CF            // Mauer mit Endtür
 #define EMERALD_WALL_WITH_ENDDOOR_READY         0x00D0            // Mauer mit Endtür, blinkend
 #define EMERALD_WALL_WITH_MINE_UP               0x00D1            // Mauer mit Mine hoch
-#define EMERALD_WALL_WITH_MOLE                  0x00D2            // Mauer mit Maulwurf
+#define EMERALD_WALL_WITH_MOLE_UP               0x00D2            // Mauer mit Maulwurf hoch
 #define EMERALD_WALL_WITH_GREEN_CHEESE          0x00D3            // Mauer mit grünem Käse
 #define EMERALD_WALL_WITH_BEETLE_UP             0x00D4            // Mauer mit Käfer hoch
 #define EMERALD_WALL_WITH_YAM                   0x00D5            // Mauer mit Yam
 #define EMERALD_WALL_WITH_ALIEN                 0x00D6            // Mauer mit Alien
-#define EMERALD_FONT_START                      0x0100            // Start des Zeichensatzes
+#define EMERALD_FONT_START                      0x0100            // Start des blauen Zeichensatzes
 #define EMERALD_FONT_EXCLAMATION                0x0100            // !
 #define EMERALD_FONT_ARROW_RIGHT                0x0101            // Pfeil rechts
 #define EMERALD_FONT_ARROW_UP                   0x0102            // Pfeil hoch
@@ -293,13 +293,183 @@
 #define EMERALD_FONT_AE                         0x0136            // Ä
 #define EMERALD_FONT_OE                         0x0137            // Ö
 #define EMERALD_FONT_UE                         0x0138            // Ü
-#define EMERALD_FONT_END                        0x0138            // Ende des Zeichensatzes
+#define EMERALD_FONT_STEEL_EXCLAMATION          0x0139            // !, Ab hier blauer Zeichensatz in Stahl
+#define EMERALD_FONT_STEEL_ARROW_RIGHT          0x013A            // Pfeil rechts
+#define EMERALD_FONT_STEEL_ARROW_UP             0x013B            // Pfeil hoch
+#define EMERALD_FONT_STEEL_ARROW_DOWN           0x013C            // Pfeil runter
+#define EMERALD_FONT_STEEL_APOSTROPHE           0x013D            // '
+#define EMERALD_FONT_STEEL_BRACE_OPEN           0x013E            // (
+#define EMERALD_FONT_STEEL_BRACE_CLOSE          0x013F            // )
+#define EMERALD_FONT_STEEL_COPYRIGHT            0x0140            // Copyright
+#define EMERALD_FONT_STEEL_PLUS                 0x0141            // +
+#define EMERALD_FONT_STEEL_COMMA                0x0142            // ,
+#define EMERALD_FONT_STEEL_MINUS                0x0143            // -
+#define EMERALD_FONT_STEEL_POINT                0x0144            // .
+#define EMERALD_FONT_STEEL_SLASH                0x0145            // /
+#define EMERALD_FONT_STEEL_0                    0x0146            // 0
+#define EMERALD_FONT_STEEL_1                    0x0147            // 1
+#define EMERALD_FONT_STEEL_2                    0x0148            // 2
+#define EMERALD_FONT_STEEL_3                    0x0149            // 3
+#define EMERALD_FONT_STEEL_4                    0x014A            // 4
+#define EMERALD_FONT_STEEL_5                    0x014B            // 5
+#define EMERALD_FONT_STEEL_6                    0x014C            // 6
+#define EMERALD_FONT_STEEL_7                    0x014D            // 7
+#define EMERALD_FONT_STEEL_8                    0x014E            // 8
+#define EMERALD_FONT_STEEL_9                    0x014F            // 9
+#define EMERALD_FONT_STEEL_DOUBLE_POINT         0x0150            // :
+#define EMERALD_FONT_STEEL_PLATE                0x0151            // Plate
+#define EMERALD_FONT_STEEL_ARROW_LEFT           0x0152            // Pfeil links
+#define EMERALD_FONT_STEEL_QUESTION_MARK        0x0153            // ?
+#define EMERALD_FONT_STEEL_A                    0x0154            // A
+#define EMERALD_FONT_STEEL_B                    0x0155            // B
+#define EMERALD_FONT_STEEL_C                    0x0156            // C
+#define EMERALD_FONT_STEEL_D                    0x0157            // D
+#define EMERALD_FONT_STEEL_E                    0x0158            // E
+#define EMERALD_FONT_STEEL_F                    0x0159            // F
+#define EMERALD_FONT_STEEL_G                    0x015A            // G
+#define EMERALD_FONT_STEEL_H                    0x015B            // H
+#define EMERALD_FONT_STEEL_I                    0x015C            // I
+#define EMERALD_FONT_STEEL_J                    0x015D            // J
+#define EMERALD_FONT_STEEL_K                    0x015E            // K
+#define EMERALD_FONT_STEEL_L                    0x015F            // L
+#define EMERALD_FONT_STEEL_M                    0x0160            // M
+#define EMERALD_FONT_STEEL_N                    0x0161            // N
+#define EMERALD_FONT_STEEL_O                    0x0162            // O
+#define EMERALD_FONT_STEEL_P                    0x0163            // P
+#define EMERALD_FONT_STEEL_Q                    0x0164            // Q
+#define EMERALD_FONT_STEEL_R                    0x0165            // R
+#define EMERALD_FONT_STEEL_S                    0x0166            // S
+#define EMERALD_FONT_STEEL_T                    0x0167            // T
+#define EMERALD_FONT_STEEL_U                    0x0168            // U
+#define EMERALD_FONT_STEEL_V                    0x0169            // V
+#define EMERALD_FONT_STEEL_W                    0x016A            // W
+#define EMERALD_FONT_STEEL_X                    0x016B            // X
+#define EMERALD_FONT_STEEL_Y                    0x016C            // Y
+#define EMERALD_FONT_STEEL_Z                    0x016D            // Z
+#define EMERALD_FONT_STEEL_AE                   0x016E            // Ä
+#define EMERALD_FONT_STEEL_OE                   0x016F            // Ö
+#define EMERALD_FONT_STEEL_UE                   0x0170            // Ü
+#define EMERALD_FONT_GREEN_EXCLAMATION          0x0171            // !, Ab hier grüner Zeichensatz
+#define EMERALD_FONT_GREEN_ARROW_RIGHT          0x0172            // Pfeil rechts
+#define EMERALD_FONT_GREEN_ARROW_UP             0x0173            // Pfeil hoch
+#define EMERALD_FONT_GREEN_ARROW_DOWN           0x0174            // Pfeil runter
+#define EMERALD_FONT_GREEN_APOSTROPHE           0x0175            // '
+#define EMERALD_FONT_GREEN_BRACE_OPEN           0x0176            // (
+#define EMERALD_FONT_GREEN_BRACE_CLOSE          0x0177            // )
+#define EMERALD_FONT_GREEN_COPYRIGHT            0x0178            // Copyright
+#define EMERALD_FONT_GREEN_PLUS                 0x0179            // +
+#define EMERALD_FONT_GREEN_COMMA                0x017A            // ,
+#define EMERALD_FONT_GREEN_MINUS                0x017B            // -
+#define EMERALD_FONT_GREEN_POINT                0x017C            // .
+#define EMERALD_FONT_GREEN_SLASH                0x017D            // /
+#define EMERALD_FONT_GREEN_0                    0x017E            // 0
+#define EMERALD_FONT_GREEN_1                    0x017F            // 1
+#define EMERALD_FONT_GREEN_2                    0x0180            // 2
+#define EMERALD_FONT_GREEN_3                    0x0181            // 3
+#define EMERALD_FONT_GREEN_4                    0x0182            // 4
+#define EMERALD_FONT_GREEN_5                    0x0183            // 5
+#define EMERALD_FONT_GREEN_6                    0x0184            // 6
+#define EMERALD_FONT_GREEN_7                    0x0185            // 7
+#define EMERALD_FONT_GREEN_8                    0x0186            // 8
+#define EMERALD_FONT_GREEN_9                    0x0187            // 9
+#define EMERALD_FONT_GREEN_DOUBLE_POINT         0x0188            // :
+#define EMERALD_FONT_GREEN_PLATE                0x0189            // Plate
+#define EMERALD_FONT_GREEN_ARROW_LEFT           0x018A            // Pfeil links
+#define EMERALD_FONT_GREEN_QUESTION_MARK        0x018B            // ?
+#define EMERALD_FONT_GREEN_A                    0x018C            // A
+#define EMERALD_FONT_GREEN_B                    0x018D            // B
+#define EMERALD_FONT_GREEN_C                    0x018E            // C
+#define EMERALD_FONT_GREEN_D                    0x018F            // D
+#define EMERALD_FONT_GREEN_E                    0x0190            // E
+#define EMERALD_FONT_GREEN_F                    0x0191            // F
+#define EMERALD_FONT_GREEN_G                    0x0192            // G
+#define EMERALD_FONT_GREEN_H                    0x0193            // H
+#define EMERALD_FONT_GREEN_I                    0x0194            // I
+#define EMERALD_FONT_GREEN_J                    0x0195            // J
+#define EMERALD_FONT_GREEN_K                    0x0196            // K
+#define EMERALD_FONT_GREEN_L                    0x0197            // L
+#define EMERALD_FONT_GREEN_M                    0x0198            // M
+#define EMERALD_FONT_GREEN_N                    0x0199            // N
+#define EMERALD_FONT_GREEN_O                    0x019A            // O
+#define EMERALD_FONT_GREEN_P                    0x019B            // P
+#define EMERALD_FONT_GREEN_Q                    0x019C            // Q
+#define EMERALD_FONT_GREEN_R                    0x019D            // R
+#define EMERALD_FONT_GREEN_S                    0x019E            // S
+#define EMERALD_FONT_GREEN_T                    0x019F            // T
+#define EMERALD_FONT_GREEN_U                    0x01A0            // U
+#define EMERALD_FONT_GREEN_V                    0x01A1            // V
+#define EMERALD_FONT_GREEN_W                    0x01A2            // W
+#define EMERALD_FONT_GREEN_X                    0x01A3            // X
+#define EMERALD_FONT_GREEN_Y                    0x01A4            // Y
+#define EMERALD_FONT_GREEN_Z                    0x01A5            // Z
+#define EMERALD_FONT_GREEN_AE                   0x01A6            // Ä
+#define EMERALD_FONT_GREEN_OE                   0x01A7            // Ö
+#define EMERALD_FONT_GREEN_UE                   0x01A8            // Ü
+#define EMERALD_FONT_STEEL_GREEN_EXCLAMATION    0x01A9            // !, Ab hier grüner Zeichensatz in Stahl
+#define EMERALD_FONT_STEEL_GREEN_ARROW_RIGHT    0x01AA            // Pfeil rechts
+#define EMERALD_FONT_STEEL_GREEN_ARROW_UP       0x01AB            // Pfeil hoch
+#define EMERALD_FONT_STEEL_GREEN_ARROW_DOWN     0x01AC            // Pfeil runter
+#define EMERALD_FONT_STEEL_GREEN_APOSTROPHE     0x01AD            // '
+#define EMERALD_FONT_STEEL_GREEN_BRACE_OPEN     0x01AE            // (
+#define EMERALD_FONT_STEEL_GREEN_BRACE_CLOSE    0x01AF            // )
+#define EMERALD_FONT_STEEL_GREEN_COPYRIGHT      0x01B0            // Copyright
+#define EMERALD_FONT_STEEL_GREEN_PLUS           0x01B1            // +
+#define EMERALD_FONT_STEEL_GREEN_COMMA          0x01B2            // ,
+#define EMERALD_FONT_STEEL_GREEN_MINUS          0x01B3            // -
+#define EMERALD_FONT_STEEL_GREEN_POINT          0x01B4            // .
+#define EMERALD_FONT_STEEL_GREEN_SLASH          0x01B5            // /
+#define EMERALD_FONT_STEEL_GREEN_0              0x01B6            // 0
+#define EMERALD_FONT_STEEL_GREEN_1              0x01B7            // 1
+#define EMERALD_FONT_STEEL_GREEN_2              0x01B8            // 2
+#define EMERALD_FONT_STEEL_GREEN_3              0x01B9            // 3
+#define EMERALD_FONT_STEEL_GREEN_4              0x01BA            // 4
+#define EMERALD_FONT_STEEL_GREEN_5              0x01BB            // 5
+#define EMERALD_FONT_STEEL_GREEN_6              0x01BC            // 6
+#define EMERALD_FONT_STEEL_GREEN_7              0x01BD            // 7
+#define EMERALD_FONT_STEEL_GREEN_8              0x01BE            // 8
+#define EMERALD_FONT_STEEL_GREEN_9              0x01BF            // 9
+#define EMERALD_FONT_STEEL_GREEN_DOUBLE_POINT   0x01C0            // :
+#define EMERALD_FONT_STEEL_GREEN_PLATE          0x01C1            // Plate
+#define EMERALD_FONT_STEEL_GREEN_ARROW_LEFT     0x01C2            // Pfeil links
+#define EMERALD_FONT_STEEL_GREEN_QUESTION_MARK  0x01C3            // ?
+#define EMERALD_FONT_STEEL_GREEN_A              0x01C4            // A
+#define EMERALD_FONT_STEEL_GREEN_B              0x01C5            // B
+#define EMERALD_FONT_STEEL_GREEN_C              0x01C6            // C
+#define EMERALD_FONT_STEEL_GREEN_D              0x01C7            // D
+#define EMERALD_FONT_STEEL_GREEN_E              0x01C8            // E
+#define EMERALD_FONT_STEEL_GREEN_F              0x01C9            // F
+#define EMERALD_FONT_STEEL_GREEN_G              0x01CA            // G
+#define EMERALD_FONT_STEEL_GREEN_H              0x01CB            // H
+#define EMERALD_FONT_STEEL_GREEN_I              0x01CC            // I
+#define EMERALD_FONT_STEEL_GREEN_J              0x01CD            // J
+#define EMERALD_FONT_STEEL_GREEN_K              0x01CE            // K
+#define EMERALD_FONT_STEEL_GREEN_L              0x01CF            // L
+#define EMERALD_FONT_STEEL_GREEN_M              0x01D0            // M
+#define EMERALD_FONT_STEEL_GREEN_N              0x01D1            // N
+#define EMERALD_FONT_STEEL_GREEN_O              0x01D2            // O
+#define EMERALD_FONT_STEEL_GREEN_P              0x01D3            // P
+#define EMERALD_FONT_STEEL_GREEN_Q              0x01D4            // Q
+#define EMERALD_FONT_STEEL_GREEN_R              0x01D5            // R
+#define EMERALD_FONT_STEEL_GREEN_S              0x01D6            // S
+#define EMERALD_FONT_STEEL_GREEN_T              0x01D7            // T
+#define EMERALD_FONT_STEEL_GREEN_U              0x01D8            // U
+#define EMERALD_FONT_STEEL_GREEN_V              0x01D9            // V
+#define EMERALD_FONT_STEEL_GREEN_W              0x01DA            // W
+#define EMERALD_FONT_STEEL_GREEN_X              0x01DB            // X
+#define EMERALD_FONT_STEEL_GREEN_Y              0x01DC            // Y
+#define EMERALD_FONT_STEEL_GREEN_Z              0x01DD            // Z
+#define EMERALD_FONT_STEEL_GREEN_AE             0x01DE            // Ä
+#define EMERALD_FONT_STEEL_GREEN_OE             0x01DF            // Ö
+#define EMERALD_FONT_STEEL_GREEN_UE             0x01E0            // Ü
+#define EMERALD_CENTRAL_EXPLOSION               0x01E1            // Mittelpunkt einer (Bomben)-Explosion
+#define EMERALD_CENTRAL_EXPLOSION_BEETLE        0x01E2            // Mittelpunkt einer Käferexplosion
 
 
+#define EMERALD_MAX_ELEMENT                     0x01E2            // hier immer das letzte Element eintragen
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 
-// Animationen
+// Animationen (für Explosionen wird das niederwertigste uint16_t verwendet)
 #define EMERALD_ANIM_STAND                      0x00000000      // keine Animation
 #define EMERALD_ANIM_UP                         0x00000100      // hoch
 #define EMERALD_ANIM_RIGHT                      0x00000200      // rechts
@@ -320,6 +490,9 @@
 #define EMERALD_ANIM_MOLE_STAND                 0x00001100      // Mole "läuft" auf der Stelle
 #define EMERALD_STATUS_DOOR_OPEN                0x00001200      // Schalt- und Zeit-Tür ist offen
 #define EMERALD_STATUS_DOOR_CLOSE               0x00001300      // Schalt- und Zeit-Tür ist geschlossen
+#define EMERALD_ANIM_SAND_0                     0x00001400      // Sand-Ränder 0 / F
+// Elemente zwischen 0x00001400 und 0x00002300 sind entsprechend besetzt
+#define EMERALD_ANIM_SAND_F                     0x00002300      // Sand-Ränder F / F
 
 
 #define EMERALD_ANIM_CLEAN_UP                   0x00010000      // über dem invaliden Feld löschen
@@ -385,14 +558,17 @@
 #define EMERALD_ANIM_DOOR_CLOSE                 0x2C000000      // Schalt- und Zeit-Tür wird geschlossen
 #define EMERALD_ANIM_KEY_WHITE_SHRINK           0x2D000000      // weißer Schlüssel wird keiner
 #define EMERALD_ANIM_KEY_GENERAL_SHRINK         0x2E000000      // General-Schlüssel wird keiner
-
+#define EMERALD_ANIM_BLOCK_MAN                  0x2F000000      // Diese Animation blockiert Man, wird i.d.R. dem Element EMERALD_SPACE gegeben
+#define EMERALD_ANIM_MOLE_GOES_ACID             0x30000000      // Mole fällt ins Säurebecken und muss beim Sterben noch Sand über dem Becken erzeugen
+#define EMERALD_ANIM_MAN_GOES_ENDDOOR           0x31000000      // Man geht in eine Endtür
+#define EMERALD_ANIM_DOOR_READY_SHRINK          0x32000000      // Endtür verschwindet
 
 
 #define EMERALD_STANDARD_SPEED                  false
 #define EMERALD_DOUBLE_SPEED                    true
 
-#define EMERALD_MAX_HEADER_SIZE                 0x500           // memmem begrenzen
 #define EMERALD_MAX_MESSAGES                    8
+
  // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 =  Perle, Bit 8 = Megabombe
 #define EMERALD_CHECKROLL_EMERALD               0x01
 #define EMERALD_CHECKROLL_SAPPHIRE              0x02
@@ -404,14 +580,16 @@
 #define EMERALD_CHECKROLL_PERL                  0x80
 #define EMERALD_CHECKROLL_MEGABOMB              0x100
 
+#define EMERALD_INVALID_COORDINATE              0xFFFFFFFF
+
 
 typedef struct {
-    uint32_t        uTextureIndex;                              // Start-Texture zur Animation
+    // Datentypen sind hier etwas geiziger ausgelegt, sollten aber immer noch locker ausreichen
+    uint16_t        uTextureIndex;                              // Start-Texture zur Animation
+    uint16_t        uX;                                         // X-Koordinate, wo Post-Animation durchgeführt werden soll.
+    uint16_t        uY;                                         // Y-Koordinate, wo Post-Animation durchgeführt werden soll.
     bool            bFlipVertical;                              // Texture vertikal spiegeln
     bool            bFlipHorizontal;                            // Texture horizontal spiegeln
-    uint32_t        uX;                                         // X-Koordinate, wo Post-Animation durchgeführt werden soll.
-    uint32_t        uY;                                         // Y-Koordinate, wo Post-Animation durchgeführt werden soll.
-    uint32_t        uFormulaIndex;                              // Index auf Formel für Animation
 } POSTANIMATION;
 
 
@@ -426,6 +604,7 @@ typedef struct {
     POSTANIMATION   *pPostAnimation;
     uint32_t        uRollUnderground[65536];                    // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
     uint16_t        *pInvalidElement;
+    int             nCentralExplosionCoordinates[8];            // Koordinaten um Zentrum einer 3x3-Explosion
     bool            bInitOK;
     bool            bHasRedKey;
     bool            bHasGreenKey;
@@ -438,6 +617,7 @@ typedef struct {
     bool            bLightOn;                                   // Licht ist an -> unsichtbare Mauern/Stahl sind sichtbar
     bool            bPushStone;                                 // wenn true, kann Man sofort (Stone, Nut, Bomb) schieben
     bool            bManDead;
+    bool            bWellDone;                                  // Level wurde geschafft
     bool            bLightBarrierRedOn;
     bool            bLightBarrierGreenOn;
     bool            bLightBarrierBlueOn;
@@ -515,10 +695,9 @@ typedef struct {
 
 
 uint32_t ControlGame(uint32_t uDirection);
-int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount);
-uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *pfAngle);
 uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCount, float *pfAngle);
 void ScrollAndCenterLevel(uint32_t uManDirection);
+int Menu(SDL_Renderer *pRenderer);
 int RunGame(SDL_Window *pWindow, SDL_Renderer *pRenderer);
 void InitRollUnderground(void);
 uint8_t GetFreeRollDirections(uint32_t I);
@@ -526,5 +705,6 @@ uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation);
 void ControlPreElements(void);
 void ControlTimeDoor(uint32_t I);
 void PostControlSwitchDoors(void);
+void PostControlBombExplosions(void);
 bool IsSteel(uint16_t uElement);
 #endif // TESTSURFACE_H_INCLUDED

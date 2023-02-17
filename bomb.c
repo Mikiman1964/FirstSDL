@@ -1,5 +1,6 @@
 #include "EmeraldMine.h"
 #include "bomb.h"
+#include "explosion.h"
 #include "sound.h"
 
 extern PLAYFIELD Playfield;
@@ -50,7 +51,8 @@ void ControlBomb(uint32_t I) {
     } else {                            // Unten ist nicht frei
         // Bombe bleibt zunächst auf Platz liegen
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
-            Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
+            // Bombe fällt auf Etwas
+            ControlCentralExplosion(I);
             PreparePlaySound(SOUND_EXPLOSION,I);
         }
         if ((Playfield.uRollUnderground[Playfield.pLevel[I + Playfield.uLevel_X_Dimension]] & EMERALD_CHECKROLL_BOMB) != 0) {

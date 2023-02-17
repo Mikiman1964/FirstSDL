@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-#define MAX_ASTEROIDS   30
+#define MAX_ASTEROIDS   60
 #define MAX_ASTEROIDLAYERS 3
 
 typedef struct {
@@ -38,7 +38,6 @@ typedef struct {
 void InitAsteroidLayer(void);
 int MoveAsteroids(SDL_Renderer *pRenderer,SDL_Texture *pAsteroidTexture);
 int SetAsteroidDeflection(int nLayer, int nAsteroid, float fXangleSpeed, float fYangleSpeed, int nXmaxDeflection, int nYmaxDeflection);
-float randf(float low,float high);
 int SwitchDrunkenAsteroids(bool bOnOff);
 
 #endif // ASTEROIDS_H_INCLUDED

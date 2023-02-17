@@ -42,19 +42,19 @@ void InitAsteroidLayer(void) {
             AsteroidLayer[nLayer].uLastCountIncreased = SDL_GetTicks();
             switch(nLayer) {
                 case(0):
-                    AsteroidLayer[nLayer].nMaxCount = 20;                   // Maximale Anzahl Asteroiden
+                    AsteroidLayer[nLayer].nMaxCount = 40;                   // Maximale Anzahl Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nWidth = 50;  // Breite des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 44; // Höhe des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nSpeed = 1;   // Geschwindigkeit
                     break;
                 case(1):
-                    AsteroidLayer[nLayer].nMaxCount = 8;                    // Maximale Anzahl Asteroiden
+                    AsteroidLayer[nLayer].nMaxCount = 16;                    // Maximale Anzahl Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nWidth = 100; // Breite des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 88; // Höhe des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nSpeed = 2;   // Geschwindigkeit
                     break;
                 case(2):
-                    AsteroidLayer[nLayer].nMaxCount = 3;                    // Maximale Anzahl Asteroiden
+                    AsteroidLayer[nLayer].nMaxCount = 6;                    // Maximale Anzahl Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nWidth = 200; // Breite des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 176;// Höhe des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nSpeed = 3;   // Geschwindigkeit
@@ -75,12 +75,12 @@ Name:           SetAsteroidDeflection
 ------------------------------------------------------------------------------
 Beschreibung: Setzt die Sinus-Ablenkung für einen Asteroiden
 Parameter
-      Eingang: int, nLayer, Asteroidenlayer 0 bis MAX_ASTEROIDLAYERS
-               int, nAsteroid, Asteroid 0 bis MAX_ASTEROIDS
-               float, fXangleSpeed, Winkelgeschwindigkeit für X-Ablenkung
-               float, fYangleSpeed, Winkelgeschwindigkeit für Y-Ablenkung
-               int, nXmaxDeflection, Maximale X-Ablenkung
-               int, nYmaxDeflection, Maximale Y-Ablenkung
+      Eingang: nLayer, int, Asteroidenlayer 0 bis MAX_ASTEROIDLAYERS
+               nAsteroid, int, Asteroid 0 bis MAX_ASTEROIDS
+               fXangleSpeed, float, Winkelgeschwindigkeit für X-Ablenkung
+               fYangleSpeed, float, Winkelgeschwindigkeit für Y-Ablenkung
+               nXmaxDeflection, int, Maximale X-Ablenkung
+               nYmaxDeflection, int, Maximale Y-Ablenkung
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS]
@@ -103,7 +103,7 @@ Name:           SwitchDrunkenAsteroids
 ------------------------------------------------------------------------------
 Beschreibung: Setzt die Sinus-Ablenkung für einen Asteroiden
 Parameter
-      Eingang: bool, bOn, (De)aktiviert bei allen Asteroiden den Trunkenmodus
+      Eingang: bOn, bool, (De)aktiviert bei allen Asteroiden den Trunkenmodus
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS]
@@ -116,10 +116,10 @@ int SwitchDrunkenAsteroids(bool bOn) {
     for (nLayer = 0; (nLayer < MAX_ASTEROIDLAYERS) && (nRet == 0); nLayer++) {    // Erstmal nur 1 Layer
         for (nAsteroid = 0; (nAsteroid < AsteroidLayer[nLayer].nMaxCount) && (nRet == 0); nAsteroid++) {
             if (bOn) {
-                fAngleSpeed = randf(0.02,0.08);
-                nRet = SetAsteroidDeflection(nLayer, nAsteroid, fAngleSpeed, fAngleSpeed, 50, 100);
+                fAngleSpeed = randf(0.02,0.6);
+                nRet = SetAsteroidDeflection(nLayer, nAsteroid, fAngleSpeed, fAngleSpeed, 80, 150);
             } else {
-                nRet = SetAsteroidDeflection(nLayer, nAsteroid, 0.00, 0.00, 50, 100);
+                nRet = SetAsteroidDeflection(nLayer, nAsteroid, 0.00, 0.00, 80, 150);
             }
         }
     }
@@ -152,7 +152,7 @@ int MoveAsteroids(SDL_Renderer *pRenderer,SDL_Texture *pAsteroidTexture) {
                 // Zunächst festlegen, ob Asteroid ganz links oder unten starten soll
                 if ((rand() & 1) == 0) {
                     // Bei geraden Zahl ganz links, wir benötigen eine Zufallszahl für Y-Start
-                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nXpos = -200;
+                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nXpos = -300;
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nYpos = (int)randf(0,WINDOW_H);
                 } else {
                     // Bei geraden Zahl ganz unten

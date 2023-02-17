@@ -21,7 +21,7 @@ Seiteneffekte: Playfield.x
 void ControlAlien(uint32_t I) {
     uint32_t uXpos;
     uint32_t uYpos;
-    uint8_t uRandom;
+    int  nRandom;
     uint32_t uCatchXpos;
     uint32_t uCatchYpos;
 
@@ -42,8 +42,8 @@ void ControlAlien(uint32_t I) {
             uCatchXpos = Playfield.uManXpos;
             uCatchYpos = Playfield.uManYpos;
         }
-        uRandom = randf(1,4);       // Ergibt Zufallszahl zwischen 1-3
-        if (uRandom == 1) {         // X testen
+        nRandom = randn(1,3);       // Ergibt Zufallszahl zwischen 1-3
+        if (nRandom == 1) {         // X testen
             if (uCatchXpos > uXpos) {  // Ist Man-X-Koordinate > als eigene X-Koordinate ?
                 // Versuche nach rechts zu laufen
                 if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {  // Ist nach rechts frei?
@@ -75,7 +75,7 @@ void ControlAlien(uint32_t I) {
             } else {                            // Steht bereits auf richtiger Koordinate
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;    // gibt es später nicht mehr
             }
-        } else if (uRandom == 2) {  // Y testen
+        } else if (nRandom == 2) {  // Y testen
             if (uCatchYpos > uYpos) {  // Ist Man-Y-Koordinate > als eigene Y-Koordinate ?
                 // Versuche nach unten zu laufen
                 if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach unten frei?
