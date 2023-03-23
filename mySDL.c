@@ -1,15 +1,18 @@
 #include <unistd.h>
 #include <SDL2/SDL.h>
+#include "loadlevel.h"
 #include "mySDL.h"
 #include "mystd.h"
 #include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
 
 int g_nGfxCount = 0;         // gefundenen Grafiken
+uint8_t g_uIntensityProzent = 100;
 SDL_Texture **g_pTextures;   // Pointer Array für Texturen
 
 extern SDL_DisplayMode ge_DisplayMode;
 extern uint8_t _binary_gfx_bin_start;extern uint8_t _binary_gfx_bin_end;
 extern uint32_t Gfx[];
+extern CONFIG Config;
 
 /*----------------------------------------------------------------------------
 Name:           InitSDL_Window
@@ -364,7 +367,7 @@ Parameter
       Eingang: uIntensityProzent, uint8_t, 0 bis 100 % für Helligkeit
       Ausgang: -
       Rückgabewert: 0 = OK, sonst Fehler
-Seiteneffekte: g_nGfxCount
+Seiteneffekte: g_nGfxCount, g_uIntensityProzent
 ------------------------------------------------------------------------------*/
 int SetAllTextureColors(uint8_t uIntensityProzent) {
     int nErrorCode;
@@ -374,6 +377,7 @@ int SetAllTextureColors(uint8_t uIntensityProzent) {
     if (uIntensityProzent > 100) {
         uIntensityProzent = 100;
     }
+    g_uIntensityProzent = uIntensityProzent;      // Damit Nicht-Texturen (z.B. die Buttons) wissen, welche Helligkeit gesetzt ist
     uIntensity = (255 * uIntensityProzent) / 100;
     nErrorCode = 0;
     for (nTexture = 0; (nTexture < g_nGfxCount) && (nErrorCode == 0); nTexture++) {
@@ -575,7 +579,7 @@ Parameter
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
       Ausgang: -
       Rückgabewert: 0 = OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText) {
     int nErrorCode;
@@ -594,10 +598,10 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
         GetMessageWindowSize(&uWinW,&uWinH,&uLines,pszText);
         // Zentrierung
         if (nXpos == -1) {      // horizontal zentrieren?
-            nXpos = (WINDOW_W - (uWinW * FONT_W / 2)) / 2;
+            nXpos = (Config.uResX - (uWinW * FONT_W / 2)) / 2;
         }
         if (nYpos == - 1) {     // vertikal zentrieren?
-            nYpos = (WINDOW_H - (uWinH * FONT_H / 2)) / 2;
+            nYpos = (Config.uResY - (uWinH * FONT_H / 2)) / 2;
         }
         nPrintXpos = nXpos;
         nPrintYpos = nYpos;

@@ -20,6 +20,8 @@ typedef struct {
 // https://stackoverflow.com/questions/22115241/how-to-generate-random-numbers-between-1-and-1-in-c
 // von SteveL
 float randf(float low,float high);
+void GetMd5String(uint8_t *puMd5Hash, char *pszMd5String);
+void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash);
 int randn(int low,int high);
 void InitXorShift(void);
 uint32_t xorshift128(void); // https://de.wikipedia.org/wiki/Xorshift

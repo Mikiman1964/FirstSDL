@@ -29,11 +29,64 @@ void InitXorShift(void) {
     XorShift.y = rand() * 88675123;
     XorShift.z = (uint64_t)(&nErrorCode) * XorShift.y * XorShift.x;
     XorShift.w = (uint64_t)(&XorShift) * rand();
-    SDL_Log("%s:\r\n x = %u\r\n y = %u\r\n z = %u\r\n w = %u\r\n i = %u",__FUNCTION__,XorShift.x,XorShift.y,XorShift.z,XorShift.w,XorShift.x & 0xFFFF);
+    printf("%s:\r\n x = %u\r\n y = %u\r\n z = %u\r\n w = %u\r\n i = %u\n",__FUNCTION__,XorShift.x,XorShift.y,XorShift.z,XorShift.w,XorShift.x & 0xFFFF);
     I = (XorShift.x & 0xFFFF);
     while (I > 0) {
         xorshift128();
         I--;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetMd5String
+------------------------------------------------------------------------------
+Beschreibung: Gibt anhand eines MD5-Hashes (16 Bytes) den zugehörigen String (32 + 1 Bytes) zurück.
+Parameter
+      Eingang: puMd5Hash, uint8_t *, Zeiger auf MD5-Hash (mindestens 16 Bytes)
+      Ausgang: pszMd5String, char *, Zeiger auf mindestens 32 + 1 = 33 Bytes für den MD5-String (Großbuchstaben)
+Rückgabewert:  -
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+void GetMd5String(uint8_t *puMd5Hash, char *pszMd5String) {
+    uint32_t I;
+    char szNum[8];
+
+    if ((puMd5Hash != NULL) && (pszMd5String != NULL)) {
+        pszMd5String[0] = 0;
+        for (I = 0; I < 16; I++) {
+            sprintf(szNum,"%02X",puMd5Hash[I]);
+            strcat(pszMd5String,szNum);
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetMd5HashFromString
+------------------------------------------------------------------------------
+Beschreibung: Gibt anhand eines MD5-Strings (32 Bytes + 1) den zugehörigen Hash (16 Bytes) zurück.
+Parameter
+      Eingang: pszMd5String, char *, Zeiger auf mindestens 32 + 1 = 33 Bytes für den MD5-String (Groß - oder Kleinbuchstaben)
+      Ausgang: puMd5Hash, uint8_t *, Zeiger auf MD5-Hash (mindestens 16 Bytes)
+Rückgabewert:  -
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash) {
+    uint32_t I;
+    char szHex[8];
+
+    szHex[2] = 0;   // szHex[0] und szHex[1] ist die 2-stellige Hexziffer
+    if ((pszMd5String != NULL) && (puMd5Hash != NULL)) {
+        if (strlen(pszMd5String) == 32) {
+            for (I = 0; I < 16; I++) {
+                szHex[0] = pszMd5String[I * 2 + 0];
+                szHex[1] = pszMd5String[I * 2 + 1];
+                puMd5Hash[I] = (strtol(szHex,NULL,16) & 0xFF);
+            }
+        } else {
+            SDL_Log("%s: string must contain 32 characters",__FUNCTION__);
+        }
     }
 }
 
@@ -49,14 +102,14 @@ Parameter
 Rückgabewert:  int, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int randn (int low,int high) {
+int randn(int low,int high) {
     int nZ;
 
     high++;     // Sehr unwahrscheinlich, dass high genau getroffen wird
     low--;
     do {
         nZ = randf(low,high);
-    } while ((nZ >= high) || (nZ <=low));   // Falls high genau das maximum triffr, dann neue Zufallszahl holen
+    } while ((nZ >= high) || (nZ <= low));   // Falls high genau das maximum triffr, dann neue Zufallszahl holen
     return nZ;
 }
 
@@ -167,6 +220,9 @@ Name:           ReadFile
 ------------------------------------------------------------------------------
 Beschreibung: Liest Daten aus einer Datei und alloziert hierfür Speicher, der
               außerhalb dieser Funktion wieder freigegeben werden muss.
+              Es wird >immer< sichergestellt, dass sich nach den Daten ein
+              Nullbyte (Stringterminierung) befindet, d.h. ggf. eingelesene Textdateien
+              können als String behandelt werden!
 Parameter
       Eingang: pszFilename, const char *, Zeiger auf Dateinamen (komplette Pfadangabe)
       Ausgang: puLen, uint32_t *, Anzahl Bytes, die eingelesen bzw. alloziert wurden.
@@ -189,20 +245,20 @@ uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen) {
                             *puLen = Fileinfo.st_size;
                              pRet[Fileinfo.st_size] = 0; // abschließendes Null-Byte
                         } else {
-                            printf("%s: read error, freeing memory\r\n",__FUNCTION__);
+                            printf("%s: read error, freeing memory for file: %s\r\n",__FUNCTION__,pszFilename);
                             SAFE_FREE(pRet);
                         }
                     } else {
-                        printf("%s: can not allocate memory for filesize: %ld\r\n",__FUNCTION__,Fileinfo.st_size);
+                        printf("%s: can not allocate memory for filesize: %ld, file: %s\r\n",__FUNCTION__,Fileinfo.st_size,pszFilename);
                     }
                 } else {
                     printf("%s: can not open file: %s\r\n",__FUNCTION__,pszFilename);
                 }
             } else {
-                printf("%s: file is empty\r\n",__FUNCTION__);
+                printf("%s: file %s is empty\r\n",__FUNCTION__,pszFilename);
             }
         } else {
-            printf("%s: stat() failed\r\n",__FUNCTION__);
+            printf("%s: stat() for file %s failed\r\n",__FUNCTION__,pszFilename);
         }
     } else {
         printf("%s: bad parameter\r\n",__FUNCTION__);

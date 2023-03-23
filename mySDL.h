@@ -3,8 +3,8 @@
 
 #include <SDL2/SDL.h>
 
-#define WINDOW_W            1024
-#define WINDOW_H            768
+#define DEFAULT_WINDOW_W            1280        // Ist auch gleichzeitig die
+#define DEFAULT_WINDOW_H            768         // Mindestanforderung an die Auflösung
 #define WINDOW_TITLE        "My first SDL2 application"
 
 #define FONT_W              32

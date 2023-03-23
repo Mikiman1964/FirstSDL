@@ -1,4 +1,5 @@
 #include "EmeraldMine.h"
+#include "explosion.h"
 #include "megabomb.h"
 #include "sound.h"
 
@@ -50,7 +51,8 @@ void ControlMegaBomb(uint32_t I) {
     } else {                            // Unten ist nicht frei
         // Mega-Bombe bleibt zunächst auf Platz liegen
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
-            Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
+            // Mega-Bombe fällt auf Etwas
+            ControlCentralMegaExplosion(I);
             PreparePlaySound(SOUND_EXPLOSION,I);
         }
         if ((Playfield.uRollUnderground[Playfield.pLevel[I + Playfield.uLevel_X_Dimension]] & EMERALD_CHECKROLL_MEGABOMB) != 0) {

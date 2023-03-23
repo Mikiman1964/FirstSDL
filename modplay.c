@@ -5,10 +5,14 @@
 
 ModPlayerStatus_t mp;
 
-extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;      // 1. Mod von banana
-extern uint8_t _binary_ripped_mod_start;extern uint8_t _binary_ripped_mod_end;          // 2. Mod von ?
-extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;        // 3. class cracktro#15 Mod von maktone vor 3/2011
+extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;     // 1. Mod von banana
+extern uint8_t _binary_ripped_mod_start;extern uint8_t _binary_ripped_mod_end;         // 2. Mod von ?
+extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;       // 3. class cracktro#15 Mod von maktone,1999
 extern uint8_t _binary_gtrash3f_mod_start;extern uint8_t _binary_gtrash3f_mod_end;     // 4. global trash 3 V2 von Jesper Kyd, 1991
+extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;       // 5. class11.mod von Maktone
+extern uint8_t _binary_2kad04_mod_start;extern uint8_t _binary_2kad04_mod_end;         // 6. 2kad04.mod  von Maktone
+
+
 
 uint8_t* g_pMusicPointer[(MAX_MUSICINDEX + 1) * 2];          // 2 Pointer / Musik + Pärchen NULL-Pointer
 
@@ -29,8 +33,10 @@ void InitMusicPointer(void) {
     g_pMusicPointer[0] = &_binary_echoing2_mod_start;g_pMusicPointer[1] = &_binary_echoing2_mod_end;
     g_pMusicPointer[2] = &_binary_ripped_mod_start;g_pMusicPointer[3] = &_binary_ripped_mod_end;
     g_pMusicPointer[4] = &_binary_class01_mod_start;g_pMusicPointer[5] = &_binary_class01_mod_end;
-    g_pMusicPointer[6] = &_binary_gtrash3f_mod_start;g_pMusicPointer[7] = &_binary_gtrash3f_mod_end;// Ende
-    g_pMusicPointer[8] = NULL;g_pMusicPointer[9] = NULL;// Ende
+    g_pMusicPointer[6] = &_binary_gtrash3f_mod_start;g_pMusicPointer[7] = &_binary_gtrash3f_mod_end;
+    g_pMusicPointer[8] = &_binary_class11_mod_start;g_pMusicPointer[9] = &_binary_class11_mod_end;
+    g_pMusicPointer[10] = &_binary_2kad04_mod_start;g_pMusicPointer[11] = &_binary_2kad04_mod_end;
+    g_pMusicPointer[12] = NULL;g_pMusicPointer[13] = NULL;// Ende
 }
 
 /*----------------------------------------------------------------------------
@@ -57,13 +63,11 @@ int InitAudioplayerStruct(AUDIOPLAYER *pAudioplayer, int nMusicIndex) {
     pAudioplayer->pMusicStart = g_pMusicPointer[nMusicIndex * 2 + 0];
     pAudioplayer->pMusicEnd = g_pMusicPointer[nMusicIndex * 2 + 1];
     pAudioplayer->nNextMusicIndex = 0;
-
     pAudioplayer->sdl_audio.freq = SAMPLERATE;
     pAudioplayer->sdl_audio.format = AUDIO_S16;
     pAudioplayer->sdl_audio.channels = 2;
     pAudioplayer->sdl_audio.samples = AUDIO_BUFFERSIZE;
     pAudioplayer->sdl_audio.callback = NULL;
-
     if ( (pAudioplayer->pMusicStart != NULL) && (pAudioplayer->pMusicEnd != NULL) ) {
         pAudioplayer->nMusicSize = pAudioplayer->pMusicEnd - pAudioplayer->pMusicStart;
     } else {
@@ -118,7 +122,13 @@ int CheckMusicSwitch(AUDIOPLAYER *pAudioplayer,const Uint8 *pKeyboardArray) {
     if (pKeyboardArray[SDL_SCANCODE_4] == 1) {
         if (pAudioplayer->nNextMusicIndex == 0) {
             pAudioplayer->nNextMusicIndex = 4;
-            nRet = 3;
+            nRet = 4;
+        }
+    }
+    if (pKeyboardArray[SDL_SCANCODE_5] == 1) {
+        if (pAudioplayer->nNextMusicIndex == 0) {
+            pAudioplayer->nNextMusicIndex = 5;
+            nRet = 5;
         }
     }
     return nRet;

@@ -1,27 +1,28 @@
 #define SDL_MAIN_HANDLED // ansonsten kommt folgende Linker-Fehlermeldung: undefined reference to 'WinMain'
 #include <SDL2/SDL.h>
 #include <math.h>
-#include "mystd.h"
-#include "mySDL.h"
 #include "asteroids.h"
 #include "buttons.h"
-#include "scroller.h"
-#include "KeyboardMouse.h"
-#include "modplay.h"
-#include "mystd.h"
 #include "copper.h"
-#include "EmeraldMine.h"
 #include "editor.h"
+#include "EmeraldMine.h"
+#include "EmeraldMineMainMenu.h"
+#include "KeyboardMouse.h"
+#include "loadlevel.h"
+#include "modplay.h"
+#include "mySDL.h"
+#include "mystd.h"
+#include "levelconverter.h"
+#include "scroller.h"
 
 
 SDL_DisplayMode ge_DisplayMode;
 extern INPUTSTATES InputStates;
-
+extern CONFIG Config;
 
 int main(int argc, char *argv[]) {
     bool bRun;
     bool bPrepareExit;
-    bool bChangeBallonAsteroids = false;
     bool bDrunkenAsteroids = false;
     bool bHasDisplayMode = false;;
     float fAngle2 = 0;
@@ -35,9 +36,9 @@ int main(int argc, char *argv[]) {
     float fFDLogoAngle = 0;
     uint32_t uFDLogoLastShown = SDL_GetTicks();
     SDL_Rect DestR_FDLogo;
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - FEBRUARY 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - MARCH 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991               "};
-    uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3 OR 4 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
+    uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3 OR 4 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
     uint8_t szMessage3[] = {"HALLO SASCHIMANN, ICH HABE NOCHMAL EIN BISSCHEN AN DIESEM SCH|NEN DEMO WEITER GEBAUT. ES SOLLTE DURCH DEN COPPER-EFFEKT NUN NOCH HYPNOTISCHER AUF DEN ZUSEHER WIRKEN. ICH WERDE IN N{CHSTER\
  ZEIT MAL SCHAUEN, OB ICH DAS SPIEL WEITER PORTIERE, BIS JETZT GEHT ES GANZ GUT VON DER HAND. BIS DENN ERSTMAL     9  8  7  6  5  4  3  2  1  0                                                    "};
 
@@ -70,17 +71,29 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     uint32_t uCopperTimer;
     bool bCopperScoll = false;
     uint8_t uModVolume = 100;
-
+    uint8_t uAsteroidsGfx = 0;
+    uint8_t uBallonsGfx = 0;
 
     InitXorShift();
+    if (ReadConfigFile() != 0) {        // Konfigurationsfile wird für Fenstergröße bzw. Bildschirmauflösung früh eingelesen.
+        return -1;
+    }
+    if (WriteDefaultLevelgroup() != 0) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Levelgroup problem","This should never occur!\nPlease check write permissions!",NULL);
+        return -1;
+    }
+    ShowConfigFile();
     InitButtons();
+    InitLevelgroups();
     memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
     InitAsteroidLayer();
-    InitVisibibleCopperSegments();
+    if (InitVisibibleCopperSegments() != 0) {
+        return -1;
+    }
     if (InitInputStates() != 0) {
         return -1;
     }
-    pWindow = InitSDL_Window(WINDOW_W, WINDOW_H, WINDOW_TITLE);     // Fenster erzeugen
+    pWindow = InitSDL_Window((int)Config.uResX, Config.uResY, WINDOW_TITLE);     // Fenster erzeugen
     if (pWindow == NULL) {
         return -1;
     }
@@ -97,16 +110,16 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     if (LoadTextures(pRenderer) != 0) {         // Für alle Bitmaps Texturen erzeugen
         return -1;
     }
-    nMenuChoose = Menu(pRenderer);
+    nMenuChoose = Menu(pRenderer);              // Demomenü aufrufen
     if ((nMenuChoose == 3) || (nMenuChoose == -1)) {
         return nMenuChoose;
     }
     if (nMenuChoose == 0) {
-        Editor(pWindow,pRenderer);
+        Editor(pRenderer);
         nMenuChoose = 1;                         // Nach Editor das Spiel aufrufen
     }
     if (nMenuChoose == 1) {
-        RunGame(pWindow,pRenderer);              // Ein erster Entwurf für Emerald Mine
+        EmeraldMineMainMenu(pRenderer);         // Emerald-Mine-Hauptmenü mit Spiel
         nMenuChoose = 2;
     }
     if (nMenuChoose == 2) {
@@ -134,7 +147,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
 
     // InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont)
     uScroller1Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller1,2,WINDOW_H / 2,szMessage1,0.3,0.02,100,1,true,false) != 0) {
+    if (InitScroller(&Scroller1,2,Config.uResY / 2,szMessage1,0.3,0.02,100,1,true,false) != 0) {
         return -1;
     }
     uScroller2Timer = SDL_GetTicks();
@@ -171,14 +184,26 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
             }
             uLastKeyTime = SDL_GetTicks();
         }
-        // Texture Asteroids/Ballons toggeln
+        // Texture Asteroids/Ballons/Smileys toggeln
         if (InputStates.pKeyboardArray[SDL_SCANCODE_A]) {
             if (SDL_GetTicks() - uLastKeyTime > 200) {
-                bChangeBallonAsteroids = !bChangeBallonAsteroids;
+                uAsteroidsGfx++;                        // Möglich ist 0 = Asteroide, 1 = Ballons, 2 = Smileys
+                if (uAsteroidsGfx > 2) {
+                    uAsteroidsGfx = 0;
+                }
             }
             uLastKeyTime = SDL_GetTicks();
         }
-
+        // Mittlere Ballon-Grafik  Asteroids/Ballons/Smileys toggeln
+        if (InputStates.pKeyboardArray[SDL_SCANCODE_B]) {
+            if (SDL_GetTicks() - uLastKeyTime > 200) {
+                uBallonsGfx++;                        // Möglich ist 0 = Ballons, 1 = Asteroid, 2 = Smileys
+                if (uBallonsGfx > 2) {
+                    uBallonsGfx = 0;
+                }
+            }
+            uLastKeyTime = SDL_GetTicks();
+        }
         if (InputStates.pKeyboardArray[SDL_SCANCODE_KP_PLUS]) {
             if (uModVolume < 100) {
                 uModVolume++;
@@ -194,7 +219,6 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
             }
             SDL_Log("minus, V:%u",uModVolume);
         }
-
 
         DoCopper(pRenderer,bCopperScoll);
         uCurrentTicks = SDL_GetTicks();
@@ -236,26 +260,29 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         if ( ((fScroller3AlteSteigung > 0) && (fScroller3NeueSteigung < 0)) || ((fScroller3AlteSteigung < 0) && (fScroller3NeueSteigung > 0)) ) {
             bScroller3Vor = !bScroller3Vor;     // Scroller 3 umkreist den Rest
         }
-
         if (uCurrentTicks - uAsteroidsTimer > 35000)
             bAsteroidsStarted = true;
         if (bAsteroidsStarted) {
-            if (bChangeBallonAsteroids) {
-                MoveAsteroids(pRenderer,GetTextureByIndex(68));
-            } else {
-                MoveAsteroids(pRenderer,GetTextureByIndex(69));
+            if (uAsteroidsGfx == 1) {
+                MoveAsteroids(pRenderer,GetTextureByIndex(68));     // Ballons
+            } else if (uAsteroidsGfx == 2) {
+                MoveAsteroids(pRenderer,GetTextureByIndex(718));    // Smileys
+            } else {    // 0
+                MoveAsteroids(pRenderer,GetTextureByIndex(69));     // Asteroide
             }
         }
         // Ballons anzeigen
-        DestR_Ballon.x = WINDOW_W / 2 - nBallonSize / 2;    // Position muss abhängig von Größe
-        DestR_Ballon.y = WINDOW_H / 2 - nBallonSize / 2;    // sein, damit mittig angezeigt wird
+        DestR_Ballon.x = Config.uResX / 2 - nBallonSize / 2;    // Position muss abhängig von Größe
+        DestR_Ballon.y = Config.uResY / 2 - nBallonSize / 2;    // sein, damit mittig angezeigt wird
         DestR_Ballon.w = nBallonSize; //360;
         DestR_Ballon.h = nBallonSize; // 360;
 
-        if (bChangeBallonAsteroids) {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(69),NULL,&DestR_Ballon);
+        if (uBallonsGfx == 1) {
+            SDL_RenderCopy(pRenderer,GetTextureByIndex(69),NULL,&DestR_Ballon); // Asteroide
+        } else if (uBallonsGfx == 2) {
+            SDL_RenderCopy(pRenderer,GetTextureByIndex(718),NULL,&DestR_Ballon); // Smileys
         } else {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(68),NULL,&DestR_Ballon);
+            SDL_RenderCopy(pRenderer,GetTextureByIndex(68),NULL,&DestR_Ballon); // Ballons
         }
 
         if (bScroller3Vor && bScroller3Started) {
@@ -269,7 +296,8 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
 
         if (bShowFDLogo) {
             uFDLogoLastShown = SDL_GetTicks();
-            DestR_FDLogo.x = 500 - fFDLogoSizeFactor * 15;    // Position muss abhängig von Größe
+            //                                              Addition sorgt dafür, dass Logo langsam nach rechts diftet
+            DestR_FDLogo.x = 500 - fFDLogoSizeFactor * 15 + fFDLogoSizeFactor * 6;    // Position muss abhängig von Größe
             DestR_FDLogo.y = 330 - fFDLogoSizeFactor * 15;    // sein, damit mittig angezeigt wird
             DestR_FDLogo.w = 69 * fFDLogoSizeFactor; // 695
             DestR_FDLogo.h = 31 * fFDLogoSizeFactor; // 313;
@@ -325,12 +353,12 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
             if (nWindowDirection == 0) {    // Rechts runter
                 nWindowPosX = nWindowPosX + nWindowSpeedX;
                 nWindowPosY = nWindowPosY + nWindowSpeedY;
-                if (nWindowPosX > ge_DisplayMode.w - WINDOW_W - 40) {    // Fenster stößt rechts an (- 40 wegen Fensterrahmen)
+                if (nWindowPosX > ge_DisplayMode.w - Config.uResX - 40) {    // Fenster stößt rechts an (- 40 wegen Fensterrahmen)
                     SDL_Log("%s: [rechts/runter] -> Fenster stoesst rechts an",__FUNCTION__);
                     nWindowDirection = 3;
                     nWindowSpeedX = (int)randf(1.1,5.1);
                     nWindowSpeedY = (int)randf(1.1,5.1);
-                } else if (nWindowPosY > ge_DisplayMode.h - WINDOW_H - 40) { // Fenster stößt unten an, -40 wegen Fensterrhamen
+                } else if (nWindowPosY > ge_DisplayMode.h - Config.uResY - 40) { // Fenster stößt unten an, -40 wegen Fensterrhamen
                     SDL_Log("%s: [rechts/runter] -> Fenster stoesst unten an",__FUNCTION__);
                     nWindowDirection = 1;
                     nWindowSpeedX = (int)randf(1.1,5.1);
@@ -339,7 +367,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
             } else if (nWindowDirection == 1) { // Rechts hoch
                 nWindowPosX = nWindowPosX + nWindowSpeedX;
                 nWindowPosY = nWindowPosY - nWindowSpeedY;
-                if (nWindowPosX > ge_DisplayMode.w - WINDOW_W - 40) {   // Fenster stößt rechts an, - 40 wegen Fensterrahmen
+                if (nWindowPosX > ge_DisplayMode.w - Config.uResX - 40) {   // Fenster stößt rechts an, - 40 wegen Fensterrahmen
                     SDL_Log("%s: [rechts/hoch] -> Fenster stoesst rechts an",__FUNCTION__);
                     nWindowDirection = 2;
                     nWindowSpeedX = (int)randf(1.1,5.1);
@@ -372,7 +400,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
                     nWindowDirection = 0;
                     nWindowSpeedX = (int)randf(1.1,5.1);
                     nWindowSpeedY = (int)randf(1.1,5.1);
-                } else if (nWindowPosY > ge_DisplayMode.h - WINDOW_H - 40) { // Fenster stößt unten an, - 40 wegen Fensterrahmen
+                } else if (nWindowPosY > ge_DisplayMode.h - Config.uResY - 40) { // Fenster stößt unten an, - 40 wegen Fensterrahmen
                     SDL_Log("%s: [links/runter] -> Fenster stoesst unten an",__FUNCTION__);
                     nWindowDirection = 2;
                     nWindowSpeedX = (int)randf(1.1,5.1);
@@ -386,6 +414,10 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     SDL_CloseAudioDevice(audio_device);
     SAFE_FREE(Audioplayer.pTheMusic);
     FreeTextures();
+    FreeScroller(&Scroller1);
+    FreeScroller(&Scroller2);
+    FreeScroller(&Scroller3);
+    FreeCopper();
     SDL_DestroyRenderer(pRenderer);
     SDL_DestroyWindow(pWindow);
     SDL_Quit();

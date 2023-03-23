@@ -729,6 +729,9 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_WALL_WITH_KEY_GENERAL):
             uTextureIndex = 539;
             break;
+        case (EMERALD_WALL_WITH_TIME_COIN):
+            uTextureIndex = 735;
+            break;
         case (EMERALD_WALL_WITH_BOMB):
             uTextureIndex = 540;
             break;
@@ -819,16 +822,16 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_DOOR_MULTICOLOR):
             uTextureIndex = 488;
             break;
-        case (EMERALD_DOOR_ONLY_UP):
+        case (EMERALD_DOOR_ONLY_UP_STEEL):
             uTextureIndex = 489;
             break;
-        case (EMERALD_DOOR_ONLY_DOWN):
+        case (EMERALD_DOOR_ONLY_DOWN_STEEL):
             uTextureIndex = 490;
             break;
-        case (EMERALD_DOOR_ONLY_LEFT):
+        case (EMERALD_DOOR_ONLY_LEFT_STEEL):
             uTextureIndex = 491;
             break;
-        case (EMERALD_DOOR_ONLY_RIGHT):
+        case (EMERALD_DOOR_ONLY_RIGHT_STEEL):
             uTextureIndex = 492;
             break;
         case (EMERALD_STEEL_INVISIBLE):
@@ -1416,7 +1419,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = 328;
             break;
         default:
-            SDL_Log("%s: unknown element: %x",__FUNCTION__,uElement);
+            SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());
             uTextureIndex = 0;     // Space
             break;
     }

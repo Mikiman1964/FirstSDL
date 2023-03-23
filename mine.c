@@ -1,4 +1,6 @@
 #include "EmeraldMine.h"
+#include "explosion.h"
+#include "greendrop.h"
 #include "mine.h"
 #include "sound.h"
 
@@ -15,6 +17,12 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineUp(uint32_t I) {
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        ControlCentralExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für die Mine ist das Spiel hier zu Ende
+    }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
@@ -62,6 +70,12 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineRight(uint32_t I) {
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        ControlCentralExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für die Mine ist das Spiel hier zu Ende
+    }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
@@ -111,7 +125,15 @@ void ControlMineDown(uint32_t I) {
     if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
         // MineDown kann vom Replikator geboren werden, dann hier nichts machen
         return;
-    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
+    }
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        ControlCentralExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für die Mine ist das Spiel hier zu Ende
+    }
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
+
         // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
         Playfield.pStatusAnimation[I] = 0;
         if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist nach unten frei?
@@ -169,6 +191,12 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineLeft(uint32_t I) {
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        ControlCentralExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für die Mine ist das Spiel hier zu Ende
+    }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
@@ -222,6 +250,8 @@ void ControlStandMine(uint32_t I) {
     if ( IsStandMineExplode(Playfield.pLevel[I - 1]) || IsStandMineExplode(Playfield.pLevel[I - Playfield.uLevel_X_Dimension]) ||
          IsStandMineExplode(Playfield.pLevel[I + 1]) || IsStandMineExplode(Playfield.pLevel[I + Playfield.uLevel_X_Dimension]) ) {
         SDL_Log("%s: Stand mine at position %d exploding",__FUNCTION__,I);
+        ControlCentralExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
     }
 }
 
@@ -237,7 +267,95 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsStandMineExplode(uint16_t uElement) {
-    return ( (uElement == EMERALD_ALIEN) || (uElement == EMERALD_YAM) || (uElement == EMERALD_MAN) ||
+    return ( (uElement == EMERALD_ALIEN) || (uElement == EMERALD_YAM) ||
              (uElement == EMERALD_MINE_UP) || (uElement == EMERALD_MINE_RIGHT) || (uElement == EMERALD_MINE_DOWN) || (uElement == EMERALD_MINE_LEFT) ||
              (uElement == EMERALD_BEETLE_UP) || (uElement == EMERALD_BEETLE_RIGHT) || (uElement == EMERALD_BEETLE_DOWN) || (uElement == EMERALD_BEETLE_LEFT) );
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlDynamiteOn
+------------------------------------------------------------------------------
+Beschreibung: Steuert ein angezündetes Dynamit und bringt es zur Explosion.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlDynamiteOn(uint32_t I) {
+
+    switch (Playfield.pStatusAnimation[I] & 0xFF000000) {
+        case (EMERALD_ANIM_DYNAMITE_ON_P1):
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P2;    // Von Phase 1 auf 2 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P2):
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P3;    // Von Phase 2 auf 3 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P3):
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P4;    // Von Phase 3 auf 4 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P4):
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            ControlCentralExplosion(I);
+            PreparePlaySound(SOUND_EXPLOSION,I);
+            break;
+        default:
+            SDL_Log("%s: Warning, unhandled status: 0x%x",__FUNCTION__,Playfield.pStatusAnimation[I] & 0xFF000000);
+            break;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlManWithDynamiteOn
+------------------------------------------------------------------------------
+Beschreibung: Steuert das Kombi-Element Man/gezündetes Dynamit.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlManWithDynamiteOn(uint32_t I) {
+
+    switch (Playfield.uDynamiteStatusAnim) {
+        case (EMERALD_ANIM_DYNAMITE_START):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P1;    // Von Start auf Phase 1 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            SDL_Log("%s: Start to P1",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P1):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P2;    // Von Phase 1 auf 2 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            SDL_Log("%s: to P2",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P2):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P3;    // Von Phase 2 auf 3 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            SDL_Log("%s: to P3",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P3):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P4;    // Von Phase 3 auf 4 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            SDL_Log("%s: to P4",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P4):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND;
+            Playfield.uDynamitePos = 0xFFFFFFFF;
+            if ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) == I) {   // Ist Man auf selbst gezündeten Dynamit stehen geblieben?
+                Playfield.bManDead = true;
+                Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
+                PreparePlaySound(SOUND_MAN_CRIES,I);
+            }
+            ControlCentralExplosion(I);
+            PreparePlaySound(SOUND_EXPLOSION,I);
+            break;
+        default:
+            SDL_Log("%s: Warning, unhandled status: 0x%x",__FUNCTION__,Playfield.pStatusAnimation[I] & 0xFF000000);
+            break;
+    }
 }

@@ -1,4 +1,5 @@
 #include "EmeraldMine.h"
+#include "explosion.h"
 #include "greendrop.h"
 #include "mystd.h"
 #include "sound.h"
@@ -50,9 +51,21 @@ void ControlGreenDrop(uint32_t I) {
         return;
     } else {
         // Unter Tropfen ist nicht frei
-        Playfield.pLevel[I] = EMERALD_GREEN_CHEESE;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
-        PreparePlaySound(SOUND_CHEESE,I);
+        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) {
+            SDL_Log("Green drop kills man");
+            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
+            PreparePlaySound(SOUND_MAN_CRIES,I);
+            Playfield.bManDead = true;
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) {
+            SDL_Log("Green drop hit stand mine");
+            ControlCentralExplosion(I + Playfield.uLevel_X_Dimension);
+            PreparePlaySound(SOUND_EXPLOSION,I);
+        } else {
+            Playfield.pLevel[I] = EMERALD_GREEN_CHEESE;
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            PreparePlaySound(SOUND_CHEESE,I);
+        }
     }
 }
 
@@ -128,4 +141,22 @@ void ControlSpreadCheese(uint32_t I) {
    Playfield.pLevel[I] = EMERALD_GREEN_DROP;           // Enstehenden Tropfen in Tropfen wandeln.
    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
    ControlGreenDrop(I);
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           IsGreenCheeseAround
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob sich grüner Käse um die angegebene Position I befindet.
+Parameter
+      Eingang: I, uint32_t, Index im Level, Position, die geprüft werden soll
+      Ausgang: -
+Rückgabewert:  bool, true = Käse hat Kontakt mit Position I
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+bool IsGreenCheeseAround(uint32_t I) {
+    return  ((Playfield.pLevel[I - 1] == EMERALD_GREEN_CHEESE) ||    // links
+            (Playfield.pLevel[I + 1] == EMERALD_GREEN_CHEESE) ||    // rechts
+            (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_GREEN_CHEESE) || // oben
+            (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_GREEN_CHEESE)); // unten
 }

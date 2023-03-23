@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <string.h>
+#include <dirent.h>
 #include "EmeraldMine.h"
 #include "ezxml.h"
 #include "loadlevel.h"
@@ -8,124 +10,16 @@
 #include "mystd.h"
 #include "zlib.h"
 
+
 extern PLAYFIELD Playfield;
 extern SDL_DisplayMode ge_DisplayMode;
 
-// Dieses interne Level wird verwendet, wenn die Datei Level.xml nicht gefunden wird
-uint8_t g_InternalLevel[] = {"<?xml version=\"1.0\"?>\
-<level>\
-  <title>DER BUNKER</title>\
-  <author>MIKIMAN</author>\
-  <version>01.00</version>\
-  <values>\
-    <emeralds_to_collect>20</emeralds_to_collect>\
-    <score_time_factor>2</score_time_factor>\
-    <speed_cheese_spread>0</speed_cheese_spread>\
-  </values>\
-  <leveldimension>\
-    <x>64</x>\
-    <y>32</y>\
-  </leveldimension>\
-  <scores>\
-    <emerald>100</emerald>\
-    <ruby>48</ruby>\
-    <sapphire>200</sapphire>\
-    <perl>5</perl>\
-    <crystal>8</crystal>\
-    <letter>100</letter>\
-    <key>2</key>\
-    <dynamite>3</dynamite>\
-    <hammer>3</hammer>\
-    <nutcracking>4</nutcracking>\
-    <stoning_beetle>5</stoning_beetle>\
-    <stoning_mine>6</stoning_mine>\
-    <stoning_alien>7</stoning_alien>\
-    <stoning_yam>8</stoning_yam>\
-    <timecoin>3</timecoin>\
-  </scores>\
-  <times>\
-    <to_play>500</to_play>\
-    <wheel_rotation>20</wheel_rotation>\
-    <magic_wall>30</magic_wall>\
-    <light>10</light>\
-    <timedoor>3</timedoor>\
-    <timecoin>50</timecoin>\
-  </times>\
-  <inventory>\
-    <dynamite>572</dynamite>\
-    <hammer>514</hammer>\
-    <white_key>4</white_key>\
-  </inventory>\
-  <replicators>\
-    <red>\
-      <active>0</active>\
-      <element>18</element>\
-    </red>\
-    <green>\
-      <active>0</active>\
-      <element>2</element>\
-    </green>\
-    <blue>\
-      <active>0</active>\
-      <element>154</element>\
-    </blue>\
-    <yellow>\
-      <active>0</active>\
-      <element>10</element>\
-    </yellow>\
-  </replicators>\
-  <lightbarriers>\
-    <red>\
-      <active>0</active>\
-    </red>\
-    <green>\
-      <active>1</active>\
-    </green>\
-    <blue>\
-      <active>1</active>\
-    </blue>\
-    <yellow>\
-      <active>0</active>\
-    </yellow>\
-  </lightbarriers>\
-  <messages>\
-    <m1>V2lsbGtvbW1lbiBpbSBlcnN0ZW4gVGVzdGxldmVsIQpEaWUgTW9uc3RlciBzaW5kIHp1ciBaZWl0IG5vY2ggaGFybWxvcywKYWJlciBlcyBmdW5rdGlvbmllcmVuIGJlcmVpdHMgdmllbGUgRWxlbWVudGUuCgpQcmVzcyBGaXJlIG9yIFNwYWNlIHRvIGNvbmZpcm0h</m1>\
-    <m2>RGllcyBpc3QgZGllIHp3ZWl0ZSBUZXh0Ym94IQoKUHJlc3MgRmlyZSBvciBTcGFjZSB0byBjb25maXJtIQ==</m2>\
-    <m3></m3>\
-    <m4></m4>\
-    <m5></m5>\
-    <m6></m6>\
-    <m7></m7>\
-    <m8></m8>\
-  </messages>\
-  <max_yam_explosions>2</max_yam_explosions>\
-  <yam_explosions>\
-    <explosion01>\
-      <element01>18</element01>\
-      <element02>18</element02>\
-      <element03>18</element03>\
-      <element04>19</element04>\
-      <element05>19</element05>\
-      <element06>19</element06>\
-      <element07>2</element07>\
-      <element08>2</element08>\
-      <element09>2</element09>\
-    </explosion01>\
-    <explosion02>\
-      <element01>133</element01>\
-      <element02>136</element02>\
-      <element03>135</element03>\
-      <element04>133</element04>\
-      <element05>136</element05>\
-      <element06>135</element06>\
-      <element07>133</element07>\
-      <element08>136</element08>\
-      <element09>135</element09>\
-    </explosion02>\
-  </yam_explosions>\
-  <leveldata>eJzFV0dvFDEU/rwEKYS6RKGGzSYhbEiUTQgdLfWIxAUhcaeGHsqJas0kwFJygAtKJHpRgDO9/gT+EW9sz8yzx7PACT155vm5fK96PNMI/yNNU5PoF32iJJrRSe8BIVEWvaJMXLuoiA7q94qVYjVJJIaJGxTdxFVppCLa1HpNPs6ldKRVkdYiUCRN+xfyo3LOJXuGlkRtSFTJwgAlMUSWV40nVpFsHfUkBkkSWV0ieR9ZXqFewewTNrC4sR/CZIeFRlLAfYwj8nGEMyS6iBOokB5rqFWIF5j0+Nm1c5tlc5iZZeNrWsD4XwnX7OjuQ8+PvI3MR4qW/2WSB5wukC+uo0eN97C1Mxzbs6jb/uD/KHNHGX5rsk+gnv3k/zJFvqqi3k+1UFIV4LOK+znLZ/3MbU5n8n3jSuwl3Kj2In3aSTKoNHiR4+P6XzRXk8jr2vO2BjGdoXbe8IGKQoCKxx69ezYi9rw6UtzY/zF+PHcd1mMDqhjEEJZgKZahhA6UzekQUoUUHO/64rvdo0kIO+NS+7l0I7VNWEPPYSynTGtHJ/FdNK8FjxU6pzTirv2+M6fOdBpl+LMc/Y9lLOpROd+D54RZpzZBsom/jDlvo6xxHd9ZmTuJEar7SIuiiv5Ksv1JEkM9b7eT/bH9+zNRCamGXXuCZF2b6r8nzEmMKYr63TSyWXE76Aw4maw7Tu0CTuTEPaXtjn11hJaFbSz+EX1Q+AWjQRG7yN/6VJDYiTdm14fGi/tMfx5DTHNbYqviWhNP6PjOdnSyM3iMkcRaGlmBw+jDPaxWuuidexWn/TGHJHOTPdOdt2Z2t/ElbhppbL/ERwdf4q4hiSPMMoka0vqZz/g600Sa3Glsf2BmN6unRk4jdBdnsUWtOGpWfU98lf+9HTHeDwm9yLDuZPwd6/IZX/AV32h3jW9jnENcK7HmE5kI7mH5734ZXJmtfST5ZCQFxGfQMzbjABrXc83heeOnXYhbDF3rdtujUVSZp3EKrxR/MJE99VaS7wYS92uWJ3mz18T8W9NvwgM8SqSvSfISMzFlKDRvaZ4+8n2d7BM5zbL0BPDdLuvmyxgkuCHZleri94TGq1m+dcdvWPju+S+x2NxD9LdP0k19qiFlo6FvVPym4bc/vvG4pO3vpHh0qZmHPPFP4zFF1e3G3295tiLy8aV3NHQsTzm9496GnndzNv+fQ8ffXVlnueDGgO9bw4Di3udYnuLn13eTgx8w++OcDD34P00E+Dngz5C8k7RbaX8RlxRdTmo3SDJrkZNNGr/I8F8mEfRHWOOP4wfN/2HWcDqJK7iq6JqZ3WJlRb7/f6rReWZmmW7QHer23qX+odpFLNF/wP+PpvEbTBnCsg==</leveldata>\
-  <leveldata_md5_hash>5AC3012E387DAC41CAEDA23B21B128B5</leveldata_md5_hash>\
-</level>"};
+uint32_t g_LevelgroupFilesCount;
+LEVELGROUPFILE LevelgroupFiles[EMERALD_MAX_LEVELGROUPFILES];
+LEVELGROUP SelectedLevelgroup;
+CONFIG Config;
+NAMES Names;
+ACTUALPLAYER Actualplayer;
 
 
 /*----------------------------------------------------------------------------
@@ -236,7 +130,7 @@ int GetTitleAuthorVersionHashFromXml(ezxml_t xml) {
             pAttr = node->txt;
             uLen = (uint32_t)strlen(pAttr);
             if (uLen == 0) {
-                strcpy(Playfield.szLevelTitle,"unknown title");
+                strcpy(Playfield.szLevelTitle,"UNKNOWN TITLE");
             } else if (uLen > EMERALD_TITLE_LEN) {
                 memcpy(Playfield.szLevelTitle,pAttr,EMERALD_TITLE_LEN);
             } else {
@@ -247,7 +141,7 @@ int GetTitleAuthorVersionHashFromXml(ezxml_t xml) {
                 pAttr = node->txt;
                 uLen = (uint32_t)strlen(pAttr);
                 if (uLen == 0) {
-                    strcpy(Playfield.szLevelTitle,"unknown author");
+                    strcpy(Playfield.szLevelAuthor,"UNKNOWN AUTHOR");
                 } else if (uLen > EMERALD_AUTHOR_LEN) {
                     memcpy(Playfield.szLevelAuthor,pAttr,EMERALD_AUTHOR_LEN);
                 } else {
@@ -964,9 +858,7 @@ int GetLeveldataFromXml(ezxml_t xml) {
     char *pAttr;
     uint32_t uBase64Len;
     uint32_t uBinLen;
-    uint32_t I;
     char szMD5String[32 + 1];   // + 1 für Stringende
-    char szNum[16];
     MD5Context MD5Leveldata;
     uint8_t *pCompressed;
     uint32_t uUnCompressLen;
@@ -982,11 +874,7 @@ int GetLeveldataFromXml(ezxml_t xml) {
                 md5Init(&MD5Leveldata);
                 md5Update(&MD5Leveldata,(uint8_t*)pAttr,strlen(pAttr));
                 md5Finalize(&MD5Leveldata);
-                szMD5String[0] = 0;
-                for (I = 0; I < 16; I++) {
-                    sprintf(szNum,"%02X",MD5Leveldata.digest[I]);
-                    strcat(szMD5String,szNum);
-                }
+                GetMd5String(MD5Leveldata.digest,szMD5String);
                 if (strcasecmp(Playfield.szMd5String,szMD5String) == 0) {
                     // Genaue Länge der Binärdaten ermitteln und Probelauf mit Base64-Daten
                     if (Base64ToBin(NULL,(uint8_t*)pAttr, strlen(pAttr),&uBinLen) != 0) {
@@ -1030,70 +918,92 @@ int GetLeveldataFromXml(ezxml_t xml) {
 
 
 /*----------------------------------------------------------------------------
+Name:           GetLevelTag
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt das Leveltag innerhalb einer geöffneten Levelgruppe.
+Parameter
+      Eingang: xml, ezxml_t, Zeiger auf geöffnete XML-Datei (Levelgruppe).
+               uLevelNumber, uint32_t, Level innerhalb der Levelgruppe
+      Ausgang: -
+Rückgabewert:  ezxml_t, NULL = Fehler, sonst Tag auf Level
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+ezxml_t GetLevelTag(ezxml_t xml,uint32_t uLevelNumber) {
+    char szLevelNumberTag[16];              // level000
+
+    sprintf(szLevelNumberTag,"level%03u",uLevelNumber);
+    return ezxml_child(xml,szLevelNumberTag);
+}
+
+/*----------------------------------------------------------------------------
 Name:           InitialisePlayfield
 ------------------------------------------------------------------------------
 Beschreibung: Lädt die Leveldaten und initialisiert das Spielfeld. Das Ergebnis
               wird in der Struktur Playfield.x abgelegt.
               Diese Funktion alloziert Speicher, der später wieder freigegebem
-              werden muss: Playfield.pLevel und Playfield.pStatusAnimation
+              werden muss: Playfield.pLevel und Playfield.pStatusAnimation.
+
+              Vor Aufruf dieser Funktion muss eine Levelgruppe mit SelectLevelgroup() ausgewählt worden sein.
 Parameter
-      Eingang: pszLevelFilename, char *, Zeiger auf Level-Dateinamen
+      Eingang: uLevelgroupIndex, uint32_t, Auswahl der Levelgruppe aus LevelgroupFiles[].x über Levelgruppen-Index
+               uLevelNumber, uint32_t, Level innerhalb der Levelgruppe
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x, ge_DisplayMode, g_InternalLevel[]
+Seiteneffekte: Playfield.x, ge_DisplayMode, SelectedLevelgroup.x, Config.x
 ------------------------------------------------------------------------------*/
-int InitialisePlayfield(char *pszLevelFilename) {
+int InitialisePlayfield(uint32_t uLevelNumber) {
     ezxml_t xml;
-    bool bFreeXml;      // Zeigt an, dass der Speicher auf Pointer pXml freigegeben werden muss
+    ezxml_t level;
     int nErrorCode;
     uint32_t I;
     uint32_t uXmlLen;
     uint8_t *pXml;
-    uint8_t *pCopyofInternalXml = NULL;
 
     nErrorCode = -1;
     memset(&Playfield,0,sizeof(Playfield));
     InitYamExplosions(Playfield.YamExplosions);
+    Playfield.uReplicatorRedObject = EMERALD_SPACE;
+    Playfield.uReplicatorGreenObject = EMERALD_SPACE;
+    Playfield.uReplicatorBlueObject = EMERALD_SPACE;
+    Playfield.uReplicatorYellowObject = EMERALD_SPACE;
     Playfield.bInitOK = false;
     for (I = 0; I < EMERALD_MAX_MESSAGES; I++) {
         Playfield.pMessage[I] = NULL;
     }
-    pXml = ReadFile(pszLevelFilename,&uXmlLen);
-    if (pXml != NULL) {
-        bFreeXml = true;
-        SDL_Log("%s: using xml from file %s, filesize: %u",__FUNCTION__,pszLevelFilename,uXmlLen);
-    } else {
-        bFreeXml = false;
-        SDL_Log("%s: using internal level, size: %u",__FUNCTION__,(uint32_t)strlen((char*)g_InternalLevel));
-        pCopyofInternalXml = malloc(strlen((char*)g_InternalLevel) + 1);    // ezxml macht originale-XML-datei kaputt?
-        if (pCopyofInternalXml != NULL) {
-            strcpy((char*)pCopyofInternalXml,(char*)g_InternalLevel);
-            pXml = pCopyofInternalXml;
+    if ((SelectedLevelgroup.bOK) && (uLevelNumber < SelectedLevelgroup.uLevelCount)) {
+        pXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen);     // Levelgruppen-Datei einlesen
+        if (pXml != NULL) {
+            SDL_Log("%s: using levelgroup %s, filesize: %u",__FUNCTION__,SelectedLevelgroup.szFilename,uXmlLen);
         } else {
+            SDL_Log("%s: can not read levelgroup file %s",__FUNCTION__,SelectedLevelgroup.szFilename);
             return -1;
-        }
-    }
-    xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
-    if (xml != NULL) {
-        // Zunächst X- und Y-Dimension ermitteln. Diese Werte werden benötigt, um die Größe des Levelspeichers zu bestimmen
-        if (GetLeveldimensionFromXml(xml,&Playfield.uLevel_X_Dimension,&Playfield.uLevel_Y_Dimension) == 0) {
-            if (GetMemoryForPlayfield() == 0) {
-                if (GetTitleAuthorVersionHashFromXml(xml) == 0) {
-                    if (GetLevelScoresFromXml(xml) == 0) {
-                        if (GetOtherLevelValuesFromXml(xml) == 0) {
-                            if (GetLevelTimesFromXml(xml) == 0) {
-                                if (GetLevelInventoryFromXml(xml) == 0) {
-                                    if (GetReplicatorLighbarrierSettingsFromXml(xml) == 0) {
-                                        if (GetLetterMessagesFromXml(xml) == 0) {
-                                            if (GetYamExplosionsFromXml(xml) == 0) {
-                                                if (GetLeveldataFromXml(xml) == 0) {
-                                                    if (GetManCoordinates(Playfield.pLevel,Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension,&Playfield.uManXpos,&Playfield.uManYpos) == 0) {
-                                                        if (CheckReplicators(Playfield.pLevel,Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension) == 0) {
-                                                            if (CheckAcidPools(Playfield.pLevel,Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension) == 0) {
-                                                                if (CheckLevelBorder() == 0) {
-                                                                    CloseAllDoors();
-                                                                    nErrorCode = 0;
-                                                                    Playfield.bInitOK = true;
+       }
+        xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
+        if (xml != NULL) {
+            level = GetLevelTag(xml,uLevelNumber);
+            if (level != NULL) {
+                // Zunächst X- und Y-Dimension ermitteln. Diese Werte werden benötigt, um die Größe des Levelspeichers zu bestimmen
+                if (GetLeveldimensionFromXml(level,&Playfield.uLevel_X_Dimension,&Playfield.uLevel_Y_Dimension) == 0) {
+                    if (GetMemoryForPlayfield() == 0) {
+                        if (GetTitleAuthorVersionHashFromXml(level) == 0) {
+                            if (GetLevelScoresFromXml(level) == 0) {
+                                if (GetOtherLevelValuesFromXml(level) == 0) {
+                                    if (GetLevelTimesFromXml(level) == 0) {
+                                        if (GetLevelInventoryFromXml(level) == 0) {
+                                            if (GetReplicatorLighbarrierSettingsFromXml(level) == 0) {
+                                                if (GetLetterMessagesFromXml(level) == 0) {
+                                                    if (GetYamExplosionsFromXml(level) == 0) {
+                                                        if (GetLeveldataFromXml(level) == 0) {
+                                                            if (GetManCoordinates(Playfield.pLevel,Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension,&Playfield.uManXpos,&Playfield.uManYpos) == 0) {
+                                                                if (CheckReplicators(Playfield.pLevel,Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension) == 0) {
+                                                                    if (CheckAcidPools(Playfield.pLevel,Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension) == 0) {
+                                                                        if (CheckLevelBorder() == 0) {
+                                                                            CloseAllDoors();
+                                                                            SetActiveDynamiteP1();
+                                                                            nErrorCode = 0;
+                                                                            Playfield.bInitOK = true;
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -1108,19 +1018,16 @@ int InitialisePlayfield(char *pszLevelFilename) {
                     }
                 }
             }
+        } else {
+            SDL_Log("%s: ezxml_parse_str() failed",__FUNCTION__);
         }
-    } else {
-        SDL_Log("%s: ezxml_parse_str() failed",__FUNCTION__);
-    }
-    ezxml_free(xml);    // Prüft selbst, ob pointer NULL ist
-    if (bFreeXml) {
+        ezxml_free(xml);    // Prüft selbst, ob pointer NULL ist
         SAFE_FREE(pXml);
     }
-    SAFE_FREE(pCopyofInternalXml);
     if (Playfield.bInitOK) {
         // Sichtbaren Bereich berechnen
-        Playfield.uVisibleY = ((WINDOW_H - PANEL_H) / FONT_H);
-        Playfield.uVisibleX = WINDOW_W / FONT_W;
+        Playfield.uVisibleY = ((Config.uResY - PANEL_H) / FONT_H);
+        Playfield.uVisibleX = Config.uResX / FONT_W;
         Playfield.uVisibleCenterY = Playfield.uVisibleY / 2;
         Playfield.uVisibleCenterX = Playfield.uVisibleX / 2;
         // Y-Zentrierung des Levels im Anzeigebereich
@@ -1138,11 +1045,11 @@ int InitialisePlayfield(char *pszLevelFilename) {
             Playfield.uShiftLevelXpix = 0;
         }
         // Positionsüberläufe abfangen
-        Playfield.nMaxXpos = (Playfield.uLevel_X_Dimension * FONT_W) - WINDOW_W;
+        Playfield.nMaxXpos = (Playfield.uLevel_X_Dimension * FONT_W) - Config.uResX;
         if (Playfield.nMaxXpos < 0) {
             Playfield.nMaxXpos = 0;
         }
-        Playfield.nMaxYpos = (Playfield.uLevel_Y_Dimension * FONT_H) - WINDOW_H + PANEL_H;
+        Playfield.nMaxYpos = (Playfield.uLevel_Y_Dimension * FONT_H) - Config.uResY + PANEL_H;
         if (Playfield.nMaxYpos < 0) {
             Playfield.nMaxYpos = 0;
         }
@@ -1180,10 +1087,15 @@ int InitialisePlayfield(char *pszLevelFilename) {
         Playfield.bSwitchDoorImpluse = false;
         Playfield.uShowMessageNo = 0;
         Playfield.uYamExplosion = 0;          // Aktuelle YAM-Explosion
+        Playfield.uFireCount = 0;
+        Playfield.uDynamitePos = 0xFFFFFFFF;  // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung
+        Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND; // Status/Animation für manuell gezündetes Dynamit
         InitRollUnderground();
         PrintPlayfieldValues();
         SetCentralExplosionCoordinates();
         SetCentralMegaExplosionCoordinates();
+        Playfield.uPlayTimeStart = 0;
+        Playfield.uPlayTimeEnd = 0;
     }
     return nErrorCode;
 }
@@ -1200,21 +1112,47 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetCentralExplosionCoordinates() {
-    Playfield.nCentralExplosionCoordinates[0] = -(int)Playfield.uLevel_X_Dimension - 1;     // oben links
-    Playfield.nCentralExplosionCoordinates[1] = -(int)Playfield.uLevel_X_Dimension;         // oben mitte
-    Playfield.nCentralExplosionCoordinates[2] = -(int)Playfield.uLevel_X_Dimension + 1;     // oben rechts
-    Playfield.nCentralExplosionCoordinates[3] = -1;                                         // mitte links
-    Playfield.nCentralExplosionCoordinates[4] = 1;                                          // mitte rechts
-    Playfield.nCentralExplosionCoordinates[5] = (int)Playfield.uLevel_X_Dimension - 1;     // unten links
-    Playfield.nCentralExplosionCoordinates[6] = (int)Playfield.uLevel_X_Dimension;         // unten mitte
-    Playfield.nCentralExplosionCoordinates[7] = (int)Playfield.uLevel_X_Dimension + 1;     // unten rechts
+    Playfield.nCentralExplosionCoordinates[0] = -(int)Playfield.uLevel_X_Dimension - 1;         // oben links
+    Playfield.nCentralExplosionCoordinates[1] = -(int)Playfield.uLevel_X_Dimension;             // oben mitte
+    Playfield.nCentralExplosionCoordinates[2] = -(int)Playfield.uLevel_X_Dimension + 1;         // oben rechts
+    Playfield.nCentralExplosionCoordinates[3] = -1;                                             // mitte links
+    Playfield.nCentralExplosionCoordinates[4] = 1;                                              // mitte rechts
+    Playfield.nCentralExplosionCoordinates[5] = (int)Playfield.uLevel_X_Dimension - 1;          // unten links
+    Playfield.nCentralExplosionCoordinates[6] = (int)Playfield.uLevel_X_Dimension;              // unten mitte
+    Playfield.nCentralExplosionCoordinates[7] = (int)Playfield.uLevel_X_Dimension + 1;          // unten rechts
+    // Für Yam-Explosion mit Replikator (obere Hälfte)
+    Playfield.nCheckReplicatorForYamExplosionTop[0] = -(int)Playfield.uLevel_X_Dimension - 1;   // R. oben links
+    Playfield.nCheckReplicatorForYamExplosionTop[1] = -(int)Playfield.uLevel_X_Dimension;       // R. oben mitte
+    Playfield.nCheckReplicatorForYamExplosionTop[2] = -(int)Playfield.uLevel_X_Dimension + 1;   // R. oben rechts
+    Playfield.nCheckReplicatorForYamExplosionTop[3] = -1;                                       // R. mitte links
+    Playfield.nCheckReplicatorForYamExplosionTop[4] = 1;                                        // R. mitte rechts
+    // Für Yam-Explosion mit Replikator (untere Hälfte)
+    Playfield.nCheckReplicatorForYamExplosionButtom[0] = -1;                                    // R. oben links
+    Playfield.nCheckReplicatorForYamExplosionButtom[1] = 0;                                     // R. oben mitte
+    Playfield.nCheckReplicatorForYamExplosionButtom[2] = 1;                                     // R. oben rechts
+    Playfield.nCheckReplicatorForYamExplosionButtom[3] = (int)Playfield.uLevel_X_Dimension - 1; // R. mitte links;
+    Playfield.nCheckReplicatorForYamExplosionButtom[4] = (int)Playfield.uLevel_X_Dimension + 1; // R. mitte rechts;
+    // Für Yam-Explosion mit Säurebecken (obere Hälfte)
+    Playfield.nCheckAcidPoolForYamExplosionTop[0] = -(int)Playfield.uLevel_X_Dimension - 1;     // S. oben links
+    Playfield.nCheckAcidPoolForYamExplosionTop[1] = -(int)Playfield.uLevel_X_Dimension;         // S. oben mitte
+    Playfield.nCheckAcidPoolForYamExplosionTop[2] = -(int)Playfield.uLevel_X_Dimension + 1;     // S. oben rechts
+    Playfield.nCheckAcidPoolForYamExplosionTop[3] = - 1;                                        // S. mitte links
+    Playfield.nCheckAcidPoolForYamExplosionTop[4] = 0;                                          // S. mitte
+    Playfield.nCheckAcidPoolForYamExplosionTop[5] = 1;                                          // S. mitte rechts
+    // Für Yam-Explosion mit Säurebecken (untere Hälfte)
+    Playfield.nCheckAcidPoolForYamExplosionButtom[0] = -1;                                      // S. oben links
+    Playfield.nCheckAcidPoolForYamExplosionButtom[1] = 0;                                       // S. oben mitte
+    Playfield.nCheckAcidPoolForYamExplosionButtom[2] = 1;                                       // S. oben rechts
+    Playfield.nCheckAcidPoolForYamExplosionButtom[3] = (int)Playfield.uLevel_X_Dimension - 1;   // S. mitte links
+    Playfield.nCheckAcidPoolForYamExplosionButtom[4] = (int)Playfield.uLevel_X_Dimension;       // S. mitte
+    Playfield.nCheckAcidPoolForYamExplosionButtom[5] = (int)Playfield.uLevel_X_Dimension + 1;   // S. mitte rechts
 }
 
 
 /*----------------------------------------------------------------------------
 Name:           SetCentralMegaExplosionCoordinates
 ------------------------------------------------------------------------------
-Beschreibung: Hinterlegt die  Koordinaten für eine zentrale Mega-Explosion ab Mittelpunkt.
+Beschreibung: Hinterlegt die Koordinaten für eine zentrale Mega-Explosion ab Mittelpunkt.
 Parameter
       Eingang: -
       Ausgang: -
@@ -1222,10 +1160,27 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetCentralMegaExplosionCoordinates(void) {
-// TODO
-
+    Playfield.nCentralMegaExplosionCoordinates[0] = -(int)Playfield.uLevel_X_Dimension * 2 - 1; // Ganz oben links
+    Playfield.nCentralMegaExplosionCoordinates[1] = -(int)Playfield.uLevel_X_Dimension * 2;     // Ganz oben mitte
+    Playfield.nCentralMegaExplosionCoordinates[2] = -(int)Playfield.uLevel_X_Dimension * 2 + 1; // Ganz oben rechts
+    Playfield.nCentralMegaExplosionCoordinates[3] = -(int)Playfield.uLevel_X_Dimension - 2;     // oben links, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[4] = -(int)Playfield.uLevel_X_Dimension - 1;     // oben links, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[5] = -(int)Playfield.uLevel_X_Dimension;         // oben mitte, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[6] = -(int)Playfield.uLevel_X_Dimension + 1;     // oben rechts, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[7] = -(int)Playfield.uLevel_X_Dimension + 2;     // oben rechts, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[8] = -2;                                         // mitte, ganz links
+    Playfield.nCentralMegaExplosionCoordinates[9] = -1;                                         // mitte, links
+    Playfield.nCentralMegaExplosionCoordinates[10] = 1;                                         // mitte, rechts
+    Playfield.nCentralMegaExplosionCoordinates[11] = 2;                                         // mitte, ganz rechts
+    Playfield.nCentralMegaExplosionCoordinates[12] = (int)Playfield.uLevel_X_Dimension - 2;     // unten links, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[13] = (int)Playfield.uLevel_X_Dimension - 1;     // unten links, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[14] = (int)Playfield.uLevel_X_Dimension;         // unten mitte, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[15] = (int)Playfield.uLevel_X_Dimension + 1;     // unten rechts, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[16] = (int)Playfield.uLevel_X_Dimension + 2;     // unten rechts, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[17] = (int)Playfield.uLevel_X_Dimension * 2 - 1; // Ganz unten links
+    Playfield.nCentralMegaExplosionCoordinates[18] = (int)Playfield.uLevel_X_Dimension * 2;     // Ganz unten mitte
+    Playfield.nCentralMegaExplosionCoordinates[19] = (int)Playfield.uLevel_X_Dimension * 2 + 1; // Ganz unten rechts
 }
-
 
 
 /*----------------------------------------------------------------------------
@@ -1825,6 +1780,28 @@ void CloseAllDoors(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           SetActiveDynamiteP1
+------------------------------------------------------------------------------
+Beschreibung: Setzt alle aktiven Dynamits auf Phase 1.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void SetActiveDynamiteP1(void) {
+    uint32_t I;                 // Index im Level
+
+    for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
+        if (Playfield.pLevel[I] == EMERALD_DYNAMITE_ON) {
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P1;
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           PrintPlayfieldValues
 ------------------------------------------------------------------------------
 Beschreibung: Zeigt die Werte der Struktur Playfield.x an.
@@ -1843,33 +1820,34 @@ void PrintPlayfieldValues() {
         printf("Version:                     %s\r\n",Playfield.szVersion);       // z.B. "01.00"
         printf("Level title:                 %s\r\n",Playfield.szLevelTitle);
         printf("Level author:                %s\r\n",Playfield.szLevelAuthor);
-        printf("Score Emerald:               %d\r\n",Playfield.uScoreEmerald);
-        printf("Score Ruby:                  %d\r\n",Playfield.uScoreRuby);
-        printf("Score Saphire:               %d\r\n",Playfield.uScoreSaphir);
-        printf("Score Perl:                  %d\r\n",Playfield.uScorePerl);
-        printf("Score crystal:               %d\r\n",Playfield.uScoreCrystal);
-        printf("Score Letter:                %d\r\n",Playfield.uScoreMessage);
-        printf("Score Key:                   %d\r\n",Playfield.uScoreKey);
-        printf("Score Dynamite:              %d\r\n",Playfield.uScoreDynamite);
-        printf("Score Hammer:                %d\r\n",Playfield.uScoreHammer);
-        printf("Score Nut cracking:          %d\r\n",Playfield.uScoreNutCracking);
-        printf("Score stoning beetle:        %d\r\n",Playfield.uScoreStoningBeetle);
-        printf("Score stoning mine:          %d\r\n",Playfield.uScoreStoningMine);
-        printf("Score stoning alien:         %d\r\n",Playfield.uScoreStoningAlien);
-        printf("Score stoning yam:           %d\r\n",Playfield.uScoreStoningYam);
-        printf("Score time coin:             %d\r\n",Playfield.uScoreTimeCoin);
-        printf("Additional time for coin:    %d\r\n",Playfield.uAdditonalTimeCoinTime);
-        printf("Emerald to collect:          %d\r\n",Playfield.uEmeraldsToCollect);
-        printf("Dynamite Count:              %d\r\n",Playfield.uDynamiteCount);
-        printf("Hammer Count:                %d\r\n",Playfield.uHammerCount);
-        printf("White key Count:             %d\r\n",Playfield.uWhiteKeyCount);
-        printf("Time Score Factor:           %d\r\n",Playfield.uTimeScoreFactor);
-        printf("Cheese spread speed:         %d\r\n",Playfield.uCheeseSpreadSpeed);
-        printf("Time to play:                %d\r\n",Playfield.uTimeToPlay);
-        printf("Time Wheel Rotation:         %d\r\n",Playfield.uTimeWheelRotation);
-        printf("Time magic wall:             %d\r\n",Playfield.uTimeMagicWall);
-        printf("Time light:                  %d\r\n",Playfield.uTimeLight);
-        printf("Time TimeDoor:               %d\r\n",Playfield.uTimeDoorTime);
+        printf("Score Emerald:               %u\r\n",Playfield.uScoreEmerald);
+        printf("Score Ruby:                  %u\r\n",Playfield.uScoreRuby);
+        printf("Score Saphire:               %u\r\n",Playfield.uScoreSaphir);
+        printf("Score Perl:                  %u\r\n",Playfield.uScorePerl);
+        printf("Score crystal:               %u\r\n",Playfield.uScoreCrystal);
+        printf("Score Letter:                %u\r\n",Playfield.uScoreMessage);
+        printf("Score Key:                   %u\r\n",Playfield.uScoreKey);
+        printf("Score Dynamite:              %u\r\n",Playfield.uScoreDynamite);
+        printf("Score Hammer:                %u\r\n",Playfield.uScoreHammer);
+        printf("Score Nut cracking:          %u\r\n",Playfield.uScoreNutCracking);
+        printf("Score stoning beetle:        %u\r\n",Playfield.uScoreStoningBeetle);
+        printf("Score stoning mine:          %u\r\n",Playfield.uScoreStoningMine);
+        printf("Score stoning alien:         %u\r\n",Playfield.uScoreStoningAlien);
+        printf("Score stoning yam:           %u\r\n",Playfield.uScoreStoningYam);
+        printf("Score time coin:             %u\r\n",Playfield.uScoreTimeCoin);
+        printf("Additional time for coin:    %u\r\n",Playfield.uAdditonalTimeCoinTime);
+        printf("Emerald to collect:          %u\r\n",Playfield.uEmeraldsToCollect);
+        printf("Dynamite Count:              %u\r\n",Playfield.uDynamiteCount);
+        printf("Hammer Count:                %u\r\n",Playfield.uHammerCount);
+        printf("White key Count:             %u\r\n",Playfield.uWhiteKeyCount);
+        printf("Time Score Factor:           %u\r\n",Playfield.uTimeScoreFactor);
+        printf("Cheese spread speed:         %u\r\n",Playfield.uCheeseSpreadSpeed);
+        printf("Time to play:                %u\r\n",Playfield.uTimeToPlay);
+        printf("Time Wheel Rotation:         %u\r\n",Playfield.uTimeWheelRotation);
+        printf("Time Wheel Rotation Left:    %u\r\n",Playfield.uTimeWheelRotationLeft);
+        printf("Time magic wall:             %u\r\n",Playfield.uTimeMagicWall);
+        printf("Time light:                  %u\r\n",Playfield.uTimeLight);
+        printf("Time TimeDoor:               %u\r\n",Playfield.uTimeDoorTime);
         printf("Replicator red, element:     %02X\r\n",Playfield.uReplicatorRedObject);
         printf("Replicator red, on:          %d\r\n",Playfield.bReplicatorRedOn);
         printf("Replicator green, element:   %02X\r\n",Playfield.uReplicatorGreenObject);
@@ -1883,15 +1861,1108 @@ void PrintPlayfieldValues() {
         printf("Lighbarrier blue, on:        %d\r\n",Playfield.bLightBarrierBlueOn);
         printf("Lighbarrier yellow, on:      %d\r\n",Playfield.bLightBarrierYellowOn);
         printf("MaxYamExplosionIndex:        %d\r\n",Playfield.uMaxYamExplosionIndex);
-        printf("Total Score:                 %d\r\n",Playfield.uTotalScore);            // Total-Score
-        printf("Level Dimension:             X(%d) x Y(%d)\r\n",Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension);
-        printf("visible Dimension:           X(%d) x Y(%d)\r\n",Playfield.uVisibleX,Playfield.uVisibleY);   // Sichtbarer Bereich (nur von Fenstergröße abhängig)
-        printf("visible Center:              X(%d) / Y(%d)\r\n",Playfield.uVisibleCenterX,Playfield.uVisibleCenterY);   // Zentrum des sichtbaren Bereichs (nur von Fenstergröße abhängig)
+        printf("Total Score:                 %u\r\n",Playfield.uTotalScore);            // Total-Score
+        printf("Level Dimension:             X(%u) x Y(%u)\r\n",Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension);
+        printf("visible Dimension:           X(%u) x Y(%u)\r\n",Playfield.uVisibleX,Playfield.uVisibleY);   // Sichtbarer Bereich (nur von Fenstergröße abhängig)
+        printf("visible Center:              X(%u) / Y(%u)\r\n",Playfield.uVisibleCenterX,Playfield.uVisibleCenterY);   // Zentrum des sichtbaren Bereichs (nur von Fenstergröße abhängig)
         printf("top left Pixel Position:     X(%d) / Y(%d)\r\n",Playfield.nTopLeftXpos,Playfield.nTopLeftYpos);           // aktuelle X/Y-Pixelposition, abhängig von Man position
-        printf("Man Position:                X(%d) / Y(%d)\r\n",Playfield.uManXpos,Playfield.uManYpos);   // Man-X/Y-Element-Koordinate
+        printf("Man Position:                X(%u) / Y(%u)\r\n",Playfield.uManXpos,Playfield.uManYpos);   // Man-X/Y-Element-Koordinate
         printf("FrameCounter:                %u\r\n",Playfield.uFrameCounter);
         printf("MD5 hash for leveldata:      %s\r\n",Playfield.szMd5String);
     } else {
         printf("Error in level data, can't show playfield values\r\n");
     }
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           CalculateLevelGroupMd5Hash
+------------------------------------------------------------------------------
+Beschreibung: Berechnet den MD5-Hash einer Levelgruppe.
+
+
+Parameter
+      Eingang: puLevelgroupXml, uint8_t *, Zeiger auf Levelgruppen-XML-Daten, muss 0-terminiert (String) sein
+      Ausgang: puMd5Hash, uint8_t, Zeiger auf mindestens 16 Bytes für MD5-Hash, nur gültig, wenn Rückgabe = 0
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int CalculateLevelGroupMd5Hash(uint8_t *puLevelgroupXml,uint8_t *puMd5Hash) {
+    int nErrorCode = -1;
+    uint8_t *puLevelgroupMd5TagStart;   // An dieser Stelle startet das Tag <levelgroup_md5_hash>
+    MD5Context MD5Leveldata;
+    uint32_t uLevelgroupSize;
+
+    if ((puLevelgroupXml != NULL) && (puMd5Hash != NULL)) {
+        if (strlen((char*)puLevelgroupXml) > 0) {
+            if ((strstr((char*)puLevelgroupXml,"<levelgroup>") != NULL) && (strstr((char*)puLevelgroupXml,"</levelgroup>") != NULL) ) {  // levelgroup tags gefunden?
+                puLevelgroupMd5TagStart = (uint8_t*)strstr((char*)puLevelgroupXml,"<levelgroup_md5_hash>");
+                if (puLevelgroupMd5TagStart != NULL) {
+                    if (puLevelgroupMd5TagStart > puLevelgroupXml) {
+                        uLevelgroupSize = puLevelgroupMd5TagStart - puLevelgroupXml;
+                        md5Init(&MD5Leveldata);
+                        md5Update(&MD5Leveldata,puLevelgroupXml,uLevelgroupSize);
+                        md5Finalize(&MD5Leveldata);
+                        memcpy(puMd5Hash,MD5Leveldata.digest,16);
+                        nErrorCode = 0;
+                    } else {
+                        SDL_Log("%s: <levelgroup_md5_hash> pointer has wrong position",__FUNCTION__);
+                    }
+                } else {
+                    SDL_Log("%s: <levelgroup_md5_hash> tag not found",__FUNCTION__);
+                }
+            } else {
+                SDL_Log("%s: levelgroup tags not found",__FUNCTION__);
+            }
+        } else {
+            SDL_Log("%s: empty file",__FUNCTION__);
+        }
+    } else {
+        SDL_Log("%s: bad parameter",__FUNCTION__);
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           InitLevelgroups
+------------------------------------------------------------------------------
+Beschreibung: Initialisiert die Strukturen für die Levelgruppen.
+
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x
+------------------------------------------------------------------------------*/
+void InitLevelgroups(void) {
+    memset(&LevelgroupFiles,0,sizeof(LevelgroupFiles));
+    memset(&SelectedLevelgroup,0,sizeof(SelectedLevelgroup));
+    g_LevelgroupFilesCount = 0;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLevelgroupFiles
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt die Levelgruppen-Dateien im Arbeitsverzeichnis und stellt
+              diese in der Struktur LevelgroupFiles[].x zur Verfügung.
+
+              WICHTIG: Es muss sichergestellt werden, dass nach diesem Aufruf mindestens
+              eine Levelgruppe zur Verfügung steht. Kann keine der bestehenden Levelgruppen
+              verwendt werden, so wird eine Default-Gruppe angelegt.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = alles OK, sonst Fehler
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
+------------------------------------------------------------------------------*/
+int GetLevelgroupFiles(void) {
+    int nErrorCode;
+    DIR *dir;
+    struct dirent *entry;
+    size_t FilenameLen;
+    uint32_t uXmlLen;
+    uint8_t *pXml = NULL;
+    ezxml_t xml = NULL;
+    ezxml_t levelgroupname,levelcount,levelgrouphash;
+    uint8_t uCalculatedLevelgroupMd5Hash[16];       // berechnet
+    uint8_t uLevelgroupMd5Hash[16];                 // gelesen
+
+    //uint32_t I; // raus
+    //char szText[64]; // raus
+
+    g_LevelgroupFilesCount = 0;
+    nErrorCode = -1;
+    if ((dir = opendir(".")) == NULL) {
+        SDL_Log("%s: can not open current directory, error: %s",__FUNCTION__,strerror(errno));
+        return nErrorCode;
+    } else {
+        nErrorCode = 0;
+        while (((entry = readdir(dir)) != NULL) && (g_LevelgroupFilesCount < EMERALD_MAX_LEVELGROUPFILES) ) {
+            FilenameLen = strlen(entry->d_name);
+            if ((FilenameLen > 4) && (FilenameLen <= EMERALD_MAX_FILENAME_LEN)) {          // a.xml    muss es wenigstens sein
+                // Nur XML-Dateien prüfen
+                if ((memcmp(entry->d_name + FilenameLen - 4,".xml",4) == 0) || (memcmp(entry->d_name + FilenameLen - 4,".XML",4) == 0)) {
+                    pXml = ReadFile(entry->d_name,&uXmlLen);
+                    if (pXml != NULL) {
+                        if ((strstr((char*)pXml,"<levelgroup>") != NULL) && (strstr((char*)pXml,"</levelgroup>") != NULL)) {  // levelgroup tags gefunden?
+                            if (CalculateLevelGroupMd5Hash(pXml,uCalculatedLevelgroupMd5Hash) == 0) { // muss vor ezxml_parse_str() durchgeführt werden, da Library Original ändert
+                                xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
+                                if (xml != NULL) {
+                                    levelgroupname = ezxml_child(xml,"groupname");
+                                    levelcount = ezxml_child(xml,"levelcount");
+                                    if ( (levelgroupname != NULL) && (levelcount != NULL) && (ezxml_child(xml,"level000") != NULL) ) {
+                                        levelgrouphash = ezxml_child(xml,"levelgroup_md5_hash");
+                                        if (levelgrouphash != NULL) {
+                                            // Stimmt der berechnete Hash mit dem Gelesenen?
+                                            GetMd5HashFromString(levelgrouphash->txt,uLevelgroupMd5Hash);
+                                            if (memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) {
+                                                strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,entry->d_name); // Maximale Länge wurde bereits geprüft
+                                                if ((strlen(levelgroupname->txt) > 0) && (strlen(levelgroupname->txt) <= EMERALD_GROUPNAME_LEN)) {
+                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,levelgroupname->txt);
+                                                } else {
+                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,"NO GROUP NAME");
+                                                }
+                                                LevelgroupFiles[g_LevelgroupFilesCount].uLevelCount = (uint32_t)strtol(levelcount->txt,NULL,10);
+                                                memcpy(LevelgroupFiles[g_LevelgroupFilesCount].uMd5Hash,uCalculatedLevelgroupMd5Hash,16);
+                                                g_LevelgroupFilesCount++;
+                                            } else {
+                                                SDL_Log("%s: can not use levelgroup, bad hash",__FUNCTION__);
+                                            }
+                                        }
+                                    }
+                                    SAFE_FREE(xml);
+                                }
+                            }
+                        }
+                        SAFE_FREE(pXml);
+                    }
+                }
+            }
+        }
+        closedir(dir);
+    }
+/*
+// Ein paar (20) Levegruppen künstlich hinzufügen --> raus
+                                                for (I = 0; I < 20; I++) {
+                                                    sprintf(szText,"LEVELGROUP %03u",I);
+                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,szText);
+                                                    sprintf(szText,"FILENAME_%03u.xml",I);
+                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,szText);
+                                                    LevelgroupFiles[g_LevelgroupFilesCount].uLevelCount = I + 10;
+                                                    g_LevelgroupFilesCount++;
+                                                }
+
+*/
+
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLevelgroupIndexByHash
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt den Levelgruppenindex anhand des Levelgruppen-MD5-Hashes.
+              Vor Aufruf dieser Funktion muss mit GetLevelgroupFiles() eine Liste der Levelgruppen ermittelt worden sein.
+Parameter
+      Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
+      Ausgang: -
+Rückgabewert:  uint32_t, Levelgruppenindex, Falls Hash nicht gefunden werden kann, wird -1 zurückgegeben
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
+------------------------------------------------------------------------------*/
+uint32_t GetLevelgroupIndexByHash(uint8_t *puLevelgroupMd5Hash) {
+    uint32_t G;
+    uint32_t uIndex;
+    bool bFound = false;
+
+    uIndex = -1;
+    if (puLevelgroupMd5Hash != NULL) {
+        for (G = 0; (G < g_LevelgroupFilesCount) && (!bFound); G++) {
+            if (memcmp(puLevelgroupMd5Hash,LevelgroupFiles[G].uMd5Hash,16) == 0) {
+                uIndex = G;
+                bFound = true;
+            }
+        }
+    }
+    if (!bFound) {
+        SDL_Log("%s: hash not found",__FUNCTION__);
+    }
+    return uIndex;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SelectLevelgroup
+------------------------------------------------------------------------------
+Beschreibung: Wählt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
+              GetLevelgroupFiles() eine Liste der Levelgruppen ermittelt worden sein.
+              Bei erfolgreicher Auswahl der Levelgruppe wird die Struktur
+              SelectedLevelgroup.x befüllt.
+Parameter
+      Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
+      Ausgang: -
+Rückgabewert:  0 = alles OK, sonst Fehler
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x.
+               Config.x
+------------------------------------------------------------------------------*/
+int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash) {
+    int nErrorCode;
+    uint32_t uLevelNumber;
+    uint32_t uXmlLen;
+    uint32_t uLevelgroupIndex;
+    uint8_t *pXml = NULL;
+    char szLevelNumberTag[16];              // level000
+    ezxml_t xml = NULL;
+    ezxml_t level = NULL;
+    ezxml_t leveltitle,levelauthor;
+
+    nErrorCode = -1;
+    memset(&SelectedLevelgroup,0,sizeof(SelectedLevelgroup));                   // setzt SelectedLevelgroup.bOK auch auf false
+    uLevelgroupIndex = GetLevelgroupIndexByHash(puLevelgroupMd5Hash);
+    if ((uLevelgroupIndex >= 0) && (uLevelgroupIndex < g_LevelgroupFilesCount)) {
+        pXml = ReadFile(LevelgroupFiles[uLevelgroupIndex].szFilename,&uXmlLen);     // Levelgruppen-Datei einlesen
+        if (pXml != NULL) {
+            xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
+            if (xml != NULL) {
+                nErrorCode = 0;
+                for (uLevelNumber = 0; (uLevelNumber < LevelgroupFiles[uLevelgroupIndex].uLevelCount) && (nErrorCode == 0); uLevelNumber++) {
+                    sprintf(szLevelNumberTag,"level%03u",uLevelNumber); // Levelnummern-Tag bauen
+                    level = ezxml_child(xml,szLevelNumberTag);          // Level im xml auswählen
+                    leveltitle = ezxml_child(level,"title");
+                    levelauthor = ezxml_child(level,"author");
+                    if ((leveltitle != NULL) && (levelauthor != NULL)) {
+                        if ((strlen(leveltitle->txt) <= EMERALD_TITLE_LEN) && (strlen(levelauthor->txt) <= EMERALD_AUTHOR_LEN)) {
+                            strcpy(SelectedLevelgroup.szLevelTitle[uLevelNumber],leveltitle->txt);
+                            strcpy(SelectedLevelgroup.szLevelAuthor[uLevelNumber],levelauthor->txt);
+                        } else {
+                            SDL_Log("%s: invalid strings for title or author found, levelnumber: %u, file %s",__FUNCTION__,uLevelNumber,LevelgroupFiles[uLevelgroupIndex].szFilename);
+                            nErrorCode = -1;
+                        }
+                    } else {
+                        SDL_Log("%s: can not determine level title or level author, levelnumber: %u, file %s",__FUNCTION__,uLevelNumber,LevelgroupFiles[uLevelgroupIndex].szFilename);
+                        nErrorCode = -1;
+                    }
+                }
+                SAFE_FREE(xml);
+            } else {
+                SDL_Log("%s: can not parse xml file %s",__FUNCTION__,LevelgroupFiles[uLevelgroupIndex].szFilename);
+            }
+        } else {
+            SDL_Log("%s: can not read level group file %s",__FUNCTION__,LevelgroupFiles[uLevelgroupIndex].szFilename);
+        }
+    } else {
+        SDL_Log("%s: invalid level group index",__FUNCTION__);
+    }
+    SAFE_FREE(pXml);
+    if (nErrorCode == 0) {
+        strcpy(SelectedLevelgroup.szFilename,LevelgroupFiles[uLevelgroupIndex].szFilename);
+        strcpy(SelectedLevelgroup.szLevelgroupname,LevelgroupFiles[uLevelgroupIndex].szLevelgroupname);
+        SelectedLevelgroup.uLevelCount = LevelgroupFiles[uLevelgroupIndex].uLevelCount;
+        SelectedLevelgroup.bOK = true;
+        memcpy(SelectedLevelgroup.uMd5Hash,LevelgroupFiles[uLevelgroupIndex].uMd5Hash,16);
+        memcpy(Config.uLevelgroupMd5Hash,LevelgroupFiles[uLevelgroupIndex].uMd5Hash,16);
+        nErrorCode = WriteConfigFile();
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SelectAlternativeLevelgroup
+------------------------------------------------------------------------------
+Beschreibung: Wählt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
+              GetLevelgroupFiles() eine Liste der Levelgruppen ermittelt worden sein.
+              Bei erfolgreicher Auswahl der Levelgruppe wird die Struktur
+              SelectedLevelgroup.x befüllt.
+
+              Im Gegensatz zur Funktion SelectLevelgroup() wird ggf. eine andere
+              Levelgruppe selektiert, wenn die Gewünschte nicht selektierbar ist.
+
+Parameter
+      Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
+      Ausgang: -
+Rückgabewert:  0 = alles OK, sonst Fehler
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
+------------------------------------------------------------------------------*/
+int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash) {
+    int nErrorCode;
+    uint32_t G;
+    bool bSelected = false;
+
+    // Zunächst versuchen die gewünschte Levelgruppe zu selektieren
+    nErrorCode = SelectLevelgroup(puLevelgroupMd5Hash);
+    if (nErrorCode != 0) {
+        SDL_Log("%s: searching for an alternative levelgroup ...",__FUNCTION__);
+        // Falls das nicht klappt, die Nächstbeste selektieren
+        for (G = 0; (G < g_LevelgroupFilesCount) && (!bSelected); G++) {
+            if (SelectLevelgroup(LevelgroupFiles[G].uMd5Hash) == 0) {
+                bSelected = true;
+                nErrorCode = 0;
+                SDL_Log("%s: found an alternative levelgroup, OK",__FUNCTION__);
+            }
+        }
+        if (!bSelected) {
+            // Jetzt ist Holland in Not!
+            SDL_Log("%s: can not select an alternative levelgroup!",__FUNCTION__);
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowSelectedLevelgroup
+------------------------------------------------------------------------------
+Beschreibung: Zeigt Informationen der ausgewählten Levelgruppe an.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: SelectedLevelgroup.x
+------------------------------------------------------------------------------*/
+void ShowSelectedLevelgroup(void) {
+    uint32_t L;
+
+    if (SelectedLevelgroup.bOK) {
+        SDL_Log("==================================================");
+        SDL_Log("Selected Levelgroup:  %s",SelectedLevelgroup.szLevelgroupname);
+        SDL_Log("Filename:             %s",SelectedLevelgroup.szFilename);
+        SDL_Log("Level count:          %u",SelectedLevelgroup.uLevelCount);
+        for (L = 0; L < SelectedLevelgroup.uLevelCount; L++) {
+            SDL_Log("Level: %03u    Level title: %s    Level author: %s",L,SelectedLevelgroup.szLevelTitle[L],SelectedLevelgroup.szLevelAuthor[L]);
+        }
+        SDL_Log("==================================================");
+    } else {
+        SDL_Log("%s: no level group selected",__FUNCTION__);
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowAvailableLevelgroups
+------------------------------------------------------------------------------
+Beschreibung: Zeigt alle verfügbaren Levelgruppen an.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: LevelgroupFiles, g_LevelgroupFilesCount
+------------------------------------------------------------------------------*/
+void ShowAvailableLevelgroups(void) {
+    char szMD5String[32 + 1];
+    uint32_t G;
+
+    if (g_LevelgroupFilesCount > 0) {
+        SDL_Log("========= AVAILABLE LEVELGROUPS: %d  ============",g_LevelgroupFilesCount);
+        for (G = 0; G < g_LevelgroupFilesCount; G++) {
+            GetMd5String(LevelgroupFiles[G].uMd5Hash,szMD5String);
+            SDL_Log("File: %s  MD5: %s  Group: %s   levels: %03u",LevelgroupFiles[G].szFilename,szMD5String,LevelgroupFiles[G].szLevelgroupname,LevelgroupFiles[G].uLevelCount);
+        }
+        SDL_Log("==================================================");
+    } else {
+        SDL_Log("No level groups available");
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           WriteDefaultConfigFile
+------------------------------------------------------------------------------
+Beschreibung: Schreibt eine Werks-Konfiguration.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Config.x
+------------------------------------------------------------------------------*/
+int WriteDefaultConfigFile(void) {
+    SDL_Log("Writing default config file ...");
+    memset(&Config,0,sizeof(Config));       // löscht auch letzten Spieler
+    Config.bStartDynamiteWithSpace = true;  // true = Dynamite wird mit Space gezündet
+    Config.bFullScreen = false;             // Spiel läuft als Fullscreen
+    Config.uResX = DEFAULT_WINDOW_W;        // Standard-Auflösung X bzw. Fensterbreite
+    Config.uResY = DEFAULT_WINDOW_H;                // Auflösung Y bzw. Fensterhöhe
+    memset(Config.uLevelgroupMd5Hash,0,16); // MD5-Hash auf "00000000000000000000000000000000" setzen
+    return WriteConfigFile();
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           WriteDefaultNamesFile
+------------------------------------------------------------------------------
+Beschreibung: Schreibt eine leere Namens-Datei (names.xml)
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Names.x
+------------------------------------------------------------------------------*/
+int WriteDefaultNamesFile(void) {
+    SDL_Log("Writing default names file ...");
+    memset(&Names,0,sizeof(Names));         // setzt alle Hashes auf "00000000000000000000000000000000" und alle Spielernamen auf \0, Spieleranzahl = 0
+    return WriteNamesFile();
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           WriteNamesFile
+------------------------------------------------------------------------------
+Beschreibung: Schreibt den Inhalt der Struktur Names.x als Daten-File.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Names.x
+------------------------------------------------------------------------------*/
+int WriteNamesFile(void) {
+    MD5Context MD5Names;
+    MD5Context MD5NameCount;
+    uint8_t uResultHash[16];        // Ergebnis-Hash aus MD5Names und MD5nameCount
+    uint32_t I;
+
+    // Zunächst Hash der inneren Struktur Names.Name bilden
+    md5Init(&MD5Names);
+    md5Update(&MD5Names,(uint8_t*)&Names.Name,sizeof(Names.Name));
+    md5Finalize(&MD5Names);
+    // Dann Hash für Names.uNameCount bilden
+    md5Init(&MD5NameCount);
+    md5Update(&MD5Names,(uint8_t*)&Names.uNameCount,sizeof(uint32_t));
+    md5Finalize(&MD5NameCount);
+    for (I = 0; I < 16; I++) {
+        uResultHash[I] = MD5Names.digest[I] ^ MD5NameCount.digest[I];
+    }
+    memcpy(Names.uSecurityHash,uResultHash,16);
+    return WriteFile(EMERALD_NAMES_FILENAME,(uint8_t *)&Names,sizeof(Names),false);
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowConfigFile
+------------------------------------------------------------------------------
+Beschreibung: Zeigt die Konfigurations-Struktur
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Config.x
+------------------------------------------------------------------------------*/
+void ShowConfigFile(void) {
+    char szMd5String[32 + 1];
+
+    GetMd5String(Config.uLevelgroupMd5Hash,szMd5String);
+    SDL_Log("============ Config.xml =============");
+    SDL_Log("Start dynamite with space:  %d",Config.bStartDynamiteWithSpace);
+    SDL_Log("Full screen mode:           %d",Config.bFullScreen);
+    SDL_Log("X-Resolution:               %u",Config.uResX);
+    SDL_Log("Y-Resolution:               %u",Config.uResY);
+    SDL_Log("Last levelgroup hash:       %s",szMd5String);
+    SDL_Log("Last player:                %s",Config.szPlayername);
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           WriteConfigFile
+------------------------------------------------------------------------------
+Beschreibung: Schreibt den Inhalt der Struktur Config.x als XML-File.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Config.x
+------------------------------------------------------------------------------*/
+int WriteConfigFile(void) {
+    char szXML[16 * 1024];
+    char szMd5String[32 + 1];
+    char szNum[32];
+
+    memset(szXML,0,sizeof(szXML));
+    strcpy(szXML,"<?xml version=\"1.0\"?>\n");
+    strcat(szXML,"<configuration>\n");
+    strcat(szXML,"  <screen>\n");
+    strcat(szXML,"    <resolution>\n");
+    strcat(szXML,"      <x>");
+    sprintf(szNum,"%d",Config.uResX);
+    strcat(szXML,szNum);
+    strcat(szXML,"</x>\n");
+    strcat(szXML,"      <y>");
+    sprintf(szNum,"%d",Config.uResY);
+    strcat(szXML,szNum);
+    strcat(szXML,"</y>\n");
+    strcat(szXML,"    </resolution>\n");
+    strcat(szXML,"    <fullscreen>");
+    if (Config.bFullScreen) {
+        strcat(szXML,"1");
+    } else {
+        strcat(szXML,"0");
+    }
+    strcat(szXML,"</fullscreen>\n");
+    strcat(szXML,"  </screen>\n");
+    strcat(szXML,"  <start_dynamite_with_space>");
+    if (Config.bStartDynamiteWithSpace) {
+        strcat(szXML,"1");
+    } else {
+        strcat(szXML,"0");
+    }
+    strcat(szXML,"</start_dynamite_with_space>\n");
+    strcat(szXML,"  <last_played_levelgroup_md5_hash>");
+    GetMd5String(Config.uLevelgroupMd5Hash,szMd5String);
+    strcat(szXML,szMd5String);
+    strcat(szXML,"</last_played_levelgroup_md5_hash>\n");
+    strcat(szXML,"  <last_player_name>");
+    strcat(szXML,Config.szPlayername);
+    strcat(szXML,"</last_player_name>\n");
+    strcat(szXML,"</configuration>\n");
+    return WriteFile(EMERALD_CONFIG_FILENAME,(uint8_t *)szXML,(uint32_t)strlen(szXML),false);
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ReadConfigFile
+------------------------------------------------------------------------------
+Beschreibung: Liest die Konfigurationsdatei und befüllt die Struktur Config.x
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Config.x, Actualplayer.x
+------------------------------------------------------------------------------*/
+int ReadConfigFile(void) {
+    ezxml_t xml = NULL;
+    ezxml_t screen,fullscreen,resolution,x,y,dynamite,levelgrouphash,playername;
+    int nErrorCode;
+    uint8_t *pXml;
+    uint32_t uXmlLen;
+    uint32_t uResX;
+    uint32_t uResY;
+    char szErrorMessage[256];
+
+    nErrorCode = -1;
+    memset(&Config,0,sizeof(Config));       // löscht auch letzten Spieler
+    memset(&Actualplayer,0,sizeof(Actualplayer));
+    pXml = ReadFile(EMERALD_CONFIG_FILENAME,&uXmlLen);     // Levelgruppen-Datei einlesen
+    if (pXml != NULL) {
+        if ((strstr((char*)pXml,"<configuration>") != NULL) && (strstr((char*)pXml,"</configuration>") != NULL)) {  // configuration tags gefunden?
+            xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
+            if (xml != NULL) {
+                screen = ezxml_child(xml,"screen");
+                if (screen != NULL) {
+                    fullscreen = ezxml_child(screen,"fullscreen");
+                    if (fullscreen != NULL) {
+                        Config.bFullScreen = (strtol(fullscreen->txt,NULL,10) == 1);
+                        resolution = ezxml_child(screen,"resolution");
+                        if (resolution != NULL) {
+                            x = ezxml_child(resolution,"x");
+                            if (x != NULL) {
+                                Config.uResX = strtol(x->txt,NULL,10);
+                                y = ezxml_child(resolution,"y");
+                                if (y != NULL) {
+                                    Config.uResY = strtol(y->txt,NULL,10);
+                                    dynamite = ezxml_child(xml,"start_dynamite_with_space");
+                                    if (dynamite != NULL) {
+                                        Config.bStartDynamiteWithSpace = (strtol(dynamite->txt,NULL,10) == 1);
+                                        levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
+                                        if (levelgrouphash != NULL) {
+                                            GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
+                                            playername = levelgrouphash = ezxml_child(xml,"last_player_name");
+                                            if (playername != NULL) {
+                                                if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
+                                                    strcpy(Config.szPlayername,playername->txt);
+                                                }
+                                                // Auflösung checken
+                                                // Zunächst prüfen, ob X- und Y-Auflösung durch FONT_W bzw. FONT_H teilbar
+                                                uResX = Config.uResX;
+                                                uResY = Config.uResY;
+                                                uResX = uResX / FONT_W;
+                                                uResX = uResX * FONT_W;
+                                                uResY = uResY / FONT_H;
+                                                uResY = uResY * FONT_H;
+                                                if ((uResX >= DEFAULT_WINDOW_W) && (uResY >= DEFAULT_WINDOW_H)) {
+                                                    // ggf. die abgerundeten Werte in die Konfiguration übernehmen
+                                                    Config.uResX = uResX;
+                                                    Config.uResY = uResY;
+                                                    nErrorCode = 0;
+                                                } else {
+                                                    sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,uResX,uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
+                                                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
+                                                    nErrorCode = -2;    // Programmende
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    SAFE_FREE(xml);
+    SAFE_FREE(pXml);
+    if (nErrorCode == 0) {
+        nErrorCode = WriteConfigFile(); // ggf. angepasste Auflösung schreiben
+    } else if (nErrorCode == -1) {
+        nErrorCode = WriteDefaultConfigFile();
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ReadNamesFile
+------------------------------------------------------------------------------
+Beschreibung: Liest die Namensdatei in die Struktur Names.x ein.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Names.x
+------------------------------------------------------------------------------*/
+int ReadNamesFile(void) {
+    int nErrorCode;
+    uint32_t I;
+    uint32_t uDataLen;
+    uint8_t *pData = NULL;
+    bool bDataOK = false;
+    MD5Context MD5Names;
+    MD5Context MD5NameCount;
+    uint8_t uResultHash[16];        // Ergebnis-Hash aus MD5Names und MD5nameCount
+
+    nErrorCode = -1;
+    memset(&Names,0,sizeof(Names));       // löscht auch letzten Spieler
+    pData = ReadFile(EMERALD_NAMES_FILENAME,&uDataLen);     // Levelgruppen-Datei einlesen
+    if (pData != NULL) {
+        if (uDataLen == sizeof(Names)) {
+            memcpy((uint8_t*)&Names,pData,uDataLen);
+            // Wenn der Security-Hash auch noch OK ist, kann die Names-Struktur verwendet werden
+            // Zunächst Hash der inneren Struktur Names.Name bilden
+            md5Init(&MD5Names);
+            md5Update(&MD5Names,(uint8_t*)&Names.Name,sizeof(Names.Name));
+            md5Finalize(&MD5Names);
+            // Dann Hash für Names.uNameCount bilden
+            md5Init(&MD5NameCount);
+            md5Update(&MD5Names,(uint8_t*)&Names.uNameCount,sizeof(uint32_t));
+            md5Finalize(&MD5NameCount);
+            for (I = 0; I < 16; I++) {
+                uResultHash[I] = MD5Names.digest[I] ^ MD5NameCount.digest[I];
+            }
+            if (memcmp(uResultHash,Names.uSecurityHash,16) == 0) {
+                bDataOK = true;
+                nErrorCode = 0;
+            } else {
+                SDL_Log("%s: bad hash -> write default names file ...",__FUNCTION__);
+            }
+        }
+    }
+    if (!bDataOK) {
+        nErrorCode = WriteDefaultNamesFile();
+    }
+    ShowNames();
+    SAFE_FREE(pData);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowNames
+------------------------------------------------------------------------------
+Beschreibung: Zeigt alle hinterlegten Namen und deren Anzahl Gruppen-Hashes.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Names.x
+------------------------------------------------------------------------------*/
+void ShowNames(void) {
+    uint32_t N;
+    uint32_t G;
+    uint32_t uHashCount;
+
+    SDL_Log("================== NAMES ====================");
+    if (Names.uNameCount > 0) {
+
+        for (N = 0; N < Names.uNameCount; N++) {
+            uHashCount = 0;
+            for (G = 0; G <EMERALD_MAX_LEVELGROUPFILES; G++) {
+                if (memcmp(Names.Name[N].GroupHash[G].uHash,"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",16) != 0) {
+                    uHashCount++;
+                } else {
+                    break;
+                }
+            }
+            SDL_Log("%02d: %s  Hashes: %u",N,Names.Name[N].szName,uHashCount);
+        }
+    } else {
+        SDL_Log("No Names");
+    }
+    SDL_Log("=============================================");
+
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowActualPlayer
+------------------------------------------------------------------------------
+Beschreibung: Zeigt den aktuell gewählten Spieler an.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Actualplayer.x
+------------------------------------------------------------------------------*/
+void ShowActualPlayer(void) {
+    char szString[32 + 1];
+
+    SDL_Log("===============ACTUAL PLAYER=================");
+    if (Actualplayer.bValid) {
+        GetMd5String(Actualplayer.uLevelgroupMd5Hash,szString);
+        SDL_Log("Name:             %s",Actualplayer.szPlayername);      // Aktueller Spieler
+        SDL_Log("Levelgroup Hash:  %s",szString);                       // aktuell gewählte Levelgruppe als MD5 Hash
+        SDL_Log("Level:            %u",Actualplayer.uLevel);            // aktuell gewähltes Level (wird beim Init. auf Handicap gestellt)
+        SDL_Log("Handicap:         %u",Actualplayer.uHandicap);         // aktuelles Handicap in der gewählten Levelgruppe
+        SDL_Log("Games played:     %u",Actualplayer.uGamesPlayed);      // Anzahl gespielter Level in der gewählten Levelgruppe
+        SDL_Log("Games won:        %u",Actualplayer.uGamesWon);         // Anzahl gewonnener Spiele in der gewählten Levelgruppe
+        SDL_Log("Totalscore:       %u",Actualplayer.uTotalScore);       // Gesamtpunktezahl in der gewählten Levelgruppe
+        SDL_Log("Playtime[secs]:   %u",Actualplayer.uPlayTimeS);        // Gesamtspielzeit in Sekunden in der gewählten Levelgruppe
+    } else {
+        SDL_Log("No actual player selected");
+    }
+    SDL_Log("=============================================");
+
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           InsertNewName
+------------------------------------------------------------------------------
+Beschreibung: Fügt einen neuen Namen in die Struktur Names.x hinzu. Falls es
+              bereits diesen Spielernamen gibt, wird dieser neu angelegt.
+
+Parameter
+      Eingang: pszname, char*, Zeiger auf Spielernamen, der angelegt werden soll
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = kein Platz mehr
+Seiteneffekte: Names.x
+------------------------------------------------------------------------------*/
+int InsertNewName(char *pszName) {
+    int nErrorCode;
+    uint32_t N;
+    uint32_t uInsertIndex;
+    bool bNameFound;
+
+    uInsertIndex = 0;
+    nErrorCode = -1;
+    if (pszName != NULL) {
+        if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
+            if (Names.uNameCount < EMERALD_MAX_PLAYERNAMES) {
+                // Zunächst schauen, ob es diesen Namen bereits gibt
+                bNameFound =  false;
+                uInsertIndex = Names.uNameCount;
+                for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
+                    if (strcmp(pszName,Names.Name[N].szName) == 0) {
+                        SDL_Log("%s: Name %s already exist, clearing GroupHashes ...",__FUNCTION__,pszName);
+                        bNameFound = true;
+                        uInsertIndex = N;
+                    }
+                }
+                // An uInsertIndex den (neuen) Namen eintragen und Gruppen-Hashes löschen
+                strcpy(Names.Name[uInsertIndex].szName,pszName);
+                memset(Names.Name[uInsertIndex].GroupHash,0,sizeof(GROUPHASH));
+                if (!bNameFound) {
+                    Names.uNameCount++; // Falls Name nicht überschrieben wurde, kommt ein neuer hinzu
+                }
+                nErrorCode = WriteNamesFile();
+            } else {
+                SDL_Log("%s: maximum amount of players reached!",__FUNCTION__);
+                nErrorCode = -2;
+            }
+        } else {
+            SDL_Log("%s: invalid playname length: %u, name: %s",__FUNCTION__,(uint32_t)strlen(pszName),pszName);
+        }
+    }
+    return nErrorCode;
+}
+
+
+
+
+
+/*----------------------------------------------------------------------------
+Name:           InsertGamesValuesIntoNamesFile
+------------------------------------------------------------------------------
+Beschreibung: Die Werte aus der Struktur Actualplayer.x werden in die Strukturen
+              der namensliste hinterlegt.
+
+Parameter
+      Eingang: pszName, char*, Zeiger auf Spielernamen, für den Werte gespeichert werden sollen
+               puHash, uint8_t * , Zeiger auf Levelgruppen-Hash, für den die Werte gelten
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Names.x, Actualplayer.x
+------------------------------------------------------------------------------*/
+int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
+    int nErrorCode;
+    bool bNameFound;
+    bool bHashFound;
+    uint32_t N;
+    uint32_t H;
+    uint32_t uFoundIndex;
+
+    nErrorCode = -1;
+    bNameFound =  false;
+    uFoundIndex = 0;
+    if ((pszName != NULL) && (puHash != NULL)) {
+        if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
+            // Zunächst schauen, ob es diesen Namen bereits gibt
+            for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
+                if (strcmp(pszName,Names.Name[N].szName) == 0) {
+                    SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
+                    bNameFound = true;
+                    uFoundIndex = N;
+                }
+            }
+            if (bNameFound) {
+                // Wenn Name gefunden wurde, dann schauen, ob Hash schon vorhanden
+                bHashFound = false;
+                for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
+                    if (memcmp(Names.Name[uFoundIndex].GroupHash[H].uHash,puHash,16) == 0) {
+                        SDL_Log("%s: level group Hash for Name %s found",__FUNCTION__,pszName);
+                        bHashFound = true;
+                        Names.Name[uFoundIndex].GroupHash[H].uHandicap = Actualplayer.uHandicap;
+                        Names.Name[uFoundIndex].GroupHash[H].uGamesPlayed = Actualplayer.uGamesPlayed;
+                        Names.Name[uFoundIndex].GroupHash[H].uGamesWon = Actualplayer.uGamesWon;
+                        Names.Name[uFoundIndex].GroupHash[H].uTotalScore = Actualplayer.uTotalScore;
+                        Names.Name[uFoundIndex].GroupHash[H].uPlayTimeS = Actualplayer.uPlayTimeS;
+                        nErrorCode = 0;
+                    }
+                }
+                if (!bHashFound) {
+                    SDL_Log("%s: levelgroup hash for player: %s not found!",__FUNCTION__,pszName);
+                }
+            } else {
+                SDL_Log("%s: Name %s not found.",__FUNCTION__,pszName);
+            }
+        } else {
+            SDL_Log("%s: invalid stringlen: %u",__FUNCTION__,(uint32_t)strlen(pszName));
+        }
+    }
+    if (nErrorCode == 0) {
+        nErrorCode = WriteNamesFile();
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SelectName
+------------------------------------------------------------------------------
+Beschreibung: Wählt einen Spielernamen aus.
+              Die Funktion ReadNamesFile() muss bereits aufgerufen worden sein,
+              d.h. die Struktur Names.x ist befüllt.
+
+Parameter
+      Eingang: pszName, char*, Zeiger auf Spielernamen, der angelegt werden soll
+               puHash, uint8_t * , Zeiger auf Levelgruppen-Hash
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = name nicht gefunden
+Seiteneffekte: Names.x, Actualplayer.x
+------------------------------------------------------------------------------*/
+int SelectName(char *pszName, uint8_t *puHash) {
+    int nErrorCode;
+    bool bNameFound;
+    bool bHashFound;
+    uint32_t N;
+    uint32_t H;
+    uint32_t uFoundIndex;
+
+    nErrorCode = -1;
+    bNameFound =  false;
+    uFoundIndex = 0;
+    memset(&Actualplayer,0,sizeof(Actualplayer));
+    if ((pszName != NULL) && (puHash != NULL)) {
+        if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
+            // Zunächst schauen, ob es diesen Namen bereits gibt
+            for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
+                if (strcmp(pszName,Names.Name[N].szName) == 0) {
+                    SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
+                    bNameFound = true;
+                    uFoundIndex = N;
+                }
+            }
+            if (bNameFound) {
+                // Wenn Name gefunden wurde, dann schauen, ob Hash schon vorhanden
+                bHashFound = false;
+                for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
+                    if (memcmp(Names.Name[uFoundIndex].GroupHash[H].uHash,puHash,16) == 0) {
+                        SDL_Log("%s: level group Hash for Name %s found",__FUNCTION__,pszName);
+                        bHashFound = true;
+                        strcpy(Actualplayer.szPlayername,pszName);
+                        memcpy(Actualplayer.uLevelgroupMd5Hash,Names.Name[uFoundIndex].GroupHash[H].uHash,16);
+                        Actualplayer.uHandicap = Names.Name[uFoundIndex].GroupHash[H].uHandicap;
+                        Actualplayer.uLevel = Actualplayer.uHandicap;
+                        Actualplayer.uGamesPlayed = Names.Name[uFoundIndex].GroupHash[H].uGamesPlayed;
+                        Actualplayer.uGamesWon = Names.Name[uFoundIndex].GroupHash[H].uGamesWon;
+                        Actualplayer.uTotalScore = Names.Name[uFoundIndex].GroupHash[H].uTotalScore;
+                        Actualplayer.uPlayTimeS = Names.Name[uFoundIndex].GroupHash[H].uPlayTimeS;
+                        Actualplayer.bValid = true;
+                        nErrorCode = 0;
+                    }
+                }
+                // Wenn Levelgruppen-Hash nicht gefunden wurde, dann diesen hinzufügen
+                if (!bHashFound) {
+                    nErrorCode = InsertGroupHashForName(pszName,puHash);
+                    if (nErrorCode == 0) {
+                        strcpy(Actualplayer.szPlayername,pszName);
+                        Actualplayer.uHandicap = 0;
+                        Actualplayer.uLevel = Actualplayer.uHandicap;
+                        Actualplayer.uGamesPlayed = 0;
+                        Actualplayer.uGamesWon = 0;
+                        Actualplayer.uTotalScore = 0;
+                        Actualplayer.uPlayTimeS = 0;
+                        Actualplayer.bValid = true;
+                    } else {
+                        SDL_Log("%s: InsertGroupHashForName() for name %s failed, Error: %d",__FUNCTION__,pszName,nErrorCode);
+                    }
+                }
+            } else {
+                SDL_Log("%s: Name %s not found.",__FUNCTION__,pszName);
+                nErrorCode = -2;
+            }
+        } else {
+            SDL_Log("%s: invalid stringlen: %u",__FUNCTION__,(uint32_t)strlen(pszName));
+        }
+    }
+    if (nErrorCode == 0) {
+        nErrorCode = WriteNamesFile();
+        ShowActualPlayer();
+    } else {
+        memset(&Actualplayer,0,sizeof(Actualplayer));   // Bei Fehler die aktuelle Spielerstruktur auf invalid stellen
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           InsertGroupHashForName
+------------------------------------------------------------------------------
+Beschreibung: Fügt einen neuen Levlgruppen-Hash zu einem Namen hinzu.
+              bereits diesen Spielernamen gibt, wird dieser neu angelegt.
+
+Parameter
+      Eingang: pszname, char*, Zeiger auf Spielernamen, bei dem der Levelgruppen-Hash hinzugefügt werden soll
+               puHash, uint8_t * , Zeiger auf anzulegenden Levelgruppen-Hash
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, -1 = Fehler,
+                             -2 = Name nicht gefunden,
+                             -3 = kein Platz mehr
+                              0 = Hash gibt es schon
+Seiteneffekte: Names.x
+------------------------------------------------------------------------------*/
+int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
+    int nErrorCode;
+    bool bNameFound;
+    bool bHashFound;
+    uint32_t N;
+    uint32_t H;
+    uint32_t uInsertIndex;
+
+    nErrorCode = -1;
+    bNameFound =  false;
+    uInsertIndex = 0;
+    if ((pszName != NULL) && (puHash != NULL)) {
+        if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
+            // Zunächst schauen, ob es diesen Namen bereits gibt
+            for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
+                if (strcmp(pszName,Names.Name[N].szName) == 0) {
+                    SDL_Log("%s: Name %s exist, clearing GroupHashes ...",__FUNCTION__,pszName);
+                    bNameFound = true;
+                    uInsertIndex = N;
+                }
+            }
+            if (bNameFound) {
+                // Wenn Name gefunden wurde, dann schauen, ob Hash schon vorhanden
+                bHashFound = false;
+                for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
+                    if (memcmp(Names.Name[uInsertIndex].GroupHash[H].uHash,puHash,16) == 0) {
+                        SDL_Log("%s: Hash for Name %s already exist.",__FUNCTION__,pszName);
+                        nErrorCode = 0;
+                        bHashFound = true;
+                    }
+                }
+                // Wenn Hash nicht gefunden wurde, dann Platz für neuen Hash suchen
+                if (!bHashFound) {
+                    for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
+                        if (memcmp(Names.Name[uInsertIndex].GroupHash[H].uHash,"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",16) == 0) {
+                            SDL_Log("%s: name: %s: empty place for new Hash found, inserting new hash ...",__FUNCTION__,pszName);
+                            memcpy(Names.Name[uInsertIndex].GroupHash[H].uHash,puHash,16);
+                            Names.Name[uInsertIndex].GroupHash[H].uHandicap = 0;
+                            Names.Name[uInsertIndex].GroupHash[H].uGamesPlayed = 0;
+                            Names.Name[uInsertIndex].GroupHash[H].uGamesWon = 0;
+                            Names.Name[uInsertIndex].GroupHash[H].uTotalScore = 0;
+                            Names.Name[uInsertIndex].GroupHash[H].uPlayTimeS = 0;
+                            nErrorCode = WriteNamesFile();
+                            bHashFound = true;
+                        }
+                    }
+                    if (!bHashFound) {
+                        SDL_Log("%s: name: %s: hash table full",__FUNCTION__,pszName);
+                        nErrorCode = -3;
+                    }
+                }
+            } else {
+                SDL_Log("%s: Name %s not found.",__FUNCTION__,pszName);
+                nErrorCode = -2;
+            }
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           DeleteName
+------------------------------------------------------------------------------
+Beschreibung: Löscht einen Namen in die Struktur Names.x. Die zugehörigen
+              Levelgruppen-Hashes werden mitgelöscht.
+
+Parameter
+      Eingang: pszname, char*, Zeiger auf Spielernamen, der gelöscht werden soll
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = Name nicht gefunden
+Seiteneffekte: Names.x
+------------------------------------------------------------------------------*/
+int DeleteName(char *pszName) {
+    int nErrorCode;
+    bool bNameFound;
+    uint32_t N;
+    uint32_t uDeleteIndex;
+
+    nErrorCode = -1;
+    bNameFound =  false;
+    uDeleteIndex = 0;
+    if (pszName != NULL) {
+        if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
+            // Prüfen, ob es diesen Namen gibt
+            for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
+                if (strcmp(pszName,Names.Name[N].szName) == 0) {
+                    SDL_Log("%s: Name %s exist, deleting name ...",__FUNCTION__,pszName);
+                    bNameFound = true;
+                    uDeleteIndex = N;
+                }
+            }
+            if (bNameFound) {
+                // Wenn Name gefunden wurde, dann muss ab dieser Position Alles nach vorne verschoben werden
+                for (N = uDeleteIndex; N < (EMERALD_MAX_PLAYERNAMES - 1); N++) {
+                    memcpy(&Names.Name[N],&Names.Name[N + 1],sizeof(NAME));
+                }
+                memset(&Names.Name[N],0,sizeof(NAME));   // Der letzte Platz muss mit 0 aufgefüllt werden
+                Names.uNameCount--;
+                nErrorCode = WriteNamesFile();
+            } else {
+                SDL_Log("%s: Name %s not found.",__FUNCTION__,pszName);
+                nErrorCode = -2;
+            }
+        }
+    }
+    return nErrorCode;
+}
+
+
+    //SDL_Log("size of Names.x: %u",sizeof(Names));
+
+
+    //SDL_Log("size of Name.x: %u",sizeof(Names.Name));

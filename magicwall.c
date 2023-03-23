@@ -16,7 +16,9 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckRunningMagicWall(void) {
     if (Playfield.bMagicWallRunning) {          // Läuft bereits Magic Wall?
-        Playfield.uTimeMagicWallLeft--;
+        if (Playfield.uTimeMagicWallLeft > 0) {
+            Playfield.uTimeMagicWallLeft--;
+        }
         if (Playfield.uTimeMagicWallLeft == 0) {
             // Magic Wall anhalten, da Zeit abgelaufen ist
             Playfield.bMagicWallRunning = false;
@@ -37,7 +39,9 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckLight(void) {
     if (Playfield.bLightOn) {          // Licht noch an ?
-        Playfield.uTimeLightLeft--;
+        if (Playfield.uTimeLightLeft > 0) {
+            Playfield.uTimeLightLeft--;
+        }
         if (Playfield.uTimeLightLeft == 0) {
             // Licht ausschalten, da Zeit abgelaufen ist
             Playfield.bLightOn = false;

@@ -6,7 +6,7 @@
 #define SAMPLERATE 44100
 #define AUDIO_BUFFERSIZE 4096
 
-#define MAX_MUSICINDEX   4       // Anzahl der verfügbaren Musikstücke
+#define MAX_MUSICINDEX   6       // Anzahl der verfügbaren Musikstücke
 
 typedef struct
 {

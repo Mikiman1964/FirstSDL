@@ -21,6 +21,7 @@ typedef struct {
 int InitInputStates(void);
 void UpdateInputStates(void);
 uint32_t GetKey(void);
+uint32_t FilterBigFontKey(uint32_t uKey);
 void WaitNoSpecialKey(SDL_Scancode ScanCode);
 void WaitNoKey(void);
 #endif // KEYBOARDMOUSE_H_INCLUDED

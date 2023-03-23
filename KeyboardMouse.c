@@ -20,6 +20,7 @@ int InitInputStates(void) {
     if (InputStates.pKeyboardArray) {
         return 0;
     } else {
+        SDL_Log("%s: failed!",__FUNCTION__);
         return -1;
     }
 }
@@ -106,6 +107,33 @@ uint32_t GetKey(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           FilterBigFontKey
+------------------------------------------------------------------------------
+Beschreibung: Filtert einen Tastencode, der aus GetKey() stammt, für den
+              Spiel-Zeichensatz (EMERALD_FONT_xxx)
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  uint32_t, Tastencode für Spielzeichensatz, 0 = kein geeigneter Code
+Seiteneffekte: InputStates.x
+------------------------------------------------------------------------------*/
+uint32_t FilterBigFontKey(uint32_t uKey) {
+    uint32_t uRetKey = 0;
+
+    if (  ((uKey >= 65) && (uKey <= 90)) ||         // A bis Z
+           (uKey == 32)                  ||         // SPACE
+           (uKey == 33)                  ||         // !
+          ((uKey >= 39) && (uKey <= 58)) ||         // ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 :
+           (uKey == 60)                  ||         // <--
+           (uKey == 62)                  ||         // -->
+           (uKey == 63)                  ) {        // ?
+                uRetKey = uKey;
+    }
+    return uRetKey;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           WaitNoSpecialKey
 ------------------------------------------------------------------------------
 Beschreibung: Wartet darauf, dass eine bestimmte Taste los gelassen wird.
@@ -139,19 +167,24 @@ Rückgabewert:  -
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
 void WaitNoKey(void) {
-    UpdateInputStates();
+    bool bKeyActive;
 
-    while ( (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_LEFT] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_RIGHT] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_UP] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_DOWN] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_INSERT] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE] == 1) ||
-            (InputStates.pKeyboardArray[SDL_SCANCODE_DELETE] == 1) ||
-            (InputStates.bLeftMouseButton) || (InputStates.bRightMouseButton) ) {
+    do {
         UpdateInputStates();
-        SDL_Delay(5);
-    }
+        bKeyActive = (
+            (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_LEFT]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_RIGHT]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_UP]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_DOWN]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_INSERT]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_DELETE]) ||
+            (InputStates.pKeyboardArray[SDL_SCANCODE_RETURN]) ||
+            (InputStates.bLeftMouseButton) || (InputStates.bRightMouseButton) );
+        if (bKeyActive) {
+            SDL_Delay(5);
+        }
+    } while (bKeyActive);
 }
