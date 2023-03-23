@@ -1,4 +1,5 @@
 #include "EmeraldMine.h"
+#include "explosion.h"
 #include "magicwall.h"
 #include "man.h"
 #include "sound.h"
@@ -38,7 +39,9 @@ void ControlStone(uint32_t I) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         return;
     }
-    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_PUSH_RIGHT2) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_PUSH_LEFT2) ) {
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_PUSH_RIGHT2) ||
+          ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_PUSH_LEFT2) ||
+          ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SAPPHIRE_SQUEAK) ) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     }
     if (    ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) ||
@@ -98,7 +101,7 @@ void ControlStone(uint32_t I) {
                         SDL_Log("Stone hit running magic wall");
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                         ElementGoesMagicWall(I,EMERALD_EMERALD);
-                    } else if (!Playfield.bMagicWallWasOn) {
+                    } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                         SDL_Log("Stone start magic wall");
                         Playfield.bMagicWallWasOn = true;
@@ -110,6 +113,61 @@ void ControlStone(uint32_t I) {
                         PreparePlaySound(SOUND_STONE_FALL,I);
                     }
                     break;
+                case (EMERALD_ALIEN):
+                    SDL_Log("Stone hit alien");
+                    Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreStoningAlien;
+                    ControlCentralExplosion(uHitCoordinate);
+                    PreparePlaySound(SOUND_EXPLOSION,I);
+                    break;
+                case (EMERALD_MINE_UP):
+                case (EMERALD_MINE_RIGHT):
+                case (EMERALD_MINE_DOWN):
+                case (EMERALD_MINE_LEFT):
+                    SDL_Log("Stone hit mine");
+                    Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreStoningMine;
+                    ControlCentralExplosion(uHitCoordinate);
+                    PreparePlaySound(SOUND_EXPLOSION,I);
+                    break;
+                case (EMERALD_STANDMINE):
+                case (EMERALD_BOMB):
+                    SDL_Log("Stone hit 'normal' explosive");
+                    ControlCentralExplosion(uHitCoordinate);
+                    PreparePlaySound(SOUND_EXPLOSION,I);
+                    break;
+                case (EMERALD_BEETLE_UP):
+                case (EMERALD_BEETLE_RIGHT):
+                case (EMERALD_BEETLE_DOWN):
+                case (EMERALD_BEETLE_LEFT):
+                    SDL_Log("Stone hit beetle");
+                    Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreStoningBeetle;
+                    ControlCentralBeetleExplosion(uHitCoordinate);
+                    PreparePlaySound(SOUND_EXPLOSION,I);
+                    break;
+                case (EMERALD_PERL):
+                    SDL_Log("Stone hit perl");
+                    Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_PERL_BREAK;
+                    PreparePlaySound(SOUND_STONE_FALL,I);
+                    PreparePlaySound(SOUND_SQUEAK,I);
+                    return; // Nichts mehr machen, damit Stein nicht von gebrochener Perle runter rollt
+                    break;
+                case (EMERALD_YAM):
+                    SDL_Log("Stone hit yam, YamExplosion (%u)/MaxYamExplosionIndex(%u)",Playfield.uYamExplosion,Playfield.uMaxYamExplosionIndex);
+                    Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreStoningYam;
+                    ControlCentralYamExplosion(uHitCoordinate); // Yam-Explosion mit aktuellem Wer 'Playfield.uYamExplosion' durchführen
+                    Playfield.uYamExplosion++;
+                    if (Playfield.uYamExplosion > Playfield.uMaxYamExplosionIndex) {
+                        Playfield.uYamExplosion = 0;
+                    }
+                    PreparePlaySound(SOUND_EXPLOSION,I);
+                    break;
+                case (EMERALD_MAN):
+                    SDL_Log("Stone kills man");
+                    Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
+                    Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
+                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                    PreparePlaySound(SOUND_STONE_FALL,I);
+                    Playfield.bManDead = true;
+                    return;
                 default:
                     SDL_Log("Stone hit other element");
                     PreparePlaySound(SOUND_STONE_FALL,I);

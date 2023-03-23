@@ -5,20 +5,18 @@
 #include <stdbool.h>
 #include "mySDL.h"
 
-#define SCROLLER_BUFFER_LEN     ((WINDOW_W / FONT_W) + 1)   // + 1, für den rechten unsichtbaren Rand
-
-
 
 typedef struct
 {
+  uint32_t uScrollerBufferLen;  // ((WINDOW_W / FONT_W) + 1)   // + 1, für den rechten unsichtbaren Rand
   bool bChangeScrollPixel;      // Anzahl Scrollpixel soll geändert werden
   uint32_t uScrolledPixel;      // Anzahl Pixel, die nach neuem Buchstaben gescrollt wurden (0 - FONT_W)
   uint32_t uScrollSpeedPixel;   // Anzahl Pixel / Scroll-Schritt
   uint8_t *pszScrolltext;       // Zeiger auf Scrolltext
   // Buffer sind die sichtbaren Buchstaben mit den enstsprechenden Winkeln (Sinus, Y-Auslenkung) des Scrollers
-  uint8_t Buffer[SCROLLER_BUFFER_LEN];
-  float fAngles[SCROLLER_BUFFER_LEN];
-  uint32_t uScrolltextPointer;  // zeiger auf Zeichen im Scrolltext
+  uint8_t *puBuffer;            // uScrollerBufferLen Elemente
+  float *pfAngles;              // uScrollerBufferLen Elemente
+  uint32_t uScrolltextPointer;  // Zeiger auf Zeichen im Scrolltext
   int nYpos;                    // Y-Position
   float fXfreq;                 // X-Frequenz der Sinusfrequenz
   float fYfreq;                 // Y-Frequenz der Sinusfrequenz
@@ -32,6 +30,6 @@ typedef struct
 int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont);
 int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller);
 uint8_t ConvertASCII(uint8_t uASCIICode);
-
+void FreeScroller(SCROLLER *pScroller);
 
 #endif // SCROLLER_H_INCLUDED

@@ -1,4 +1,5 @@
 #include "EmeraldMine.h"
+#include "explosion.h"
 #include "magicwall.h"
 #include "man.h"
 #include "saphir.h"
@@ -18,6 +19,7 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSaphir(uint32_t I) {
     uint8_t uFree;  // Richtung, in die Saphir rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+    uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
@@ -55,15 +57,15 @@ void ControlSaphir(uint32_t I) {
         return;
     } else {                            // Unten ist nicht frei
         // Saphir bleibt zunächst auf Platz liegen
+        uHitCoordinate = I + Playfield.uLevel_X_Dimension;
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
             Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
-            if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAGIC_WALL) ||
-                (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAGIC_WALL_STEEL)) { // Saphir trifft auf Magic wall
+            if ((Playfield.pLevel[uHitCoordinate] == EMERALD_MAGIC_WALL) || (Playfield.pLevel[uHitCoordinate] == EMERALD_MAGIC_WALL_STEEL)) { // Saphir trifft auf Magic wall
                 if (Playfield.bMagicWallRunning) {
                     SDL_Log("Sapphire hit running magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     ElementGoesMagicWall(I,EMERALD_STONE);
-                } else if (!Playfield.bMagicWallWasOn) {
+                } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     SDL_Log("Sapphire start magic wall");
                     Playfield.bMagicWallWasOn = true;
@@ -74,7 +76,16 @@ void ControlSaphir(uint32_t I) {
                     SDL_Log("Sapphire hit used magic wall");
                     PreparePlaySound(SOUND_PING,I);
                 }
-
+            } else if (Playfield.pLevel[uHitCoordinate] == EMERALD_MAN) {
+                SDL_Log("Sapphire kills man");
+                Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
+                Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
+                PreparePlaySound(SOUND_MAN_CRIES,I);
+                Playfield.bManDead = true;
+            } else if (Playfield.pLevel[uHitCoordinate] == EMERALD_STANDMINE) {
+                SDL_Log("Sapphire hit stand mine");
+                ControlCentralExplosion(uHitCoordinate);
+                PreparePlaySound(SOUND_EXPLOSION,I);
             } else {
                 PreparePlaySound(SOUND_PING,I);
             }

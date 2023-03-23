@@ -20,6 +20,7 @@ void ControlRedReplicator(uint32_t I) {
         if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist der Replikator frei?
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = Playfield.uReplicatorRedObject;
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_BORN1;
+            PreparePlaySound(SOUND_REPLICATOR_PLOP,I);
         }
     }
 }

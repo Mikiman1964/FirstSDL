@@ -1,7 +1,11 @@
 #include <SDL2/SDL.h>
+#include "loadlevel.h"
 #include <math.h>
 #include "mySDL.h"
+#include "mystd.h"
 #include "scroller.h"
+
+extern CONFIG Config;
 
 /*----------------------------------------------------------------------------
 Name:           InitScroller
@@ -17,7 +21,7 @@ Parameter
                fYfreq, float, Y-Frequenz der Sinusfrequenz
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont) {
     int nErrorcode = -1;
@@ -25,35 +29,61 @@ int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, int nYpos, uin
 
     if ( (pScroller != NULL) && (pszScrolltext != NULL) ) {
         memset(pScroller,0,sizeof(SCROLLER));
-        pScroller->bChangeScrollPixel = false;
-        pScroller->uScrolledPixel = 0;
-        if (uScrollSpeedPixel > FONT_W) {
-            uScrollSpeedPixel = FONT_W;
+        pScroller->uScrollerBufferLen = ((Config.uResX / FONT_W) + 1); // + 1, für den rechten unsichtbaren Rand
+        pScroller->puBuffer = malloc(pScroller->uScrollerBufferLen * sizeof(uint8_t));  // uScrollerBufferLen Elemente
+        pScroller->pfAngles = malloc(pScroller->uScrollerBufferLen * sizeof(float));    // uScrollerBufferLen Elemente
+        if ((pScroller->puBuffer != NULL) && (pScroller->pfAngles != NULL)) {
+            pScroller->bChangeScrollPixel = false;
+            pScroller->uScrolledPixel = 0;
+            if (uScrollSpeedPixel > FONT_W) {
+                uScrollSpeedPixel = FONT_W;
+            }
+            // Falls gewünschte Scroll-Geschwindigkeit kein Vielfaches von FONT_W ist, dann an nächst schneller Geschwindigkeit anpassen
+            while (FONT_W % uScrollSpeedPixel != 0) {
+                uScrollSpeedPixel++;
+            }
+            pScroller->uScrollSpeedPixel = uScrollSpeedPixel;
+            pScroller->nYpos = nYpos;
+            pScroller->uScrolltextPointer = 0;      // Auf Zeichenkettenanfang setzen
+            pScroller->pszScrolltext = pszScrolltext;
+            for (I = 0; I < pScroller->uScrollerBufferLen; I++) {
+                pScroller->pfAngles[I] = 0;         // Alle Winkel auf 0°
+                pScroller->puBuffer[I] = ConvertASCII(0x20);       // Alle Pufferzeichen auf Space
+            }
+            pScroller->fXfreq = fXfreq;
+            pScroller->fYfreq = fYfreq;
+            pScroller->fYamplitude = fYamplitude;
+            pScroller->fScale = fScale;
+            pScroller->bSinus = bSinus;
+            pScroller->bSwellFont = bSwellFont;
+            nErrorcode = 0;
+        } else {
+            SDL_Log("%s: malloc() failed",__FUNCTION__);
+            SAFE_FREE(pScroller->puBuffer);
+            SAFE_FREE(pScroller->pfAngles);
         }
-        // Falls gewünschte Scroll-Geschwindigkeit kein Vielfaches von FONT_W ist, dann an nächst schneller Geschwindigkeit anpassen
-        while (FONT_W % uScrollSpeedPixel != 0) {
-            uScrollSpeedPixel++;
-        }
-        pScroller->uScrollSpeedPixel = uScrollSpeedPixel;
-        pScroller->nYpos = nYpos;
-        pScroller->uScrolltextPointer = 0;      // Auf Zeichenkettenanfang setzen
-        pScroller->pszScrolltext = pszScrolltext;
-        for (I = 0; I < SCROLLER_BUFFER_LEN; I++) {
-            pScroller->fAngles[I] = 0;         // Alle Winkel auf 0°
-            pScroller->Buffer[I] = ConvertASCII(0x20);       // Alle Pufferzeichen auf Space
-        }
-        pScroller->fXfreq = fXfreq;
-        pScroller->fYfreq = fYfreq;
-        pScroller->fYamplitude = fYamplitude;
-        pScroller->fScale = fScale;
-        pScroller->bSinus = bSinus;
-        pScroller->bSwellFont = bSwellFont;
-        nErrorcode = 0;
     } else {
         SDL_Log("%s: check parameters, null pointer",__FUNCTION__);
     }
     return nErrorcode;
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           FreeScroller
+------------------------------------------------------------------------------
+Beschreibung: Gibt allozierten Speicher für den Scroller wieder frei.
+Parameter
+      Eingang: pScroller, SCROLLER *, Zeiger auf Scroller-Struktur
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+void FreeScroller(SCROLLER *pScroller) {
+    SAFE_FREE(pScroller->puBuffer);
+    SAFE_FREE(pScroller->pfAngles);
+}
+
 
 /*----------------------------------------------------------------------------
 Name:           DoScroller
@@ -84,42 +114,42 @@ int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
         newchar = ConvertASCII(newchar);
         pScroller->uScrolltextPointer++;
         // Scroll-Puffer mit entsprechenden Winkeln nach links kopieren und neues Zeichen ganz rechts einfügen
-        for (I = 0; I < SCROLLER_BUFFER_LEN - 1; I++) {
-            pScroller->Buffer[I] = pScroller->Buffer[I + 1];
-            pScroller->fAngles[I] = pScroller->fAngles[I + 1];
+        for (I = 0; I < pScroller->uScrollerBufferLen - 1; I++) {
+            pScroller->puBuffer[I] = pScroller->puBuffer[I + 1];
+            pScroller->pfAngles[I] = pScroller->pfAngles[I + 1];
         }
-        pScroller->Buffer[I] = newchar;
-        pScroller->fAngles[I] = pScroller->fAngles[I - 1] + pScroller->fXfreq;
+        pScroller->puBuffer[I] = newchar;
+        pScroller->pfAngles[I] = pScroller->pfAngles[I - 1] + pScroller->fXfreq;
     }
     // Buffer-Zeichen rendern
-    for (I = 0; I < SCROLLER_BUFFER_LEN; I++) {
+    for (I = 0; I < pScroller->uScrollerBufferLen; I++) {
        if (pScroller->bSinus) {
             if (pScroller->bSwellFont) {
-                fScaleW = pScroller->fScale * abs(sin(pScroller->fAngles[I]));
+                fScaleW = pScroller->fScale * abs(sin(pScroller->pfAngles[I]));
                 fScaleH = fScaleW;
             } else {
                 fScaleW = pScroller->fScale;
                 fScaleH = fScaleW;
             }
-            fRotation = cos(pScroller->fAngles[I]) * 45;
-            //fScaleW = fScaleW + abs(cos(pScroller->fAngles[I])) * 0.2;
+            fRotation = cos(pScroller->pfAngles[I]) * 45;
+            //fScaleW = fScaleW + abs(cos(pScroller->pfAngles[I])) * 0.2;
         } else {
             fScaleW = pScroller->fScale;
             fScaleH = fScaleW;
             fRotation = 0;
         }
         nErrorCode = CopyTexture(pRenderer,
-                                 pScroller->Buffer[I],
+                                 pScroller->puBuffer[I],
                                  I * FONT_W - pScroller->uScrolledPixel,
-                                 pScroller->nYpos + sin(pScroller->fAngles[I]) * pScroller->fYamplitude,
+                                 pScroller->nYpos + sin(pScroller->pfAngles[I]) * pScroller->fYamplitude,
                                  FONT_W,
                                  FONT_H,
                                  fScaleW,
                                  fScaleH,
                                  fRotation);
     }
-    for (I = 0; I < SCROLLER_BUFFER_LEN; I++) {
-        pScroller->fAngles[I] = pScroller->fAngles[I] + pScroller->fYfreq;
+    for (I = 0; I < pScroller->uScrollerBufferLen; I++) {
+        pScroller->pfAngles[I] = pScroller->pfAngles[I] + pScroller->fYfreq;
     }
     pScroller->uScrolledPixel += pScroller->uScrollSpeedPixel;
     if (pScroller->uScrolledPixel >= FONT_W) {

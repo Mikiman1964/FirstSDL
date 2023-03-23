@@ -1,5 +1,6 @@
 #include "EmeraldMine.h"
 #include "GetTextureIndexByElement.h"
+#include "loadlevel.h"
 #include "magicwall.h"
 #include "man.h"
 #include "mySDL.h"
@@ -9,6 +10,7 @@
 
 extern PLAYFIELD Playfield;
 extern uint8_t ge_uBeamColors[];
+extern CONFIG Config;
 
 /*----------------------------------------------------------------------------
 Name:           RenderLevel
@@ -22,7 +24,7 @@ Parameter
       Ausgang: pnXpos, int *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x
+Seiteneffekte: Playfield.x, Config.x
 ------------------------------------------------------------------------------*/
 int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount)
 {
@@ -48,7 +50,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     float fAngleOffs;
     float fScaleW;
     float fScaleH;
-    /////// Erweitert: dieses Element wird >vor<, also unter das Standard-Element auf derselben Position gezeichnet
+    /////// Erweitert: dieses Element wird >zuerst<, also unter das Standard-Element auf derselben Position gezeichnet
     uint32_t uTextureIndex_0;
     bool bExtendedElement;
     int nXoffs_0;                        // Animations-Offset X
@@ -87,8 +89,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     CheckPlayTime();
     nErrorCode = 0;
     // Den sichtbaren Teil des Levels in den Renderer kopieren.
-    for (uY = 0; (uY <= ((WINDOW_H - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
-        for (uX = 0; (uX <= (WINDOW_W / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
+    for (uY = 0; (uY <= ((Config.uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
+        for (uX = 0; (uX <= (Config.uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
             // Levelindex berechnen
             I = uUpperLeftLevelIndex + uY * Playfield.uLevel_X_Dimension + uX;
             if (I > ((Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension) - 1)) {
@@ -120,8 +122,71 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
             uSelfStatus = Playfield.pStatusAnimation[I] & 0xFF000000;
             uReplicatorAnimation = Playfield.uFrameCounter % 12;
             switch (uLevelElement) {
-                case (EMERALD_DYNAMITE_ON): // TODO
-                    uTextureIndex = 555 + nAnimationCount / 4;
+                case (EMERALD_YAM_KILLS_MAN):
+                    Y = Playfield.uFrameCounter % 11;       // Y von 0 bis 10
+                    if (Y <= 5) {                           // 0,1,2,3,4,5
+                        uTextureIndex = 362 + Y;            // 362 - 367
+                    } else {                                // 6,7,8,9,10
+                        uTextureIndex = 367 + 5 - Y;        // 366 - 362
+                    }
+                    if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_LEFT) {
+                        nXoffs = -nAnimationCount * 2;
+                    } else if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_RIGHT) {
+                        nXoffs = nAnimationCount * 2;
+                    } else if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_UP) {
+                        nYoffs = -nAnimationCount * 2;
+                    } else if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_DOWN) {
+                        nYoffs = nAnimationCount * 2;
+                    } else {
+                      SDL_Log("%s: [EMERALD_YAM_KILLS_MAN]: Warning: unhandled Status: %x",__FUNCTION__,uSelfStatus);
+                    }
+                    break;
+                case (EMERALD_ALIEN_KILLS_MAN):
+                    if ((nAnimationCount >= 4) && (nAnimationCount <= 11)) {
+                        uTextureIndex = 135;                        // Alien geht 2, Flügel voll ausgebreitet
+                    } else {
+                        uTextureIndex = 136;                        // Alien geht 1
+                    }
+                    if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_LEFT) {
+                        nXoffs = -nAnimationCount * 2;
+                    } else if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_RIGHT) {
+                        nXoffs = nAnimationCount * 2;
+                    } else if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_UP) {
+                        nYoffs = -nAnimationCount * 2;
+                    } else if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_DOWN) {
+                        nYoffs = nAnimationCount * 2;
+                    } else {
+                      SDL_Log("%s: [EMERALD_ALIEN_KILLS_MAN]: Warning: unhandled Status: %x",__FUNCTION__,uSelfStatus);
+                    }
+                    break;
+                case (EMERALD_MAN_DIES):
+                    if (uSelfStatus == EMERALD_ANIM_MAN_DIES_P1) {
+                        uTextureIndex = 719 + nAnimationCount / 2;
+                    } else {
+                        uTextureIndex = 719 + 8 + nAnimationCount / 2; // bis 734
+                    }
+                    break;
+                case (EMERALD_DYNAMITE_ON):
+                    switch (uSelfStatus) {
+                        case (EMERALD_ANIM_DYNAMITE_ON_P1):
+                            uTextureIndex = 555;
+                            break;
+                        case (EMERALD_ANIM_DYNAMITE_ON_P2):
+                            uTextureIndex = 556;
+                            break;
+                        case (EMERALD_ANIM_DYNAMITE_ON_P3):
+                            uTextureIndex = 557;
+                            break;
+                        case (EMERALD_ANIM_DYNAMITE_ON_P4):
+                            uTextureIndex = 558;
+                            break;
+                        default:
+                            uTextureIndex = 555;
+                            break;
+                    }
+                    break;
+                case (EMERALD_WALL_WITH_TIME_COIN):
+                    uTextureIndex = 735;
                     break;
                 case (EMERALD_WALL_WITH_CRYSTAL):
                     uTextureIndex = 533;
@@ -259,16 +324,16 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_DOOR_MULTICOLOR):
                     uTextureIndex = 488;
                     break;
-                case (EMERALD_DOOR_ONLY_UP):
+                case (EMERALD_DOOR_ONLY_UP_STEEL):
                     uTextureIndex = 489;
                     break;
-                case (EMERALD_DOOR_ONLY_DOWN):
+                case (EMERALD_DOOR_ONLY_DOWN_STEEL):
                     uTextureIndex = 490;
                     break;
-                case (EMERALD_DOOR_ONLY_LEFT):
+                case (EMERALD_DOOR_ONLY_LEFT_STEEL):
                     uTextureIndex = 491;
                     break;
-                case (EMERALD_DOOR_ONLY_RIGHT):
+                case (EMERALD_DOOR_ONLY_RIGHT_STEEL):
                     uTextureIndex = 492;
                     break;
                 case (EMERALD_STEEL_INVISIBLE):
@@ -869,6 +934,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
 
                 case (EMERALD_CENTRAL_EXPLOSION):
+                case (EMERALD_CENTRAL_EXPLOSION_MEGA):
                 case (EMERALD_CENTRAL_EXPLOSION_BEETLE):
                     if (nAnimationCount < 14) {
                         uTextureIndex = 279 + nAnimationCount / 2;
@@ -1538,7 +1604,6 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         uTextureIndex = 119 + nAnimationCount % 8;     // Man runter
                         nYoffs = nAnimationCount * 4 - FONT_H * 2;    // Man steht bereits auf neuer Position, daher - FONT_H * 2 (DoubleSpeed)
                     } else {
-                        uTextureIndex = 102;                            // Man stehend
                         if (uSelfStatus == EMERALD_ANIM_MAN_LEFT_ARM) {
                             uTextureIndex = 240;                        // Man stehend, linker Arm
                         } else if (uSelfStatus == EMERALD_ANIM_MAN_RIGHT_ARM) {
@@ -1559,6 +1624,31 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                                 uTextureIndex = 243 + nAnimationCount / 2;     // Man rechts schiebend
                             } else {
                                 uTextureIndex = 246 + 5 - nAnimationCount / 2;
+                            }
+                        } else {
+                            // Steht Man noch auf selbst gezündeten Dynamit?
+                            if ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) == Playfield.uDynamitePos) {
+                                bExtendedElement = true;
+                                uTextureIndex_0 = 102;                            // Man stehend, unter Dynamit
+                                switch (Playfield.uDynamiteStatusAnim) {
+                                    case (EMERALD_ANIM_DYNAMITE_ON_P1):
+                                        uTextureIndex = 555;
+                                        break;
+                                    case (EMERALD_ANIM_DYNAMITE_ON_P2):
+                                        uTextureIndex = 556;
+                                        break;
+                                    case (EMERALD_ANIM_DYNAMITE_ON_P3):
+                                        uTextureIndex = 557;
+                                        break;
+                                    case (EMERALD_ANIM_DYNAMITE_ON_P4):
+                                        uTextureIndex = 558;
+                                        break;
+                                    default:
+                                        uTextureIndex = 555;
+                                        break;
+                                }
+                            } else {
+                                uTextureIndex = 102;                            // Man stehend
                             }
                         }
                     }
@@ -3072,11 +3162,11 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             // 2. Element befindet sich am linken Rand und will nach rechts in den sichtbaren Bereich
                             //SDL_Log("%s: invalid element at left found    Anim:%x   T:%u",__FUNCTION__,Playfield.pStatusAnimation[I],SDL_GetTicks());
                             nXoffs = -FONT_H + nAnimationCount * 2;
-                        } else if ((uX == (WINDOW_W / FONT_W)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_RIGHT)) {
+                        } else if ((uX == (Config.uResX / FONT_W)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_RIGHT)) {
                             // 3. Element befindet sich am rechten Rand und will nach links in den sichtbaren Bereich
                             //SDL_Log("%s: invalid element at right found    Anim:%x   T:%u",__FUNCTION__,Playfield.pStatusAnimation[I],SDL_GetTicks());
                             nXoffs = FONT_H - nAnimationCount * 2;
-                        } else if ( (uY == ((WINDOW_H - PANEL_H) / FONT_H)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_DOWN)) {
+                        } else if ( (uY == ((Config.uResY - PANEL_H) / FONT_H)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_DOWN)) {
                             // 4. Element befindet sich am unteren Rand und will nach oben in den sichtbaren Bereich
                             //SDL_Log("%s: invalid element at bottom found    Anim:%x   T:%u",__FUNCTION__,Playfield.pStatusAnimation[I],SDL_GetTicks());
                             nYoffs = FONT_H - nAnimationCount * 2;

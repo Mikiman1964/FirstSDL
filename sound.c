@@ -20,7 +20,7 @@ extern uint8_t _binary_Sound_ManPush_raw_start;extern uint8_t _binary_Sound_ManP
 extern uint8_t _binary_Sound_Yam_raw_start;extern uint8_t _binary_Sound_Yam_raw_end;
 extern uint8_t _binary_Sound_Stone_raw_start;extern uint8_t _binary_Sound_Stone_raw_end;
 extern uint8_t _binary_Sound_Explosion_raw_start;extern uint8_t _binary_Sound_Explosion_raw_end;
-//#define SOUND_DYNAMIT       0b00000000000000001000000000000000      // Dynamit aktiv
+extern uint8_t _binary_Sound_DynamiteTick_raw_start;extern uint8_t _binary_Sound_DynamiteTick_raw_end;
 extern uint8_t _binary_Sound_PoolBlub_raw_start;extern uint8_t _binary_Sound_PoolBlub_raw_end;
 extern uint8_t _binary_Sound_ManTake_raw_start;extern uint8_t _binary_Sound_ManTake_raw_end;
 extern uint8_t _binary_Sound_ManDig_raw_start;extern uint8_t _binary_Sound_ManDig_raw_end;
@@ -33,6 +33,9 @@ extern uint8_t _binary_Sound_Switch_raw_start;extern uint8_t _binary_Sound_Switc
 extern uint8_t _binary_Sound_Mole_raw_start;extern uint8_t _binary_Sound_Mole_raw_end;
 extern uint8_t _binary_Sound_WheelTimeDoor_raw_start;extern uint8_t _binary_Sound_WheelTimeDoor_raw_end;
 extern uint8_t _binary_Sound_DoorCloseOpen_raw_start;extern uint8_t _binary_Sound_DoorCloseOpen_raw_end;
+extern uint8_t _binary_Sound_DynamiteStart_raw_start;extern uint8_t _binary_Sound_DynamiteStart_raw_end;
+extern uint8_t _binary_Sound_ReplicatorPlop_raw_start;extern uint8_t _binary_Sound_ReplicatorPlop_raw_end;
+
 
 uint8_t* g_pSfxPointer[] = {
 // Bit
@@ -51,11 +54,11 @@ uint8_t* g_pSfxPointer[] = {
 /*13*/    &_binary_Sound_Yam_raw_start,&_binary_Sound_Yam_raw_end,                      // Yam
 /*14*/    &_binary_Sound_Stone_raw_start,&_binary_Sound_Stone_raw_end,                  // Stein fällt auf Etwas
 /*15*/    &_binary_Sound_Explosion_raw_start,&_binary_Sound_Explosion_raw_end,          // Explosion
-/*16*/    NULL,NULL,                                                                    // Dynamit aktiv
+/*16*/    &_binary_Sound_DynamiteTick_raw_start,&_binary_Sound_DynamiteTick_raw_end,    // Dynamit aktiv
 /*17*/    &_binary_Sound_PoolBlub_raw_start,&_binary_Sound_PoolBlub_raw_end,            // Etwas ist ins Säurebecken gefallen
 /*18*/    &_binary_Sound_ManTake_raw_start,&_binary_Sound_ManTake_raw_end,              // Man nimmt etwas auf
 /*19*/    &_binary_Sound_ManDig_raw_start,&_binary_Sound_ManDig_raw_end,                // Man gräbt Sand
-/*20*/    &_binary_Sound_Enddoor_raw_start,&_binary_Sound_Enddoor_raw_end,               // Man geht in die Endtür
+/*20*/    &_binary_Sound_Enddoor_raw_start,&_binary_Sound_Enddoor_raw_end,              // Man geht in die Endtür
 /*21*/    &_binary_Sound_ManCries_raw_start,&_binary_Sound_ManCries_raw_end,            // Man schreit
 /*22*/    &_binary_Sound_Cheese_raw_start,&_binary_Sound_Cheese_raw_end,                // Käse breitet sich aus
 /*23*/    &_binary_Sound_Gong_raw_start,&_binary_Sound_Gong_raw_end,                    // Zeit ist bald um
@@ -64,8 +67,8 @@ uint8_t* g_pSfxPointer[] = {
 /*26*/    &_binary_Sound_Mole_raw_start,&_binary_Sound_Mole_raw_end,                    // Maulwurf
 /*27*/    &_binary_Sound_WheelTimeDoor_raw_start,&_binary_Sound_WheelTimeDoor_raw_end,  // Rad für Zeit-Tür
 /*28*/    &_binary_Sound_DoorCloseOpen_raw_start,&_binary_Sound_DoorCloseOpen_raw_end,  // Tür schließen / öffnen
-/*29*/    NULL,NULL,                                                                    // Frei 4
-/*30*/    NULL,NULL,                                                                    // Frei 5
+/*29*/    &_binary_Sound_ReplicatorPlop_raw_start,&_binary_Sound_ReplicatorPlop_raw_end,// Replikator erzeugt neues Objekt
+/*30*/    &_binary_Sound_DynamiteStart_raw_start,&_binary_Sound_DynamiteStart_raw_end,  // Dynamit wird gestartet
 /*31*/    NULL,NULL,                                                                    // Frei 6
 };
 
