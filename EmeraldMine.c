@@ -1,23 +1,32 @@
 /*
 TODO
-* Element 0x3B, Dynamit an mit Man
 * Levelgruppen mit fester Verknüpfung (über Hash?) zu Highscores und Handicap
-* Explosionen allgemein
-* Mine + Beetle an grünem Käse
-* Monster -> Man -> Spielende
-* Unabhängige Sound-Kanäle ->SDL_Mixer erforderlich?
-* Yam-Explosionen unterstützen bereits Replikatoren und Säurebecken: Bei unvollständig konfigurierten Elementen diese löschen oder Hinweis geben.
+* Gehört zum 1. Punkt: Beim Start des Spieles nicht verwendete Hashes aus der Namensliste entfernen
+* Highscores
+* Gras einbauen
+* Unsichtbaren Sand einbauen
+* Unabhängige Sound-Kanäle -> SDL_Mixer erforderlich?
 * Undo für Editor
+* Explosionen mit Sumpf und Tropfen testen
+* grünen Käse noch agressiver machen, wenn hohe Rate eingestellt
+* Konfigurationsdatei: 'config.xml' -> Fenstergröße, Tastenbelegung für Dynamit zünden usw.
+* Konverter für alte/DC3/MIK-Levels bauen, DC3-Konverter bereits lauffähig
+* Berührt Mine von unten einen Tropfen, wird sofort eine Explosion ausgelöst, ohne dass vorher Käse entstehen kann.
+  In diesem Zusammenhang gibt es noch Fehler (z.B. invalid Cleanstatus: 0) mit Minen und Käse/Tropfen, siehe Level "ONLY ONE EMERALD"
+* Wenn Element durch Magic Wall fällt, kommt noch kein SOUND_SQUEAK: Kommt bei DC3 auch nicht, bei Kingsoft ja
+* Funktion editor.c/EditorStateConfirmNewLevelDimension() umbauen wegen dynamischer Auflösung
+* Yams entstehen im Replikator nicht korrekt, kein Zoom und kein "Plopp". Plopp wird z.Z in ControlGame() gesteuert.
 */
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <math.h>
-#include "EmeraldMine.h"
 #include "alien.h"
 #include "beetle.h"
 #include "bomb.h"
 #include "buttons.h"
 #include "crystal.h"
+#include "EmeraldMine.h"
+#include "EmeraldMineMainMenu.h"
 #include "editor.h"
 #include "emerald.h"
 #include "explosion.h"
@@ -30,6 +39,7 @@ TODO
 #include "man.h"
 #include "megabomb.h"
 #include "mine.h"
+#include "modplay.h"
 #include "mole.h"
 #include "mySDL.h"
 #include "mystd.h"
@@ -41,6 +51,7 @@ TODO
 #include "ruby.h"
 #include "sand.h"
 #include "saphir.h"
+#include "smileys.h"
 #include "sound.h"
 #include "stone.h"
 #include "yam.h"
@@ -52,7 +63,11 @@ extern INPUTSTATES InputStates;
 extern MANKEY ManKey;
 extern uint8_t ge_uLevel[];
 extern uint8_t ge_uBeamColors[];
-
+extern uint8_t g_uIntensityProzent;
+extern SMILEY Smileys[MAX_SMILEYS];
+extern CONFIG Config;
+extern LEVELGROUP SelectedLevelgroup;
+extern MAINMENU MainMenu;
 
 /*----------------------------------------------------------------------------
 Name:           Menu
@@ -61,13 +76,19 @@ Beschreibung: Hauptmenü, um den entsprechenden SDL2-Programmteil aufzurufen.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
 Rückgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
-Seiteneffekte: Playfield.x für FrameCounter
+Seiteneffekte: Playfield.x für FrameCounter, Config.x
 ------------------------------------------------------------------------------*/
 int Menu(SDL_Renderer *pRenderer) {
+    AUDIOPLAYER Audioplayer;
+    SDL_AudioDeviceID audio_device;
+    uint32_t uModVolume;
     int nErrorCode;
     int nChoose;
+    int nColorDimm;
     float fAngle;
     SDL_Rect DestR;
+    uint32_t uXoffs;
+    uint32_t uYoffs;
     uint32_t uFrameCounter;
     uint32_t I;
     uint32_t uTextureIndex;
@@ -79,47 +100,77 @@ int Menu(SDL_Renderer *pRenderer) {
         624,128,EMERALD_FONT_P,656,128,EMERALD_FONT_L,688,128,EMERALD_FONT_I,720,128,EMERALD_FONT_C,752,128,EMERALD_FONT_A,784,128,EMERALD_FONT_T,816,128,EMERALD_FONT_I,
         848,128,EMERALD_FONT_O,880,128,EMERALD_FONT_N,912,128,EMERALD_FONT_APOSTROPHE,
         // Obere Stahl-Zeile
-        0,0,EMERALD_STEEL,32,0,EMERALD_STEEL,64,0,EMERALD_STEEL,96,0,EMERALD_STEEL,128,0,EMERALD_STEEL,160,0,EMERALD_STEEL,192,0,EMERALD_STEEL,224,0,EMERALD_STEEL,256,0,EMERALD_STEEL,
+        -128,0,EMERALD_STEEL,-96,0,EMERALD_STEEL,-64,0,EMERALD_STEEL,-32,0,EMERALD_STEEL,0,0,EMERALD_STEEL,32,0,EMERALD_STEEL,64,0,EMERALD_STEEL,96,0,EMERALD_STEEL,128,0,EMERALD_STEEL,160,0,EMERALD_STEEL,192,0,EMERALD_STEEL,224,0,EMERALD_STEEL,256,0,EMERALD_STEEL,
         288,0,EMERALD_STEEL,320,0,EMERALD_STEEL,352,0,EMERALD_STEEL,384,0,EMERALD_STEEL,416,0,EMERALD_STEEL,448,0,EMERALD_STEEL,480,0,EMERALD_STEEL,512,0,EMERALD_STEEL,544,0,EMERALD_STEEL,
         576,0,EMERALD_STEEL,608,0,EMERALD_STEEL,640,0,EMERALD_STEEL,672,0,EMERALD_STEEL,704,0,EMERALD_STEEL,736,0,EMERALD_STEEL,768,0,EMERALD_STEEL,800,0,EMERALD_STEEL,832,0,EMERALD_STEEL,
-        864,0,EMERALD_STEEL,896,0,EMERALD_STEEL,928,0,EMERALD_STEEL,960,0,EMERALD_STEEL,
-        992,0,EMERALD_STEEL,
+        864,0,EMERALD_STEEL,896,0,EMERALD_STEEL,928,0,EMERALD_STEEL,960,0,EMERALD_STEEL,992,0,EMERALD_STEEL,1024,0,EMERALD_STEEL,1056,0,EMERALD_STEEL,1088,0,EMERALD_STEEL,1120,0,EMERALD_STEEL,
         // Untere Stahl-Zeile
-        0,736,EMERALD_STEEL,32,736,EMERALD_STEEL,64,736,EMERALD_STEEL,96,736,EMERALD_STEEL,128,736,EMERALD_STEEL,160,736,EMERALD_STEEL,192,736,EMERALD_STEEL,224,736,EMERALD_STEEL,
+        -128,736,EMERALD_STEEL,-96,736,EMERALD_STEEL,-64,736,EMERALD_STEEL,-32,736,EMERALD_STEEL,0,736,EMERALD_STEEL,32,736,EMERALD_STEEL,64,736,EMERALD_STEEL,96,736,EMERALD_STEEL,128,736,EMERALD_STEEL,160,736,EMERALD_STEEL,192,736,EMERALD_STEEL,224,736,EMERALD_STEEL,
         256,736,EMERALD_STEEL,288,736,EMERALD_STEEL,320,736,EMERALD_STEEL,352,736,EMERALD_STEEL,384,736,EMERALD_STEEL,416,736,EMERALD_STEEL,448,736,EMERALD_STEEL,480,736,EMERALD_STEEL,
         512,736,EMERALD_STEEL,544,736,EMERALD_STEEL,576,736,EMERALD_STEEL,608,736,EMERALD_STEEL,640,736,EMERALD_STEEL,672,736,EMERALD_STEEL,704,736,EMERALD_STEEL,736,736,EMERALD_STEEL,
         768,736,EMERALD_STEEL,800,736,EMERALD_STEEL,832,736,EMERALD_STEEL,864,736,EMERALD_STEEL,896,736,EMERALD_STEEL,928,736,EMERALD_STEEL,960,736,EMERALD_STEEL,992,736,EMERALD_STEEL,
+        1024,736,EMERALD_STEEL,1056,736,EMERALD_STEEL,1088,736,EMERALD_STEEL,1120,736,EMERALD_STEEL,
         // Linke Stahl-Zeile
-        0,32,EMERALD_STEEL,0,64,EMERALD_STEEL,0,96,EMERALD_STEEL,0,128,EMERALD_STEEL,0,160,EMERALD_STEEL,0,192,EMERALD_STEEL,0,224,EMERALD_STEEL,0,256,EMERALD_STEEL,0,288,EMERALD_STEEL,
-        0,320,EMERALD_STEEL,0,352,EMERALD_STEEL,0,384,EMERALD_STEEL,0,416,EMERALD_STEEL,0,448,EMERALD_STEEL,0,480,EMERALD_STEEL,0,512,EMERALD_STEEL,0,544,EMERALD_STEEL,0,576,EMERALD_STEEL,
-        0,608,EMERALD_STEEL,0,640,EMERALD_STEEL,0,672,EMERALD_STEEL,0,704,EMERALD_STEEL,
+        -128,32,EMERALD_STEEL,-128,64,EMERALD_STEEL,-128,96,EMERALD_STEEL,-128,128,EMERALD_STEEL,-128,160,EMERALD_STEEL,-128,192,EMERALD_STEEL,-128,224,EMERALD_STEEL,-128,256,EMERALD_STEEL,-128,288,EMERALD_STEEL,
+        -128,320,EMERALD_STEEL,-128,352,EMERALD_STEEL,-128,384,EMERALD_STEEL,-128,416,EMERALD_STEEL,-128,448,EMERALD_STEEL,-128,480,EMERALD_STEEL,-128,512,EMERALD_STEEL,-128,544,EMERALD_STEEL,-128,576,EMERALD_STEEL,
+        -128,608,EMERALD_STEEL,-128,640,EMERALD_STEEL,-128,672,EMERALD_STEEL,-128,704,EMERALD_STEEL,
         // rechte Stahl-Zeile
-        992,32,EMERALD_STEEL,992,64,EMERALD_STEEL,992,96,EMERALD_STEEL,992,128,EMERALD_STEEL,992,160,EMERALD_STEEL,992,192,EMERALD_STEEL,992,224,EMERALD_STEEL,992,256,EMERALD_STEEL,
-        992,288,EMERALD_STEEL,992,320,EMERALD_STEEL,992,352,EMERALD_STEEL,992,384,EMERALD_STEEL,992,416,EMERALD_STEEL,992,448,EMERALD_STEEL,992,480,EMERALD_STEEL,992,512,EMERALD_STEEL,
-        992,544,EMERALD_STEEL,992,576,EMERALD_STEEL,992,608,EMERALD_STEEL,992,640,EMERALD_STEEL,992,672,EMERALD_STEEL,992,704,EMERALD_STEEL,
+        1120,32,EMERALD_STEEL,1120,64,EMERALD_STEEL,1120,96,EMERALD_STEEL,1120,128,EMERALD_STEEL,1120,160,EMERALD_STEEL,1120,192,EMERALD_STEEL,1120,224,EMERALD_STEEL,1120,256,EMERALD_STEEL,
+        1120,288,EMERALD_STEEL,1120,320,EMERALD_STEEL,1120,352,EMERALD_STEEL,1120,384,EMERALD_STEEL,1120,416,EMERALD_STEEL,1120,448,EMERALD_STEEL,1120,480,EMERALD_STEEL,1120,512,EMERALD_STEEL,
+        1120,544,EMERALD_STEEL,1120,576,EMERALD_STEEL,1120,608,EMERALD_STEEL,1120,640,EMERALD_STEEL,1120,672,EMERALD_STEEL,1120,704,EMERALD_STEEL,
         // "Menüpunkte"
-        128,224,EMERALD_EMERALD,128,288,EMERALD_RUBY,128,352,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
+        128,256,EMERALD_RUBY,128,352,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
         // "PROGRAMMED IN 2023"
         144,672,EMERALD_FONT_P,176,672,EMERALD_FONT_R,208,672,EMERALD_FONT_O,240,672,EMERALD_FONT_G,272,672,EMERALD_FONT_R,304,672,EMERALD_FONT_A,336,672,EMERALD_FONT_M,368,672,EMERALD_FONT_M,
         400,672,EMERALD_FONT_E,432,672,EMERALD_FONT_D,496,672,EMERALD_FONT_I,528,672,EMERALD_FONT_N,592,672,EMERALD_FONT_2,624,672,EMERALD_FONT_0,656,672,EMERALD_FONT_2,688,672,EMERALD_FONT_2,
         720,672,EMERALD_FONT_MINUS,752,672,EMERALD_FONT_2,784,672,EMERALD_FONT_0,816,672,EMERALD_FONT_2,848,672,EMERALD_FONT_3
     };
 
+    uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
+    uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
+    memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
+    InitSmileys();
     uFrameCounter = 0;
     nErrorCode = 0;
     nChoose = -1;
     // Buttons erzeugen
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_EDITOR,"Level Editor",192,224 + 4,true);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",192,288 + 4,true);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",192,352 + 4,true);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",192,576 + 4,true);
-    while ((nErrorCode == 0) && (nChoose == -1)) {
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",192 + 128,256 + 4,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",192 + 128,352 + 4,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",192 + 128,576 + 4,true,false);
+    // Audiostruktur initialisieren
+    InitAudioplayerStruct(&Audioplayer,5);      // Mit MOD 5 class11 starten
+    // Modfile initialisieren
+    if (!InitMOD(Audioplayer.pTheMusic, Audioplayer.sdl_audio.freq)) {
+        SDL_Log("%s: invalid mod file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
+        return -1;
+    }
+    audio_device = SDL_OpenAudioDevice(NULL, 0, &Audioplayer.sdl_audio, NULL, 0);
+    if (audio_device == 0) {
+        SDL_Log("%s: SDL_OpenAudioDevice() failed: %s",__FUNCTION__,SDL_GetError());
+        return -1;
+    }
+    SDL_PauseAudioDevice(audio_device, 0);
+    uModVolume = 0;
+    SetModVolume(uModVolume);
+    nColorDimm = 0;
+    SetAllTextureColors(nColorDimm);
+    while (((nErrorCode == 0) && (nChoose == -1)) || (nColorDimm > 0) ) {
+        MoveSmileys(pRenderer);
         UpdateInputStates();
-
+        if ((nChoose == -1) && (nColorDimm < 100)) {
+            nColorDimm++;
+            SetAllTextureColors(nColorDimm);
+            uModVolume++;
+            SetModVolume(uModVolume);
+        }
+        if (SDL_GetQueuedAudioSize(audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
+            RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);
+            SDL_QueueAudio(audio_device,Audioplayer. audiobuffer, Audioplayer.sdl_audio.samples * 4); // 2 channels, 2 bytes/sample
+        }
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],uFrameCounter % 16,&fAngle);
-            DestR.x = uPositionsAndElements[I * 3 + 0];
-            DestR.y = uPositionsAndElements[I * 3 + 1];
+            DestR.x = 128 + uXoffs + uPositionsAndElements[I * 3 + 0];
+            DestR.y = uYoffs + uPositionsAndElements[I * 3 + 1];
             DestR.w = FONT_W;
             DestR.h = FONT_H;
             if (nErrorCode == 0) {
@@ -130,30 +181,33 @@ int Menu(SDL_Renderer *pRenderer) {
                 }
             }
         }
-        PrintLittleFont(pRenderer,320,232,0,"WARNING: RIGHT MOUSEBUTTON FILLS AREA WITH SELECTED ELEMENT !");
-        PrintLittleFont(pRenderer,320,296,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.");
-        PrintLittleFont(pRenderer,320,360,0,"USE THE FOLLOWING KEYS:");
-        PrintLittleFont(pRenderer,340,375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT");
-        PrintLittleFont(pRenderer,340,390,0,"* MOUSEWHEEL TO ZOOM BALLONS");
-        PrintLittleFont(pRenderer,340,405,0,"* 'A' TO TOGGLE TEXTURE FOR BALLONS AND ASTEROID");
-        PrintLittleFont(pRenderer,340,420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE");
-        PrintLittleFont(pRenderer,340,435,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME");
-        PrintLittleFont(pRenderer,340,450,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988");
-        PrintLittleFont(pRenderer,340,465,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990");
-        PrintLittleFont(pRenderer,340,480,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999");
-        PrintLittleFont(pRenderer,340,495,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991");
-        PrintLittleFont(pRenderer,340,510,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO");
-        PrintLittleFont(pRenderer,340,525,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.");
-        PrintLittleFont(pRenderer,320,576 + 8,0,"NUFF SAID");
+        PrintLittleFont(pRenderer,448,264,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.");
+        PrintLittleFont(pRenderer,448,360,0,"USE THE FOLLOWING KEYS:");
+        PrintLittleFont(pRenderer,468,375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT");
+        PrintLittleFont(pRenderer,468,390,0,"* MOUSEWHEEL TO ZOOM BALLONS");
+        PrintLittleFont(pRenderer,468,405,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS AND ASTEROID");
+        PrintLittleFont(pRenderer,468,420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE");
+        PrintLittleFont(pRenderer,468,435,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME");
+        PrintLittleFont(pRenderer,468,450,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988");
+        PrintLittleFont(pRenderer,468,465,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990");
+        PrintLittleFont(pRenderer,468,480,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999");
+        PrintLittleFont(pRenderer,468,495,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991");
+        PrintLittleFont(pRenderer,468,510,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO");
+        PrintLittleFont(pRenderer,468,525,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.");
+        PrintLittleFont(pRenderer,448,576 + 8,0,"NUFF SAID");
         nErrorCode = ShowButtons(pRenderer);
-        if (IsButtonPressed(BUTTONLABEL_CALL_EDITOR)) {
-            nChoose = 0;
-        } else if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
+        if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
             nChoose = 1;
         } else if (IsButtonPressed(BUTTONLABEL_CALL_DEMO)) {
             nChoose = 2;
         } else if (IsButtonPressed(BUTTONLABEL_CALL_QUIT)) {
             nChoose = 3;
+        }
+        if ((nChoose != -1) && (nColorDimm > 0)) {
+            nColorDimm--;
+            SetAllTextureColors(nColorDimm);
+            uModVolume--;
+            SetModVolume(uModVolume);
         }
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
@@ -161,10 +215,12 @@ int Menu(SDL_Renderer *pRenderer) {
         Playfield.uFrameCounter++;
     }
     // Buttons freigeben
-    FreeButton(BUTTONLABEL_CALL_EDITOR);
     FreeButton(BUTTONLABEL_CALL_GAME);
     FreeButton(BUTTONLABEL_CALL_DEMO);
     FreeButton(BUTTONLABEL_CALL_QUIT);
+    SAFE_FREE(Audioplayer.pTheMusic);
+    SDL_CloseAudioDevice(audio_device);
+    SetAllTextureColors(100);
     return nChoose;
 }
 
@@ -174,42 +230,62 @@ Name:           RunGame
 ------------------------------------------------------------------------------
 Beschreibung: Hauptschleifen-Funktion für das Spielen eines Levels.
 Parameter
-      Eingang: pWindow, SDL_Window, Fenster-Handle
-               pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+               uLevel, uint32_t, Levelnummer
       Ausgang: -
 
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: Playfield.x, InputStates.x, ManKey.x,, GameSound.x
+Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x,
 ------------------------------------------------------------------------------*/
-int RunGame(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
+int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bLevelRun;
     bool bPrepareLevelExit;
     int nColorDimm;
     int nCheckLevelCount;
-    nCheckLevelCount = 0;
-    nColorDimm = 100; // war 0
     uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
     uint32_t uKey;
     uint32_t I;
     bool bDimmIn = true;
     bool bDebug = false;
+    uint32_t uQuitTime;
+    int nRet;
 
+    nRet = 0;
+    nCheckLevelCount = 0;
+    nColorDimm = 0;
     if (InitGameSound() != 0) {
         return -1;
     }
-    SetAllTextureColors(0);
-    bLevelRun = (InitialisePlayfield(LEVEL_XML_FILENAME) == 0);
+    bLevelRun = (InitialisePlayfield(uLevel) == 0);
     // Renderer mit schwarz löschen
     SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
     SDL_RenderClear(pRenderer);
     SDL_RenderPresent(pRenderer);
     bPrepareLevelExit = false;
-    while (bLevelRun) {
-        UpdateManKey();
-        if ((InputStates.pKeyboardArray[SDL_SCANCODE_SPACE]) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (Playfield.uTimeToPlay == 0)) {
+    if (bLevelRun) {
+        nRet = ShowAuthorAndLevelname(pRenderer,uLevel);
+        if (nRet < 0) {
+            bLevelRun = false; // Ein Fehler ist aufgetreten
+        } else if (nRet > 0) {
             bPrepareLevelExit = true;
         }
-
+    }
+    SetAllTextureColors(0);
+    Playfield.uPlayTimeStart = SDL_GetTicks();
+    uQuitTime = 0xFFFFFFFF;
+    while (bLevelRun) {
+        UpdateManKey();
+        if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit)) {
+            bPrepareLevelExit = true;
+        }
+        if ((Playfield.bManDead) || (Playfield.bWellDone)) {
+            if (uQuitTime == 0xFFFFFFFF) {
+                uQuitTime = SDL_GetTicks();
+            }
+            if ((uQuitTime != 0xFFFFFFFF) && ((SDL_GetTicks() - uQuitTime) > 2000) && ((ManKey.bFire) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])))   {
+                bPrepareLevelExit = true;
+            }
+        }
         if (InputStates.pKeyboardArray[SDL_SCANCODE_X]) {
             bDebug = !bDebug;
             if (bDebug) {
@@ -266,6 +342,7 @@ int RunGame(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
         if (bDebug) SDL_Delay(100);
     }
+    Playfield.uPlayTimeEnd = SDL_GetTicks();
     SetAllTextureColors(100);           // Farben beim Verlassen wieder auf volle Helligekit
     SAFE_FREE(Playfield.pLevel);
     SAFE_FREE(Playfield.pInvalidElement);
@@ -441,6 +518,7 @@ uint32_t ControlGame(uint32_t uDirection) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_BORN2;
         } else if (uCleanStatus == EMERALD_ANIM_BORN2) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            PreparePlaySound(SOUND_REPLICATOR_PLOP,I);
         }
         // "Selbststeuernde" Animationen und Animationsstatus nicht zurücksetzen,
         // Nur Clean-Status zurücksetzen
@@ -455,16 +533,37 @@ uint32_t ControlGame(uint32_t uDirection) {
     // Man als Zweites steuern !
     uManDirection = ControlMan(Playfield.uManYpos * Playfield.uLevel_X_Dimension + Playfield.uManXpos,uDirection);
     ControlLightBarriers();
+
+    if (Playfield.uDynamitePos != 0xFFFFFFFF) {
+        ControlManWithDynamiteOn(Playfield.uDynamitePos);
+    }
+
     for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
         uLevelElement = Playfield.pLevel[I];
         switch (uLevelElement)
         {
+            case (EMERALD_YAM_KILLS_MAN):
+                ControlYamKillsMan(I);
+                break;
+            case (EMERALD_ALIEN_KILLS_MAN):
+                ControlAlienKillsMan(I);
+                break;
+            case (EMERALD_MAN_DIES):
+                ControlManDies(I);
+                break;
+            case (EMERALD_DYNAMITE_ON):
+                ControlDynamiteOn(I);
+                break;
             case (EMERALD_CENTRAL_EXPLOSION_BEETLE):
                 ControlCentralBeetleExplosion(I);       // 3x3-Käferexplosion
                 PreparePlaySound(SOUND_EXPLOSION,I);
                 break;
             case (EMERALD_CENTRAL_EXPLOSION):
                 ControlCentralExplosion(I);             // Normale 3x3 Explosion
+                PreparePlaySound(SOUND_EXPLOSION,I);
+                break;
+            case (EMERALD_CENTRAL_EXPLOSION_MEGA):
+                ControlCentralMegaExplosion(I);         // Mega-Explosion
                 PreparePlaySound(SOUND_EXPLOSION,I);
                 break;
             case (EMERALD_SWITCHDOOR_OPEN):
@@ -829,34 +928,253 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_RUBY] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_PERL] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_CRYSTAL] = 0x1FF;
-    Playfield.uRollUnderground[EMERALD_NUT] = 0x1FF;                    // Nut rollt bei DC3 nicht von Schlüssel
+    Playfield.uRollUnderground[EMERALD_NUT] = 0x1FF;                            // Nut rollt bei DC3 nicht von Schlüssel
     Playfield.uRollUnderground[EMERALD_WALL_ROUND] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_WALL_ROUND_PIKE] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_STEEL_ROUND_PIKE] = 0x1FF;
-    Playfield.uRollUnderground[EMERALD_STEEL] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_WALL_CORNERED] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_KEY_RED] = 0x1FF;                // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_KEY_YELLOW] = 0x1FF;             // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_KEY_BLUE] = 0x1FF;               // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_KEY_GREEN] = 0x1FF;              // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_WHEEL] = 0xFF;
-    Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_LEFT] = 0x1FF;      // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_RIGHT] = 0x1FF;     // nicht bei DC3
+    Playfield.uRollUnderground[EMERALD_STEEL] = 0xEB;                           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_CORNERED] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_WALL_INVISIBLE] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_KEY_RED] = 0x1FF;                        // nicht bei DC3
+    Playfield.uRollUnderground[EMERALD_KEY_YELLOW] = 0x1FF;                     // nicht bei DC3
+    Playfield.uRollUnderground[EMERALD_KEY_BLUE] = 0x1FF;                       // nicht bei DC3
+    Playfield.uRollUnderground[EMERALD_KEY_GREEN] = 0x1FF;                      // nicht bei DC3
+	Playfield.uRollUnderground[EMERALD_KEY_GENERAL] = 0x1FF;                    // nicht bei DC3
+	Playfield.uRollUnderground[EMERALD_KEY_WHITE] = 0x1FF;                      // nicht bei DC3
+    Playfield.uRollUnderground[EMERALD_WHEEL] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_LEFT] = 0x1FF;              // nicht bei DC3
+    Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_RIGHT] = 0x1FF;             // nicht bei DC3
     Playfield.uRollUnderground[EMERALD_DOOR_RED] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_DOOR_YELLOW] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_DOOR_BLUE] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_DOOR_GREEN] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_WHITE] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_EMERALD] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_MULTICOLOR] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_RED_WOOD] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_YELLOW_WOOD] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_BLUE_WOOD] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_GREEN_WOOD] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_WHITE_WOOD] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_GREY_RED] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_GREY_YELLOW] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_GREY_GREEN] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_GREY_BLUE] = 0x1FF;
+    Playfield.uRollUnderground[EMERALD_DOOR_GREY_WHITE] = 0x1FF;
+	Playfield.uRollUnderground[EMERALD_WHEEL_TIMEDOOR] = 0x1FF;
+	Playfield.uRollUnderground[EMERALD_DOOR_TIME] = 0x1FF;
+	Playfield.uRollUnderground[EMERALD_SWITCHDOOR_OPEN] = 0x1FF;
+	Playfield.uRollUnderground[EMERALD_SWITCHDOOR_CLOSED] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_STEEL_ROUND] = 0x1FF;
-    Playfield.uRollUnderground[EMERALD_STEEL_WARNING] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_BIOHAZARD] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_DEADEND] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_STOP] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_PARKING] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_FORBIDDEN] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_EXIT] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_RADIOACTIVE] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_EXPLOSION] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_ACID] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_WARNING] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_BIOHAZARD] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_DEADEND] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STOP] = 0xEB;                      // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_PARKING] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_FORBIDDEN] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_EXIT] = 0xEB;                      // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_RADIOACTIVE] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_EXPLOSION] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_ACID] = 0xEB;                      // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_HEART] = 0xEB;                     // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_PLAYERHEAD] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_NO_ENTRY] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_GIVE_WAY] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_YING] = 0xEB;                      // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_WHEELCHAIR] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_ARROW_DOWN] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_ARROW_UP] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_ARROW_LEFT] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_ARROW_RIGHT] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_INVISIBLE] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_LEFT_UP] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_UP] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_RIGHT_UP] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_LEFT] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_RIGHT] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_LEFT_BOTTOM] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_BOTTOM] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_RIGHT_BOTTOM] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_EXCLAMATION] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_ARROW_RIGHT] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_ARROW_UP] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_ARROW_DOWN] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_APOSTROPHE] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_BRACE_OPEN] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_BRACE_CLOSE] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_COPYRIGHT] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_PLUS] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_COMMA] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_MINUS] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_POINT] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_SLASH] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_0] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_1] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_2] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_3] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_4] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_5] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_6] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_7] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_8] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_9] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_DOUBLE_POINT] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_PLATE] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_ARROW_LEFT] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_QUESTION_MARK] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_A] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_B] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_C] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_D] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_E] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_F] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_G] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_H] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_I] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_J] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_K] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_L] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_M] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_N] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_O] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_P] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_Q] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_R] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_S] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_T] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_U] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_V] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_W] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_X] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_Y] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_Z] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_AE] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_OE] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_UE] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_EXCLAMATION] = 0xEB;    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_ARROW_RIGHT] = 0xEB;    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_ARROW_UP] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_ARROW_DOWN] = 0xEB;     // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_APOSTROPHE] = 0xEB;     // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_BRACE_OPEN] = 0xEB;     // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_BRACE_CLOSE] = 0xEB;    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_COPYRIGHT] = 0xEB;      // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_PLUS] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_COMMA] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_MINUS] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_POINT] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_SLASH] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_0] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_1] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_2] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_3] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_4] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_5] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_6] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_7] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_8] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_9] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_DOUBLE_POINT] = 0xEB;   // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_PLATE] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_ARROW_LEFT] = 0xEB;     // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_QUESTION_MARK] = 0xEB;  // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_A] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_B] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_C] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_D] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_E] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_F] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_G] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_H] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_I] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_J] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_K] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_L] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_M] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_N] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_O] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_P] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_Q] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_R] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_S] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_T] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_U] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_V] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_W] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_X] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_Y] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_Z] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_AE] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_OE] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_FONT_STEEL_GREEN_UE] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_EMERALD] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_RUBY] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_SAPPHIRE] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_PERL] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_KEY_RED] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_KEY_GREEN] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_KEY_BLUE] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_KEY_YELLOW] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_KEY_WHITE] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_KEY_GENERAL] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_BOMB] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_MEGABOMB] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_STONE] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_NUT] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_WHEEL] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_DYNAMITE] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_ENDDOOR] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_ENDDOOR_READY] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_MINE_UP] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_MOLE_UP] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_GREEN_CHEESE] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_BEETLE_UP] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_YAM] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_ALIEN] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_CRYSTAL] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_RED_TOP_LEFT] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_RED_TOP_RIGHT] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_GREEN_TOP_LEFT] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_GREEN_TOP_RIGHT] = 0xEB;      // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_YELLOW_TOP_LEFT] = 0xEB;      // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_YELLOW_TOP_RIGHT] = 0xEB;     // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_BLUE_TOP_LEFT] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_DOOR_ONLY_UP_STEEL] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_DOOR_ONLY_DOWN_STEEL] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_DOOR_ONLY_LEFT_STEEL] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_DOOR_ONLY_RIGHT_STEEL] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_RED_SWITCH] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_GREEN_SWITCH] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_BLUE_SWITCH] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_SWITCH] = 0xEB;      // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_RED_SWITCH] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_YELLOW_SWITCH] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_GREEN_SWITCH] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_REPLICATOR_BLUE_SWITCH] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_LIGHT_SWITCH] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_MAGIC_WALL_SWITCH] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_SWITCH_SWITCHDOOR] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_DOOR_END_NOT_READY_STEEL] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_DOOR_END_READY_STEEL] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_DOOR_END_READY] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_DOOR_END_NOT_READY] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_RED_UP] = 0x1FF;            // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_RED_DOWN] = 0x1FF;          // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_RED_LEFT] = 0x1FF;          // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_RED_RIGHT] = 0x1FF;         // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_GREEN_UP] = 0x1FF;          // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_GREEN_DOWN] = 0x1FF;        // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_GREEN_LEFT] = 0x1FF;        // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_GREEN_RIGHT] = 0x1FF;       // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_BLUE_UP] = 0x1FF;           // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_BLUE_DOWN] = 0x1FF;         // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_BLUE_LEFT] = 0x1FF;         // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_BLUE_RIGHT] = 0x1FF;        // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_UP] = 0x1FF;         // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_DOWN] = 0x1FF;       // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_LEFT] = 0x1FF;       // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_RIGHT] = 0x1FF;      // Alles rollt von Lichtschranken
+	Playfield.uRollUnderground[EMERALD_TIME_COIN] = 0x1FF;                      // Alles rollt von Münzen
 }
 
 
@@ -1058,6 +1376,7 @@ void PostControlSwitchDoors(void) {
     }
 }
 
+
 /*----------------------------------------------------------------------------
 Name:           IsSteel
 ------------------------------------------------------------------------------
@@ -1103,6 +1422,8 @@ bool IsSteel(uint16_t uElement) {
     (uElement == EMERALD_STEEL_ARROW_LEFT) ||
     (uElement == EMERALD_STEEL_ARROW_RIGHT) ||
     (uElement == EMERALD_STEEL_INVISIBLE) ||
+    (uElement == EMERALD_DOOR_END_NOT_READY_STEEL) ||
+    (uElement == EMERALD_DOOR_END_READY_STEEL) ||
     ((uElement >= EMERALD_FONT_STEEL_GREEN_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_GREEN_UE)) ||
     ((uElement >= EMERALD_FONT_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_UE))
     );

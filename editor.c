@@ -6,6 +6,7 @@
 #include "FillLevelArea.h"
 #include "GetTextureIndexByElement.h"
 #include "KeyboardMouse.h"
+#include "levelconverter.h"
 #include "loadlevel.h"
 #include "md5.h"
 #include "mystd.h"
@@ -18,6 +19,7 @@ extern BUTTON Buttons[MAX_BUTTONS];
 extern PLAYFIELD Playfield;
 extern INPUTSTATES InputStates;
 extern SDL_DisplayMode ge_DisplayMode;
+extern CONFIG Config;
 
 uint8_t g_PanelColorPatterns[] = {
 //                           R    G    B
@@ -128,10 +130,10 @@ char ge_szElementNames[][64] =
                           "BEAM, CROSS, INTERNAL ELEMENT",      // 0X61
                           "DOOR, EMERALD",                      // 0X62
                           "DOOR, MULTICOLOR",                   // 0X63
-                          "DOOR, ONLY UP",                      // 0X64
-                          "DOOR, ONLY DOWN",                    // 0X65
-                          "DOOR, ONLY LEFT",                    // 0X66
-                          "DOOR, ONLY RIGHT",                   // 0X67
+                          "DOOR, ONLY UP, STEEL",               // 0X64
+                          "DOOR, ONLY DOWN, STEEL",             // 0X65
+                          "DOOR, ONLY LEFT, STEEL",             // 0X66
+                          "DOOR, ONLY RIGHT, STEEL",            // 0X67
                           "SWITCH, TIMEDOOR",                   // 0X68
                           "TIMEDOOR",                           // 0X69
                           "SWITCHED DOOR, OPEN",                // 0X6A
@@ -509,6 +511,13 @@ char ge_szElementNames[][64] =
                           "FONT, STEEL, GREEN, AE",             // 0X1DE
                           "FONT, STEEL, GREEN, OE",             // 0X1DF
                           "FONT, STEEL, GREEN, UE",             // 0X1E0
+                          "EXPL. CENTRAL, INTERNAL ELEMENT",    // 0X1E1
+                          "EXPL. MEGACENTRAL, INT. ELEMENT",    // 0X1E2
+                          "EXPL. CENTRAL BEETLE, INT. ELEMENT", // 0X1E3
+                          "MAN DIES, INTERNAL ELEMENT",         // 0X1E4
+                          "ALIEN KILLS MAN, INTERNAL ELEMENT",  // 0X1E5
+                          "YAM KILLS MAN, INTERNAL ELEMENT",    // 0X1E6
+                          "WALL, WITH TIME COIN",               // 0X1E7
                          };
 
 // Level-Elemente, die aktuell angezeigt werden
@@ -522,7 +531,7 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_DOOR_GREY_RED,EMERALD_DOOR_GREY_YELLOW,EMERALD_DOOR_GREY_GREEN,EMERALD_DOOR_GREY_BLUE,EMERALD_DOOR_RED_WOOD,EMERALD_DOOR_YELLOW_WOOD,EMERALD_DOOR_GREEN_WOOD,EMERALD_DOOR_BLUE_WOOD,
                             EMERALD_DOOR_WHITE,EMERALD_DOOR_GREY_WHITE,EMERALD_DOOR_WHITE_WOOD,EMERALD_KEY_WHITE,EMERALD_KEY_GENERAL,EMERALD_DOOR_MULTICOLOR,EMERALD_DOOR_EMERALD,EMERALD_DOOR_TIME,
                             EMERALD_DOOR_END_NOT_READY,EMERALD_DOOR_END_READY,EMERALD_DOOR_END_NOT_READY_STEEL,EMERALD_DOOR_END_READY_STEEL,EMERALD_SWITCHDOOR_CLOSED,EMERALD_SWITCHDOOR_OPEN,EMERALD_SWITCH_SWITCHDOOR,EMERALD_WHEEL_TIMEDOOR,
-                            EMERALD_DOOR_ONLY_LEFT,EMERALD_DOOR_ONLY_DOWN,EMERALD_DOOR_ONLY_RIGHT,EMERALD_DOOR_ONLY_DOWN,EMERALD_MAGIC_WALL,EMERALD_MAGIC_WALL_STEEL,EMERALD_MAGIC_WALL_SWITCH,EMERALD_LIGHT_SWITCH,
+                            EMERALD_DOOR_ONLY_LEFT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_DOOR_ONLY_RIGHT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_MAGIC_WALL,EMERALD_MAGIC_WALL_STEEL,EMERALD_MAGIC_WALL_SWITCH,EMERALD_LIGHT_SWITCH,
                             EMERALD_MINE_LEFT,EMERALD_MINE_DOWN,EMERALD_MINE_RIGHT,EMERALD_MINE_UP,EMERALD_BEETLE_LEFT,EMERALD_BEETLE_DOWN,EMERALD_BEETLE_RIGHT,EMERALD_BEETLE_UP,
                             EMERALD_MOLE_LEFT,EMERALD_MOLE_DOWN,EMERALD_MOLE_RIGHT,EMERALD_MOLE_UP,EMERALD_YAM,EMERALD_ALIEN,EMERALD_GREEN_CHEESE,EMERALD_GREEN_DROP,
                             EMERALD_MAN,EMERALD_HAMMER,EMERALD_TIME_COIN,EMERALD_DYNAMITE_OFF,EMERALD_DYNAMITE_ON,EMERALD_WHEEL,EMERALD_SPACE,EMERALD_SPACE,
@@ -544,17 +553,17 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_WALL_WITH_EMERALD,EMERALD_WALL_WITH_RUBY,EMERALD_WALL_WITH_SAPPHIRE,EMERALD_WALL_WITH_PERL,EMERALD_WALL_WITH_CRYSTAL,EMERALD_WALL_WITH_STONE,EMERALD_WALL_WITH_NUT,EMERALD_WALL_WITH_WHEEL,
                             EMERALD_WALL_WITH_KEY_RED,EMERALD_WALL_WITH_KEY_GREEN,EMERALD_WALL_WITH_KEY_BLUE,EMERALD_WALL_WITH_KEY_YELLOW,EMERALD_WALL_WITH_KEY_WHITE,EMERALD_WALL_WITH_KEY_GENERAL,EMERALD_WALL_WITH_BOMB,EMERALD_WALL_WITH_MEGABOMB,
                             EMERALD_WALL_WITH_DYNAMITE,EMERALD_WALL_WITH_ENDDOOR,EMERALD_WALL_WITH_ENDDOOR_READY,EMERALD_WALL_WITH_MINE_UP,EMERALD_WALL_WITH_BEETLE_UP,EMERALD_WALL_WITH_YAM,EMERALD_WALL_WITH_ALIEN,EMERALD_WALL_WITH_MOLE_UP,
-                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_INVALID
                             };
 
 
 uint16_t g_PanelElementsMachines[MAX_PANEL_ELEMENTS + 1] = {
-                            EMERALD_EMERALD,EMERALD_RUBY,EMERALD_SAPPHIRE,EMERALD_PERL,EMERALD_CRYSTAL,EMERALD_STONE,EMERALD_NUT,EMERALD_NONE,
-                            EMERALD_BOMB,EMERALD_MEGABOMB,EMERALD_STANDMINE,EMERALD_NONE,EMERALD_NONE,EMERALD_NONE,EMERALD_NONE,EMERALD_NONE,
-                            EMERALD_MINE_DOWN,EMERALD_BEETLE_DOWN,EMERALD_YAM,EMERALD_ALIEN,EMERALD_MOLE_DOWN,EMERALD_GREEN_DROP,EMERALD_NONE,EMERALD_NONE,
-                            EMERALD_DOOR_END_NOT_READY,EMERALD_DOOR_END_READY,EMERALD_TIME_COIN,EMERALD_DYNAMITE_OFF,EMERALD_HAMMER,EMERALD_NONE,EMERALD_NONE,EMERALD_NONE,
-                            EMERALD_KEY_RED,EMERALD_KEY_YELLOW,EMERALD_KEY_GREEN,EMERALD_KEY_BLUE,EMERALD_KEY_WHITE,EMERALD_KEY_GENERAL,EMERALD_NONE,EMERALD_NONE,EMERALD_NONE,
+                            EMERALD_EMERALD,EMERALD_RUBY,EMERALD_SAPPHIRE,EMERALD_PERL,EMERALD_CRYSTAL,EMERALD_STONE,EMERALD_NUT,EMERALD_SPACE,
+                            EMERALD_BOMB,EMERALD_MEGABOMB,EMERALD_STANDMINE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_MINE_DOWN,EMERALD_BEETLE_DOWN,EMERALD_YAM,EMERALD_ALIEN,EMERALD_MOLE_DOWN,EMERALD_GREEN_DROP,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_DOOR_END_NOT_READY,EMERALD_DOOR_END_READY,EMERALD_TIME_COIN,EMERALD_DYNAMITE_OFF,EMERALD_HAMMER,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_KEY_RED,EMERALD_KEY_YELLOW,EMERALD_KEY_GREEN,EMERALD_KEY_BLUE,EMERALD_KEY_WHITE,EMERALD_KEY_GENERAL,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_INVALID
                             };
 
@@ -579,8 +588,6 @@ uint16_t g_PanelElementsText[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_FONT_STEEL_N,EMERALD_FONT_STEEL_O,EMERALD_FONT_STEEL_P,EMERALD_FONT_STEEL_Q,EMERALD_FONT_STEEL_R,EMERALD_FONT_STEEL_S,EMERALD_FONT_STEEL_T,EMERALD_FONT_STEEL_U,
                             EMERALD_FONT_STEEL_V,EMERALD_FONT_STEEL_W,EMERALD_FONT_STEEL_X,EMERALD_FONT_STEEL_Y,EMERALD_FONT_STEEL_Z,EMERALD_FONT_STEEL_AE,EMERALD_FONT_STEEL_OE,EMERALD_FONT_STEEL_UE,
 
-
-
                             EMERALD_FONT_GREEN_EXCLAMATION,EMERALD_FONT_GREEN_ARROW_RIGHT,EMERALD_FONT_GREEN_ARROW_UP,EMERALD_FONT_GREEN_ARROW_DOWN,EMERALD_FONT_GREEN_ARROW_LEFT,EMERALD_FONT_GREEN_BRACE_OPEN,EMERALD_FONT_GREEN_BRACE_CLOSE,EMERALD_FONT_GREEN_COPYRIGHT,
                             EMERALD_FONT_GREEN_PLUS,EMERALD_FONT_GREEN_COMMA,EMERALD_FONT_GREEN_MINUS,EMERALD_FONT_GREEN_POINT,EMERALD_FONT_GREEN_SLASH,EMERALD_FONT_GREEN_DOUBLE_POINT,EMERALD_FONT_GREEN_PLATE,EMERALD_FONT_GREEN_APOSTROPHE,
                             EMERALD_FONT_GREEN_0,EMERALD_FONT_GREEN_1,EMERALD_FONT_GREEN_2,EMERALD_FONT_GREEN_3,EMERALD_FONT_GREEN_4,EMERALD_FONT_GREEN_5,EMERALD_FONT_GREEN_6,EMERALD_FONT_GREEN_7,
@@ -588,7 +595,6 @@ uint16_t g_PanelElementsText[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_FONT_GREEN_F,EMERALD_FONT_GREEN_G,EMERALD_FONT_GREEN_H,EMERALD_FONT_GREEN_I,EMERALD_FONT_GREEN_J,EMERALD_FONT_GREEN_K,EMERALD_FONT_GREEN_L,EMERALD_FONT_GREEN_M,
                             EMERALD_FONT_GREEN_N,EMERALD_FONT_GREEN_O,EMERALD_FONT_GREEN_P,EMERALD_FONT_GREEN_Q,EMERALD_FONT_GREEN_R,EMERALD_FONT_GREEN_S,EMERALD_FONT_GREEN_T,EMERALD_FONT_GREEN_U,
                             EMERALD_FONT_GREEN_V,EMERALD_FONT_GREEN_W,EMERALD_FONT_GREEN_X,EMERALD_FONT_GREEN_Y,EMERALD_FONT_GREEN_Z,EMERALD_FONT_GREEN_AE,EMERALD_FONT_GREEN_OE,EMERALD_FONT_GREEN_UE,
-
 
                             EMERALD_FONT_STEEL_GREEN_EXCLAMATION,EMERALD_FONT_STEEL_GREEN_ARROW_RIGHT,EMERALD_FONT_STEEL_GREEN_ARROW_UP,EMERALD_FONT_STEEL_GREEN_ARROW_DOWN,EMERALD_FONT_STEEL_GREEN_ARROW_LEFT,EMERALD_FONT_STEEL_GREEN_BRACE_OPEN,EMERALD_FONT_STEEL_GREEN_BRACE_CLOSE,EMERALD_FONT_STEEL_GREEN_COPYRIGHT,
                             EMERALD_FONT_STEEL_GREEN_PLUS,EMERALD_FONT_STEEL_GREEN_COMMA,EMERALD_FONT_STEEL_GREEN_MINUS,EMERALD_FONT_STEEL_GREEN_POINT,EMERALD_FONT_STEEL_GREEN_SLASH,EMERALD_FONT_STEEL_GREEN_DOUBLE_POINT,EMERALD_FONT_STEEL_GREEN_PLATE,EMERALD_FONT_STEEL_GREEN_APOSTROPHE,
@@ -614,6 +620,7 @@ Rückgabewert:  -
 Seiteneffekte: g_PanelElements[], g_PanelElementsMain[], g_PanelElementsMachines[]
 ------------------------------------------------------------------------------*/
 void SetPanelElements(uint32_t uMenuState) {
+    uint32_t K;
 
     switch (uMenuState) {
         case (MENUSTATE_LEVEL_STD):
@@ -625,6 +632,11 @@ void SetPanelElements(uint32_t uMenuState) {
             break;
         case (MENUSTATE_YAMS):
             memcpy(g_PanelElements,g_PanelElementsMain,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
+            for (K = 0; K < MAX_PANEL_ELEMENTS; K++) {
+                if (g_PanelElements[K] == EMERALD_MAN) {
+                    g_PanelElements[56] = EMERALD_SPACE; // Im Yam-Editor den Man durch Space ersetzen
+                }
+            }
             break;
         case (MENUSTATE_MACHINES):
             memcpy(g_PanelElements,g_PanelElementsMachines,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
@@ -675,7 +687,7 @@ Seiteneffekte: Ed.x
 int WriteLevelXmlFile(const char *szFilename) {
     int nErrorCode;
     char szXML[64 * 1024];     // Ohne Level-Daten, reine Kopfdaten ca. 2 KB, ca. 300 Bytes / pro YAM-Explosion
-    char szNum[16];
+    char szNum[32];
     uint32_t uBase64Len;
     uint32_t uBase64MessageLen;
     uint32_t I;
@@ -1115,14 +1127,28 @@ Parameter
                pszFilename, char*, Zeiger auf Level-Dateinamen, wird nur verwendet, wenn bNewLevel = false
       Ausgang: -
 Rückgabewert:  0 = alles OK, sonst Fehler
-Seiteneffekte: Ed.x
+Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, char *pszFilename) {
     int nErrorCode;
 
     nErrorCode = -1;
+
+    return nErrorCode;  // Ist zur Zeit nicht verwendbar
+
     memset(&Ed,0,sizeof(Ed));
+    Ed.uPanelW = 192;                                       // Breite des Panels im Editor
+    Ed.uPanelH = Config.uResX;                              // Höhe des Panels im Editor
+    Ed.uPanelXpos = Config.uResX - Ed.uPanelW;              // X-Positionierung des Panels im Editor
+    Ed.uPanelYpos = 0;                                      // Y-Positionierung des Panels im Editor
     InitYamExplosions(Ed.YamExplosions);
+    Ed.uReplicatorRedObject = EMERALD_SPACE;
+    Ed.uReplicatorGreenObject = EMERALD_SPACE;
+    Ed.uReplicatorBlueObject = EMERALD_SPACE;
+    Ed.uReplicatorYellowObject = EMERALD_SPACE;
+    memset(Ed.szLevelTitle,0x20,EMERALD_TITLE_LEN);         // z.B. "Der Bunker"
+    memset(Ed.szLevelAuthor,0x20,EMERALD_AUTHOR_LEN);       // z.B. "Mikiman"
+    strcpy(Ed.szVersion,EMERALD_VERSION);                   // z.B. "01.00"
     InitMessageEditor();
     Ed.uMenuState = MENUSTATE_LEVEL_STD;
     SetPanelElements(Ed.uMenuState);
@@ -1139,7 +1165,10 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, char *pszFilename
             return -1;
         }
     } else {
-        if (InitialisePlayfield(pszFilename) == 0) {
+        if (LevelConverter(0) == 10) {
+            nErrorCode = 0;
+            SDL_Log("%s: LevelConverter succeeded",__FUNCTION__);
+        } else if (InitialisePlayfield(0) == 0) {
             if (CopyPlayfieldValueToEditor() == 0) {
                 nErrorCode = 0;
             }
@@ -1204,7 +1233,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: Ed.x
+Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 void CalcEditorViewArea(void) {
     // Sichtbaren Bereich berechnen
@@ -1223,8 +1252,8 @@ void CalcEditorViewArea(void) {
         Ed.uScrollPixelY = 32;              // Scrollt bei Tastendruck x Pixel vertikal
         Ed.uScrollPixelFastY = 64;          // Scrollt bei Tastendruck x Pixel vertikal in hoher Geschwindigkeit
     }
-    Ed.uVisibleX = (WINDOW_W - EDITORPANEL_W) / Ed.uFont_W;
-    Ed.uVisibleY = WINDOW_H / Ed.uFont_H;
+    Ed.uVisibleX = (Config.uResX - Ed.uPanelW) / Ed.uFont_W;
+    Ed.uVisibleY = Config.uResY / Ed.uFont_H;
 
     Ed.uVisibleCenterY = Ed.uVisibleY / 2;
     Ed.uVisibleCenterX = Ed.uVisibleX / 2;
@@ -1244,11 +1273,11 @@ void CalcEditorViewArea(void) {
         Ed.uShiftLevelXpix = 0;
     }
     // Positionsüberläufe abfangen
-    Ed.nMaxXpos = (Ed.uLevel_X_Dimension * Ed.uFont_W) - WINDOW_W + EDITORPANEL_W; // + Ed.uFont_W;
+    Ed.nMaxXpos = (Ed.uLevel_X_Dimension * Ed.uFont_W) - Config.uResX + Ed.uPanelW; // + Ed.uFont_W;
     if (Ed.nMaxXpos < 0) {
         Ed.nMaxXpos = 0;
     }
-    Ed.nMaxYpos = (Ed.uLevel_Y_Dimension * Ed.uFont_H) - WINDOW_H + PANEL_H;
+    Ed.nMaxYpos = (Ed.uLevel_Y_Dimension * Ed.uFont_H) - Config.uResY + PANEL_H;
     if (Ed.nMaxYpos < 0) {
         Ed.nMaxYpos = 0;
     }
@@ -1350,7 +1379,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: g_PanelElements[], Playfiel.x
+Seiteneffekte: Ed.x, g_PanelElements[], Playfiel.x
 ------------------------------------------------------------------------------*/
 int FillPanel(SDL_Renderer *pRenderer) {
     uint32_t uI;
@@ -1368,8 +1397,8 @@ int FillPanel(SDL_Renderer *pRenderer) {
             uX = uI % 8;
             uY = uI / 8;
             // Position innerhalb des Renderers
-            DestR.x = EDITORPANEL_X + 8 + uX * 23;
-            DestR.y = EDITORPANEL_Y + 8 + uY * 23;
+            DestR.x = Ed.uPanelXpos + 8 + uX * 23;
+            DestR.y = Ed.uPanelYpos + 8 + uY * 23;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
             uTextureIndex = GetTextureIndexByElement(g_PanelElements[uI],Ed.uFrameCounter % 16,&fAngle);
@@ -1391,7 +1420,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: g_PanelColorPatterns[]
+Seiteneffekte: Ed.x, g_PanelColorPatterns[], Config.x
 ------------------------------------------------------------------------------*/
 int DrawEditorPanel(SDL_Renderer *pRenderer) {
     uint32_t I;
@@ -1402,10 +1431,10 @@ int DrawEditorPanel(SDL_Renderer *pRenderer) {
 
     for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
         SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
-        Rect.x = EDITORPANEL_X + 1 + 4 - I;
-        Rect.y = EDITORPANEL_Y + 3 - I;
-        Rect.w = EDITORPANEL_W - 8 + I * 2;
-        Rect.h = EDITORPANEL_H - 6 + I * 2;
+        Rect.x = Ed.uPanelXpos + 1 + 4 - I;
+        Rect.y = Ed.uPanelYpos + 3 - I;
+        Rect.w = Ed.uPanelW - 8 + I * 2;
+        Rect.h = Ed.uPanelH - 6 + I * 2;
         nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
     }
     if (nErrorCode == 0) {
@@ -1413,44 +1442,44 @@ int DrawEditorPanel(SDL_Renderer *pRenderer) {
         for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
             // linkes Quadrat, selected Element
             SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
-            Rect.x = WINDOW_W - 177 - I;
-            Rect.y = WINDOW_H - FONT_H - 15 - I;
+            Rect.x = Config.uResX - 177 - I;
+            Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
             nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
             // rechtes Quadrat, selected Element
             SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
-            Rect.x = WINDOW_W - 48 - I;
-            Rect.y = WINDOW_H - FONT_H - 15 - I;
+            Rect.x = Config.uResX - 48 - I;
+            Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
             nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
             // mittleres Quadrat, selected Element
             SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
-            Rect.x = WINDOW_W - 112 - I;
-            Rect.y = WINDOW_H - FONT_H - 15 - I;
+            Rect.x = Config.uResX - 112 - I;
+            Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
             nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
         }
         if (nErrorCode == 0) {
             // selected element, left
-            Rect.x = WINDOW_W - 177 + 1;
-            Rect.y = WINDOW_H - FONT_H - 15 + 1;
+            Rect.x = Config.uResX - 177 + 1;
+            Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
             uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementLeft[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle);
             nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
             // selected element, right
-            Rect.x = WINDOW_W - 48 + 1;
-            Rect.y = WINDOW_H - FONT_H - 15 + 1;
+            Rect.x = Config.uResX - 48 + 1;
+            Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
             uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementRight[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle);
             nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
             // selected element, middle
-            Rect.x = WINDOW_W - 112 + 1;
-            Rect.y = WINDOW_H - FONT_H - 15 + 1;
+            Rect.x = Config.uResX - 112 + 1;
+            Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
             uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementMiddle[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle);
@@ -1479,7 +1508,7 @@ Parameter
       Ausgang: pnXpos, int *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Ed.
+Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount)
 {
@@ -1512,7 +1541,7 @@ int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAn
     Ed.uUpperLeftLevelIndex = (*pnXpos / Ed.uFont_W) + (*pnYpos / Ed.uFont_H) * Ed.uLevel_X_Dimension;
     nErrorCode = 0;
     // Den sichtbaren Teil des Levels in den Renderer kopieren.
-    for (uY = 0; (uY <= (WINDOW_H / Ed.uFont_H) && (uY < Ed.uLevel_Y_Dimension) && (nErrorCode == 0)); uY++) {
+    for (uY = 0; (uY <= (Config.uResY / Ed.uFont_H) && (uY < Ed.uLevel_Y_Dimension) && (nErrorCode == 0)); uY++) {
         for (uX = 0; (uX <  Ed.uVisibleX) && (uX < Ed.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
             // Levelindex berechnen
             I = Ed.uUpperLeftLevelIndex + uY * Ed.uLevel_X_Dimension + uX;
@@ -1549,7 +1578,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, Buttons[].x, InputStates.x
+Seiteneffekte: Ed.x, Buttons[].x, InputStates.x, Config.x
 ------------------------------------------------------------------------------*/
 int EditorStateLevel(SDL_Renderer *pRenderer) {
     char szText[100];
@@ -1625,20 +1654,20 @@ int EditorStateLevel(SDL_Renderer *pRenderer) {
     if (CheckReplicators(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension) == 0) {
         if (GetManCoordinates(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,NULL,NULL) == 0) {
             if (CheckAcidPools(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension) == 0) {
-                PrintLittleFont(pRenderer,WINDOW_W - 640, WINDOW_H - 16,0,"LEVEL: OK");
+                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: OK");
             } else {
-                PrintLittleFont(pRenderer,WINDOW_W - 640, WINDOW_H - 16,0,"LEVEL: ACID POOL ERROR");
+                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: ACID POOL ERROR");
                 Ed.bFoundError = true;
             }
         } else {
-            PrintLittleFont(pRenderer,WINDOW_W - 640, WINDOW_H - 16,0,"LEVEL: MAN ERROR");
+            PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: MAN ERROR");
             Ed.bFoundError = true;
         }
     } else {
-        PrintLittleFont(pRenderer,WINDOW_W - 640, WINDOW_H - 16,0,"LEVEL: REPLICATOR ERROR");
+        PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: REPLICATOR ERROR");
         Ed.bFoundError = true;
     }
-    return PrintLittleFont(pRenderer,WINDOW_W - 350, WINDOW_H - 16,0,szText); // Level-Koordinaten anzeigen
+    return PrintLittleFont(pRenderer,Config.uResX - 350, Config.uResY - 16,0,szText); // Level-Koordinaten anzeigen
 }
 
 
@@ -1716,7 +1745,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, Buttons[].x, InputStates.x
+Seiteneffekte: Ed.x, Buttons[].x, InputStates.x, Config.x
 ------------------------------------------------------------------------------*/
 int EditorStateYams(SDL_Renderer *pRenderer) {
     char szText[64];
@@ -1733,11 +1762,16 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;  // Für Elemente
     float fAngle;
     uint32_t uTextureIndex;
+    bool bFoundError;
+    bool bReplicatorError;
+    uint32_t uYamErrorIndex;
 
+    uYamErrorIndex = 0;
+    bFoundError = false;
+    bReplicatorError = false;
     nErrorCode = 0;
     for (I = 0; (I <= Ed.uMaxYamExplosionIndex) && (nErrorCode == 0); I++) {
         sprintf(szText,"YAM%02d",I);
-
         uXpos = ((I % 10) * 80) + 4;
         uYpos = ((I / 10) * 74) + 4;
         PrintLittleFont(pRenderer,uXpos,uYpos,0,szText);
@@ -1767,6 +1801,19 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
                 nErrorCode = -1;
             }
         }
+        if (!bFoundError) {
+            if (CheckReplicators(Ed.YamExplosions[I].uElement,3,3) != 0) {
+                uYamErrorIndex = I;
+                bFoundError = true;
+                bReplicatorError = true;
+            }
+        }
+        if (!bFoundError) {
+            if (CheckAcidPools(Ed.YamExplosions[I].uElement,3,3) != 0) {
+                uYamErrorIndex = I;
+                bFoundError = true;
+            }
+        }
     }
     nYamExplosion = GetYamExplosionFromMousepointer(&uElementIndex);
     if (nYamExplosion != -1) {
@@ -1778,8 +1825,17 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
             Ed.YamExplosions[nYamExplosion].uElement[uElementIndex] = Ed.uSelectedElementRight[Ed.uMenuState];
         }
     }
+    Ed.bFoundError = bFoundError;
+    if (bFoundError) {
+        if (bReplicatorError) {
+            sprintf(szText,"YAM[%02u]:REPLICATOR ERROR",uYamErrorIndex);
+        } else {
+            sprintf(szText,"YYAM[%02u]:ACID POOL ERROR",uYamErrorIndex);
+        }
+        PrintLittleFont(pRenderer,Config.uResX - 740, Config.uResY - 16,0,szText);
+    }
     sprintf(szText,"YAMS: %02u",Ed.uMaxYamExplosionIndex);
-    PrintLittleFont(pRenderer,WINDOW_W - 355,WINDOW_H - 20,0,szText);
+    PrintLittleFont(pRenderer,Config.uResX  - 355,Config.uResY - 20,0,szText);
     return nErrorCode;
 }
 
@@ -3049,6 +3105,10 @@ Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, Buttons[].x, InputStates.x
 ------------------------------------------------------------------------------*/
 int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
+
+    return -1; // TODO
+
+    /*
     int nErrorCode;
     uint32_t I;
     uint32_t uTextureIndex;
@@ -3149,6 +3209,7 @@ int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
         }
     }
     return nErrorCode;
+    */
 }
 
 
@@ -3160,25 +3221,25 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Buttons[].x
+Seiteneffekte: Buttons[].x, Config.x
 ------------------------------------------------------------------------------*/
 int CreateEditorButtons(void) {
     int nErrors;
 
-    nErrors = CreateButton(BUTTONLABEL_SAVE_AND_PLAY,"Save+Play",WINDOW_W - 184,WINDOW_H - 100,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_YAMS,"Yams",WINDOW_W - 48,WINDOW_H - 100,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_RETURN_TO_LEVEL,"Return to level",WINDOW_W - 184,WINDOW_H - 100,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_MINUS,"-",WINDOW_W - 382,WINDOW_H - FONT_H + 8,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_PLUS,"+",WINDOW_W - 265,WINDOW_H - FONT_H + 8,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_MACHINES,"Machines",WINDOW_W - 184,WINDOW_H - 130,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_TIME_AND_SCORES,"Time+Scores",WINDOW_W - 104,WINDOW_H - 130,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_TEXT,"Text",WINDOW_W - 96,WINDOW_H - 100,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_STD,"Std.",WINDOW_W - 49,WINDOW_H - 100,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_OPTION_1,"-->",(WINDOW_W / 2) - 260,228,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_OPTION_2,"-->",(WINDOW_W / 2) - 260,288,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_OPTION_3,"-->",(WINDOW_W / 2) - 260,328,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_SAVE_MESSAGE,"Save message",(WINDOW_W / 2) - 100 ,736,false);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_CANCEL_MESSAGE,"Cancel",(WINDOW_W / 2) + 100 ,736,false);
+    nErrors = CreateButton(BUTTONLABEL_SAVE_AND_PLAY,"Save+Play",Config.uResX - 184,Config.uResY - 100,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_YAMS,"Yams",Config.uResX - 48,Config.uResY - 100,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_RETURN_TO_LEVEL,"Return to level",Config.uResX - 184,Config.uResY - 100,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_MINUS,"-",Config.uResX - 382,Config.uResY - FONT_H + 8,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_PLUS,"+",Config.uResX - 265,Config.uResY - FONT_H + 8,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_MACHINES,"Machines",Config.uResX - 184,Config.uResY - 130,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_TIME_AND_SCORES,"Time+Scores",Config.uResX - 104,Config.uResY - 130,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_TEXT,"Text",Config.uResX - 96,Config.uResY - 100,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_STD,"Std.",Config.uResX - 49,Config.uResY - 100,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_OPTION_1,"-->",(Config.uResX / 2) - 260,228,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_OPTION_2,"-->",(Config.uResX / 2) - 260,288,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_OPTION_3,"-->",(Config.uResX / 2) - 260,328,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_SAVE_MESSAGE,"Save message",(Config.uResX / 2) - 100 ,736,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_CANCEL_MESSAGE,"Cancel",(Config.uResX / 2) + 100 ,736,false,true);
     return nErrors;
 }
 
@@ -3325,19 +3386,21 @@ Name:           Editor
 Beschreibung: Hauptfunktion (Einsprungsfunktion)  für den Level-Editor.
 
 Parameter
-      Eingang: pWindow, SDL_Window, Zeiger auf Fenster-Handle
-               SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, InputStates.x
+Seiteneffekte: Ed.x, InputStates.x, Config.x
 ------------------------------------------------------------------------------*/
-int Editor(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
+int Editor(SDL_Renderer *pRenderer) {
     uint32_t uMouseElement;             // Levelelement, auf das Mauspfeil zeigt
     uint32_t I;
 
+
+    return -1;  // Funktioniert zur Zeit nicht
+
     Ed.nXpos = 0;
     Ed.nYpos = 0;
-    Ed.bEditorRun = (InitEditor(false,0,0,LEVEL_XML_FILENAME) == 0);
+    //Ed.bEditorRun = (InitEditor(false,0,0,LEVEL_XML_FILENAME) == 0);
     //Ed.bEditorRun = (InitEditor(true,110,110,NULL) == 0);
     if (Ed.bEditorRun) {
         Ed.bEditorRun = (CreateEditorButtons() == 0);
@@ -3369,11 +3432,15 @@ int Editor(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
         }
         if ((Ed.uMenuState != MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION) && (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_MESSAGE)) {
             DrawEditorPanel(pRenderer);
-            PrintLittleFont(pRenderer, 0, WINDOW_H - FONT_LITTLE_347_H,0,ge_szElementNames[uMouseElement]);// Element unten links anzeigen
+            PrintLittleFont(pRenderer, 0, Config.uResY - FONT_LITTLE_347_H,0,ge_szElementNames[uMouseElement]);// Element unten links anzeigen
         }
         ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_SAVE_AND_PLAY) && (!Ed.bFoundError)) {
-            WriteLevelXmlFile(LEVEL_XML_FILENAME);
+
+
+            // WriteLevelXmlFile(LEVEL_XML_FILENAME);
+
+
             Ed.bEditorRun = false;
         } else if (IsButtonPressed(BUTTONLABEL_YAMS)) {
             Ed.uMenuState = MENUSTATE_YAMS;
@@ -3386,8 +3453,8 @@ int Editor(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
             SetButtonActivity(BUTTONLABEL_PLUS,true);
             SetButtonActivity(BUTTONLABEL_MINUS,true);
             SetButtonActivity(BUTTONLABEL_TEXT,true);
-            SetButtonPosition(BUTTONLABEL_TEXT,WINDOW_W - 49,WINDOW_H - 100);
-        } else if (IsButtonPressed(BUTTONLABEL_RETURN_TO_LEVEL)) {
+            SetButtonPosition(BUTTONLABEL_TEXT,Config.uResX - 49,Config.uResY - 100);
+        } else if ((IsButtonPressed(BUTTONLABEL_RETURN_TO_LEVEL)) && (!Ed.bFoundError)) {
             // Wenn sich Level-Dimension geändert hat, dann Warnung bzw. weiteres Vorgehen anbieten
             if ((Ed.uTmpLevel_X_Dimension != Ed.uLevel_X_Dimension) || (Ed.uTmpLevel_Y_Dimension != Ed.uLevel_Y_Dimension)) {
                 Ed.uMenuState = MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION;
@@ -3405,7 +3472,7 @@ int Editor(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
                 SetButtonActivity(BUTTONLABEL_TIME_AND_SCORES,true);
                 SetButtonActivity(BUTTONLABEL_TEXT,true);
                 SetButtonActivity(BUTTONLABEL_STD,false);
-                SetButtonPosition(BUTTONLABEL_TEXT,WINDOW_W - 96,WINDOW_H - 100);
+                SetButtonPosition(BUTTONLABEL_TEXT,Config.uResX - 96,Config.uResY - 100);
             }
             SetButtonActivity(BUTTONLABEL_RETURN_TO_LEVEL,false);
         } else if (IsButtonPressed(BUTTONLABEL_PLUS)) {
@@ -3483,7 +3550,7 @@ int Editor(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
             SetButtonActivity(BUTTONLABEL_TIME_AND_SCORES,true);
             SetButtonActivity(BUTTONLABEL_TEXT,true);
             SetButtonActivity(BUTTONLABEL_STD,false);
-            SetButtonPosition(BUTTONLABEL_TEXT,WINDOW_W - 96,WINDOW_H - 100);
+            SetButtonPosition(BUTTONLABEL_TEXT,Config.uResX - 96,Config.uResY - 100);
         } else if (IsButtonPressed(BUTTONLABEL_OPTION_3)) {
             Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
             Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
@@ -3500,7 +3567,7 @@ int Editor(SDL_Window *pWindow, SDL_Renderer *pRenderer) {
             SetButtonActivity(BUTTONLABEL_TIME_AND_SCORES,true);
             SetButtonActivity(BUTTONLABEL_TEXT,true);
             SetButtonActivity(BUTTONLABEL_STD,false);
-            SetButtonPosition(BUTTONLABEL_TEXT,WINDOW_W - 96,WINDOW_H - 100);
+            SetButtonPosition(BUTTONLABEL_TEXT,Config.uResX - 96,Config.uResY - 100);
         }
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen

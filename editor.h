@@ -5,10 +5,6 @@
 #include "EmeraldMine.h"
 #include "mySDL.h"
 
-#define EDITORPANEL_X                           WINDOW_W - EDITORPANEL_W
-#define EDITORPANEL_Y                           0
-#define EDITORPANEL_W                           192
-#define EDITORPANEL_H                           WINDOW_H
 
 #define MAX_PANEL_ELEMENTS                      224 // (8 * 32)
 #define EDITOR_MEM_SIZE                         4096
@@ -38,7 +34,6 @@
 #define BUTTONLABEL_OPTION_3         "OPTION3"
 #define BUTTONLABEL_SAVE_MESSAGE     "SAVE_MESSAGE"
 #define BUTTONLABEL_CANCEL_MESSAGE   "CANCEL_MESSAGE"
-#define BUTTONLABEL_CALL_EDITOR      "CALL_EDITOR"
 #define BUTTONLABEL_CALL_GAME        "CALL_GAME"
 #define BUTTONLABEL_CALL_DEMO        "CALL_DEMO"
 #define BUTTONLABEL_CALL_QUIT        "CALL_QUIT"
@@ -72,6 +67,10 @@ typedef struct {
     bool            bEditorRun;
     bool            bFoundError;                                // Ein Levelfehler (Man fehlt, unvollständiger Replikator, unvollständiges Säurebecken) wurde gefunden
     bool            bHalfSize;
+    uint32_t        uPanelXpos;                                 // X-Positionierung des Panels im Editor
+    uint32_t        uPanelYpos;                                 // Y-Positionierung des Panels im Editor
+    uint32_t        uPanelW;                                    // Breite des Panels im Editor
+    uint32_t        uPanelH;                                    // Höhe des Panels im Editor
     uint32_t        uVisibleY;
     uint32_t        uVisibleX;
     uint32_t        uVisibleCenterY;
@@ -163,7 +162,7 @@ void CalcEditorViewArea(void);
 int CreateEditorButtons(void);
 int CopyPlayfieldValueToEditor(void);
 int SetLevelBorder(uint16_t *pLevel);
-int Editor(SDL_Window *pWindow, SDL_Renderer *pRenderer);
+int Editor(SDL_Renderer *pRenderer);
 int DrawEditorPanel(SDL_Renderer *pRenderer);
 int FillPanel(SDL_Renderer *pRenderer);
 uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos);

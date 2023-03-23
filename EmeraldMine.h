@@ -11,11 +11,12 @@
 
 #define PANEL_H                                 32      // Spiel-Anzeige (Time, Score usw.)
 
+#define EMERALD_VERSION                         "01.00" // Version
+
 #define EMERALD_VERSION_LEN                     5       // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                       32      // Maximale Titellänge
 #define EMERALD_AUTHOR_LEN                      32      // Maximale Autorlänge
 #define EMERALD_MD5_STRING_LEN                  32      // Maximale Autorlänge
-
 #define EMERALD_MAX_YAM_EXPLOSIONS              100     // Maximale Anzahl an verschiedenen YAM-Explosionen
 
 // Level-Elemente
@@ -119,10 +120,10 @@
 #define EMERALD_BEAM_CROSS                      0x0061            // Lichtstrahl, Kreuz
 #define EMERALD_DOOR_EMERALD                    0x0062            // Einen Emerald mehr zu sammeln beim Durchgang durch diese Tür
 #define EMERALD_DOOR_MULTICOLOR                 0x0063            // Bunte Tür, ein Schlüssel reicht
-#define EMERALD_DOOR_ONLY_UP                    0x0064            // Tür, nur nach oben passierbar
-#define EMERALD_DOOR_ONLY_DOWN                  0x0065            // Tür, nur nach unten passierbar
-#define EMERALD_DOOR_ONLY_LEFT                  0x0066            // Tür, nur nach links passierbar
-#define EMERALD_DOOR_ONLY_RIGHT                 0x0067            // Tür, nur nach rechts passierbar
+#define EMERALD_DOOR_ONLY_UP_STEEL              0x0064            // Tür, nur nach oben passierbar
+#define EMERALD_DOOR_ONLY_DOWN_STEEL            0x0065            // Tür, nur nach unten passierbar
+#define EMERALD_DOOR_ONLY_LEFT_STEEL            0x0066            // Tür, nur nach links passierbar
+#define EMERALD_DOOR_ONLY_RIGHT_STEEL           0x0067            // Tür, nur nach rechts passierbar
 #define EMERALD_WHEEL_TIMEDOOR                  0x0068            // Rad für Zeit-Tür
 #define EMERALD_DOOR_TIME                       0x0069            // Zeit-Tür
 #define EMERALD_SWITCHDOOR_OPEN                 0x006A            // Schalttür auf
@@ -462,11 +463,22 @@
 #define EMERALD_FONT_STEEL_GREEN_OE             0x01DF            // Ö
 #define EMERALD_FONT_STEEL_GREEN_UE             0x01E0            // Ü
 #define EMERALD_CENTRAL_EXPLOSION               0x01E1            // Mittelpunkt einer (Bomben)-Explosion
-#define EMERALD_CENTRAL_EXPLOSION_BEETLE        0x01E2            // Mittelpunkt einer Käferexplosion
+#define EMERALD_CENTRAL_EXPLOSION_MEGA          0x01E2            // Mittelpunkt einer Mega-Bomben-Explosion
+#define EMERALD_CENTRAL_EXPLOSION_BEETLE        0x01E3            // Mittelpunkt einer Käferexplosion
+#define EMERALD_MAN_DIES                        0x01E4            // Man stirbt
+#define EMERALD_ALIEN_KILLS_MAN                 0x01E5            // Alien tötet Man
+#define EMERALD_YAM_KILLS_MAN                   0x01E6            // Yam tötet Man
+#define EMERALD_WALL_WITH_TIME_COIN             0x01E7            // Mauer mit Zeitmünze
 
 
-#define EMERALD_MAX_ELEMENT                     0x01E2            // hier immer das letzte Element eintragen
+#define EMERALD_MAX_ELEMENT                     0x01E7            // hier immer das letzte Element eintragen
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
+
+
+#define EMERALD_FONT_BLUE                       0x00              // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
+#define EMERALD_FONT_STEEL_BLUE                 0x01
+#define EMERALD_FONT_GREEN                      0x10
+#define EMERALD_FONT_STEEL_GREEN                0x11
 
 
 // Animationen (für Explosionen wird das niederwertigste uint16_t verwendet)
@@ -562,7 +574,18 @@
 #define EMERALD_ANIM_MOLE_GOES_ACID             0x30000000      // Mole fällt ins Säurebecken und muss beim Sterben noch Sand über dem Becken erzeugen
 #define EMERALD_ANIM_MAN_GOES_ENDDOOR           0x31000000      // Man geht in eine Endtür
 #define EMERALD_ANIM_DOOR_READY_SHRINK          0x32000000      // Endtür verschwindet
-
+#define EMERALD_ANIM_DYNAMITE_START             0x33000000      // Dynamit wird aktiv durch manuelle Zündung (Man)
+#define EMERALD_ANIM_DYNAMITE_ON_P1             0x34000000      // Dynamit aktiv, Phase 1
+#define EMERALD_ANIM_DYNAMITE_ON_P2             0x35000000      // Dynamit aktiv, Phase 2
+#define EMERALD_ANIM_DYNAMITE_ON_P3             0x36000000      // Dynamit aktiv, Phase 3
+#define EMERALD_ANIM_DYNAMITE_ON_P4             0x37000000      // Dynamit aktiv, Phase 4
+#define EMERALD_ANIM_MAN_DIES_P1                0x38000000      // Man stirbt, Phase 1
+#define EMERALD_ANIM_MAN_DIES_P2                0x39000000      // Man stirbt, Phase 1
+#define EMERALD_ANIM_MONSTER_KILLS_UP           0x3A000000      // Monster (Alien oder Yam) tötet nach oben
+#define EMERALD_ANIM_MONSTER_KILLS_LEFT         0x3B000000      // Monster (Alien oder Yam) tötet nach links
+#define EMERALD_ANIM_MONSTER_KILLS_RIGHT        0x3C000000      // Monster (Alien oder Yam) tötet nach rechts
+#define EMERALD_ANIM_MONSTER_KILLS_DOWN         0x3D000000      // Monster (Alien oder Yam) tötet nach unten
+#define EMERALD_ANIM_YAM_WAS_BLOCKED            0x3E000000      // Yam war in der letzten Control-Phase blockiert
 
 #define EMERALD_STANDARD_SPEED                  false
 #define EMERALD_DOUBLE_SPEED                    true
@@ -605,6 +628,11 @@ typedef struct {
     uint32_t        uRollUnderground[65536];                    // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
     uint16_t        *pInvalidElement;
     int             nCentralExplosionCoordinates[8];            // Koordinaten um Zentrum einer 3x3-Explosion
+    int             nCentralMegaExplosionCoordinates[20];       // Koordinaten um Zentrum einer Mega-Explosion
+    int             nCheckReplicatorForYamExplosionTop[5];      // Für Yam-Explosion mit Replikator (obere Hälfte)
+    int             nCheckReplicatorForYamExplosionButtom[5];   // Für Yam-Explosion mit Replikator (untere Hälfte)
+    int             nCheckAcidPoolForYamExplosionTop[6];        // Für Yam-Explosion mit Säurebecken (obere Hälfte)
+    int             nCheckAcidPoolForYamExplosionButtom[6];     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
     bool            bInitOK;
     bool            bHasRedKey;
     bool            bHasGreenKey;
@@ -634,8 +662,8 @@ typedef struct {
     bool            bReplicatorYellowOn;
     uint16_t        uReplicatorYellowObject;
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
-    char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "Der Bunker"
-    char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "Mikiman"
+    char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "DER BUNKER"
+    char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "MIKIMAN"
     char            szMd5String[EMERALD_MD5_STRING_LEN + 1];    // MD5-Prüfsumme als String für komprimierte Leveldaten, d.h. ohne Header
     char            *pMessage[EMERALD_MAX_MESSAGES];            // 8 Nachrichtentexte
     uint32_t        uScoreEmerald;
@@ -690,6 +718,11 @@ typedef struct {
     uint32_t        uShowMessageNo;                             // Nachricht Nr. x zeigen, 0 = keine Nachricht
     uint32_t        uMaxYamExplosionIndex;                      // Max. Yam-Explosions-Index in diesem Level
     uint32_t        uYamExplosion;                              // Aktuelle YAM-Explosion
+    uint32_t        uFireCount;                                 // Für Zündung von Dynamit.
+    uint32_t        uDynamitePos;                               // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung
+    uint32_t        uDynamiteStatusAnim;                        // Status/Animation für manuell gezündetes Dynamit
+    uint32_t        uPlayTimeStart;                             // Zeitpunkt, wann Level gestartet wurde
+    uint32_t        uPlayTimeEnd;                               // Zeitpunkt, wann Level beendet wurde
     YAMEXPLOSION    YamExplosions[EMERALD_MAX_YAM_EXPLOSIONS];
 } PLAYFIELD;
 
@@ -698,7 +731,7 @@ uint32_t ControlGame(uint32_t uDirection);
 uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCount, float *pfAngle);
 void ScrollAndCenterLevel(uint32_t uManDirection);
 int Menu(SDL_Renderer *pRenderer);
-int RunGame(SDL_Window *pWindow, SDL_Renderer *pRenderer);
+int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel);
 void InitRollUnderground(void);
 uint8_t GetFreeRollDirections(uint32_t I);
 uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation);

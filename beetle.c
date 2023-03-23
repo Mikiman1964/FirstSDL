@@ -1,5 +1,7 @@
 #include "EmeraldMine.h"
 #include "beetle.h"
+#include "explosion.h"
+#include "greendrop.h"
 #include "sound.h"
 
 extern PLAYFIELD Playfield;
@@ -15,6 +17,12 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBeetleUp(uint32_t I) {
+    // Hat Käfer Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        ControlCentralBeetleExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für den Mäfer ist hier Ende Gelände
+    }
     // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
@@ -62,6 +70,12 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBeetleRight(uint32_t I) {
+    // Hat Käfer Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        ControlCentralBeetleExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für den Mäfer ist hier Ende Gelände
+    }
     // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE)
     {
@@ -123,6 +137,12 @@ void ControlBeetleDown(uint32_t I) {
         // BeetleDown kann vom Replikator geboren werden, dann hier nichts machen
         return;
     } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
+        // Hat Käfer Kontakt zu grünem Käse ?
+        if (IsGreenCheeseAround(I)) {
+            ControlCentralBeetleExplosion(I);
+            PreparePlaySound(SOUND_EXPLOSION,I);
+            return; // Für den Mäfer ist hier Ende Gelände
+        }
         // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
         Playfield.pStatusAnimation[I] = 0;
         if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE)    // Ist nach unten frei?
@@ -190,6 +210,12 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBeetleLeft(uint32_t I) {
+    // Hat Käfer Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        ControlCentralBeetleExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für den Mäfer ist hier Ende Gelände
+    }
     // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE)
     {

@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-#define MAX_ASTEROIDS   60
+#define MAX_ASTEROIDS   80
 #define MAX_ASTEROIDLAYERS 3
 
 typedef struct {

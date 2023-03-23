@@ -152,12 +152,26 @@ void ControlCentralExplosion(uint32_t I) {
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                     Playfield.pStatusAnimation[uCoordinate] = EMERALD_SPACE;
                     break;
+                case (EMERALD_EXPLOSION_EMPTY_MAN):
+                    Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                    Playfield.pStatusAnimation[uCoordinate] = EMERALD_EMERALD;
+                    Playfield.bManDead = true;
+                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                    break;
                 case (EMERALD_EXPLOSION_ELEMENT):
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                     Playfield.pStatusAnimation[uCoordinate] = uCheckExplosion >> 16;
                     break;
                 case (EMERALD_EXPLOSION_NEWCENTRAL):
                     Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION;
+                    if (uCoordinate > I) {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    } else {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;
+                    }
+                    break;
+                case (EMERALD_EXPLOSION_NEWCENTRAL_MEGA):
+                    Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION_MEGA;
                     if (uCoordinate > I) {
                         Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     } else {
@@ -172,6 +186,83 @@ void ControlCentralExplosion(uint32_t I) {
                         Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;
                     }
                     break;
+            }
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlCentralMegaExplosion
+------------------------------------------------------------------------------
+Beschreibung: Steuert eine Mega-Explosion (3x3) + (4x3)
+Parameter
+      Eingang: nI, int, Index im Level (zentraler Punkt)
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlCentralMegaExplosion(int nI) {
+    uint32_t K;
+    int nCoordinate;
+    uint32_t uCheckExplosion;
+    int nX;     // Lineare nCoordinate in X-
+    int nY;     // und Y umgerechnet
+    if (Playfield.pStatusAnimation[nI] == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
+        Playfield.pStatusAnimation[nI] = EMERALD_ANIM_STAND;
+    } else {
+        Playfield.pLevel[nI] = EMERALD_EXPLOSION_TO_ELEMENT_1;    // Mittelpunkt wird auf jedem Fall zur Explosion
+        Playfield.pStatusAnimation[nI] = EMERALD_SPACE;
+        CleanInvalidFieldsForCentralExplosion(nI);
+        for (K = 0; K < 20; K++) {
+            nCoordinate = nI + Playfield.nCentralMegaExplosionCoordinates[K];
+            // Mega-Explosionen könnten theoretisch das Spielfeld überwinden. Daher wird hier mit X/Y-Koordinaten abegrüft, ob innerhalb des Spielfeldes gesprengt wird
+            if (nCoordinate > 0) {
+                nX = nCoordinate % Playfield.uLevel_X_Dimension;
+                nY = nCoordinate / Playfield.uLevel_X_Dimension;
+                if ((nX > 0) && (nX < (Playfield.uLevel_X_Dimension - 1)) && (nY > 0) && (nY < (Playfield.uLevel_Y_Dimension - 1))) {
+                    uCheckExplosion = CheckExplosionElement(Playfield.pLevel[nCoordinate]);
+                    switch (uCheckExplosion & 0xFFFF) {
+                        case (EMERALD_EXPLOSION_EMPTY):
+                            Playfield.pLevel[nCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                            Playfield.pStatusAnimation[nCoordinate] = EMERALD_SPACE;
+                            break;
+                        case (EMERALD_EXPLOSION_EMPTY_MAN):
+                            Playfield.pLevel[nCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                            Playfield.pStatusAnimation[nCoordinate] = EMERALD_EMERALD;
+                            Playfield.bManDead = true;
+                            PreparePlaySound(SOUND_MAN_CRIES,nI);
+                            break;
+                        case (EMERALD_EXPLOSION_ELEMENT):
+                            Playfield.pLevel[nCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                            Playfield.pStatusAnimation[nCoordinate] = uCheckExplosion >> 16;
+                            break;
+                        case (EMERALD_EXPLOSION_NEWCENTRAL):
+                            Playfield.pLevel[nCoordinate] = EMERALD_CENTRAL_EXPLOSION;
+                            if (nCoordinate > nI) {
+                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                            } else {
+                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                            }
+                            break;
+                        case (EMERALD_EXPLOSION_NEWCENTRAL_MEGA):
+                            Playfield.pLevel[nCoordinate] = EMERALD_CENTRAL_EXPLOSION_MEGA;
+                            if (nCoordinate > nI) {
+                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                            } else {
+                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                            }
+                            break;
+                        case (EMERALD_EXPLOSION_NEWCENTRAL_BEETLE):
+                            Playfield.pLevel[nCoordinate] = EMERALD_CENTRAL_EXPLOSION_BEETLE;
+                            if (nCoordinate > nI) {
+                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                            } else {
+                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                            }
+                            break;
+                    }
+                }
             }
         }
     }
@@ -207,12 +298,26 @@ void ControlCentralBeetleExplosion(uint32_t I) {
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                     Playfield.pStatusAnimation[uCoordinate] = EMERALD_EMERALD;
                     break;
+                case (EMERALD_EXPLOSION_EMPTY_MAN):
+                    Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                    Playfield.pStatusAnimation[uCoordinate] = EMERALD_EMERALD;
+                    Playfield.bManDead = true;
+                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                    break;
                 case (EMERALD_EXPLOSION_ELEMENT):   // Käfer sprengt Elemente aus Mauer frei statt Emeralds zu erzeugen
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                     Playfield.pStatusAnimation[uCoordinate] = uCheckExplosion >> 16;
                     break;
                 case (EMERALD_EXPLOSION_NEWCENTRAL):
                     Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION;
+                    if (uCoordinate > I) {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    } else {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;
+                    }
+                    break;
+                case (EMERALD_EXPLOSION_NEWCENTRAL_MEGA):
+                    Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION_MEGA;
                     if (uCoordinate > I) {
                         Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     } else {
@@ -234,6 +339,77 @@ void ControlCentralBeetleExplosion(uint32_t I) {
 
 
 /*----------------------------------------------------------------------------
+Name:           ControlCentralYamExplosion
+------------------------------------------------------------------------------
+Beschreibung: Steuert eine zentrale Yam-Explosion (3x3).
+Parameter
+      Eingang: I, uint32_t, Index im Level (zentraler Punkt)
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlCentralYamExplosion(uint32_t I) {
+    uint32_t K;
+    uint32_t uCoordinate;
+    uint32_t uCheckExplosion;
+    uint32_t Y;
+    uint16_t YamElements[9];
+
+    if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+    } else {
+        // Kopie der Yam-Elemente machen, da diese für Replikator und Säurebecken ggf. angepasst werden müssen
+        memcpy(YamElements,Playfield.YamExplosions[Playfield.uYamExplosion].uElement,9 * sizeof(uint16_t));
+        CleanInvalidFieldsForCentralExplosion(I);
+        CheckYamContents(I,YamElements);
+        Playfield.pLevel[I] = EMERALD_EXPLOSION_TO_ELEMENT_1;    // Mittelpunkt wird auf jedem Fall zur Explosion
+        Playfield.pStatusAnimation[I] = YamElements[4];  // 4 ist das mittlere YAM-Element
+        Y = 0;
+        for (K = 0; K < 8; K++) {
+            uCoordinate = I + Playfield.nCentralExplosionCoordinates[K];
+            uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate]);
+            switch (uCheckExplosion & 0xFFFF) {
+                case (EMERALD_EXPLOSION_EMPTY_MAN):
+                    Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                    Playfield.pStatusAnimation[uCoordinate] = EMERALD_EMERALD;
+                    Playfield.bManDead = true;
+                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                    break;
+                case (EMERALD_EXPLOSION_EMPTY):
+                    Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                    Playfield.pStatusAnimation[uCoordinate] = YamElements[Y];
+                    break;
+                case (EMERALD_EXPLOSION_ELEMENT):   // Yam sprengt Elemente aus Mauer frei statt Emeralds zu erzeugen
+                    Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                    Playfield.pStatusAnimation[uCoordinate] = uCheckExplosion >> 16;
+                    break;
+                case (EMERALD_EXPLOSION_NEWCENTRAL):
+                    Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION;
+                    if (uCoordinate > I) {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    } else {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;
+                    }
+                    break;
+                case (EMERALD_EXPLOSION_NEWCENTRAL_BEETLE):
+                    Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION_BEETLE;
+                    if (uCoordinate > I) {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    } else {
+                        Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;
+                    }
+                    break;
+            }
+            Y++;
+            if (Y == 4) {   // Mittelpunkt überspringen
+                Y++;
+            }
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           CheckExplosionElement
 ------------------------------------------------------------------------------
 Beschreibung: Prüft, wie sich ein bestehendes Objekt, das sich im Bereich einer Explosion
@@ -244,11 +420,11 @@ Parameter
 Rückgabewert:  uint32_t LOW WORD: Explosionstype
                         HIGH WORD: Element das an dieser Szelle neu entsteht
 
-                EMERALD_EXPLOSION_NONE                              bei diesem Element kann keine Explosion stattfinden, z.B. Stahl
-                EMERALD_EXPLOSION_EMPTY                             an dieser Stelle wird eine Explosion durchgeführt und das bestehende Element entfernt
-                EMERALD_EXPLOSION_ELEMENT                           an dieser Stelle entsteht nach der Explosion ein neues Element
-                EMERALD_EXPLOSION_NEWCENTRAL_EXPLOSION              an dieser Stelle entsteht eine neue zentrale 3x3-Explosion
-                EMERALD_EXPLOSION_NEWCENTRAL_MEGA_EXPLOSION         an dieser Stelle entsteht eine neue zentrale Mega-Explosion
+                EMERALD_EXPLOSION_NONE                    bei diesem Element kann keine Explosion stattfinden, z.B. Stahl
+                EMERALD_EXPLOSION_EMPTY                   an dieser Stelle wird eine Explosion durchgeführt und das bestehende Element entfernt
+                EMERALD_EXPLOSION_ELEMENT                 an dieser Stelle entsteht nach der Explosion ein neues Element
+                EMERALD_EXPLOSION_NEWCENTRAL              an dieser Stelle entsteht eine neue zentrale 3x3-Explosion
+                EMERALD_EXPLOSION_NEWCENTRAL_MEGA         an dieser Stelle entsteht eine neue zentrale Mega-Explosion
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint32_t CheckExplosionElement(uint16_t uElement) {
@@ -433,7 +609,10 @@ uint32_t CheckExplosionElement(uint16_t uElement) {
             uExplosion = EMERALD_EXPLOSION_EMPTY;
             break;
         case (EMERALD_MAN):
-            SDL_Log("kill man");
+            uExplosion = EMERALD_EXPLOSION_EMPTY_MAN;
+            break;
+        case (EMERALD_WALL_WITH_TIME_COIN):
+            uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_TIME_COIN << 16);
             break;
         case (EMERALD_WALL_WITH_EMERALD):
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_EMERALD << 16);
@@ -513,8 +692,11 @@ uint32_t CheckExplosionElement(uint16_t uElement) {
         case (EMERALD_BOMB):
             uExplosion = EMERALD_EXPLOSION_NEWCENTRAL;
             break;
+        case (EMERALD_MEGABOMB):
+            uExplosion = EMERALD_EXPLOSION_NEWCENTRAL_MEGA;
+            break;
         case (EMERALD_STANDMINE):
-            uExplosion = EMERALD_EXPLOSION_NONE;
+            uExplosion = EMERALD_EXPLOSION_NEWCENTRAL;
             break;
         case (EMERALD_BEETLE_UP):
         case (EMERALD_BEETLE_RIGHT):
@@ -522,18 +704,199 @@ uint32_t CheckExplosionElement(uint16_t uElement) {
         case (EMERALD_BEETLE_LEFT):
             uExplosion = EMERALD_EXPLOSION_NEWCENTRAL_BEETLE;
             break;
-        //case (EMERALD_MAN):
-            //uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_ALIEN << 16);
-            //break;
-        case (EMERALD_MEGABOMB):
-            uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_ALIEN << 16);
-            break;
-
-
         default:
             uExplosion = EMERALD_EXPLOSION_NONE;
 
     }
-
     return uExplosion;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           YamHasReplicatorAcidPool
+------------------------------------------------------------------------------
+Beschreibung:   Prüft, ob eine YAM-Explosion einen Replikator oder ein Säurebecken enthält.
+                Der Leveleditor stellt bereits sicher, dass Replikator und Säurebecken
+                korrekt in der Yam-Explosion kodiert sind.
+Parameter
+      Eingang: YamExplosion, uint16_t *, Zeiger auf 3x3 = 9 Explosions-Elemente eines Yams
+      Ausgang: -
+Rückgabewert:  0 = kein Replikator oder Säurebecken enthalten
+               1 = Replikator in oberer Hälfte (0,1,2,3,5)
+               2 = Replikator in unterer Hälfte (3,4,5,6,8)
+               3 = Säurebecken in oberer Hälfte (0,1,2,3,4,5)
+               4 = Säurebecken in unterer Hälfte (3,4,5,6,7,8)
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int YamHasReplicatorAcidPool(uint16_t *YamExplosion) {
+    int nRet;
+
+    nRet = 0;
+    if  ( (YamExplosion[0] == EMERALD_REPLICATOR_RED_TOP_LEFT) || (YamExplosion[0] == EMERALD_REPLICATOR_GREEN_TOP_LEFT) || (YamExplosion[0] == EMERALD_REPLICATOR_BLUE_TOP_LEFT) || (YamExplosion[0] == EMERALD_REPLICATOR_YELLOW_TOP_LEFT) ) {
+        nRet = 1;
+    } else  if ( (YamExplosion[3] == EMERALD_REPLICATOR_RED_TOP_LEFT) || (YamExplosion[3] == EMERALD_REPLICATOR_GREEN_TOP_LEFT) || (YamExplosion[3] == EMERALD_REPLICATOR_BLUE_TOP_LEFT) || (YamExplosion[3] == EMERALD_REPLICATOR_YELLOW_TOP_LEFT) ) {
+        nRet = 2;
+    } else if  (YamExplosion[0] == EMERALD_ACIDPOOL_TOP_LEFT) {
+        nRet = 3;
+    } else if  (YamExplosion[3] == EMERALD_ACIDPOOL_TOP_LEFT) {
+        nRet = 4;
+    }
+    return nRet;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CheckYamContents
+------------------------------------------------------------------------------
+Beschreibung:   Falls eine Yam-Explosion einen Replikator oder ein Säurebecken enthält,
+                muss ggf. vorher die Yam-Explosion angepasst werden, wenn der R. oder das S.
+                nicht vollständig platziert werden kann.
+                Kann die Platzierung nicht vollständig erfolgen, so werden
+                die R./S.-Elemente durch EMERALD_STEEL_WARNING ersetzt.
+Parameter
+      Eingang: I, uint32_t, Zentrum der Yam-Explosion
+               YamElements, uint16_t *, Zeiger auf bisherige Yam-Elemente
+      Ausgang: YamElements, uint16_t *, Zeiger auf angepasste Yam-Elemente
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void CheckYamContents(uint32_t I,uint16_t *YamElements) {
+    bool bReplace;
+    uint32_t K;
+    uint32_t uCoordinate;
+    uint32_t uCheckExplosion;
+    int nYamContent;
+    // YamContent
+    // 0 = kein Replikator oder Säurebecken enthalten
+    // 1 = Replikator in oberer Hälfte (0,1,2,3,5)
+    // 2 = Replikator in unterer Hälfte (3,4,5,6,8)
+    // 3 = Säurebecken in oberer Hälfte (0,1,2,3,4,5)
+    // 4 = Säurebecken in unterer Hälfte (3,4,5,6,7,8)
+    bReplace = false;
+    nYamContent = YamHasReplicatorAcidPool(YamElements);
+    if (nYamContent == 0) {
+        return;                         // Yam-Explosion enthält keine Maschine (Replikator oder Säurebecken)
+    } else if (nYamContent == 1) {      // Replikator in oberer Hälfte
+        for (K = 0; (K < 5) && (!bReplace); K++) {
+            uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionTop[K];
+            uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate]);
+            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = Replikator-Teil-Element kann nicht erzeugt werden
+        }
+        if (bReplace) {
+            for (K = 0; K <= 5; K++) {
+                YamElements[K] = EMERALD_STEEL_WARNING;     // Statt Replikator Stahl-Warnschilder erzeugen
+            }
+        } else {
+            // Replikator kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            for (K = 0; (K < 5); K++) {
+                uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionTop[K];
+                Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
+            }
+        }
+    } else if (nYamContent == 2) {      // Replikator in unterer Hälfte
+        for (K = 0; (K < 5) && (!bReplace); K++) {
+            uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionButtom[K];
+            uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate]);
+            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = Replikator-Teil-Element kann nicht erzeugt werden
+        }
+        if (bReplace) {
+            for (K = 0; K <= 5; K++) {
+                YamElements[3 + K] = EMERALD_STEEL_WARNING;     // Statt Replikator Stahl-Warnschilder erzeugen
+            }
+        } else {
+            // Replikator kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            for (K = 0; (K < 5); K++) {
+                uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionButtom[K];
+                Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
+            }
+        }
+    } else if (nYamContent == 3) {       // Säurebecken in oberer Hälfte
+        for (K = 0; (K < 6) && (!bReplace); K++) {
+            uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionTop[K];
+            uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate]);
+            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = Säurebecken-Teil-Element kann nicht erzeugt werden
+        }
+        if (bReplace) {
+            for (K = 0; K <= 5; K++) {
+                YamElements[K] = EMERALD_STEEL_WARNING;     // Statt Säurebecken Stahl-Warnschilder erzeugen
+            }
+        } else {
+            // Säurebecken kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            for (K = 0; (K < 6); K++) {
+                uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionTop[K];
+                Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
+            }
+        }
+    } else {                            // Säurebecken in unterer Hälfte
+        for (K = 0; (K < 6) && (!bReplace); K++) {
+            uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionButtom[K];
+            uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate]);
+            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = Säurebecken-Teil-Element kann nicht erzeugt werden
+        }
+        if (bReplace) {
+            for (K = 0; K <= 5; K++) {
+                YamElements[3 + K] = EMERALD_STEEL_WARNING;     // Statt Säurebecken Stahl-Warnschilder erzeugen
+            }
+        } else {
+            // Säurebecken kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            for (K = 0; (K < 6); K++) {
+                uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionButtom[K];
+                Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
+            }
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           IsDangerousEnemyAround
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob sich eine "gefährlicher" Feind (Standmine, Käfer oder Mine)
+              um Position I befindet. Die Funktion wird nur in ControlMan() aufgerufen.
+Parameter
+      Eingang: I, uint32_t, Index im Level, Position, an der geprüft werden soll
+      Ausgang: -
+Rückgabewert:  bool, true = "gefährlicher" Feind  hat Kontakt mit Position I
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+bool IsDangerousEnemyAround(uint32_t I) {
+    return        ( (Playfield.pLevel[I - 1] == EMERALD_STANDMINE) ||    // links
+                    (Playfield.pLevel[I + 1] == EMERALD_STANDMINE) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) || // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) || // unten
+                    // Käfer
+                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_DOWN) ||    // rechts
+                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_DOWN) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) || // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) || // unten
+                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_LEFT) ||    // links
+                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_LEFT) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) || // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) || // unten
+                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_RIGHT) ||    // links
+                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_RIGHT) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) || // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) || // unten
+                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_UP) ||    // links
+                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_UP) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||    // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||    // unten
+                    // Mine
+                    (Playfield.pLevel[I - 1] == EMERALD_MINE_DOWN) ||    // rechts
+                    (Playfield.pLevel[I + 1] == EMERALD_MINE_DOWN) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) || // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) || // unten
+                    (Playfield.pLevel[I - 1] == EMERALD_MINE_LEFT) ||    // links
+                    (Playfield.pLevel[I + 1] == EMERALD_MINE_LEFT) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) || // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) || // unten
+                    (Playfield.pLevel[I - 1] == EMERALD_MINE_RIGHT) ||    // links
+                    (Playfield.pLevel[I + 1] == EMERALD_MINE_RIGHT) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) || // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) || // unten
+                    (Playfield.pLevel[I - 1] == EMERALD_MINE_UP) ||    // links
+                    (Playfield.pLevel[I + 1] == EMERALD_MINE_UP) ||    // rechts
+                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||    // oben
+                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP)       // unten
+                    );
 }

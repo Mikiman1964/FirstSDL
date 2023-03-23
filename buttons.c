@@ -5,6 +5,7 @@
 
 BUTTON Buttons[MAX_BUTTONS];
 extern INPUTSTATES InputStates;
+extern uint8_t g_uIntensityProzent;
 
 
 /*----------------------------------------------------------------------------
@@ -160,11 +161,12 @@ Parameter
                uXpos, int32_t, X-Position des Buttons
                uYpos, int32_t, X-Position des Buttons
                bActive, bool, true = Button ist aktiv und wird angezeigt
+               bWaitRelease, bool, true = wartet solange, bis Button losgelassen wird und wertet dann aus
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
-int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive) {
+int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease) {
     int nErrorCode;
     int nButtonIndex;
 
@@ -185,6 +187,7 @@ int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bo
                         Buttons[nButtonIndex].uXpos = uXpos;
                         Buttons[nButtonIndex].uYpos = uYpos;
                         Buttons[nButtonIndex].bActive = bActive;
+                        Buttons[nButtonIndex].bWaitRelease = bWaitRelease;
                         Buttons[nButtonIndex].bPressed = false;
                         nErrorCode = 0;
                     } else {
@@ -290,7 +293,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Buttons[].x, InputStates.x
+Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent
 ------------------------------------------------------------------------------*/
 int ShowButtons(SDL_Renderer *pRenderer) {
     int nErrorCode;
@@ -300,7 +303,9 @@ int ShowButtons(SDL_Renderer *pRenderer) {
     uint32_t uButtonW;
     uint32_t uButtonH;
     bool bButtonArea;
+    float fIntensityProzent;
 
+    fIntensityProzent = (float)g_uIntensityProzent / 100;
     nErrorCode = 0;
     for (I = 0; (I < MAX_BUTTONS) && (nErrorCode == 0); I++) {
         Buttons[I].bPressed = false;
@@ -314,28 +319,30 @@ int ShowButtons(SDL_Renderer *pRenderer) {
             if  (InputStates.bLeftMouseButton && bButtonArea) {
                 // Buttonfläche erzeugen
                 Buttons[I].bPressed = true;
-                nErrorCode = CopyColorRect(pRenderer,106,104,100,uXpos,uYpos,uButtonW,uButtonH);
+                nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH);
                 nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText);
                 ShowOtherButtons(pRenderer);
                 SDL_RenderPresent(pRenderer);   // Renderer anzeigen
-                WaitNoKey();
+                if (Buttons[I].bWaitRelease) {
+                    WaitNoKey();
+                }
                 // Falls Maus vom Button gezogen wurde, während die linke Maustaste gedrückt wurde
                 Buttons[I].bPressed = ((InputStates.nMouseXpos >= uXpos) && (InputStates.nMouseXpos <= (uXpos + uButtonW)) &&
                                        (InputStates.nMouseYpos >= uYpos) && (InputStates.nMouseYpos <= (uYpos + uButtonH)));
             } else {
                 // Buttonfläche erzeugen
-                nErrorCode = CopyColorRect(pRenderer,212,208,200,uXpos,uYpos,uButtonW,uButtonH);
+                nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH);
             }
             // Weißer Button-Rand oben und links zeichnen
-            SDL_SetRenderDrawColor(pRenderer,255,255,255, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos, uYpos, uXpos + uButtonW + 1, uYpos); // oben
             SDL_RenderDrawLine(pRenderer, uXpos, uYpos, uXpos, uYpos + uButtonH + 1); // links
             // Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,128,128,128, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1, uYpos + uButtonH, uXpos + uButtonW, uYpos + uButtonH); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW, uYpos + 1, uXpos + uButtonW, uYpos + uButtonH); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,64,64,64, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1, uYpos + uButtonH + 1, uXpos + uButtonW, uYpos + uButtonH + 1); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1, uYpos + 1, uXpos + uButtonW + 1, uYpos + uButtonH + 1); // rechts
             SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
@@ -354,7 +361,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Buttons[].x, InputStates.x
+Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent
 ------------------------------------------------------------------------------*/
 int ShowOtherButtons(SDL_Renderer *pRenderer) {
     int nErrorCode;
@@ -363,7 +370,9 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
     uint32_t uYpos;
     uint32_t uButtonW;
     uint32_t uButtonH;
+    float fIntensityProzent;
 
+    fIntensityProzent = (float)g_uIntensityProzent / 100;
     nErrorCode = 0;
     for (I = 0; (I < MAX_BUTTONS) && (nErrorCode == 0); I++) {
         if ((Buttons[I].pszLabel != NULL) && (Buttons[I].pszText != NULL) && (Buttons[I].bActive) && (!Buttons[I].bPressed)) { // Nicht den gedrückten Button anzeigen
@@ -372,17 +381,17 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
             uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_559_W + FONT_LITTLE_559_W;
             uButtonH = BUTTON_H;
             // Buttonfläche erzeugen
-            nErrorCode = CopyColorRect(pRenderer,212,208,200,uXpos,uYpos,uButtonW,uButtonH);
+            nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH);
             // Weißer Button-Rand oben und links zeichnen
-            SDL_SetRenderDrawColor(pRenderer,255,255,255, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos, uYpos, uXpos + uButtonW + 1, uYpos); // oben
             SDL_RenderDrawLine(pRenderer, uXpos, uYpos, uXpos, uYpos + uButtonH + 1); // links
             // Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,128,128,128, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1, uYpos + uButtonH, uXpos + uButtonW, uYpos + uButtonH); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW, uYpos + 1, uXpos + uButtonW, uYpos + uButtonH); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,64,64,64, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1, uYpos + uButtonH + 1, uXpos + uButtonW, uYpos + uButtonH + 1); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1, uYpos + 1, uXpos + uButtonW + 1, uYpos + uButtonH + 1); // rechts
             SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen

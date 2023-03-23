@@ -1,16 +1,23 @@
 #include <SDL2/SDL.h>
 #include "mySDL.h"
 #include "copper.h"
+#include "loadlevel.h"
+#include "mystd.h"
 
 
 int g_nPrecalculatedSegmentCount;                                       // Zählt die bereits durchgescrollten vorberechneten Segmente
 int g_nColorPattern;
 bool g_bReady;
 
-COPPERSEGMENT VisibleCopperSegments[COPPER_VISIBLE_SEGMENTS];           // Die sichtbaren Segmente;
+
+uint32_t uCopperVisibleSegments;
+
+
+COPPERSEGMENT *VisibleCopperSegments;                                    // Die sichtbaren Segmente;
 COPPERSEGMENT PrecalculatedSegments[COPPER_PRECALCULATED_SEGMENTS];     // Vorberechnete Segmente
 COLORFLOW ColorFlow[(COPPER_COLORLINES_PER_SEGMENT * 2) - 1];           // Vorberechneter Farbverlauf (dunkel -> hell -> dunkel) für aktuelles Color-Pattern
 
+extern CONFIG Config;
 
 uint8_t g_ColorPatterns[] = {
 //                           R    G    B
@@ -33,15 +40,26 @@ Beschreibung: Initialisiert alle sichtbaren Farbsegmente auf schwarz und die
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: g_nPrecalculatedSegmentCount, g_nColorPattern, g_bReady,
-               VisibleCopperSegments[]
+               VisibleCopperSegments, uCopperVisibleSegments, Config.x
 ------------------------------------------------------------------------------*/
-void InitVisibibleCopperSegments() {
+int InitVisibibleCopperSegments() {
+    int nErrorCode;
+
+    nErrorCode = -1;
+    uCopperVisibleSegments = ((Config.uResY + 20) / COPPER_COLORLINES_PER_SEGMENT);     // sichtbare Segmente
     g_nPrecalculatedSegmentCount = 0;   // Zählt die bereits durchgescrollten vorberechneten Segmente
     g_nColorPattern = 0;                // Aktuelle Scroll-Farbe (Maximalwerte)
     g_bReady = true;                    // Es wurden alle vorberechneten Segmente durchgescrollt bzw. Neustart
-    memset(&VisibleCopperSegments,0,sizeof(VisibleCopperSegments)); // Alle sichtbaren Segmente auf schwarz setzen
+    VisibleCopperSegments = malloc(sizeof(COPPERSEGMENT) * uCopperVisibleSegments);
+    if (VisibleCopperSegments != NULL) {
+        memset(VisibleCopperSegments,0,sizeof(COPPERSEGMENT) * uCopperVisibleSegments); // Alle sichtbaren Segmente auf schwarz setzen
+        nErrorCode = 0;
+    } else {
+        SDL_Log("%s: malloc() failed",__FUNCTION__);
+    }
+    return nErrorCode;
 }
 
 
@@ -159,13 +177,13 @@ Parameter
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: VisibleCopperSegments[], PrecalculatedSegments[],
-                g_nPrecalculatedSegmentCount, g_bReady
+                g_nPrecalculatedSegmentCount, g_bReady, uCopperVisibleSegments
 ------------------------------------------------------------------------------*/
 void ScrollVisibleSegments(void) {
     int nSegment;
 
     // Sichtbare Segmente scrollen
-    for (nSegment = 0; nSegment < COPPER_VISIBLE_SEGMENTS - 1; nSegment++) {
+    for (nSegment = 0; nSegment < uCopperVisibleSegments - 1; nSegment++) {
         VisibleCopperSegments[nSegment] = VisibleCopperSegments[nSegment + 1];
     }
     // und neues vorberechnetes Segment unten einfügen
@@ -188,7 +206,7 @@ Parameter
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: VisibleCopperSegments[], g_ColorPatterns[]
-               g_nColorPattern, g_bReady
+               g_nColorPattern, g_bReady, uCopperVisibleSegments, Config.x
 ------------------------------------------------------------------------------*/
 int DoCopper(SDL_Renderer *pRenderer,bool bScroll) {
     int nSegment;
@@ -219,14 +237,14 @@ int DoCopper(SDL_Renderer *pRenderer,bool bScroll) {
     ScrollVisibleSegments();
     // Copperzeilen erzeugen/malen
     nRet = 0;
-    for (nSegment = 0; (nSegment < COPPER_VISIBLE_SEGMENTS) && (nRet == 0); nSegment++) {
+    for (nSegment = 0; (nSegment < uCopperVisibleSegments) && (nRet == 0); nSegment++) {
         for (nLine = 0; (nLine < COPPER_COLORLINES_PER_SEGMENT) && (nRet == 0); nLine++) {
             nRed = VisibleCopperSegments[nSegment].CopperLine[nLine].nRed;
             nGreen = VisibleCopperSegments[nSegment].CopperLine[nLine].nGreen;
             nBlue = VisibleCopperSegments[nSegment].CopperLine[nLine].nBlue;
             if (SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0) {  // Farbe für Line setzen
                 nYpos = nSegment * COPPER_COLORLINES_PER_SEGMENT + nLine;
-                if (SDL_RenderDrawLine(pRenderer, 0, nYpos, WINDOW_W - 1, nYpos) != 0) {
+                if (SDL_RenderDrawLine(pRenderer, 0, nYpos, Config.uResX - 1, nYpos) != 0) {
                     nRet = -1;
                     SDL_Log("%s: SDL_RenderDrawLine() failed: %sd",__FUNCTION__,SDL_GetError());
                 }
@@ -245,3 +263,17 @@ int DoCopper(SDL_Renderer *pRenderer,bool bScroll) {
     return nRet;
 }
 
+
+/*----------------------------------------------------------------------------
+Name:           FreeCopper
+------------------------------------------------------------------------------
+Beschreibung: Gibt den Speicher für die sichtbaren Segmente wieder frei.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: VisibleCopperSegments
+------------------------------------------------------------------------------*/
+void FreeCopper(void) {
+    SAFE_FREE(VisibleCopperSegments);
+}

@@ -9,10 +9,11 @@
 #define MAX_BUTTONTEXT_LEN      100
 
 typedef struct {
-    char *pszLabel;
-    char *pszText;
     bool bActive;
     bool bPressed;
+    bool bWaitRelease;
+    char *pszLabel;
+    char *pszText;
     uint32_t uXpos;
     uint32_t uYpos;
 } BUTTON;
@@ -23,7 +24,7 @@ void FreeButton(char *pszLabel);
 void FreeAllButtons(void);
 int GetButtonIndex(char *pszLabel);
 int GetFreeButtonIndex(void);
-int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive);
+int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease);
 int SetButtonActivity(char *pszLabel, bool bActive);
 int SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos);
 int ShowButtons(SDL_Renderer *pRenderer);
