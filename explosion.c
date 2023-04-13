@@ -83,37 +83,33 @@ void CleanInvalidFieldsForCentralExplosion(uint32_t I) {
                     case (EMERALD_ANIM_UP):
                         if (Playfield.pLevel[uCoordinate - Playfield.uLevel_X_Dimension] == EMERALD_INVALID) {
                             Playfield.pLevel[uCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                            Playfield.pInvalidElement[uCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                             Playfield.pStatusAnimation[uCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                             Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;   // Nicht sprengbares aber bewegliches Objekt zum Stillstand bringen
-                        } else {
-                            SDL_Log("%s: Warning: Element 0x%04x has no invalid field, AnimStatus: up",__FUNCTION__,Playfield.pLevel[uCoordinate]);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
                         if (Playfield.pLevel[uCoordinate + 1] == EMERALD_INVALID) {
                             Playfield.pLevel[uCoordinate + 1] = EMERALD_SPACE;
+                            Playfield.pInvalidElement[uCoordinate + 1] = EMERALD_NONE;
                             Playfield.pStatusAnimation[uCoordinate + 1] = EMERALD_ANIM_STAND;
                             Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;   // Nicht sprengbares aber bewegliches Objekt zum Stillstand bringen
-                        } else {
-                            SDL_Log("%s: Warning: Element 0x%04x has no invalid field, AnimStatus: right",__FUNCTION__,Playfield.pLevel[uCoordinate]);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
                         if (Playfield.pLevel[uCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID) {
                             Playfield.pLevel[uCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                            Playfield.pInvalidElement[uCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                             Playfield.pStatusAnimation[uCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                             Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;   // Nicht sprengbares aber bewegliches Objekt zum Stillstand bringen
-                        } else {
-                            SDL_Log("%s: Warning: Element 0x%04x has no invalid field, AnimStatus: down",__FUNCTION__,Playfield.pLevel[uCoordinate]);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
                         if (Playfield.pLevel[uCoordinate - 1] == EMERALD_INVALID) {
                             Playfield.pLevel[uCoordinate - 1] = EMERALD_SPACE;
+                            Playfield.pInvalidElement[uCoordinate - 1] = EMERALD_NONE;
                             Playfield.pStatusAnimation[uCoordinate - 1] = EMERALD_ANIM_STAND;
                             Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;   // Nicht sprengbares aber bewegliches Objekt zum Stillstand bringen
-                        } else {
-                            SDL_Log("%s: Warning: Element 0x%04x has no invalid field, AnimStatus: left",__FUNCTION__,Playfield.pLevel[uCoordinate]);
                         }
                         break;
                 }

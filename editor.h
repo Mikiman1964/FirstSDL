@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "EmeraldMine.h"
 #include "mySDL.h"
-
+#include "mystd.h"
 
 #define MAX_PANEL_ELEMENTS                      224 // (8 * 32)
 #define EDITOR_MEM_SIZE                         4096
@@ -17,21 +17,24 @@
 #define MENUSTATE_TIME_AND_SCORES               5
 #define MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION    6
 #define MENUSTATE_TIME_AND_SCORES_MESSAGE       7
-#define MENUSTATE_MAX                           (MENUSTATE_TIME_AND_SCORES_MESSAGE + 1)
+#define MENUSTATE_TIME_AND_SCORES_EDIT_TITLE    8
+#define MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR   9
+#define MENUSTATE_MAX                           (MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR + 1)
 
 
-#define BUTTONLABEL_SAVE_AND_PLAY    "SAVE_AND_PLAY"
-#define BUTTONLABEL_YAMS             "YAMS"
+#define BUTTONLABEL_EDITOR_SAVE      "EDITOR_LEVEL_SAVE"
+#define BUTTONLABEL_EDITOR_QUIT      "EDITOR_QUIT"
+#define BUTTONLABEL_EDITOR_YAMS      "EDITOR_YAMS"
 #define BUTTONLABEL_RETURN_TO_LEVEL  "RETURN_TO_LEVEL"
-#define BUTTONLABEL_MINUS            "MINUS"
-#define BUTTONLABEL_PLUS             "PLUS"
-#define BUTTONLABEL_MACHINES         "MACHINES"
+#define BUTTONLABEL_EDITOR_YAM_MINUS "EDITOR_YAM_MINUS"
+#define BUTTONLABEL_EDITOR_YAM_PLUS  "EDITOR_YAM_PLUS"
+#define BUTTONLABEL_EDITOR_MACHINES  "EDITOR_MACHINES"
 #define BUTTONLABEL_TIME_AND_SCORES  "TIME_AND_SCORES"
-#define BUTTONLABEL_TEXT             "TEXT"
-#define BUTTONLABEL_STD              "STD"
-#define BUTTONLABEL_OPTION_1         "OPTION1"
-#define BUTTONLABEL_OPTION_2         "OPTION2"
-#define BUTTONLABEL_OPTION_3         "OPTION3"
+#define BUTTONLABEL_EDITOR_TEXT      "EDITOR_TEXT"
+#define BUTTONLABEL_EDITOR_STD       "EDITOR_STD"
+#define BUTTONLABEL_EDITOR_OPTION_1  "EDITOR_OPTION1"
+#define BUTTONLABEL_EDITOR_OPTION_2  "EDITOR_OPTION2"
+#define BUTTONLABEL_EDITOR_OPTION_3  "EDITOR_OPTION3"
 #define BUTTONLABEL_SAVE_MESSAGE     "SAVE_MESSAGE"
 #define BUTTONLABEL_CANCEL_MESSAGE   "CANCEL_MESSAGE"
 #define BUTTONLABEL_CALL_GAME        "CALL_GAME"
@@ -152,22 +155,32 @@ typedef struct {
     YAM_COORDS      YamCoords[EMERALD_MAX_YAM_EXPLOSIONS];      // Koordinaten für Kästchen des YAM-Editors
 } ED;
 
-
+int UpdateLevelgroupHash(uint8_t *pszInput, uint8_t *puCalculatedHash);
+int UpdateCreateTimestamp(uint8_t *pszInput);
+uint8_t *GetStartOrEndLevelTag(uint8_t *pszInput, uint8_t *pEndpointer, bool bStart);
+int RenumLevelgroup(uint8_t *pszXml);
 void SetPanelElements(uint32_t uMenuState);
 void ShowEditorStatus(void);
 void ClearOldMan(void);
-int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, char *pszFilename);
+int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel);
+DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel);
 void InitMessageEditor(void);
 void CalcEditorViewArea(void);
 int CreateEditorButtons(void);
+void FreeEditorButtons(void);
 int CopyPlayfieldValueToEditor(void);
 int SetLevelBorder(uint16_t *pLevel);
-int Editor(SDL_Renderer *pRenderer);
+uint32_t GetLevelnameBeamPosition(void);
+int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
+void InitLevelTitleList(void);
+int HandlePreEditorButtons(SDL_Renderer *pRenderer, int nSelectedLevel);
+void PreparePreEditormenu(void);
+int PreEditorMenu(SDL_Renderer *pRenderer);
 int DrawEditorPanel(SDL_Renderer *pRenderer);
 int FillPanel(SDL_Renderer *pRenderer);
 uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos);
 int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount);
-int WriteLevelXmlFile(const char *szFilename);
+DYNSTRING *GetLevelXmlFile(void);
 int EditorStateLevel(SDL_Renderer *pRenderer);
 int EditorStateYams(SDL_Renderer *pRenderer);
 int EditorStateMachines(SDL_Renderer *pRenderer);
@@ -178,7 +191,7 @@ int GetYamExplosionFromMousepointer(uint8_t *puElementIndex);
 int GetTimeScoresSwitchfieldAndOffset(uint32_t uSwitch,uint32_t *puSwitchOffset);
 void ChangeTimeScoresValue(int nSwitchField,uint32_t uSwitchOffset);
 uint32_t IncreaseOrDecreaseTimeScoreValue(uint32_t uValue, uint32_t uSwitchOffset);
-void ChangeTimeScoreString(char *pszText,uint32_t uSwitchOffset);
 int CreateNewLevel(bool bCopyOldLeveldata);
 int SaveNewMessage(void);
+int ScrollLevelTitleList(int nButton);
 #endif // EDITOR_H_INCLUDED

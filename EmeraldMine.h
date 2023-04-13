@@ -469,9 +469,18 @@
 #define EMERALD_ALIEN_KILLS_MAN                 0x01E5            // Alien tötet Man
 #define EMERALD_YAM_KILLS_MAN                   0x01E6            // Yam tötet Man
 #define EMERALD_WALL_WITH_TIME_COIN             0x01E7            // Mauer mit Zeitmünze
+#define EMERALD_STEEL_TRASHCAN                  0x01E8            // Stahl Mülleimer
+#define EMERALD_STEEL_JOYSTICK                  0x01E9            // Stahl Joystick
+#define EMERALD_STEEL_EDIT_LEVEL                0x01EA            // Stahl Level editieren
+#define EMERALD_STEEL_MOVE_LEVEL                0x01EB            // Stahl Level verschieben
+#define EMERALD_STEEL_ADD_LEVELGROUP            0x01EC            // Stahl erzeuge neue Levelgruppe
+#define EMERALD_STEEL_COPY_LEVEL                0x01ED            // Stahl Level kopieren
+#define EMERALD_STEEL_MSDOS_IMPORT              0x01EE            // Stahl MSDOS-Level-Import
+#define EMERALD_STEEL_DC3_IMPORT                0x01EF            // Stahl DC3 (Diamond Caves 3)-Level-Import
+#define EMERALD_STEEL_RENAME_LEVELGROUP         0x01F0            // Stahl Levelgruppe umbenennen
+#define EMERALD_STEEL_PASSWORD                  0x01F1            // Stahl Passwort
 
-
-#define EMERALD_MAX_ELEMENT                     0x01E7            // hier immer das letzte Element eintragen
+#define EMERALD_MAX_ELEMENT                     0x01F1            // hier immer das letzte Element eintragen
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 
@@ -740,4 +749,5 @@ void ControlTimeDoor(uint32_t I);
 void PostControlSwitchDoors(void);
 void PostControlBombExplosions(void);
 bool IsSteel(uint16_t uElement);
+int CheckGameDirectorys(void);
 #endif // TESTSURFACE_H_INCLUDED

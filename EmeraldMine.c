@@ -1,21 +1,24 @@
 /*
 TODO
-* Levelgruppen mit fester Verknüpfung (über Hash?) zu Highscores und Handicap
-* Gehört zum 1. Punkt: Beim Start des Spieles nicht verwendete Hashes aus der Namensliste entfernen
-* Highscores
 * Gras einbauen
 * Unsichtbaren Sand einbauen
 * Unabhängige Sound-Kanäle -> SDL_Mixer erforderlich?
-* Undo für Editor
 * Explosionen mit Sumpf und Tropfen testen
 * grünen Käse noch agressiver machen, wenn hohe Rate eingestellt
-* Konfigurationsdatei: 'config.xml' -> Fenstergröße, Tastenbelegung für Dynamit zünden usw.
-* Konverter für alte/DC3/MIK-Levels bauen, DC3-Konverter bereits lauffähig
-* Berührt Mine von unten einen Tropfen, wird sofort eine Explosion ausgelöst, ohne dass vorher Käse entstehen kann.
+* Fullscreen-Unterstützung
+* Konverter für alte/DC3/DOS-Levels bauen, DC3-Konverter bereits lauffähig -> Unteren Teil eines Repliklators richtig berücksichtigen
+* Berührt Mine von unten einen Tropfen, wird sofort eine Explosion ausgelöst, ohne dass vorher Käse entstehen kann. Passiert allerdings bei DC3 auch.
   In diesem Zusammenhang gibt es noch Fehler (z.B. invalid Cleanstatus: 0) mit Minen und Käse/Tropfen, siehe Level "ONLY ONE EMERALD"
+* Tropfen in Explosionen behandeln: Wird eigentlich schon behandelt, siehe auch voriger Punkt
 * Wenn Element durch Magic Wall fällt, kommt noch kein SOUND_SQUEAK: Kommt bei DC3 auch nicht, bei Kingsoft ja
-* Funktion editor.c/EditorStateConfirmNewLevelDimension() umbauen wegen dynamischer Auflösung
-* Yams entstehen im Replikator nicht korrekt, kein Zoom und kein "Plopp". Plopp wird z.Z in ControlGame() gesteuert.
+* Beim Start des Spieles nicht verwendete Hashes aus der Namensliste entfernen und Highscorefiles aufräumen -> CleanUp
+* Leveleditor: Levelnamen und Autor über Tastatur eingeben
+* Undo für Editor
+* Zoom (32x32) für Editor (wird bereits unterstützt, ist aber noch nicht aufrufbar)
+* Sprengung einer Standmine mit Dynamit: Sprengung von oben ergibt Doppelsprengung, Sprengung von unten ergibt Einfachsprengung. Verhalten wahrscheinlich auch bei anderen Elementen.
+  In diesem Zusammenhang diagonale Sprengung von Käfern testen (oben links, oben rechts, unten links, unten rechts) -> Kreuzsprengung mit Dynamit
+* Joystick-/Gamecontroller-Support
+* Komprimierung der Objektdatei 'gfx.o' -> 3,7 MB zu 300 KB
 */
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -32,6 +35,7 @@ TODO
 #include "explosion.h"
 #include "GetTextureIndexByElement.h"
 #include "greendrop.h"
+#include "highscores.h"
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
 #include "lightbarrier.h"
@@ -68,6 +72,7 @@ extern SMILEY Smileys[MAX_SMILEYS];
 extern CONFIG Config;
 extern LEVELGROUP SelectedLevelgroup;
 extern MAINMENU MainMenu;
+extern AUDIOPLAYER Audioplayer;
 
 /*----------------------------------------------------------------------------
 Name:           Menu
@@ -75,12 +80,11 @@ Name:           Menu
 Beschreibung: Hauptmenü, um den entsprechenden SDL2-Programmteil aufzurufen.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Ausgang: -
 Rückgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
-Seiteneffekte: Playfield.x für FrameCounter, Config.x
+Seiteneffekte: Playfield.x für FrameCounter, Config.x, Audioplayer.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int Menu(SDL_Renderer *pRenderer) {
-    AUDIOPLAYER Audioplayer;
-    SDL_AudioDeviceID audio_device;
     uint32_t uModVolume;
     int nErrorCode;
     int nChoose;
@@ -128,28 +132,16 @@ int Menu(SDL_Renderer *pRenderer) {
 
     uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
     uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
-    memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
     InitSmileys();
     uFrameCounter = 0;
     nErrorCode = 0;
     nChoose = -1;
     // Buttons erzeugen
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",192 + 128,256 + 4,true,false);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",192 + 128,352 + 4,true,false);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",192 + 128,576 + 4,true,false);
-    // Audiostruktur initialisieren
-    InitAudioplayerStruct(&Audioplayer,5);      // Mit MOD 5 class11 starten
-    // Modfile initialisieren
-    if (!InitMOD(Audioplayer.pTheMusic, Audioplayer.sdl_audio.freq)) {
-        SDL_Log("%s: invalid mod file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
-        return -1;
-    }
-    audio_device = SDL_OpenAudioDevice(NULL, 0, &Audioplayer.sdl_audio, NULL, 0);
-    if (audio_device == 0) {
-        SDL_Log("%s: SDL_OpenAudioDevice() failed: %s",__FUNCTION__,SDL_GetError());
-        return -1;
-    }
-    SDL_PauseAudioDevice(audio_device, 0);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",uXoffs + 320,uYoffs + 260,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",uXoffs + 320,uYoffs + 356,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",uXoffs + 320,uYoffs + 580,true,false);
+    nErrorCode = nErrorCode + SetModMusic(5);
+    SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
     uModVolume = 0;
     SetModVolume(uModVolume);
     nColorDimm = 0;
@@ -163,10 +155,7 @@ int Menu(SDL_Renderer *pRenderer) {
             uModVolume++;
             SetModVolume(uModVolume);
         }
-        if (SDL_GetQueuedAudioSize(audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
-            RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);
-            SDL_QueueAudio(audio_device,Audioplayer. audiobuffer, Audioplayer.sdl_audio.samples * 4); // 2 channels, 2 bytes/sample
-        }
+        PlayMusic();
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],uFrameCounter % 16,&fAngle);
             DestR.x = 128 + uXoffs + uPositionsAndElements[I * 3 + 0];
@@ -181,20 +170,20 @@ int Menu(SDL_Renderer *pRenderer) {
                 }
             }
         }
-        PrintLittleFont(pRenderer,448,264,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.");
-        PrintLittleFont(pRenderer,448,360,0,"USE THE FOLLOWING KEYS:");
-        PrintLittleFont(pRenderer,468,375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT");
-        PrintLittleFont(pRenderer,468,390,0,"* MOUSEWHEEL TO ZOOM BALLONS");
-        PrintLittleFont(pRenderer,468,405,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS AND ASTEROID");
-        PrintLittleFont(pRenderer,468,420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE");
-        PrintLittleFont(pRenderer,468,435,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME");
-        PrintLittleFont(pRenderer,468,450,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988");
-        PrintLittleFont(pRenderer,468,465,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990");
-        PrintLittleFont(pRenderer,468,480,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999");
-        PrintLittleFont(pRenderer,468,495,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991");
-        PrintLittleFont(pRenderer,468,510,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO");
-        PrintLittleFont(pRenderer,468,525,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.");
-        PrintLittleFont(pRenderer,448,576 + 8,0,"NUFF SAID");
+        PrintLittleFont(pRenderer,uXoffs + 448,uYoffs + 264,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.");
+        PrintLittleFont(pRenderer,uXoffs + 448,uYoffs + 360,0,"USE THE FOLLOWING KEYS:");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 390,0,"* MOUSEWHEEL TO ZOOM BALLONS");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 405,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS AND ASTEROID");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 435,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 450,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 465,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 480,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 495,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 510,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO");
+        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 525,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.");
+        PrintLittleFont(pRenderer,uXoffs + 448,uYoffs + 584,0,"NUFF SAID");
         nErrorCode = ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
             nChoose = 1;
@@ -218,8 +207,6 @@ int Menu(SDL_Renderer *pRenderer) {
     FreeButton(BUTTONLABEL_CALL_GAME);
     FreeButton(BUTTONLABEL_CALL_DEMO);
     FreeButton(BUTTONLABEL_CALL_QUIT);
-    SAFE_FREE(Audioplayer.pTheMusic);
-    SDL_CloseAudioDevice(audio_device);
     SetAllTextureColors(100);
     return nChoose;
 }
@@ -240,6 +227,7 @@ Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x,
 int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bLevelRun;
     bool bPrepareLevelExit;
+    bool bPause;
     int nColorDimm;
     int nCheckLevelCount;
     uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
@@ -250,8 +238,8 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     uint32_t uQuitTime;
     int nRet;
 
+    bPause = false;
     nRet = 0;
-    nCheckLevelCount = 0;
     nColorDimm = 0;
     if (InitGameSound() != 0) {
         return -1;
@@ -273,6 +261,9 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SetAllTextureColors(0);
     Playfield.uPlayTimeStart = SDL_GetTicks();
     uQuitTime = 0xFFFFFFFF;
+    nCheckLevelCount = 0;
+    ManKey.uLastActiveDirection = MANKEY_NONE;
+    ManKey.uLastDirectionFrameCount = 0;
     while (bLevelRun) {
         UpdateManKey();
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit)) {
@@ -295,11 +286,16 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             }
             WaitNoSpecialKey(SDL_SCANCODE_X);
         }
-
-        if (InputStates.pKeyboardArray[SDL_SCANCODE_P]) {
-            PrintPlayfieldValues();
+        if ((InputStates.pKeyboardArray[SDL_SCANCODE_P]) || ((bPause) && (ManKey.bFire))) {
+            bPause = !bPause;
+            if (!bPause) {
+                bDimmIn = true; // Nach Pause wieder aufdimmen
+            }
+            do {
+                UpdateManKey();
+            } while ((InputStates.pKeyboardArray[SDL_SCANCODE_P]) || (ManKey.bFire));
         }
-        if (nCheckLevelCount == 0) {
+        if ((nCheckLevelCount == 0) && (!bPause)) {
             if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= 15)) {
                 SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
                 uKey = ManKey.uLastActiveDirection;
@@ -310,9 +306,24 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             PlayAllSounds();
         }
         ScrollAndCenterLevel(uManDirection);
+        if (!bPause) {
+            CheckRunningWheel();
+            CheckRunningMagicWall();
+            CheckLight();
+            CheckTimeDoorOpen();
+            CheckPlayTime();
+        } else {
+            // Pause abdimmen
+            if (nColorDimm > 10) {
+                nColorDimm = nColorDimm - 2;
+                SetAllTextureColors(nColorDimm);
+            }
+        }
         RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);  // nCheckLevelCount 0 ... 15
         if (bDebug) PrintLittleFont(pRenderer,400,700,0,"DEBUG MODE ON, PRESS X TO TOGGLE");
-        nCheckLevelCount++;
+        if (!bPause) {
+            nCheckLevelCount++;
+        }
         if (nCheckLevelCount == 16) {
             nCheckLevelCount = 0;
         }
@@ -341,6 +352,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
         if (bDebug) SDL_Delay(100);
+
     }
     Playfield.uPlayTimeEnd = SDL_GetTicks();
     SetAllTextureColors(100);           // Farben beim Verlassen wieder auf volle Helligekit
@@ -383,8 +395,7 @@ uint32_t ControlGame(uint32_t uDirection) {
         // ihren neuen Platz (invalides Feld) einnehmen.
         if (Playfield.pLevel[I] == EMERALD_INVALID) {
             uCleanStatus = Playfield.pStatusAnimation[I] & 0x00FF0000;
-            if (uCleanStatus != EMERALD_ANIM_CLEAN_NOTHING) {
-
+            if (uCleanStatus != EMERALD_ANIM_CLEAN_NOTHING) {   // Wird für grüne Tropfen verwendet
                 if (Playfield.pInvalidElement[I] == EMERALD_NONE) {
                     SDL_Log("%s: warning, set element EMERALD_NONE at position %d",__FUNCTION__,I);
                 }
@@ -1424,7 +1435,40 @@ bool IsSteel(uint16_t uElement) {
     (uElement == EMERALD_STEEL_INVISIBLE) ||
     (uElement == EMERALD_DOOR_END_NOT_READY_STEEL) ||
     (uElement == EMERALD_DOOR_END_READY_STEEL) ||
+    (uElement == EMERALD_STEEL_TRASHCAN) ||
+    (uElement == EMERALD_STEEL_JOYSTICK) ||
+    (uElement == EMERALD_STEEL_EDIT_LEVEL) ||
+    (uElement == EMERALD_STEEL_MOVE_LEVEL) ||
+    (uElement == EMERALD_STEEL_COPY_LEVEL) ||
+    (uElement == EMERALD_STEEL_MSDOS_IMPORT) ||
+    (uElement == EMERALD_STEEL_DC3_IMPORT) ||
+    (uElement == EMERALD_STEEL_ADD_LEVELGROUP) ||
     ((uElement >= EMERALD_FONT_STEEL_GREEN_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_GREEN_UE)) ||
     ((uElement >= EMERALD_FONT_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_UE))
     );
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CheckGameDirectorys
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob alle benötigten Directorys vorhanden sind und legt diese
+              ggf. an.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int CheckGameDirectorys(void) {
+    int nErrorCode = -1;
+
+    if (CheckHighScoresDirectory() == 0) {
+        if (CheckAndCreateDirectory(EMERALD_IMPORTDOS_DIRECTORYNAME) == 0) {
+            if (CheckAndCreateDirectory(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
+                nErrorCode = CheckImportLevelFiles();
+            }
+        }
+    }
+    return nErrorCode;
 }
