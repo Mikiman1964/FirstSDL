@@ -4,14 +4,17 @@
 #include "modplay.h"
 
 ModPlayerStatus_t mp;
+AUDIOPLAYER Audioplayer;
 
+// Externe Pointer und Indexe
 extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;     // 1. Mod von banana
 extern uint8_t _binary_ripped_mod_start;extern uint8_t _binary_ripped_mod_end;         // 2. Mod von ?
 extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;       // 3. class cracktro#15 Mod von maktone,1999
 extern uint8_t _binary_gtrash3f_mod_start;extern uint8_t _binary_gtrash3f_mod_end;     // 4. global trash 3 V2 von Jesper Kyd, 1991
-extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;       // 5. class11.mod von Maktone
-extern uint8_t _binary_2kad04_mod_start;extern uint8_t _binary_2kad04_mod_end;         // 6. 2kad04.mod  von Maktone
-
+extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;       // 5. class11.mod (class11.time flies) von Maktone
+extern uint8_t _binary_2kad04_mod_start;extern uint8_t _binary_2kad04_mod_end;         // 6. 2kad04.mod (2000AD:cracktro:IV) von Maktone
+extern uint8_t _binary_2kad02_mod_start;extern uint8_t _binary_2kad02_mod_end;         // 7. 2kad02.mod (2000AD cracktro02)  von Maktone
+extern uint8_t _binary_brewery_mod_start;extern uint8_t _binary_brewery_mod_end;       // 8. brewery.mod (the brewery)  von Maktone
 
 
 uint8_t* g_pMusicPointer[(MAX_MUSICINDEX + 1) * 2];          // 2 Pointer / Musik + Pärchen NULL-Pointer
@@ -36,102 +39,167 @@ void InitMusicPointer(void) {
     g_pMusicPointer[6] = &_binary_gtrash3f_mod_start;g_pMusicPointer[7] = &_binary_gtrash3f_mod_end;
     g_pMusicPointer[8] = &_binary_class11_mod_start;g_pMusicPointer[9] = &_binary_class11_mod_end;
     g_pMusicPointer[10] = &_binary_2kad04_mod_start;g_pMusicPointer[11] = &_binary_2kad04_mod_end;
-    g_pMusicPointer[12] = NULL;g_pMusicPointer[13] = NULL;// Ende
+
+    g_pMusicPointer[12] = &_binary_2kad02_mod_start;g_pMusicPointer[13] = &_binary_2kad02_mod_end;
+    g_pMusicPointer[14] = &_binary_brewery_mod_start;g_pMusicPointer[15] = &_binary_brewery_mod_end;
+
+    g_pMusicPointer[16] = NULL;g_pMusicPointer[17] = NULL;// Ende
 }
 
 /*----------------------------------------------------------------------------
-Name:           InitMusicPointer
+Name:           InitAudioplayerStruct
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert das modulglobale MusicPointer-Array
+Beschreibung: Initialisiert die Struktur Audioplayer.x und öffnet das
+              Audiodevice für MODPlay.
 Parameter
-      Eingang: pAudioplayer, AUDIOPLAYER *, Zeiger auf Audioplayer-Struktur
-               nMusicIndex, int, ab 1 gezählt bis MAX_MUSICINDEX
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
-Seiteneffekte:  g_pMusicPointer
-                alle externen Pointer auf die MOD-Musikstücke
+Seiteneffekte: Audioplayer.x
 ------------------------------------------------------------------------------*/
-int InitAudioplayerStruct(AUDIOPLAYER *pAudioplayer, int nMusicIndex) {
+int InitAudioplayerStruct(void) {
     int nErrorcode = -1;
 
     InitMusicPointer();
-    if ( (nMusicIndex < 1) || (nMusicIndex > MAX_MUSICINDEX) ) {
-        nMusicIndex = 1;
-    }
-    nMusicIndex--; // Pointer-Array ab 0
-    pAudioplayer->nMusicIndex = nMusicIndex;
-    pAudioplayer->pMusicStart = g_pMusicPointer[nMusicIndex * 2 + 0];
-    pAudioplayer->pMusicEnd = g_pMusicPointer[nMusicIndex * 2 + 1];
-    pAudioplayer->nNextMusicIndex = 0;
-    pAudioplayer->sdl_audio.freq = SAMPLERATE;
-    pAudioplayer->sdl_audio.format = AUDIO_S16;
-    pAudioplayer->sdl_audio.channels = 2;
-    pAudioplayer->sdl_audio.samples = AUDIO_BUFFERSIZE;
-    pAudioplayer->sdl_audio.callback = NULL;
-    if ( (pAudioplayer->pMusicStart != NULL) && (pAudioplayer->pMusicEnd != NULL) ) {
-        pAudioplayer->nMusicSize = pAudioplayer->pMusicEnd - pAudioplayer->pMusicStart;
+    memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
+    Audioplayer.sdl_audio.freq = SAMPLERATE;
+    Audioplayer.sdl_audio.format = AUDIO_S16;
+    Audioplayer.sdl_audio.channels = 2;
+    Audioplayer.sdl_audio.samples = AUDIO_BUFFERSIZE;
+    Audioplayer.sdl_audio.callback = NULL;
+    Audioplayer.audio_device = SDL_OpenAudioDevice(NULL, 0, &Audioplayer.sdl_audio, NULL, 0);
+    if (Audioplayer.audio_device > 0) {
+        SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
+        nErrorcode = 0;
     } else {
-        pAudioplayer->nMusicSize = 0;
-    }
-    // SDL_Log("%s: MusicSize: %d",__FUNCTION__,pAudioplayer->nMusicSize);
-    if (pAudioplayer->nMusicSize > 0) {
-        pAudioplayer->pTheMusic = (uint8_t*)realloc(pAudioplayer->pTheMusic,pAudioplayer->nMusicSize);
-        if (pAudioplayer->pTheMusic != NULL) {
-            memcpy(pAudioplayer->pTheMusic,pAudioplayer->pMusicStart,pAudioplayer->nMusicSize);
-            nErrorcode = 0;
-        }
-    } else {
-        SDL_Log("%s: bad mod file size",__FUNCTION__);
+        SDL_Log("%s: SDL_OpenAudioDevice() failed: %s",__FUNCTION__,SDL_GetError());
     }
     return nErrorcode;
 }
 
+
+/*----------------------------------------------------------------------------
+Name:           SetModMusic
+------------------------------------------------------------------------------
+Beschreibung: Stellt ein MOD-File für MODPlay zum Abspielen bereit.
+
+Parameter
+      Eingang: nMusicIndex, int, Index auf MOD-File, siehe oben "Externe Pointer und Indexe"
+      Ausgang: -
+Rückgabewert:  int, 0 = OK, sonst Fehler
+Seiteneffekte: Audioplayer.x,
+               g_pMusicPointer[] (alle externen Pointer auf die MOD-Musikstücke)
+------------------------------------------------------------------------------*/
+int SetModMusic(int nMusicIndex) {
+    int nErrorCode;
+
+    nErrorCode = -1;
+    if ( (nMusicIndex < 1) || (nMusicIndex > MAX_MUSICINDEX) ) {
+        nMusicIndex = 1;
+    }
+    nMusicIndex--; // Pointer-Array ab 0
+    Audioplayer.nMusicIndex = nMusicIndex;
+    Audioplayer.pMusicStart = g_pMusicPointer[nMusicIndex * 2 + 0];
+    Audioplayer.pMusicEnd = g_pMusicPointer[nMusicIndex * 2 + 1];
+    Audioplayer.nNextMusicIndex = 0;
+
+    if ( (Audioplayer.pMusicStart != NULL) && (Audioplayer.pMusicEnd != NULL) ) {
+        Audioplayer.nMusicSize = Audioplayer.pMusicEnd - Audioplayer.pMusicStart;
+    } else {
+        Audioplayer.nMusicSize = 0;
+    }
+    if (Audioplayer.nMusicSize > 0) {
+        Audioplayer.pTheMusic = (uint8_t*)realloc(Audioplayer.pTheMusic,Audioplayer.nMusicSize);
+        if (Audioplayer.pTheMusic != NULL) {
+            memcpy(Audioplayer.pTheMusic,Audioplayer.pMusicStart,Audioplayer.nMusicSize);
+            if (InitMOD(Audioplayer.pTheMusic, Audioplayer.sdl_audio.freq) != NULL) {
+                nErrorCode = 0;
+            } else {
+                SDL_Log("%s: invalid mod file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
+            }
+        }
+    } else {
+        SDL_Log("%s: bad mod file size, MusicIndex: %d",__FUNCTION__,nMusicIndex + 1);
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           PlayMusic
+------------------------------------------------------------------------------
+Beschreibung: Spielt ein MOD-File ab. Diese Funktion muss zyklisch aufgerufen werden,
+              da z.Z. keine Callback-Funktion verwendet wird.
+              Vor Aufruf dieser Funktion muss das Audiodevice geöffnet
+              * InitAudioplayerStruct()   und
+              ein Modfile gesetzt
+              * SetModMusic
+              worden sein
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = OK, sonst Fehler
+Seiteneffekte: Audioplayer.x,
+------------------------------------------------------------------------------*/
+int PlayMusic(void) {
+    int nErrorCode;
+
+    if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
+        RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);
+        nErrorCode = SDL_QueueAudio(Audioplayer.audio_device,Audioplayer. audiobuffer, Audioplayer.sdl_audio.samples * 4); // 2 channels, 2 bytes/sample
+        if (nErrorCode != 0) {
+            SDL_Log("%s: SDL_QueueAudio() failed: %s",__FUNCTION__,SDL_GetError());
+        }
+    } else {
+        nErrorCode = 0; // Queue ist noch voll
+    }
+    return nErrorCode;
+}
+
+
 /*----------------------------------------------------------------------------
 Name:           CheckMusicSwitch
 ------------------------------------------------------------------------------
-Beschreibung: Prüft anhand eines Tastendrucks, ob auf eine andere Musik umgeschaltet werden muss
+Beschreibung: Prüft anhand eines Tastendrucks, ob auf eine andere Musik umgeschaltet werden soll
 Parameter
-      Eingang: pAudioplayer, AUDIOPLAYER *, Zeiger auf Audioplayer-Struktur
-               pKeyboardArray, const Uint8 *, Zeiger auf Tastatur-Array
+      Eingang: pKeyboardArray, const Uint8 *, Zeiger auf Tastatur-Array
       Ausgang: -
-Rückgabewert:  int, Index auf neues Musikstück
-Seiteneffekte: -
+Rückgabewert:  -
+Seiteneffekte: Audioplayer.x
 ------------------------------------------------------------------------------*/
-int CheckMusicSwitch(AUDIOPLAYER *pAudioplayer,const Uint8 *pKeyboardArray) {
-    int nRet;
+void CheckMusicSwitch(const Uint8 *pKeyboardArray) {
 
-    nRet = 0;
-    if (pKeyboardArray[SDL_SCANCODE_1] == 1) {
-        if (pAudioplayer->nNextMusicIndex == 0) {
-            pAudioplayer->nNextMusicIndex = 1;
-            nRet = 1;
+    if (pKeyboardArray[SDL_SCANCODE_1]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 1;
         }
     }
-    if (pKeyboardArray[SDL_SCANCODE_2] == 1) {
-        if (pAudioplayer->nNextMusicIndex == 0) {
-            pAudioplayer->nNextMusicIndex = 2;
-            nRet = 2;
+    if (pKeyboardArray[SDL_SCANCODE_2]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 2;
         }
     }
-    if (pKeyboardArray[SDL_SCANCODE_3] == 1) {
-        if (pAudioplayer->nNextMusicIndex == 0) {
-            pAudioplayer->nNextMusicIndex = 3;
-            nRet = 3;
+    if (pKeyboardArray[SDL_SCANCODE_3]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 3;
         }
     }
-    if (pKeyboardArray[SDL_SCANCODE_4] == 1) {
-        if (pAudioplayer->nNextMusicIndex == 0) {
-            pAudioplayer->nNextMusicIndex = 4;
-            nRet = 4;
+    if (pKeyboardArray[SDL_SCANCODE_4]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 4;
         }
     }
-    if (pKeyboardArray[SDL_SCANCODE_5] == 1) {
-        if (pAudioplayer->nNextMusicIndex == 0) {
-            pAudioplayer->nNextMusicIndex = 5;
-            nRet = 5;
+    if (pKeyboardArray[SDL_SCANCODE_5]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 5;
         }
     }
-    return nRet;
+    if (pKeyboardArray[SDL_SCANCODE_6]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 6;
+        }
+    }
 }
 
 

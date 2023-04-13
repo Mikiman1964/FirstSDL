@@ -1,4 +1,6 @@
 #include <SDL2/SDL.h>
+#include <errno.h>
+#include <dirent.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -39,6 +41,90 @@ void InitXorShift(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           DynStringInit
+------------------------------------------------------------------------------
+Beschreibung: Initialisiert ein neues String-Objekt. Der zurückgegebene Speicher
+              muss mit DynStringFree() später freigegeben werden.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  DYNSTRING *, Zeiger auf String-Objekt, NULL = Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+DYNSTRING *DynStringInit(void) {
+    DYNSTRING *DynString;
+
+    DynString = (DYNSTRING*)malloc(sizeof(DYNSTRING));
+    if (DynString != NULL) {
+        DynString->nLen = 0;
+        DynString->pszString = malloc(1);
+        if (DynString->pszString != NULL) {
+            DynString->pszString[0] = '\0';     // Stringende
+        } else {
+            SAFE_FREE(DynString);
+        }
+    }
+    return DynString;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           DynStringAdd
+------------------------------------------------------------------------------
+Beschreibung: Addiert einen String zu einem String-Objekt.
+
+Parameter
+      Eingang: DynString, DYNSTRING *, Zeiger auf String-Objekt
+               pszString, char *, String, der dazu addiert wird.
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int DynStringAdd(DYNSTRING *DynString, char *pszString) {
+    int nErrorCode = -1;
+    size_t uActualStringLen;
+    size_t uAddStringLen;
+
+    if ((DynString != NULL) && (pszString != NULL)) {
+        if (DynString->pszString != NULL) {
+            uActualStringLen = strlen(DynString->pszString);
+            uAddStringLen = strlen(pszString);
+            DynString->pszString = realloc(DynString->pszString,uActualStringLen + uAddStringLen + 1);
+            strcat(DynString->pszString,pszString);
+            DynString->nLen = strlen(DynString->pszString);
+            nErrorCode = 0;
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           DynStringFree
+------------------------------------------------------------------------------
+Beschreibung: Gibt den Speicher für ein String-Objekt wieder frei.
+
+Parameter
+      Eingang: DynString, DYNSTRING *, Zeiger auf String-Objekt
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int DynStringFree(DYNSTRING *DynString) {
+    int nErrorCode = -1;
+
+    if (DynString != NULL) {
+        if (DynString->pszString != NULL) {
+            SAFE_FREE(DynString->pszString);
+            SAFE_FREE(DynString);
+            nErrorCode = 0;
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           GetMd5String
 ------------------------------------------------------------------------------
 Beschreibung: Gibt anhand eines MD5-Hashes (16 Bytes) den zugehörigen String (32 + 1 Bytes) zurück.
@@ -59,6 +145,32 @@ void GetMd5String(uint8_t *puMd5Hash, char *pszMd5String) {
             strcat(pszMd5String,szNum);
         }
     }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetMd5String2
+------------------------------------------------------------------------------
+Beschreibung: Gibt einen char-Pointer auf einen MD5-Hash-String zurück. Falls
+              das nicht möglich ist, wird NULL zurück gegeben.
+              Diese Funktion alloziert bei Erfolg Speicher, der außerhalb dieser
+              Funktion freigegeben werden muss.
+Parameter
+      Eingang: puMd5Hash, uint8_t *, Zeiger auf MD5-Hash (mindestens 16 Bytes)
+Rückgabewert:  char *, Zeiger auf MD5-String, bei Fehler NULL
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+char *GetMd5String2(uint8_t *puMd5Hash) {
+    char *pszMD5;
+
+    pszMD5 = NULL;
+    if (puMd5Hash != NULL) {
+        pszMD5 = malloc(32 + 1);
+        if (pszMD5 != NULL) {
+          GetMd5String(puMd5Hash,pszMD5);
+        }
+    }
+    return pszMD5;
 }
 
 
@@ -87,6 +199,37 @@ void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash) {
         } else {
             SDL_Log("%s: string must contain 32 characters",__FUNCTION__);
         }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetActualTimestamp
+------------------------------------------------------------------------------
+Beschreibung: Gibt die aktuelle Zeit als Zeitstempel-String zurück. Der String
+              hat das folgendes Format: YYYYMMDD_HHMMSS
+              Es werden 15 + 1 Bytes Speicher benötigt
+Parameter
+      Eingang: -
+      Ausgang: pszTimestamp, char *, Zeiger auf Speicher für Zeitstempelstring (mindestens 16 Bytes)
+Rückgabewert:  -
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+void GetActualTimestamp(char *pszTimestamp) {
+    time_t clock;
+    struct tm *result;
+
+    if (pszTimestamp != NULL) {
+        time(&clock);
+        result = localtime(&clock);
+        sprintf(pszTimestamp,"%04d%02d%02d_%02d%02d%02d",
+                result->tm_year + 1900,
+                result->tm_mon + 1,
+                result->tm_mday,
+                result->tm_hour,
+                result->tm_min,
+                result->tm_sec
+                );
     }
 }
 
@@ -401,6 +544,54 @@ int GetLineLen(char *pszText, int nCursorPos) {
         }
     }
     return nLineLen;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CheckAndCreateDirectory
+------------------------------------------------------------------------------
+Beschreibung: Prüft ein Directory und legt dieses an, falls es nicht existiert.
+Parameter
+      Eingang: pszDirectoryName, char *, Zeiger auf Directory-namen
+      Ausgang: -
+
+Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int CheckAndCreateDirectory(char *pszDirectoryName) {
+    int nErrorCode;
+    DIR *dir;
+    bool bTryToCreateDir;
+
+    bTryToCreateDir = false;
+    nErrorCode = -1;
+    if (pszDirectoryName != NULL) {
+        dir = opendir(pszDirectoryName);
+        if (dir != NULL) {
+            nErrorCode = closedir(dir);     // Directory besteht und kann nun wieder geschlossen werden
+        } else {
+            SDL_Log("can not open dir, error: %s",strerror(errno));
+            if (errno == ENOTDIR) {         // File existiert, ist aber kein Directory
+                bTryToCreateDir = (remove(pszDirectoryName) == 0);  // remove kann beides (Dir/File) löschen
+            } else if (errno == ENOENT) {   // Directory/File gibt es nicht
+                bTryToCreateDir = true;
+            }
+            if (bTryToCreateDir) {
+                #ifdef __linux__
+                    nErrorCode = mkdir(pszDirectoryName, 0777);
+                #else
+                    nErrorCode = mkdir(pszDirectoryName);
+                #endif
+                if (nErrorCode != 0) {
+                    SDL_Log("can not create dir, error: %s",strerror(errno));
+                }
+            }
+        }
+    }
+    if (nErrorCode != 0) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Directory problem","Can not create directory!\nPlease check write permissions.",NULL);
+    }
+    return nErrorCode;
 }
 
 

@@ -6,18 +6,18 @@
 #define SAMPLERATE 44100
 #define AUDIO_BUFFERSIZE 4096
 
-#define MAX_MUSICINDEX   6       // Anzahl der verfügbaren Musikstücke
+#define MAX_MUSICINDEX   8       // Anzahl der verfügbaren Musikstücke
 
-typedef struct
-{
+typedef struct {
+    SDL_AudioDeviceID audio_device;
+    SDL_AudioSpec sdl_audio;
+    short audiobuffer[AUDIO_BUFFERSIZE * 2]; // 2 channels
     uint8_t *pMusicStart;
     uint8_t *pMusicEnd;
     int nMusicSize;
     int nMusicIndex;
-    int nNextMusicIndex;
-    uint8_t *pTheMusic;           //  Zeiger auf Kopie, da durch das Abspielen die Daten verändert werden
-    SDL_AudioSpec sdl_audio;
-    short audiobuffer[AUDIO_BUFFERSIZE * 2]; // 2 channels
+    int nNextMusicIndex;                    // wird nur in main() zum Umschalten der Musik verwendet
+    uint8_t *pTheMusic;                     //  Zeiger auf Kopie, da durch das Abspielen die Daten verändert werden
 }AUDIOPLAYER;
 
 typedef struct {
@@ -69,8 +69,10 @@ typedef struct {
 
 
 void InitMusicPointer(void);
-int InitAudioplayerStruct(AUDIOPLAYER *pAudioplayer, int nMusicIndex);
-int CheckMusicSwitch(AUDIOPLAYER *pAudioplayer,const Uint8 *pKeyboardArray);
+int InitAudioplayerStruct(void);
+int SetModMusic(int nMusicIndex);
+int PlayMusic(void);
+void CheckMusicSwitch(const Uint8 *pKeyboardArray);
 void SetModVolume(uint8_t uVolumePercent);
 
 ModPlayerStatus_t *InitMOD(uint8_t *mod, int samplerate);

@@ -7,6 +7,7 @@
 #include "editor.h"
 #include "EmeraldMine.h"
 #include "EmeraldMineMainMenu.h"
+#include "highscores.h"
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
 #include "modplay.h"
@@ -15,10 +16,10 @@
 #include "levelconverter.h"
 #include "scroller.h"
 
-
 SDL_DisplayMode ge_DisplayMode;
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
+extern AUDIOPLAYER Audioplayer;
 
 int main(int argc, char *argv[]) {
     bool bRun;
@@ -36,9 +37,9 @@ int main(int argc, char *argv[]) {
     float fFDLogoAngle = 0;
     uint32_t uFDLogoLastShown = SDL_GetTicks();
     SDL_Rect DestR_FDLogo;
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - MARCH 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
-MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991               "};
-    uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3 OR 4 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
+    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - APRIL 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE             "};
+    uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5 OR 6 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
     uint8_t szMessage3[] = {"HALLO SASCHIMANN, ICH HABE NOCHMAL EIN BISSCHEN AN DIESEM SCH|NEN DEMO WEITER GEBAUT. ES SOLLTE DURCH DEN COPPER-EFFEKT NUN NOCH HYPNOTISCHER AUF DEN ZUSEHER WIRKEN. ICH WERDE IN N{CHSTER\
  ZEIT MAL SCHAUEN, OB ICH DAS SPIEL WEITER PORTIERE, BIS JETZT GEHT ES GANZ GUT VON DER HAND. BIS DENN ERSTMAL     9  8  7  6  5  4  3  2  1  0                                                    "};
 
@@ -60,8 +61,6 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     float fScroller3NeueSteigung;
     bool bAsteroidsStarted = false;
     uint32_t uAsteroidsTimer;
-    AUDIOPLAYER Audioplayer;
-    SDL_AudioDeviceID audio_device;
     int nWindowPosX;
     int nWindowPosY;
     int nWindowDirection = 0;
@@ -75,17 +74,17 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     uint8_t uBallonsGfx = 0;
 
     InitXorShift();
-    if (ReadConfigFile() != 0) {        // Konfigurationsfile wird für Fenstergröße bzw. Bildschirmauflösung früh eingelesen.
+    if (ReadConfigFile() != 0) {            // Konfigurationsfile wird für Fenstergröße bzw. Bildschirmauflösung früh eingelesen.
         return -1;
     }
-    if (WriteDefaultLevelgroup() != 0) {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Levelgroup problem","This should never occur!\nPlease check write permissions!",NULL);
+    if (CheckGameDirectorys() != 0) {
         return -1;
     }
-    ShowConfigFile();
+    if (WriteDefaultLevelgroup() != 0) {    // Stellt sicher, dass mindestens eine Levelgruppe vorhanden ist.
+        return -1;
+    }
     InitButtons();
     InitLevelgroups();
-    memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
     InitAsteroidLayer();
     if (InitVisibibleCopperSegments() != 0) {
         return -1;
@@ -93,13 +92,17 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     if (InitInputStates() != 0) {
         return -1;
     }
-    pWindow = InitSDL_Window((int)Config.uResX, Config.uResY, WINDOW_TITLE);     // Fenster erzeugen
+    pWindow = InitSDL_Window((int)Config.uResX, Config.uResY, WINDOW_TITLE);     // SDL_Init() und Fenster erzeugen
     if (pWindow == NULL) {
         return -1;
     }
     bHasDisplayMode = ((GetDisplayMode(pWindow,&nWindowPosX, &nWindowPosY)) == 0);
     pRenderer = CreateRenderer(pWindow);        // Renderer für erzeugtes Fenster erstellen
     if (pRenderer == NULL) {
+        return -1;
+    }
+    // Audiostruktur initialisieren und Audiodevice öffnen. darf erst nach InitSDL_Window() aufgerufen werden
+    if (InitAudioplayerStruct() != 0) {
         return -1;
     }
     // Renderer mit schwarz löschen
@@ -114,36 +117,19 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     if ((nMenuChoose == 3) || (nMenuChoose == -1)) {
         return nMenuChoose;
     }
-    if (nMenuChoose == 0) {
-        Editor(pRenderer);
-        nMenuChoose = 1;                         // Nach Editor das Spiel aufrufen
-    }
     if (nMenuChoose == 1) {
-        EmeraldMineMainMenu(pRenderer);         // Emerald-Mine-Hauptmenü mit Spiel
-        nMenuChoose = 2;
+        return EmeraldMineMainMenu(pRenderer);         // Emerald-Mine-Hauptmenü mit Spiel
     }
     if (nMenuChoose == 2) {
         SDL_Log("Start SDL2 Demo");
+    }
+    if (SetModMusic(3) != 0) {        // Mit MOD 3 class_cracktro#15 starten
+        return -1;
     }
     SDL_WarpMouseInWindow(pWindow,10,10);
     do {
         UpdateInputStates();
     }  while(InputStates.bQuit);
-    // Audiostruktur initialisieren
-    InitAudioplayerStruct(&Audioplayer,3);      // Mit MOD 3 class_cracktro#15 starten
-
-    // Modfile initialisieren
-    if (!InitMOD(Audioplayer.pTheMusic, Audioplayer.sdl_audio.freq)) {
-        SDL_Log("%s: invalid mod file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
-        return -1;
-    }
-
-    audio_device = SDL_OpenAudioDevice(NULL, 0, &Audioplayer.sdl_audio, NULL, 0);
-    if (audio_device == 0) {
-        SDL_Log("%s: SDL_OpenAudioDevice() failed: %s",__FUNCTION__,SDL_GetError());
-        return -1;
-    }
-    SDL_PauseAudioDevice(audio_device, 0);
 
     // InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont)
     uScroller1Timer = SDL_GetTicks();
@@ -328,24 +314,19 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         }
 
         // MOD wechseln
-        CheckMusicSwitch(&Audioplayer,InputStates.pKeyboardArray);
+        CheckMusicSwitch(InputStates.pKeyboardArray);
         if (Audioplayer.nNextMusicIndex != 0) {
             if (Audioplayer.nNextMusicIndex == 4) {     // Bei MOD 4 FD-Logo starten
                 bShowFDLogo = true;
             }
-            if (SDL_GetQueuedAudioSize(audio_device) == 0) {    // Etwas warten, bis Callback-Funktion nicht mehr aufgerufen wird
-                InitAudioplayerStruct(&Audioplayer,Audioplayer.nNextMusicIndex);
-                uModVolume = 100;
-                if (InitMOD(Audioplayer.pTheMusic, SAMPLERATE) == NULL) {
-                    SDL_Log("%s: invalid mod file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
+            if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) == 0) {    // Etwas warten, bis Callback-Funktion nicht mehr aufgerufen wird
+                if (SetModMusic(Audioplayer.nNextMusicIndex) != 0) {
                     return -1;
                 }
+                uModVolume = 100;
             }
         } else  {
-            if (SDL_GetQueuedAudioSize(audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
-                RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);
-                SDL_QueueAudio(audio_device,Audioplayer. audiobuffer, Audioplayer.sdl_audio.samples * 4); // 2 channels, 2 bytes/sample
-            }
+            PlayMusic();
         }
         // Fenster-Verschiebung im Drunken-Asteroids Modus
         if ((bHasDisplayMode) && (bDrunkenAsteroids)) {
@@ -411,7 +392,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         }
     }
     //////////////////////////////////////////////////////////////// Hauptschleife ENDE
-    SDL_CloseAudioDevice(audio_device);
+    SDL_CloseAudioDevice(Audioplayer.audio_device);
     SAFE_FREE(Audioplayer.pTheMusic);
     FreeTextures();
     FreeScroller(&Scroller1);

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define KB  1024
 
@@ -17,17 +18,32 @@ typedef struct {
 } XORSHIFT;
 
 
+
+typedef struct {
+    char *pszString;
+    int  nLen;
+} DYNSTRING;
+
+
+// Dynamische Strings
+DYNSTRING *DynStringInit(void);
+int DynStringAdd(DYNSTRING *DynString, char *pszString);
+int DynStringFree(DYNSTRING *DynString);
+
 // https://stackoverflow.com/questions/22115241/how-to-generate-random-numbers-between-1-and-1-in-c
 // von SteveL
 float randf(float low,float high);
 void GetMd5String(uint8_t *puMd5Hash, char *pszMd5String);
+char *GetMd5String2(uint8_t *puMd5Hash);
 void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash);
+void GetActualTimestamp(char *pszTimestamp);
 int randn(int low,int high);
 void InitXorShift(void);
 uint32_t xorshift128(void); // https://de.wikipedia.org/wiki/Xorshift
 void DumpMem(uint8_t *pcMem, int nLen);
 uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen);
 int WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppend);
+int CheckAndCreateDirectory(char *pszDirectoryName);
 uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64Len, bool bNewLine);
 int GetLineFeedCount(char *pszText);
 int GetLineLen(char *pszText, int nCursorPos);

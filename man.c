@@ -2,6 +2,7 @@
 #include "emerald.h"
 #include "explosion.h"
 #include "KeyboardMouse.h"
+#include "loadlevel.h"
 #include "man.h"
 #include "saphir.h"
 #include "sound.h"
@@ -12,6 +13,7 @@ extern PLAYFIELD Playfield;
 extern INPUTSTATES InputStates;
 extern char ge_szElementNames[][64];
 extern SDL_DisplayMode ge_DisplayMode;
+extern CONFIG Config;
 
 /*----------------------------------------------------------------------------
 Name:           UpdateManKey
@@ -85,7 +87,7 @@ Parameter
                uDirection, uint32_t, Richtung, in die Man laufen möchte
       Ausgang: -
 Rückgabewert:  Richtung, in die Man gelaufen ist als Animation
-Seiteneffekte: Playfield.x, Mankey.x
+Seiteneffekte: Playfield.x, ManKey.x
 ------------------------------------------------------------------------------*/
 uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     uint32_t uRetDirection;
@@ -103,15 +105,13 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
         Playfield.bManDead = true;
         return uRetDirection;
     }
-    if ((ManKey.bFire) && (Playfield.uDynamitePos == 0xFFFFFFFF) && (ManKey.uDirection == MANKEY_NONE)) {
+    // Zündung des Dynamits mit Feuertaste oder Space
+    if (  (((ManKey.bFire) && (!Config.bStartDynamiteWithSpace)) || ((InputStates.pKeyboardArray [SDL_SCANCODE_SPACE]) && (Config.bStartDynamiteWithSpace)))  && (Playfield.uDynamitePos == 0xFFFFFFFF) && (ManKey.uDirection == MANKEY_NONE)) {
         Playfield.uFireCount++;
+        SDL_Log("FireCount: %u",Playfield.uFireCount);
     } else {
         Playfield.uFireCount = 0;
     }
-    if (Playfield.uFireCount > 0) {
-        SDL_Log("FireCount: %u",Playfield.uFireCount);
-    }
-
 
     if ((Playfield.uFireCount > 5) && (Playfield.uDynamiteCount > 0)) { // Bei 6 zündet das Dynamit
         Playfield.uDynamiteCount--;
