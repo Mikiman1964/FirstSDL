@@ -1,9 +1,13 @@
 #include <SDL2/SDL.h>
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
+#include "editor.h"
 #include "EmeraldMine.h"
+#include "EmeraldMineMainMenu.h"
 #include "ezxml.h"
+#include "highscores.h"
 #include "loadlevel.h"
 #include "md5.h"
 #include "mySDL.h"
@@ -20,6 +24,24 @@ LEVELGROUP SelectedLevelgroup;
 CONFIG Config;
 NAMES Names;
 ACTUALPLAYER Actualplayer;
+IMPORTLEVEL ImportLevel;
+
+
+/*----------------------------------------------------------------------------
+Name:           CheckImportLevelFiles
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt die Dateien für den DOS- und DC3-Level-Import.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: ImportLevel.x
+------------------------------------------------------------------------------*/
+int CheckImportLevelFiles(void) {
+    ImportLevel.uDosFileCount = 0;
+    ImportLevel.uDc3FileCount = 0;
+    return 0;
+}
 
 
 /*----------------------------------------------------------------------------
@@ -1021,7 +1043,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         } else {
             SDL_Log("%s: ezxml_parse_str() failed",__FUNCTION__);
         }
-        ezxml_free(xml);    // Prüft selbst, ob pointer NULL ist
+        ezxml_free(xml);    // Prüft selbst, ob Pointer NULL ist
         SAFE_FREE(pXml);
     }
     if (Playfield.bInitOK) {
@@ -1951,7 +1973,7 @@ Beschreibung: Ermittelt die Levelgruppen-Dateien im Arbeitsverzeichnis und stell
 
               WICHTIG: Es muss sichergestellt werden, dass nach diesem Aufruf mindestens
               eine Levelgruppe zur Verfügung steht. Kann keine der bestehenden Levelgruppen
-              verwendt werden, so wird eine Default-Gruppe angelegt.
+              verwendet werden, so wird eine Default-Gruppe angelegt.
 
 Parameter
       Eingang: -
@@ -1967,7 +1989,7 @@ int GetLevelgroupFiles(void) {
     uint32_t uXmlLen;
     uint8_t *pXml = NULL;
     ezxml_t xml = NULL;
-    ezxml_t levelgroupname,levelcount,levelgrouphash;
+    ezxml_t levelgroupname,levelcount,levelgrouphash,passwordhash,createdate;
     uint8_t uCalculatedLevelgroupMd5Hash[16];       // berechnet
     uint8_t uLevelgroupMd5Hash[16];                 // gelesen
 
@@ -1990,11 +2012,15 @@ int GetLevelgroupFiles(void) {
                     if (pXml != NULL) {
                         if ((strstr((char*)pXml,"<levelgroup>") != NULL) && (strstr((char*)pXml,"</levelgroup>") != NULL)) {  // levelgroup tags gefunden?
                             if (CalculateLevelGroupMd5Hash(pXml,uCalculatedLevelgroupMd5Hash) == 0) { // muss vor ezxml_parse_str() durchgeführt werden, da Library Original ändert
+                                //char *p1 = GetMd5String2(uCalculatedLevelgroupMd5Hash);
+                                //SDL_Log("LG: %s  --> Hash: %s",entry->d_name,p1);
                                 xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
                                 if (xml != NULL) {
                                     levelgroupname = ezxml_child(xml,"groupname");
                                     levelcount = ezxml_child(xml,"levelcount");
-                                    if ( (levelgroupname != NULL) && (levelcount != NULL) && (ezxml_child(xml,"level000") != NULL) ) {
+                                    passwordhash = ezxml_child(xml,"password_md5_hash");
+                                    createdate = ezxml_child(xml,"create_timestamp");
+                                    if ( (levelgroupname != NULL) && (levelcount != NULL) && (passwordhash != NULL) && (createdate != NULL) && (ezxml_child(xml,"level000") != NULL) ) {
                                         levelgrouphash = ezxml_child(xml,"levelgroup_md5_hash");
                                         if (levelgrouphash != NULL) {
                                             // Stimmt der berechnete Hash mit dem Gelesenen?
@@ -2005,6 +2031,16 @@ int GetLevelgroupFiles(void) {
                                                     strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,levelgroupname->txt);
                                                 } else {
                                                     strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,"NO GROUP NAME");
+                                                }
+                                                if (strlen(passwordhash->txt) == 32) {
+                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szPasswordHash,passwordhash->txt);
+                                                } else {
+                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szPasswordHash,"\0");
+                                                }
+                                                if (strlen(createdate->txt) == 15) {
+                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szCreateTimestamp,createdate->txt);
+                                                } else {
+                                                    GetActualTimestamp(LevelgroupFiles[g_LevelgroupFilesCount].szCreateTimestamp);
                                                 }
                                                 LevelgroupFiles[g_LevelgroupFilesCount].uLevelCount = (uint32_t)strtol(levelcount->txt,NULL,10);
                                                 memcpy(LevelgroupFiles[g_LevelgroupFilesCount].uMd5Hash,uCalculatedLevelgroupMd5Hash,16);
@@ -2083,12 +2119,13 @@ Beschreibung: Wählt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
               SelectedLevelgroup.x befüllt.
 Parameter
       Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
+               bReadWriteHighscores, bool, true = Highscores lesen/schreiben, false = Highscores nicht lesen/schreiben
       Ausgang: -
 Rückgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x.
                Config.x
 ------------------------------------------------------------------------------*/
-int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash) {
+int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
     int nErrorCode;
     uint32_t uLevelNumber;
     uint32_t uXmlLen;
@@ -2143,8 +2180,12 @@ int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash) {
         SelectedLevelgroup.uLevelCount = LevelgroupFiles[uLevelgroupIndex].uLevelCount;
         SelectedLevelgroup.bOK = true;
         memcpy(SelectedLevelgroup.uMd5Hash,LevelgroupFiles[uLevelgroupIndex].uMd5Hash,16);
+        strcpy(SelectedLevelgroup.szPasswordHash,LevelgroupFiles[uLevelgroupIndex].szPasswordHash);
         memcpy(Config.uLevelgroupMd5Hash,LevelgroupFiles[uLevelgroupIndex].uMd5Hash,16);
         nErrorCode = WriteConfigFile();
+        if ((nErrorCode == 0) && (bReadWriteHighscores)) {
+            nErrorCode = ReadHighScoreFile(SelectedLevelgroup.uMd5Hash);
+        }
     }
     return nErrorCode;
 }
@@ -2160,25 +2201,25 @@ Beschreibung: Wählt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
 
               Im Gegensatz zur Funktion SelectLevelgroup() wird ggf. eine andere
               Levelgruppe selektiert, wenn die Gewünschte nicht selektierbar ist.
-
 Parameter
       Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
+               bReadWriteHighscores, bool, true = Highscores lesen/schreiben, false = Highscores nicht lesen/schreiben
       Ausgang: -
 Rückgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
-int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash) {
+int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
     int nErrorCode;
     uint32_t G;
     bool bSelected = false;
 
     // Zunächst versuchen die gewünschte Levelgruppe zu selektieren
-    nErrorCode = SelectLevelgroup(puLevelgroupMd5Hash);
+    nErrorCode = SelectLevelgroup(puLevelgroupMd5Hash,bReadWriteHighscores);
     if (nErrorCode != 0) {
         SDL_Log("%s: searching for an alternative levelgroup ...",__FUNCTION__);
         // Falls das nicht klappt, die Nächstbeste selektieren
         for (G = 0; (G < g_LevelgroupFilesCount) && (!bSelected); G++) {
-            if (SelectLevelgroup(LevelgroupFiles[G].uMd5Hash) == 0) {
+            if (SelectLevelgroup(LevelgroupFiles[G].uMd5Hash,bReadWriteHighscores) == 0) {
                 bSelected = true;
                 nErrorCode = 0;
                 SDL_Log("%s: found an alternative levelgroup, OK",__FUNCTION__);
@@ -2212,6 +2253,7 @@ void ShowSelectedLevelgroup(void) {
         SDL_Log("Selected Levelgroup:  %s",SelectedLevelgroup.szLevelgroupname);
         SDL_Log("Filename:             %s",SelectedLevelgroup.szFilename);
         SDL_Log("Level count:          %u",SelectedLevelgroup.uLevelCount);
+        SDL_Log("Password hash:        %s",SelectedLevelgroup.szPasswordHash);
         for (L = 0; L < SelectedLevelgroup.uLevelCount; L++) {
             SDL_Log("Level: %03u    Level title: %s    Level author: %s",L,SelectedLevelgroup.szLevelTitle[L],SelectedLevelgroup.szLevelAuthor[L]);
         }
@@ -2432,50 +2474,53 @@ int ReadConfigFile(void) {
     memset(&Actualplayer,0,sizeof(Actualplayer));
     pXml = ReadFile(EMERALD_CONFIG_FILENAME,&uXmlLen);     // Levelgruppen-Datei einlesen
     if (pXml != NULL) {
-        if ((strstr((char*)pXml,"<configuration>") != NULL) && (strstr((char*)pXml,"</configuration>") != NULL)) {  // configuration tags gefunden?
-            xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
-            if (xml != NULL) {
-                screen = ezxml_child(xml,"screen");
-                if (screen != NULL) {
-                    fullscreen = ezxml_child(screen,"fullscreen");
-                    if (fullscreen != NULL) {
-                        Config.bFullScreen = (strtol(fullscreen->txt,NULL,10) == 1);
-                        resolution = ezxml_child(screen,"resolution");
-                        if (resolution != NULL) {
-                            x = ezxml_child(resolution,"x");
-                            if (x != NULL) {
-                                Config.uResX = strtol(x->txt,NULL,10);
-                                y = ezxml_child(resolution,"y");
-                                if (y != NULL) {
-                                    Config.uResY = strtol(y->txt,NULL,10);
-                                    dynamite = ezxml_child(xml,"start_dynamite_with_space");
-                                    if (dynamite != NULL) {
-                                        Config.bStartDynamiteWithSpace = (strtol(dynamite->txt,NULL,10) == 1);
-                                        levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
-                                        if (levelgrouphash != NULL) {
-                                            GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
-                                            playername = levelgrouphash = ezxml_child(xml,"last_player_name");
-                                            if (playername != NULL) {
-                                                if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
-                                                    strcpy(Config.szPlayername,playername->txt);
-                                                }
-                                                // Auflösung checken
-                                                // Zunächst prüfen, ob X- und Y-Auflösung durch FONT_W bzw. FONT_H teilbar
-                                                uResX = Config.uResX;
-                                                uResY = Config.uResY;
-                                                uResX = uResX / FONT_W;
-                                                uResX = uResX * FONT_W;
-                                                uResY = uResY / FONT_H;
-                                                uResY = uResY * FONT_H;
-                                                if ((uResX >= DEFAULT_WINDOW_W) && (uResY >= DEFAULT_WINDOW_H)) {
-                                                    // ggf. die abgerundeten Werte in die Konfiguration übernehmen
-                                                    Config.uResX = uResX;
-                                                    Config.uResY = uResY;
-                                                    nErrorCode = 0;
-                                                } else {
-                                                    sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,uResX,uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
-                                                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
-                                                    nErrorCode = -2;    // Programmende
+        // Prüfen, ob Schreibrechte bestehen und versuchen gelesene Datei zurück zu schreiben
+        if (WriteFile(EMERALD_CONFIG_FILENAME,pXml,uXmlLen,false) == 0) {
+            if ((strstr((char*)pXml,"<configuration>") != NULL) && (strstr((char*)pXml,"</configuration>") != NULL)) {  // configuration tags gefunden?
+                xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
+                if (xml != NULL) {
+                    screen = ezxml_child(xml,"screen");
+                    if (screen != NULL) {
+                        fullscreen = ezxml_child(screen,"fullscreen");
+                        if (fullscreen != NULL) {
+                            Config.bFullScreen = (strtol(fullscreen->txt,NULL,10) == 1);
+                            resolution = ezxml_child(screen,"resolution");
+                            if (resolution != NULL) {
+                                x = ezxml_child(resolution,"x");
+                                if (x != NULL) {
+                                    Config.uResX = strtol(x->txt,NULL,10);
+                                    y = ezxml_child(resolution,"y");
+                                    if (y != NULL) {
+                                        Config.uResY = strtol(y->txt,NULL,10);
+                                        dynamite = ezxml_child(xml,"start_dynamite_with_space");
+                                        if (dynamite != NULL) {
+                                            Config.bStartDynamiteWithSpace = (strtol(dynamite->txt,NULL,10) == 1);
+                                            levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
+                                            if (levelgrouphash != NULL) {
+                                                GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
+                                                playername = levelgrouphash = ezxml_child(xml,"last_player_name");
+                                                if (playername != NULL) {
+                                                    if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
+                                                        strcpy(Config.szPlayername,playername->txt);
+                                                    }
+                                                    // Auflösung checken
+                                                    // Zunächst prüfen, ob X- und Y-Auflösung durch FONT_W bzw. FONT_H teilbar
+                                                    uResX = Config.uResX;
+                                                    uResY = Config.uResY;
+                                                    uResX = uResX / FONT_W;
+                                                    uResX = uResX * FONT_W;
+                                                    uResY = uResY / FONT_H;
+                                                    uResY = uResY * FONT_H;
+                                                    if ((uResX >= DEFAULT_WINDOW_W) && (uResY >= DEFAULT_WINDOW_H)) {
+                                                        // ggf. die abgerundeten Werte in die Konfiguration übernehmen
+                                                        Config.uResX = uResX;
+                                                        Config.uResY = uResY;
+                                                        nErrorCode = 0;
+                                                    } else {
+                                                        sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,uResX,uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
+                                                        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
+                                                        nErrorCode = -2;    // Programmende
+                                                    }
                                                 }
                                             }
                                         }
@@ -2486,6 +2531,9 @@ int ReadConfigFile(void) {
                     }
                 }
             }
+        } else {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Write problem","Can not write config.xml file!\nPlease check write permissions.",NULL);
+            nErrorCode = -2;    // Programmende
         }
     }
     SAFE_FREE(xml);
@@ -2571,7 +2619,7 @@ void ShowNames(void) {
     uint32_t G;
     uint32_t uHashCount;
 
-    SDL_Log("================== NAMES ====================");
+    SDL_Log("================== NAMES: %d =================",Names.uNameCount);
     if (Names.uNameCount > 0) {
 
         for (N = 0; N < Names.uNameCount; N++) {
@@ -2841,7 +2889,6 @@ Name:           InsertGroupHashForName
 ------------------------------------------------------------------------------
 Beschreibung: Fügt einen neuen Levlgruppen-Hash zu einem Namen hinzu.
               bereits diesen Spielernamen gibt, wird dieser neu angelegt.
-
 Parameter
       Eingang: pszname, char*, Zeiger auf Spielernamen, bei dem der Levelgruppen-Hash hinzugefügt werden soll
                puHash, uint8_t * , Zeiger auf anzulegenden Levelgruppen-Hash
@@ -2916,9 +2963,8 @@ int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
 /*----------------------------------------------------------------------------
 Name:           DeleteName
 ------------------------------------------------------------------------------
-Beschreibung: Löscht einen Namen in die Struktur Names.x. Die zugehörigen
+Beschreibung: Löscht einen Namen aus der Struktur Names.x. Die zugehörigen
               Levelgruppen-Hashes werden mitgelöscht.
-
 Parameter
       Eingang: pszname, char*, Zeiger auf Spielernamen, der gelöscht werden soll
       Ausgang: -
@@ -2960,9 +3006,3 @@ int DeleteName(char *pszName) {
     }
     return nErrorCode;
 }
-
-
-    //SDL_Log("size of Names.x: %u",sizeof(Names));
-
-
-    //SDL_Log("size of Name.x: %u",sizeof(Names.Name));

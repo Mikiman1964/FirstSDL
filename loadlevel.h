@@ -3,21 +3,36 @@
 
 #include "EmeraldMine.h"
 #include "ezxml.h"
+#include "mystd.h"
 
 #define EMERALD_CONFIG_FILENAME                 "config.xml"                    // Konfigurationsfile
 #define EMERALD_DEFAULT_LEVELGROUP_FILENAME     "default_levelgroup.xml"        // Diese Levelgruppe ist immer vorhanden
 #define EMERALD_NAMES_FILENAME                  "names.dat"                     // Namen mit Handicaps, Games Played, Games Won und Totalscore für jede Levelgruppe
 
+#define EMERALD_IMPORTDOS_DIRECTORYNAME         "importdos"                     // Import-Directory für DOS-Level
+#define EMERALD_IMPORTDC3_DIRECTORYNAME         "importdc3"                     // Import-Directory für Diamond Caves 3-Bitmap-Level
+
+
 #define EMERALD_GROUPNAME_LEN                   25                              // Maximale Länge für Gruppennamen
+#define EMERALD_GROUP_PASSWORD_LEN              25                              // Maximale Länge für Passwort einer Levelgruppe
 #define EMERALD_MAX_LEVELGROUPFILES             100                             // Maximale Anzahl von Levelgruppen
 #define EMERALD_MAX_FILENAME_LEN                255                             // Maximale Filenamenlänge ist bei den meisten Dateisystemen 255
-#define EMERALD_PLAYERNAME_LEN                  31                              // Maximale Spielernamenlänge
+#define EMERALD_PLAYERNAME_LEN                  29                              // Maximale Spielernamenlänge
 #define EMERALD_MAX_LEVELCOUNT                  1000                            // maximale Anzahl Level in einer Levelgruppe
 #define EMERALD_MAX_PLAYERNAMES                 100
 
 
 #define BUTTONLABEL_CREATE_PLAYER               "CREATE_PLAYER"
 #define BUTTONLABEL_DELETE_PLAYER               "DELETE_PLAYER"
+#define BUTTONLABEL_LEVELEDITOR                 "LEVELEDITOR"
+#define BUTTONLABEL_HIGHSCORES                  "SHOW_HIGHSCORES"
+#define BUTTONLABEL_EXIT_HIGHSCORES             "EXIT_HIGHSCORES"
+
+// Für IMPORT (DOS/DC3) ///////////////
+typedef struct {
+    uint32_t uDosFileCount;             // Anzahl der DOS-Levelfiles
+    uint32_t uDc3FileCount;             // Anzahl der DC3-Bimap-Levelfiles
+} IMPORTLEVEL;
 
 
 
@@ -74,6 +89,8 @@ typedef struct {
 typedef struct {
     char szFilename[EMERALD_MAX_FILENAME_LEN + 1];
     char szLevelgroupname[EMERALD_GROUPNAME_LEN + 1];
+    char szPasswordHash[32 + 1];
+    char szCreateTimestamp[15 + 1];                                             // 20230331_133530
     uint8_t uMd5Hash[16];
     uint32_t uLevelCount;                                                       // Anzahl Level in der Levelgruppe
 } LEVELGROUPFILE;
@@ -83,6 +100,7 @@ typedef struct {
     bool bOK;
     char szFilename[EMERALD_MAX_FILENAME_LEN + 1];                              // Dateiname der ausgewählten Levelgruppe
     char szLevelgroupname[EMERALD_GROUPNAME_LEN + 1];                           // Levelgruppenname
+    char szPasswordHash[32 + 1];
     uint8_t uMd5Hash[16];
     uint32_t uLevelCount;                                                       // Anzahl Level in der ausgewählten Levelgruppe
     char szLevelTitle[EMERALD_MAX_LEVELCOUNT][EMERALD_TITLE_LEN + 1];           // Levelname
@@ -90,6 +108,7 @@ typedef struct {
 } LEVELGROUP;
 
 
+int CheckImportLevelFiles(void);
 void PrintPlayfieldValues();
 ezxml_t GetLevelTag(ezxml_t xml,uint32_t uLevelNumber);
 int GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY);
@@ -117,8 +136,8 @@ int WriteDefaultLevelgroup(void); // Funktion befindet sich in default_levelgrou
 int GetLevelgroupFiles(void);
 int CalculateLevelGroupMd5Hash(uint8_t *puLevelgroupXml,uint8_t *puMd5Hash);
 uint32_t GetLevelgroupIndexByHash(uint8_t *puLevelgroupMd5Hash);
-int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash);
-int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash);
+int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores);
+int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores);
 void ShowSelectedLevelgroup(void);
 void ShowAvailableLevelgroups(void);
 int WriteNamesFile(void);

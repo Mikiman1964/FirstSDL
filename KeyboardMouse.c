@@ -124,8 +124,9 @@ uint32_t FilterBigFontKey(uint32_t uKey) {
            (uKey == 32)                  ||         // SPACE
            (uKey == 33)                  ||         // !
           ((uKey >= 39) && (uKey <= 58)) ||         // ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 :
-           (uKey == 60)                  ||         // <--
-           (uKey == 62)                  ||         // -->
+           // Auskommentiert: Könnte Probleme mit XML-Tags machen
+           //(uKey == 60)                  ||         // <--
+           //(uKey == 62)                  ||         // -->
            (uKey == 63)                  ) {        // ?
                 uRetKey = uKey;
     }
@@ -182,9 +183,10 @@ void WaitNoKey(void) {
             (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) ||
             (InputStates.pKeyboardArray[SDL_SCANCODE_DELETE]) ||
             (InputStates.pKeyboardArray[SDL_SCANCODE_RETURN]) ||
-            (InputStates.bLeftMouseButton) || (InputStates.bRightMouseButton) );
+            (InputStates.bLeftMouseButton) || (InputStates.bRightMouseButton));
         if (bKeyActive) {
             SDL_Delay(5);
         }
     } while (bKeyActive);
+    InputStates.bQuit = false;
 }

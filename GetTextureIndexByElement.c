@@ -1418,6 +1418,36 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_WALL_ROUND_PIKE):
             uTextureIndex = 328;
             break;
+        case (EMERALD_STEEL_TRASHCAN):
+            uTextureIndex = 736;
+            break;
+        case (EMERALD_STEEL_JOYSTICK):
+            uTextureIndex = 737;
+            break;
+        case (EMERALD_STEEL_EDIT_LEVEL):
+            uTextureIndex = 738;
+            break;
+        case (EMERALD_STEEL_MOVE_LEVEL):
+            uTextureIndex = 739;
+            break;
+        case (EMERALD_STEEL_ADD_LEVELGROUP):
+            uTextureIndex = 740;
+            break;
+        case (EMERALD_STEEL_COPY_LEVEL):
+            uTextureIndex = 741;
+            break;
+        case (EMERALD_STEEL_MSDOS_IMPORT):
+            uTextureIndex = 742;
+            break;
+        case (EMERALD_STEEL_DC3_IMPORT):
+            uTextureIndex = 743;
+            break;
+        case (EMERALD_STEEL_RENAME_LEVELGROUP):
+            uTextureIndex = 744;
+            break;
+        case (EMERALD_STEEL_PASSWORD):
+            uTextureIndex = 745;
+            break;
         default:
             SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());
             uTextureIndex = 0;     // Space
