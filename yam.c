@@ -19,6 +19,10 @@ void ControlYam(uint32_t I) {
     int nRandom;
     uint32_t uAnimStatus;
 
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
+        // Yam kann vom Replikator geboren werden, dann hier nichts machen
+        return;
+    }
     uAnimStatus = Playfield.pStatusAnimation[I] & 0x0000FF00;
     // Zunächst prüfen, ob es um den YAM einen Saphir gibt, den er fressen kann
     if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND)) {
@@ -35,7 +39,10 @@ void ControlYam(uint32_t I) {
         PreparePlaySound(SOUND_YAM,I);
     } else if ((Playfield.pLevel[I - 1] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I - 1] == EMERALD_ANIM_STAND)) {
         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_SAPPHIRE_SHRINK;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED; // YAM ist beim Fressen blockiert.
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // YAM ist beim Fressen blockiert.
+        if (IsYamCompleteBlocked(I)) {
+            Playfield.pStatusAnimation[I] |= EMERALD_ANIM_YAM_WAS_BLOCKED;
+        }
         PreparePlaySound(SOUND_YAM,I);
     } else {
         // YAM frisst nicht
@@ -123,7 +130,10 @@ void CheckYamGoLeft(uint32_t I) {
             PreparePlaySound(SOUND_MAN_CRIES,I);
         }
     } else {
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        if (IsYamCompleteBlocked(I)) {
+            Playfield.pStatusAnimation[I] |= EMERALD_ANIM_YAM_WAS_BLOCKED;
+        }
         PreparePlaySound(SOUND_YAM,I);
     }
 }
@@ -170,7 +180,10 @@ void CheckYamGoRight(uint32_t I) {
             PreparePlaySound(SOUND_MAN_CRIES,I);
         }
     } else {
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        if (IsYamCompleteBlocked(I)) {
+            Playfield.pStatusAnimation[I] |= EMERALD_ANIM_YAM_WAS_BLOCKED;
+        }
         PreparePlaySound(SOUND_YAM,I);
     }
 }
@@ -217,7 +230,10 @@ void CheckYamGoUp(uint32_t I) {
             PreparePlaySound(SOUND_MAN_CRIES,I);
         }
     } else {
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        if (IsYamCompleteBlocked(I)) {
+            Playfield.pStatusAnimation[I] |= EMERALD_ANIM_YAM_WAS_BLOCKED;
+        }
         PreparePlaySound(SOUND_YAM,I);
     }
 }
@@ -235,10 +251,6 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckYamGoDown(uint32_t I) {
-    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
-        // YamDown kann vom Replikator geboren werden, dann hier nichts machen
-        return;
-    }
     if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
@@ -274,7 +286,10 @@ void CheckYamGoDown(uint32_t I) {
             PreparePlaySound(SOUND_MAN_CRIES,I);
         }
     } else {
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        if (IsYamCompleteBlocked(I)) {
+            Playfield.pStatusAnimation[I] |= EMERALD_ANIM_YAM_WAS_BLOCKED;
+        }
         PreparePlaySound(SOUND_YAM,I);
     }
 }
@@ -313,4 +328,22 @@ void ControlYamKillsMan(uint32_t I) {
     }
     Playfield.pLevel[I] = EMERALD_SPACE;
     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           IsYamCompleteBlocked
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob ein Yam komplett (zu allen Seiten) blockiert ist.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  bool, true = Yam komplett blockiert
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+bool IsYamCompleteBlocked(uint32_t I) {
+    return ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_SPACE) && (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_MAN) &&
+           (Playfield.pLevel[I - 1] != EMERALD_SPACE) && (Playfield.pLevel[I - 1] != EMERALD_MAN) &&
+           (Playfield.pLevel[I + 1] != EMERALD_SPACE) && (Playfield.pLevel[I + 1] != EMERALD_MAN) &&
+           (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_MAN) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL_TOP_MID));
 }

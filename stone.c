@@ -169,7 +169,7 @@ void ControlStone(uint32_t I) {
                     Playfield.bManDead = true;
                     return;
                 default:
-                    SDL_Log("Stone hit other element");
+                    // SDL_Log("Stone hit other element");
                     PreparePlaySound(SOUND_STONE_FALL,I);
                     break;
             }

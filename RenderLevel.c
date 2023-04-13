@@ -82,11 +82,6 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
         *pnYpos = Playfield.nMaxYpos;
     }
     uUpperLeftLevelIndex = (*pnXpos / FONT_W) + (*pnYpos / FONT_H) * Playfield.uLevel_X_Dimension;
-    CheckRunningWheel();
-    CheckRunningMagicWall();
-    CheckLight();
-    CheckTimeDoorOpen();
-    CheckPlayTime();
     nErrorCode = 0;
     // Den sichtbaren Teil des Levels in den Renderer kopieren.
     for (uY = 0; (uY <= ((Config.uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
@@ -723,6 +718,36 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_STEEL_ARROW_RIGHT):
                     uTextureIndex = 483;
+                    break;
+                case (EMERALD_STEEL_TRASHCAN):
+                    uTextureIndex = 736;
+                    break;
+                case (EMERALD_STEEL_JOYSTICK):
+                    uTextureIndex = 737;
+                    break;
+                case (EMERALD_STEEL_EDIT_LEVEL):
+                    uTextureIndex = 738;
+                    break;
+                case (EMERALD_STEEL_MOVE_LEVEL):
+                    uTextureIndex = 739;
+                    break;
+                case (EMERALD_STEEL_ADD_LEVELGROUP):
+                    uTextureIndex = 740;
+                    break;
+                case (EMERALD_STEEL_COPY_LEVEL):
+                    uTextureIndex = 741;
+                    break;
+                case (EMERALD_STEEL_MSDOS_IMPORT):
+                    uTextureIndex = 742;
+                    break;
+                case (EMERALD_STEEL_DC3_IMPORT):
+                    uTextureIndex = 743;
+                    break;
+                case (EMERALD_STEEL_RENAME_LEVELGROUP):
+                    uTextureIndex = 744;
+                    break;
+                case (EMERALD_STEEL_PASSWORD):
+                    uTextureIndex = 745;
                     break;
                 case (EMERALD_GREEN_DROP_COMES):
                     uTextureIndex = 346;
