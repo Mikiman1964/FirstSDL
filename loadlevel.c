@@ -9,10 +9,11 @@
 #include "ezxml.h"
 #include "highscores.h"
 #include "loadlevel.h"
+#include "miniz.h"
 #include "md5.h"
 #include "mySDL.h"
 #include "mystd.h"
-#include "zlib.h"
+
 
 
 extern PLAYFIELD Playfield;
@@ -884,6 +885,7 @@ int GetLeveldataFromXml(ezxml_t xml) {
     MD5Context MD5Leveldata;
     uint8_t *pCompressed;
     uint32_t uUnCompressLen;
+    int nMiniz;
 
     pCompressed = NULL;
     nErrorCode = -1;
@@ -907,14 +909,15 @@ int GetLeveldataFromXml(ezxml_t xml) {
                         if (pCompressed != NULL) {
                             Base64ToBin(pCompressed,(uint8_t*)pAttr,strlen(pAttr),&uBinLen);
                             uUnCompressLen = Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t);
-                            if (uncompress((uint8_t*)Playfield.pLevel,(uLong*)&uUnCompressLen,pCompressed,(uLong)uBinLen) == Z_OK) {
+                            nMiniz = mz_uncompress((uint8_t*)Playfield.pLevel,(mz_ulong*)&uUnCompressLen,pCompressed,(mz_ulong)uBinLen);
+                            if (nMiniz == MZ_OK) {
                                 if (uUnCompressLen == (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t))) {
                                     nErrorCode = 0;
                                 } else {
                                     SDL_Log("%s: decompress unexpected len: %u     expected: %u",__FUNCTION__,(uint32_t)uUnCompressLen,(uint32_t)(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t)));
                                 }
                             } else {
-                                SDL_Log("%s: decompress ERROR",__FUNCTION__);
+                                SDL_Log("%s: mz_uncompress ERROR: %d",__FUNCTION__,nMiniz);
                             }
                         } else {
                             SDL_Log("%s: malloc() failed for compressed leveldata",__FUNCTION__);
@@ -2308,6 +2311,7 @@ int WriteDefaultConfigFile(void) {
     memset(&Config,0,sizeof(Config));       // löscht auch letzten Spieler
     Config.bStartDynamiteWithSpace = true;  // true = Dynamite wird mit Space gezündet
     Config.bFullScreen = false;             // Spiel läuft als Fullscreen
+    Config.bEditorZoom = false;             // Editor läuft mit 16x16 Pixeln
     Config.uResX = DEFAULT_WINDOW_W;        // Standard-Auflösung X bzw. Fensterbreite
     Config.uResY = DEFAULT_WINDOW_H;                // Auflösung Y bzw. Fensterhöhe
     memset(Config.uLevelgroupMd5Hash,0,16); // MD5-Hash auf "00000000000000000000000000000000" setzen
@@ -2384,6 +2388,7 @@ void ShowConfigFile(void) {
     SDL_Log("============ Config.xml =============");
     SDL_Log("Start dynamite with space:  %d",Config.bStartDynamiteWithSpace);
     SDL_Log("Full screen mode:           %d",Config.bFullScreen);
+    SDL_Log("Editor zoom:                %d",Config.bEditorZoom);
     SDL_Log("X-Resolution:               %u",Config.uResX);
     SDL_Log("Y-Resolution:               %u",Config.uResY);
     SDL_Log("Last levelgroup hash:       %s",szMd5String);
@@ -2443,6 +2448,13 @@ int WriteConfigFile(void) {
     strcat(szXML,"  <last_player_name>");
     strcat(szXML,Config.szPlayername);
     strcat(szXML,"</last_player_name>\n");
+    strcat(szXML,"  <editor_zoom>");
+    if (Config.bEditorZoom) {
+        strcat(szXML,"1");
+    } else {
+        strcat(szXML,"0");
+    }
+    strcat(szXML,"</editor_zoom>\n");
     strcat(szXML,"</configuration>\n");
     return WriteFile(EMERALD_CONFIG_FILENAME,(uint8_t *)szXML,(uint32_t)strlen(szXML),false);
 }
@@ -2461,7 +2473,7 @@ Seiteneffekte: Config.x, Actualplayer.x
 ------------------------------------------------------------------------------*/
 int ReadConfigFile(void) {
     ezxml_t xml = NULL;
-    ezxml_t screen,fullscreen,resolution,x,y,dynamite,levelgrouphash,playername;
+    ezxml_t screen,fullscreen,resolution,x,y,dynamite,levelgrouphash,playername,editorzoom;
     int nErrorCode;
     uint8_t *pXml;
     uint32_t uXmlLen;
@@ -2495,31 +2507,35 @@ int ReadConfigFile(void) {
                                         dynamite = ezxml_child(xml,"start_dynamite_with_space");
                                         if (dynamite != NULL) {
                                             Config.bStartDynamiteWithSpace = (strtol(dynamite->txt,NULL,10) == 1);
-                                            levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
-                                            if (levelgrouphash != NULL) {
-                                                GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
-                                                playername = levelgrouphash = ezxml_child(xml,"last_player_name");
-                                                if (playername != NULL) {
-                                                    if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
-                                                        strcpy(Config.szPlayername,playername->txt);
-                                                    }
-                                                    // Auflösung checken
-                                                    // Zunächst prüfen, ob X- und Y-Auflösung durch FONT_W bzw. FONT_H teilbar
-                                                    uResX = Config.uResX;
-                                                    uResY = Config.uResY;
-                                                    uResX = uResX / FONT_W;
-                                                    uResX = uResX * FONT_W;
-                                                    uResY = uResY / FONT_H;
-                                                    uResY = uResY * FONT_H;
-                                                    if ((uResX >= DEFAULT_WINDOW_W) && (uResY >= DEFAULT_WINDOW_H)) {
-                                                        // ggf. die abgerundeten Werte in die Konfiguration übernehmen
-                                                        Config.uResX = uResX;
-                                                        Config.uResY = uResY;
-                                                        nErrorCode = 0;
-                                                    } else {
-                                                        sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,uResX,uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
-                                                        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
-                                                        nErrorCode = -2;    // Programmende
+                                            editorzoom = ezxml_child(xml,"editor_zoom");
+                                            if (editorzoom != NULL) {
+                                                Config.bEditorZoom = (strtol(editorzoom->txt,NULL,10) == 1);
+                                                levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
+                                                if (levelgrouphash != NULL) {
+                                                    GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
+                                                    playername = levelgrouphash = ezxml_child(xml,"last_player_name");
+                                                    if (playername != NULL) {
+                                                        if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
+                                                            strcpy(Config.szPlayername,playername->txt);
+                                                        }
+                                                        // Auflösung checken
+                                                        // Zunächst prüfen, ob X- und Y-Auflösung durch FONT_W bzw. FONT_H teilbar
+                                                        uResX = Config.uResX;
+                                                        uResY = Config.uResY;
+                                                        uResX = uResX / FONT_W;
+                                                        uResX = uResX * FONT_W;
+                                                        uResY = uResY / FONT_H;
+                                                        uResY = uResY * FONT_H;
+                                                        if ((uResX >= DEFAULT_WINDOW_W) && (uResY >= DEFAULT_WINDOW_H)) {
+                                                            // ggf. die abgerundeten Werte in die Konfiguration übernehmen
+                                                            Config.uResX = uResX;
+                                                            Config.uResY = uResY;
+                                                            nErrorCode = 0;
+                                                        } else {
+                                                            sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,uResX,uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
+                                                            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
+                                                            nErrorCode = -2;    // Programmende
+                                                        }
                                                     }
                                                 }
                                             }

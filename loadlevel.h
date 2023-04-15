@@ -79,6 +79,7 @@ typedef struct {
 typedef struct {
     bool        bStartDynamiteWithSpace;                                        // true = Dynamite wird mit Space gezündet
     bool        bFullScreen;                                                    // true = Spiel läuft als Fullscreen
+    bool        bEditorZoom;                                                    // true = 32x32 Pixel, sonst 16x16 Pixel
     uint32_t    uResX;                                                          // Auflösung X bzw. Fensterbreite
     uint32_t    uResY;                                                          // Auflösung Y bzw. Fensterhöhe
     uint8_t     uLevelgroupMd5Hash[16];                                         // zuletzt gewählte Levelgruppe als MD5 Hash
