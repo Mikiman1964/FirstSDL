@@ -1,16 +1,18 @@
 #include <unistd.h>
 #include <SDL2/SDL.h>
 #include "loadlevel.h"
+#include "miniz.h"
 #include "mySDL.h"
 #include "mystd.h"
 #include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
+
 
 int g_nGfxCount = 0;         // gefundenen Grafiken
 uint8_t g_uIntensityProzent = 100;
 SDL_Texture **g_pTextures;   // Pointer Array für Texturen
 
 extern SDL_DisplayMode ge_DisplayMode;
-extern uint8_t _binary_gfx_bin_start;extern uint8_t _binary_gfx_bin_end;
+extern uint8_t _binary_gfx_compressed_bin_start;extern uint8_t _binary_gfx_compressed_bin_end;
 extern uint32_t Gfx[];
 extern CONFIG Config;
 
@@ -162,22 +164,35 @@ int LoadTextures(SDL_Renderer *pRenderer) {
     int nErrorCode;
     bool bFound;
     bool bOK;
-    uint8_t *pStartGfxPacket;   // Start-Pointer des Grafikpaketes
-    uint8_t *pEndGfxPacket;     // Endpointer des Grafikpaketes
+    uint8_t *pStartGfxPacket = NULL;   // Start-Pointer des dekomprimierten Grafikpaketes
     uint8_t *pStartGfx;         // Start-Pointer der Einzelgrafik
     void *pTextures = NULL;
     uint32_t uOffset;           // Offset innerhalb des Grafikpaketes, wo Grafik zu finden ist
     uint32_t uLen;              // Länge der Einzelgrafik
-
+    uint32_t uCompressedSize;
+    uint32_t uUnCompressedSize;
     SDL_RWops* pSDLStreamPointer; // Zeigt auf Grafikanfang
     SDL_Surface *pSurface;      // Surface
     SDL_Texture *pTexture;      // Texture
+    uint8_t *pStartCompressedGfx;
+    int nMiniz;
 
-    pStartGfxPacket = &_binary_gfx_bin_start;
-    pEndGfxPacket = &_binary_gfx_bin_end;
-    nGfxSize = pEndGfxPacket - pStartGfxPacket;
-    SDL_Log("%s: gfx packet size: %d Bytes",__FUNCTION__,nGfxSize);
-
+    pStartCompressedGfx = &_binary_gfx_compressed_bin_start;
+    uCompressedSize = &_binary_gfx_compressed_bin_end - &_binary_gfx_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
+    SDL_Log("%s: compressed gfx packet size: %u",__FUNCTION__,uCompressedSize);
+    uUnCompressedSize = *(uint32_t*)pStartCompressedGfx;
+    SDL_Log("%s: gfx packet size: %d Bytes",__FUNCTION__,uUnCompressedSize);
+    pStartGfxPacket = malloc(uUnCompressedSize);
+    if (pStartGfxPacket == NULL) {
+        SDL_Log("%s: can not allocate memory for decompressed graphics (%u bytes)",__FUNCTION__,uUnCompressedSize);
+        return -1;
+    }
+    nMiniz = mz_uncompress(pStartGfxPacket,(mz_ulong*)&uUnCompressedSize,pStartCompressedGfx + 4,(mz_ulong)uCompressedSize);
+    if (nMiniz != MZ_OK) {
+        SDL_Log("%s: can not decompress graphics, error: %d",__FUNCTION__,nMiniz);
+        SAFE_FREE(pStartGfxPacket);
+        return -1;
+    }
     // Zunächst zählen, wieviele Grafiken vorhanden sind
     nErrorCode = -1;
     nCount = 0;
@@ -207,7 +222,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
             g_nGfxCount = nCount;
             for (nI = 0; (nI < nCount) && (bOK); nI++) {
                 pStartGfx = pStartGfxPacket + Gfx[nI * 2 + 0];  // Offset innerhalb des Paketes dazu addieren
-                nGfxSize =  Gfx[nI * 2 + 1];
+                nGfxSize = Gfx[nI * 2 + 1];
                 //SDL_Log("%s: nI = %d   nGfxSize: %d",__FUNCTION__,nI,nGfxSize);
                 pSDLStreamPointer = SDL_RWFromMem((void*)pStartGfx,nGfxSize);// Erzeugt SDL-Speicherstruktur für Speicher (Stream)
                 if (pSDLStreamPointer != NULL) {
@@ -244,6 +259,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
         g_pTextures = NULL;
         g_nGfxCount = 0;
     }
+    SAFE_FREE(pStartGfxPacket);
     return nErrorCode;
 }
 
@@ -686,6 +702,42 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
     } else {
         SDL_Log("%s: bad input parameter, null pointer found.",__FUNCTION__);
         nErrorCode = -1;
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           DrawBeam
+------------------------------------------------------------------------------
+Beschreibung: Zeichnet ein Rechteck / einen Balken für die Levelgruppen- und Namen-Auswahl.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+               uXpos, uint32_t, X-Position für Balken
+               uYpos, uint32_t, X-Position für Balken
+               uWidth, uint32_t, Breite des Balkens
+               uHeight, uint32_t, Höhe des Balkens
+               uRed, uint8_t, Rot-Anteil für Farbe des Balkens
+               uGreen, uint8_t, Grün-Anteil für Farbe des Balkens
+               uBlue, uint8_t, Blau-Anteil für Farbe des Balkens
+               uTransp, uint8_t, Transparenz der Farbe
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp) {
+    int nErrorCode = -1;
+    SDL_Rect DestR;
+
+    // Balken zeichnen
+    DestR.x = uXpos;
+    DestR.y = uYpos;
+    DestR.w = uWidth;
+    DestR.h = uHeight;
+    if (SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uTransp) == 0) {   // dunkelblaue, halbtransparente Fensterfläche
+        if (SDL_RenderFillRect(pRenderer,&DestR) == 0) {
+            nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+        }
     }
     return nErrorCode;
 }
