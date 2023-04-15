@@ -12,11 +12,11 @@
 #include "levelgroupoperation.h"
 #include "loadlevel.h"
 #include "md5.h"
+#include "miniz.h"
 #include "modplay.h"
 #include "mystd.h"
 #include "mySDL.h"
 #include "scroller.h"
-#include "zlib.h"
 
 ED Ed;
 extern PLAYFIELD Playfield;
@@ -716,6 +716,7 @@ DYNSTRING *GetLevelXmlFile(void) {
     char szTag[32];
     DYNSTRING *XML = NULL;
     bool bError = false;
+    int nMiniz;
 
     XML = DynStringInit();
     if (XML == NULL) {
@@ -916,8 +917,9 @@ DYNSTRING *GetLevelXmlFile(void) {
         uMaxCompressedSize = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t) * 2 + 16 * KB;
         pcCompressedLevel = malloc(uMaxCompressedSize);
         if (pcCompressedLevel != NULL) {
-            // uMaxCompressedSize ist hier noch Eingabeparameter, damit compress() weiß, wieviel Puffer zum Komprimieren bereit steht
-            if (compress(pcCompressedLevel,(uLongf*)&uMaxCompressedSize,(uint8_t*)Ed.pLevel,Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t)) == Z_OK) {
+            // uMaxCompressedSize ist hier noch Eingabeparameter, damit mz_compress2() weiß, wieviel Puffer zum Komprimieren bereit steht
+            nMiniz = mz_compress2(pcCompressedLevel,(mz_ulong*)&uMaxCompressedSize,(uint8_t*)Ed.pLevel,Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t),MZ_UBER_COMPRESSION);
+            if (nMiniz == MZ_OK) {
                 SDL_Log("%s:c compressed level size: %u",__FUNCTION__,uMaxCompressedSize);
                 pcBase64 = BinToBase64((uint8_t *)pcCompressedLevel,uMaxCompressedSize,&uBase64Len,false);
                 if (pcBase64 != NULL) {
@@ -938,11 +940,11 @@ DYNSTRING *GetLevelXmlFile(void) {
                     bError = true;
                 }
             } else {
-                SDL_Log("%s: compress() failed",__FUNCTION__);
+                SDL_Log("%s: mz_compress2() failed, Error: %d",__FUNCTION__,nMiniz);
                 bError = true;
             }
         } else {
-            SDL_Log("%s: malloc() failed (compress memory)",__FUNCTION__);
+            SDL_Log("%s: malloc() failed (mz_compress2 memory)",__FUNCTION__);
             bError = true;
         }
     }
@@ -1532,6 +1534,11 @@ int EditorStateLevel(SDL_Renderer *pRenderer) {
     } else {
         PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: REPLICATOR ERROR");
         Ed.bFoundError = true;
+    }
+    if (Ed.bHalfSize) {
+        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM OFF");
+    } else {
+        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM ON");
     }
     return PrintLittleFont(pRenderer,Config.uResX - 350, Config.uResY - 16,0,szText); // Level-Koordinaten anzeigen
 }
@@ -2206,7 +2213,30 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             896,960,64,96,896,960,128,160,896,960,192,224,896,960,256,288,896,960,320,352,896,960,384,416,896,960,448,480,896,960,512,544
                             };
 
-
+    // Rahmen und Füllung für Level-Title und Level Author zeichnen
+    // Rechtecke in Farbe 20,200,20 zeichnen
+    if (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_MESSAGE) {
+        SDL_SetRenderDrawColor(pRenderer,20,200,20, SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+        DestR.x = 28;
+        DestR.y = 572;
+        DestR.w = (EMERALD_TITLE_LEN + 15) * FONT_LITTLE_347_W;
+        DestR.h = FONT_LITTLE_347_H + 8;
+        SDL_RenderDrawRect(pRenderer,&DestR);
+        DestR.x = 28;
+        DestR.y = 668;
+        DestR.w = (EMERALD_AUTHOR_LEN + 15) * FONT_LITTLE_347_W;
+        DestR.h = FONT_LITTLE_347_H + 8;
+        nErrorCode = SDL_RenderDrawRect(pRenderer,&DestR);
+        // Senkrechte Linien hinter Doppelpunkt setzen
+        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_347_W,572,31 + 13 *FONT_LITTLE_347_W,572 + FONT_LITTLE_347_H + 6); // Level-Title
+        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_347_W,668,31 + 13 *FONT_LITTLE_347_W,668 + FONT_LITTLE_347_H + 6); // Level-Author
+        // Untergründe für Title und Author (vor Doppelunkt) zeichnen
+        DrawBeam(pRenderer,29, 573, 13 * FONT_LITTLE_347_W + 2,FONT_LITTLE_347_H + 6, 0,0,255,255); // Level-Title
+        DrawBeam(pRenderer,29, 669, 13 * FONT_LITTLE_347_W + 2,FONT_LITTLE_347_H + 6, 0,0,255,255); // Level-Title
+        // Untergründe für Title und Author (nach Doppelunkt) zeichnen
+        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_347_W, 573, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_347_W + 5,FONT_LITTLE_347_H + 6, 30,30,255,255); // Level-Title
+        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_347_W, 669, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_347_W + 5,FONT_LITTLE_347_H + 6, 30,30,255,255); // Level-Title
+    }
     if (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_MESSAGE) {
         nErrorCode = CreateMessageWindow(pRenderer,-1,-1,0,Ed.MessageEditor.szMessageEditorMem);
         if (Ed.MessageEditor.bInsert) {
@@ -2465,7 +2495,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,740,214,0,"----");
         sprintf(szText,"%04d",Ed.uScoreStoningYam);
         PrintLittleFont(pRenderer,740,201,0,szText);
-        nErrorCode = PrintLittleFont(pRenderer,300,250,0,"TIMES (SECS) & INVENTORY");
+        PrintLittleFont(pRenderer,300,250,0,"TIMES (SECS) & INVENTORY");
         nErrorCode = PrintLittleFont(pRenderer,200,363,0,"INVENTORY -->");
         // 4. Zeile
         // Time to Play
@@ -2533,10 +2563,10 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         sprintf(szText,"%04d",Ed.uEmeraldsToCollect);
         PrintLittleFont(pRenderer,350,488,0,szText);
         // Level-Title
-        nErrorCode = PrintLittleFont(pRenderer,32,576,0,"LEVEL-TITLE :");
+        PrintLittleFont(pRenderer,32,576,0,"LEVEL-TITLE :");
         nErrorCode = PrintLittleFont(pRenderer,164,576,0,Ed.szLevelTitle);
         // Level-Author
-        nErrorCode = PrintLittleFont(pRenderer,32,672,0,"LEVEL-AUTHOR:");
+        PrintLittleFont(pRenderer,32,672,0,"LEVEL-AUTHOR:");
         nErrorCode = PrintLittleFont(pRenderer,164,672,0,Ed.szLevelAuthor);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],Ed.uFrameCounter % 16,&fAngle);
@@ -2553,7 +2583,6 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             }
         }
         nSwitchField = -1;
-
         if (InputStates.bLeftMouseButton) {
             for (I = 0; I < (sizeof(uSwitches) / (sizeof(uint32_t) * 4)); I++) {
                 uMinX = uSwitches[I * 4 + 0];
@@ -3290,7 +3319,7 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
     }
     if (nErrorCode == 0) {
         Ed.uFrameCounter = 0;
-        Ed.bHalfSize = true;
+        Ed.bHalfSize = !Config.bEditorZoom;
         Ed.uSelectedElementLeft[MENUSTATE_LEVEL_STD] = EMERALD_SAND;
         Ed.uSelectedElementMiddle[MENUSTATE_LEVEL_STD] = EMERALD_STONE;
         Ed.uSelectedElementRight[MENUSTATE_LEVEL_STD] = EMERALD_STEEL;
@@ -3383,6 +3412,16 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
         }
         if ((Ed.uMenuState == MENUSTATE_LEVEL_STD) || (Ed.uMenuState == MENUSTATE_LEVEL_TEXT))  {
             Ed.bEditorRun = (EditorStateLevel(pRenderer) == 0);
+            if (GetKey() == 'Z') {  // Zoom toggeln
+                do {
+                    UpdateInputStates();
+                    SDL_Delay(5);
+                } while ((InputStates.pKeyboardArray[SDL_SCANCODE_Z]) || (InputStates.pKeyboardArray[SDL_SCANCODE_Y]));
+                Config.bEditorZoom = !Config.bEditorZoom;
+                Ed.bHalfSize = !Config.bEditorZoom;
+                Ed.bEditorRun = (WriteConfigFile() == 0);
+                CalcEditorViewArea();
+            }
         } else if ((Ed.uMenuState == MENUSTATE_YAMS) || (Ed.uMenuState == MENUSTATE_YAMS_TEXT)) {
             Ed.bEditorRun = (EditorStateYams(pRenderer) == 0);
         } else if (Ed.uMenuState == MENUSTATE_MACHINES) {

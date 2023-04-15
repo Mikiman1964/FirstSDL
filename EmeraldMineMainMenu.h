@@ -41,7 +41,6 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
 int RenderMenuElements(SDL_Renderer *pRenderer);
 int MenuSelectLevelgroup(SDL_Renderer *pRenderer);
 int MenuSelectName(SDL_Renderer *pRenderer);
-int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp);
 void ScrollLevelGroups(int nButton);
 void ScrollPlayernames(int nButton);
 int SetMenuText(uint16_t *pMenuScreen, char *pszText, int nXpos, int nYpos,uint32_t uFont);

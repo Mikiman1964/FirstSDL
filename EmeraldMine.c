@@ -6,19 +6,16 @@ TODO
 * Explosionen mit Sumpf und Tropfen testen
 * grünen Käse noch agressiver machen, wenn hohe Rate eingestellt
 * Fullscreen-Unterstützung
-* Konverter für alte/DC3/DOS-Levels bauen, DC3-Konverter bereits lauffähig -> Unteren Teil eines Repliklators richtig berücksichtigen
+* Import Level: Konverter für alte/DC3/DOS-Levels bauen, DC3-Konverter bereits lauffähig -> Unteren Teil eines Repliklators richtig berücksichtigen
 * Berührt Mine von unten einen Tropfen, wird sofort eine Explosion ausgelöst, ohne dass vorher Käse entstehen kann. Passiert allerdings bei DC3 auch.
   In diesem Zusammenhang gibt es noch Fehler (z.B. invalid Cleanstatus: 0) mit Minen und Käse/Tropfen, siehe Level "ONLY ONE EMERALD"
 * Tropfen in Explosionen behandeln: Wird eigentlich schon behandelt, siehe auch voriger Punkt
 * Wenn Element durch Magic Wall fällt, kommt noch kein SOUND_SQUEAK: Kommt bei DC3 auch nicht, bei Kingsoft ja
 * Beim Start des Spieles nicht verwendete Hashes aus der Namensliste entfernen und Highscorefiles aufräumen -> CleanUp
-* Leveleditor: Levelnamen und Autor über Tastatur eingeben
 * Undo für Editor
-* Zoom (32x32) für Editor (wird bereits unterstützt, ist aber noch nicht aufrufbar)
 * Sprengung einer Standmine mit Dynamit: Sprengung von oben ergibt Doppelsprengung, Sprengung von unten ergibt Einfachsprengung. Verhalten wahrscheinlich auch bei anderen Elementen.
   In diesem Zusammenhang diagonale Sprengung von Käfern testen (oben links, oben rechts, unten links, unten rechts) -> Kreuzsprengung mit Dynamit
 * Joystick-/Gamecontroller-Support
-* Komprimierung der Objektdatei 'gfx.o' -> 3,7 MB zu 300 KB
 */
 #include <SDL2/SDL.h>
 #include <stdio.h>

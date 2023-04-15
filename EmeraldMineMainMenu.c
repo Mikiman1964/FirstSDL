@@ -871,42 +871,6 @@ void ScrollPlayernames(int nButton) {
 
 
 /*----------------------------------------------------------------------------
-Name:           DrawBeam
-------------------------------------------------------------------------------
-Beschreibung: Zeichnet ein Rechteck / einen Balken für die Levelgruppen- und Namen-Auswahl.
-Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uXpos, uint32_t, X-Position für Balken
-               uYpos, uint32_t, X-Position für Balken
-               uWidth, uint32_t, Breite des Balkens
-               uHeight, uint32_t, Höhe des Balkens
-               uRed, uint8_t, Rot-Anteil für Farbe des Balkens
-               uGreen, uint8_t, Grün-Anteil für Farbe des Balkens
-               uBlue, uint8_t, Blau-Anteil für Farbe des Balkens
-               uTransp, uint8_t, Transparenz der Farbe
-      Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: -
-------------------------------------------------------------------------------*/
-int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp) {
-    int nErrorCode = -1;
-    SDL_Rect DestR;
-
-    // Balken zeichnen
-    DestR.x = uXpos;
-    DestR.y = uYpos;
-    DestR.w = uWidth;
-    DestR.h = uHeight;
-    if (SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uTransp) == 0) {   // dunkelblaue, halbtransparente Fensterfläche
-        if (SDL_RenderFillRect(pRenderer,&DestR) == 0) {
-            nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
-        }
-    }
-    return nErrorCode;
-}
-
-
-/*----------------------------------------------------------------------------
 Name:           RenderMenuElements
 ------------------------------------------------------------------------------
 Beschreibung: Alle Menü-Elemente im Menü-Screen uMenuScreen werden in den Renderer geschrieben.
@@ -1611,7 +1575,7 @@ int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
     strcpy(szText,"LEVEL:");
     strcat(szText,szNum);
     SetMenuText(MainMenu.uMenuScreen,szText,-1,7,EMERALD_FONT_BLUE);
-    strcpy(szText,"AUTHOR:");
+    strcpy(szText,"BY:");
     strcat(szText,Playfield.szLevelAuthor);
     SetMenuText(MainMenu.uMenuScreen,szText,-1,9,EMERALD_FONT_BLUE);
 
