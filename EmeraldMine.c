@@ -3,19 +3,16 @@ TODO
 * Gras einbauen
 * Unsichtbaren Sand einbauen
 * Unabhängige Sound-Kanäle -> SDL_Mixer erforderlich?
-* Explosionen mit Sumpf und Tropfen testen
+* Explosionen mit Sumpf und Tropfen testen (erster Test sieht gut aus)
 * grünen Käse noch agressiver machen, wenn hohe Rate eingestellt
 * Fullscreen-Unterstützung
 * Import Level: Konverter für alte/DC3/DOS-Levels bauen, DC3-Konverter bereits lauffähig -> Unteren Teil eines Repliklators richtig berücksichtigen
 * Berührt Mine von unten einen Tropfen, wird sofort eine Explosion ausgelöst, ohne dass vorher Käse entstehen kann. Passiert allerdings bei DC3 auch.
-  In diesem Zusammenhang gibt es noch Fehler (z.B. invalid Cleanstatus: 0) mit Minen und Käse/Tropfen, siehe Level "ONLY ONE EMERALD"
-* Tropfen in Explosionen behandeln: Wird eigentlich schon behandelt, siehe auch voriger Punkt
-* Wenn Element durch Magic Wall fällt, kommt noch kein SOUND_SQUEAK: Kommt bei DC3 auch nicht, bei Kingsoft ja
-* Beim Start des Spieles nicht verwendete Hashes aus der Namensliste entfernen und Highscorefiles aufräumen -> CleanUp
 * Undo für Editor
-* Sprengung einer Standmine mit Dynamit: Sprengung von oben ergibt Doppelsprengung, Sprengung von unten ergibt Einfachsprengung. Verhalten wahrscheinlich auch bei anderen Elementen.
-  In diesem Zusammenhang diagonale Sprengung von Käfern testen (oben links, oben rechts, unten links, unten rechts) -> Kreuzsprengung mit Dynamit
+* Level von Levelgruppe zu Levelgruppe kopieren
 * Joystick-/Gamecontroller-Support
+* Konfigurationsmenü erweitern: Kann Tastatur erkannt werden? Sieht nicht so aus.
+* Yam-Sprengung erzeugt Replikator bzw. Säurebecken -> Kommt es zu Fehlfunktionen, wenn R. bzw. S nicht vollständig erzeugt werden kann?
 */
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -23,7 +20,8 @@ TODO
 #include "alien.h"
 #include "beetle.h"
 #include "bomb.h"
-#include "buttons.h"
+#include "buttons_checkboxes.h"
+#include "config.h"
 #include "crystal.h"
 #include "EmeraldMine.h"
 #include "EmeraldMineMainMenu.h"
@@ -152,7 +150,7 @@ int Menu(SDL_Renderer *pRenderer) {
             uModVolume++;
             SetModVolume(uModVolume);
         }
-        PlayMusic();
+        PlayMusic(true);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],uFrameCounter % 16,&fAngle);
             DestR.x = 128 + uXoffs + uPositionsAndElements[I * 3 + 0];
@@ -261,10 +259,13 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     nCheckLevelCount = 0;
     ManKey.uLastActiveDirection = MANKEY_NONE;
     ManKey.uLastDirectionFrameCount = 0;
+    ManKey.uFireCount = 0;
+    ManKey.bExit = false;
     while (bLevelRun) {
         UpdateManKey();
-        if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit)) {
+        if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bExit)) {
             bPrepareLevelExit = true;
+            ManKey.bExit = false; // hier bestätigen
         }
         if ((Playfield.bManDead) || (Playfield.bWellDone)) {
             if (uQuitTime == 0xFFFFFFFF) {
@@ -1460,12 +1461,15 @@ Seiteneffekte: -
 int CheckGameDirectorys(void) {
     int nErrorCode = -1;
 
-    if (CheckHighScoresDirectory() == 0) {
-        if (CheckAndCreateDirectory(EMERALD_IMPORTDOS_DIRECTORYNAME) == 0) {
-            if (CheckAndCreateDirectory(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
+    if (CheckHighScoresDir() == 0) {
+        if (CheckAndCreateDir(EMERALD_IMPORTDOS_DIRECTORYNAME) == 0) {
+            if (CheckAndCreateDir(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
                 nErrorCode = CheckImportLevelFiles();
             }
         }
+    }
+    if (nErrorCode != 0) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Directory problem","Can not create directory!\nPlease check write permissions.",NULL);
     }
     return nErrorCode;
 }

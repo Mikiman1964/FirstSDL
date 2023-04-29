@@ -1,7 +1,10 @@
 #include <ctype.h>
-#include "buttons.h"
+#include <math.h>
+#include "buttons_checkboxes.h"
+#include "config.h"
 #include "editor.h"
 #include "EmeraldMineMainMenu.h"
+#include "gamecontroller.h"
 #include "GetTextureIndexByElement.h"
 #include "highscores.h"
 #include "KeyboardMouse.h"
@@ -10,7 +13,9 @@
 #include "modplay.h"
 #include "mySDL.h"
 #include "mystd.h"
+#include "scroller.h"
 
+MAINMENU MainMenu;
 
 extern INPUTSTATES InputStates;
 extern MANKEY ManKey;
@@ -23,7 +28,8 @@ extern LEVELGROUP SelectedLevelgroup;
 extern ACTUALPLAYER Actualplayer;
 extern HIGHSCOREFILE HighscoreFile;
 extern AUDIOPLAYER Audioplayer;
-MAINMENU MainMenu;
+extern GAMECONTROLLER GameController;
+extern JOYSTICK Joystick;
 
 
 /*----------------------------------------------------------------------------
@@ -94,21 +100,28 @@ uint32_t GetRainbowColors(uint16_t uWert) {
 
 
 /*----------------------------------------------------------------------------
-Name:           GetLevelButton
+Name:           GetMainMenuButton
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Levelbutton (down/up) gedrückt ist.
+Beschreibung: Prüft, welcher Gfx-Button im EmeraldMinemainMenü gedrückt ist.
+                Möglich sind zur Zeit folgende Buttons:
+                    * Level up
+                    * Level down
+                    * Settings
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
+Rückgabewert:  int, 0 = kein Button gedrückt,
+                    1 = EMERALD_STEEL_ARROW_DOWN_PRESSED,
+                    2 = EMERALD_STEEL_ARROW_UP_PRESSED
+                    3 = EMERALD_STEEL_SETTINGS_PRESSED
 Seiteneffekte: InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int GetLevelButton(void) {
+int GetMainMenuButton(void) {
     int nButton;
 
     nButton = 0;
     if (InputStates.bLeftMouseButton) {
-        // Beide Buttons auf selber Y-Position
+        // Beide Level-Buttons auf selber Y-Position
         if ((InputStates.nMouseYpos >= (192 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (224 + MainMenu.uYoffs))) {
             if ((InputStates.nMouseXpos >= (352 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (384 + MainMenu.uXoffs))) {
                 nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
@@ -116,6 +129,13 @@ int GetLevelButton(void) {
                 nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
             }
         }
+        // Settings-Button
+        else if ((MainMenu.nState == 0) && ((InputStates.nMouseYpos >= (0 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (32 + MainMenu.uYoffs)))) {
+            if ((InputStates.nMouseXpos >= (0 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (32 + MainMenu.uXoffs))) {
+                nButton = EMERALD_STEEL_SETTINGS_PRESSED;
+            }
+        }
+
     }
     return nButton;
 }
@@ -1279,22 +1299,35 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int nErrorCode;
     uint32_t uModVolume;
     uint32_t uHighscoreLevel;
+    uint32_t uXStart;
+    uint32_t uXEnd;
     bool bMenuRun;
     bool bEndGame;
     bool bPrepareExit;
     bool bShowHighscores;
     bool bStartEditor;
+    bool bStartSettings;
     int nColorDimm;
-    int nLevelButton;
-    int nLastLevelButton;
+    int nButton;
+    int nLastButton;
     int nPlayerlistButton;
     int nLastPlayerlistButton;
     int nLevelgrouplistButton;
     int nLastLevelgrouplistButton;
     int nNewHighscoreIndex;
     char szText[256];
+    SCROLLER Scroller;
+    uint8_t szMessage[] = {"START THE GAME WITH THE FIRE BUTTON (LEFT CTRL).  GAME MUSIC BY MAKTONE AND JESPER KYD.  MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU).  \
+    DATA (DE)COMPRESSOR 'MINIZ' BY RICH GELDREICH AND TENACIOUS SOFTWARE LLC.  XML READER 'EZXML' BY AARON VOISINE.  BASE64 DECODER BY CAMERON HARPER.  \
+    GAME GRAPHICS AND GAME SAMPLES TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.                     "};
 
     InitMainMenu();
+    uXStart = MainMenu.uXoffs + FONT_W;
+    uXEnd = MainMenu.uXoffs + DEFAULT_WINDOW_W - FONT_W;
+    if (InitScroller(&Scroller,1,uXStart,uXEnd,0,szMessage, 0,0,0,1,false,false) != 0) {
+        return -1;
+    }
+    Scroller.nYpos = (Config.uResY / 2);
     // Namen einlesen
     if (ReadNamesFile() != 0) {
         return -1;
@@ -1324,205 +1357,238 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     bMenuRun = true;
     bEndGame = false;
     bStartEditor =  false;
+    bStartSettings = false;
     bShowHighscores = false;
-    nLevelButton = 0;   // 0 = nicht gedrückt, 1 = down, 2 = up
-    nLastLevelButton = 0;
+    nButton = 0;   // 0 = nicht gedrückt, 1 = down, 2 = up
+    nLastButton = 0;
     nPlayerlistButton = 0;
     nLastPlayerlistButton = 0;
     nLevelgrouplistButton = 0;
     nLastLevelgrouplistButton = 0;
     nNewHighscoreIndex = -1;
     if (GetLevelgroupFiles() == 0) {    // Wenn das nicht funktioniert, kann nicht weitergemacht werden!
-        InitLists();
-        // ShowAvailableLevelgroups();
-        if (SelectAlternativeLevelgroup(Config.uLevelgroupMd5Hash,true) == 0) {
-            // ShowSelectedLevelgroup();
-            if (SelectName(Config.szPlayername,SelectedLevelgroup.uMd5Hash) != 0) {
-                // Falls letzter Name nicht mehr auswählbar ist, diesen aus dem Konfigurationsfile löschen
-                memset(Config.szPlayername,0,sizeof(Config.szPlayername));
-                nErrorCode = WriteConfigFile();
-            }
-            while ((bMenuRun) && (nErrorCode == 0)) {
-                UpdateManKey(); // Ruft UpdateInputStates() auf
-                if (((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit)) && (nColorDimm == 100) && (MainMenu.nState == 0)) {
-                    bPrepareExit = true;
-                    bEndGame = true;        // Spiel beenden
-                } else if ( (MainMenu.nState == 0) && (Actualplayer.bValid) && (nColorDimm == 100) && (SelectedLevelgroup.bOK) && ((ManKey.bFire) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])) ) {
-                    bPrepareExit = true;    // Level starten
-                } else if ( ((InputStates.pKeyboardArray[SDL_SCANCODE_H]) || IsButtonPressed(BUTTONLABEL_HIGHSCORES)) && (nColorDimm == 100) && (MainMenu.nState == 0) ) {
-                    bPrepareExit = true;    // Highscores zeigen
-                    bShowHighscores = true;
-                } else if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_DELETE_PLAYER))) {
-                    if (Actualplayer.bValid) {
-                        SDL_Log("Deleting name :%s",Actualplayer.szPlayername);
-                        nErrorCode = DeleteName(Actualplayer.szPlayername);
-                        if (nErrorCode == 0) {
-                            memset(&Actualplayer,0,sizeof(Actualplayer));
-                            InitLists();
-                        }
+        if (CleanUpHighScoreDir() == 0) {
+            if (CleanNameHashes() == 0) {
+                InitLists();
+                // ShowAvailableLevelgroups();
+                if (SelectAlternativeLevelgroup(Config.uLevelgroupMd5Hash,true) == 0) {
+                    // ShowSelectedLevelgroup();
+                    if (SelectName(Config.szPlayername,SelectedLevelgroup.uMd5Hash) != 0) {
+                        // Falls letzter Name nicht mehr auswählbar ist, diesen aus dem Konfigurationsfile löschen
+                        memset(Config.szPlayername,0,sizeof(Config.szPlayername));
+                        nErrorCode = WriteConfigFile();
                     }
-                } else if ( (MainMenu.nState == 0) && (nColorDimm == 100) && (SelectedLevelgroup.bOK) && (IsButtonPressed(BUTTONLABEL_LEVELEDITOR) )) {
-                    bPrepareExit = true;    // Highscores zeigen
-                    bStartEditor =  true;
-                }
-                if (bPrepareExit) {
-                    if (nColorDimm > 0) {
-                        nColorDimm = nColorDimm - 4;
-                        SetAllTextureColors(nColorDimm);
-                        uModVolume = uModVolume - 4;
-                        SetModVolume(uModVolume);
-                    } else {
-                        if (bEndGame) {
-                            bMenuRun = false;
-                        } else if (bShowHighscores) {
-                            SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
-                            SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
-                            SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
-                            SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-                            nErrorCode = ShowHighScores(pRenderer,Actualplayer.uLevel,-1);
-                            SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
+                    while ((bMenuRun) && (nErrorCode == 0)) {
+                        if (Actualplayer.bValid) {
+                            DoScroller(pRenderer,&Scroller);
+                        }
+                        UpdateManKey(); // Ruft UpdateInputStates() auf
+                        if (((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit)) && (nColorDimm == 100) && (MainMenu.nState == 0)) {
+                            bPrepareExit = true;
+                            bEndGame = true;        // Spiel beenden
+                        } else if ( (MainMenu.nState == 0) && (Actualplayer.bValid) && (nColorDimm == 100) && (SelectedLevelgroup.bOK) && ((ManKey.bFire) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])) ) {
+                            bPrepareExit = true;    // Level starten
+                        } else if ( ((InputStates.pKeyboardArray[SDL_SCANCODE_H]) || IsButtonPressed(BUTTONLABEL_HIGHSCORES)) && (nColorDimm == 100) && (MainMenu.nState == 0) ) {
+                            bPrepareExit = true;    // Highscores zeigen
+                            bShowHighscores = true;
+                        } else if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_DELETE_PLAYER))) {
                             if (Actualplayer.bValid) {
-                                SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
-                            }
-                            SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
-                            SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
-                            SetStaticMenuElements();
-                            bPrepareExit = false;
-                            nColorDimm = 0;
-                            uModVolume = 0;
-                            SetAllTextureColors(nColorDimm);
-                            SetModVolume(uModVolume);
-                            if (SetModMusic(6) != 0) {
-                                return -1;
-                            }
-                            bShowHighscores = false;
-                            WaitNoKey();
-                        } else if (bStartEditor) {
-                            SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
-                            SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
-                            SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
-                            SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-
-                            memset(&Actualplayer,0,sizeof(Actualplayer));
-                            nErrorCode = PreEditorMenu(pRenderer);
-                            if (nErrorCode == 0) {
-                                // Eine ggf. geänderte Levelgruppe nun mit Highscorefile ausstatten
-                                nErrorCode = SelectAlternativeLevelgroup(Config.uLevelgroupMd5Hash,true);
-                            }
-                            SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
-                            if (Actualplayer.bValid) {
-                                SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
-                            }
-                            SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
-                            SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
-                            nColorDimm = 0;
-                            uModVolume = 0;
-                            SetStaticMenuElements();
-                            bPrepareExit = false;
-                            bStartEditor = false;
-                            if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
-                                return -1;
-                            }
-                            WaitNoKey();
-                        } else if (nErrorCode == 0) {
-                            // Ein erster Entwurf für Emerald Mine. Das Spielergebnis (Erfolg oder Versagen) kann in Playfield.x abgefragt werden.
-                            SDL_Log("Start Game with level %u",Actualplayer.uLevel);
-                            nErrorCode = RunGame(pRenderer,Actualplayer.uLevel);
-                            SDL_Log("%s: RunGame() ErrorCode: %u",__FUNCTION__,nErrorCode);
-                            if (nErrorCode == 0) {
-                                nErrorCode = EvaluateGame(&nNewHighscoreIndex,&uHighscoreLevel);
-                            }
-                            if ((nNewHighscoreIndex >= 0) && (nErrorCode == 0)) {
-                                SDL_Log("%s: New highscore at index: %u",__FUNCTION__,nNewHighscoreIndex);
-                                SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
-                                SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
-                                SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
-                                SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-                                nErrorCode = ShowHighScores(pRenderer,uHighscoreLevel,nNewHighscoreIndex);
-                                SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
-                                if (Actualplayer.bValid) {
-                                    SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
+                                SDL_Log("Deleting name :%s",Actualplayer.szPlayername);
+                                nErrorCode = DeleteName(Actualplayer.szPlayername);
+                                if (nErrorCode == 0) {
+                                    memset(&Actualplayer,0,sizeof(Actualplayer));
+                                    InitLists();
                                 }
-                                SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
-                                SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
                             }
-                            SetStaticMenuElements();
-                            bPrepareExit = false;
-                            nColorDimm = 0;
-                            uModVolume = 0;
+                        } else if ( (MainMenu.nState == 0) && (nColorDimm == 100) && (SelectedLevelgroup.bOK) && (IsButtonPressed(BUTTONLABEL_LEVELEDITOR) )) {
+                            bPrepareExit = true;    // Highscores zeigen
+                            bStartEditor =  true;
+                        } else if (nButton == EMERALD_STEEL_SETTINGS_PRESSED) {
+                            bPrepareExit = true;    // zu den Einstellungen
+                            bStartSettings =  true;
+                        }
+                        if (bPrepareExit) {
+                            if (nColorDimm > 0) {
+                                nColorDimm = nColorDimm - 4;
+                                SetAllTextureColors(nColorDimm);
+                                uModVolume = uModVolume - 4;
+                                SetModVolume(uModVolume);
+                            } else {
+                                if (bEndGame) {
+                                    bMenuRun = false;
+                                } else if (bShowHighscores) {
+                                    SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
+                                    SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
+                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
+                                    SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
+                                    nErrorCode = ShowHighScores(pRenderer,Actualplayer.uLevel,-1);
+                                    SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
+                                    if (Actualplayer.bValid) {
+                                        SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
+                                    }
+                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
+                                    SetStaticMenuElements();
+                                    bPrepareExit = false;
+                                    nColorDimm = 0;
+                                    uModVolume = 0;
+                                    SetAllTextureColors(nColorDimm);
+                                    SetModVolume(uModVolume);
+                                    if (SetModMusic(6) != 0) {
+                                        return -1;
+                                    }
+                                    bShowHighscores = false;
+                                    WaitNoKey();
+                                } else if (bStartEditor) {
+                                    SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
+                                    SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
+                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
+                                    SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
+                                    memset(&Actualplayer,0,sizeof(Actualplayer));
+                                    nErrorCode = PreEditorMenu(pRenderer);
+                                    if (nErrorCode == 0) {
+                                        // Eine ggf. geänderte Levelgruppe nun mit Highscorefile ausstatten
+                                        nErrorCode = SelectAlternativeLevelgroup(Config.uLevelgroupMd5Hash,true);
+                                    }
+                                    SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
+                                    if (Actualplayer.bValid) {
+                                        SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
+                                    }
+                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
+                                    nColorDimm = 0;
+                                    uModVolume = 0;
+                                    SetStaticMenuElements();
+                                    bPrepareExit = false;
+                                    bStartEditor = false;
+                                    if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
+                                        return -1;
+                                    }
+                                    WaitNoKey();
+                                } else if (bStartSettings) {
+                                    SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
+                                    SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
+                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
+                                    SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
+                                    nErrorCode = SettingsMenu(pRenderer);
+                                    SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
+                                    if (Actualplayer.bValid) {
+                                        SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
+                                    }
+                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
+                                    nColorDimm = 0;
+                                    uModVolume = 0;
+                                    SetStaticMenuElements();
+                                    bPrepareExit = false;
+                                    bStartSettings = false;
+                                    if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
+                                        return -1;
+                                    }
+                                    WaitNoKey();
+                                } else if (nErrorCode == 0) {
+                                    // Ein erster Entwurf für Emerald Mine. Das Spielergebnis (Erfolg oder Versagen) kann in Playfield.x abgefragt werden.
+                                    SDL_Log("Start Game with level %u",Actualplayer.uLevel);
+                                    nErrorCode = RunGame(pRenderer,Actualplayer.uLevel);
+                                    SDL_Log("%s: RunGame() ErrorCode: %u",__FUNCTION__,nErrorCode);
+                                    if (nErrorCode == 0) {
+                                        nErrorCode = EvaluateGame(&nNewHighscoreIndex,&uHighscoreLevel);
+                                    }
+                                    if ((nNewHighscoreIndex >= 0) && (nErrorCode == 0) && (Config.bShowHighscores)) {
+                                        SDL_Log("%s: New highscore at index: %u",__FUNCTION__,nNewHighscoreIndex);
+                                        SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
+                                        SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
+                                        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
+                                        SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
+                                        nErrorCode = ShowHighScores(pRenderer,uHighscoreLevel,nNewHighscoreIndex);
+                                        SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
+                                        if (Actualplayer.bValid) {
+                                            SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
+                                        }
+                                        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                        SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
+                                    }
+                                    SetStaticMenuElements();
+                                    bPrepareExit = false;
+                                    nColorDimm = 0;
+                                    uModVolume = 0;
+                                    SetAllTextureColors(nColorDimm);
+                                    SetModVolume(uModVolume);
+                                    if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
+                                        return -1;
+                                    }
+                                    WaitNoKey();
+                                }
+                            }
+                        }
+                        // printf("x:%u  y:%u\n",InputStates.nMouseXpos,InputStates.nMouseYpos);
+                        if (!bPrepareExit) {
+                            if (MainMenu.nState == 0) {     // Levelgruppen- und Spielerauswahl nur während Namenseingabe nicht aktiv
+                                nErrorCode = MenuSelectLevelgroup(pRenderer);
+                                if (nErrorCode == 0) {
+                                    nErrorCode = MenuSelectName(pRenderer);
+                                }
+                                nLastPlayerlistButton = nPlayerlistButton;
+                                nPlayerlistButton = GetPlayerListButton();
+                                if ((nLastPlayerlistButton == 0) && (nPlayerlistButton != 0)) {
+                                    ScrollPlayernames(nPlayerlistButton);
+                                }
+                                nLastLevelgrouplistButton = nLevelgrouplistButton;
+                                nLevelgrouplistButton = GetLevelgroupListButton();
+                                if ((nLastLevelgrouplistButton == 0) && (nLevelgrouplistButton != 0)) {
+                                    ScrollLevelGroups(nLevelgrouplistButton);
+                                }
+                            }
+                            SetMenuText(MainMenu.uMenuScreen,"                         ",13,4,EMERALD_FONT_GREEN);
+                            SetMenuText(MainMenu.uMenuScreen,SelectedLevelgroup.szLevelgroupname,13,4,EMERALD_FONT_GREEN);
+                            SetDynamicMenuElements();
+                        }
+                        nLastButton = nButton;
+                        nButton = GetMainMenuButton();
+                        if ((nLastButton == 0) && (Actualplayer.bValid)) {
+                            if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {
+                                if (Actualplayer.uLevel > 0) {
+                                    Actualplayer.uLevel--;
+                                }
+                            } else if (nButton == EMERALD_STEEL_ARROW_UP_PRESSED) {
+                                if (Actualplayer.uLevel < Actualplayer.uHandicap) {
+                                    Actualplayer.uLevel++;
+                                }
+                            }
+                            if (nButton != 0) {
+                                SetMenuText(MainMenu.uMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
+                                sprintf(szText,"%u       ",Actualplayer.uLevel);
+                            }
+                        }
+                        nLastButton = nButton;
+                        if (nButton != 0) SDL_Log("Button:%d",nButton);
+
+                        if ((!bPrepareExit) && (nColorDimm < 100)) {
+                            nColorDimm = nColorDimm + 4;
                             SetAllTextureColors(nColorDimm);
+                            uModVolume = uModVolume + 4;
                             SetModVolume(uModVolume);
-                            if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
-                                return -1;
-                            }
-                            WaitNoKey();
                         }
-                    }
-                }
-                // printf("x:%u  y:%u\n",InputStates.nMouseXpos,InputStates.nMouseYpos);
-                if (!bPrepareExit) {
-                    if (MainMenu.nState == 0) {     // Levelgruppen- und Spielerauswahl nur während Namenseingabe nicht aktiv
-                        nErrorCode = MenuSelectLevelgroup(pRenderer);
+                        PlayMusic(false);
                         if (nErrorCode == 0) {
-                            nErrorCode = MenuSelectName(pRenderer);
+                            nErrorCode = RenderMenuElements(pRenderer);
+                            if ((nErrorCode == 0) && (MainMenu.nState == 0)) {
+                                nErrorCode = RenderSettingsbutton(pRenderer);
+                            }
                         }
-                        nLastPlayerlistButton = nPlayerlistButton;
-                        nPlayerlistButton = GetPlayerListButton();
-                        if ((nLastPlayerlistButton == 0) && (nPlayerlistButton != 0)) {
-                            ScrollPlayernames(nPlayerlistButton);
+                        ShowButtons(pRenderer);
+                        if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_CREATE_PLAYER))) {
+                            ActivateInputPlayernameMode();  // Eingabemodus für Namenseingabe aktivieren
                         }
-
-                        nLastLevelgrouplistButton = nLevelgrouplistButton;
-                        nLevelgrouplistButton = GetLevelgroupListButton();
-                        if ((nLastLevelgrouplistButton == 0) && (nLevelgrouplistButton != 0)) {
-                            ScrollLevelGroups(nLevelgrouplistButton);
-                        }
+                        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+                        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+                        Playfield.uFrameCounter++;
                     }
-                    SetMenuText(MainMenu.uMenuScreen,"                         ",13,4,EMERALD_FONT_GREEN);
-                    SetMenuText(MainMenu.uMenuScreen,SelectedLevelgroup.szLevelgroupname,13,4,EMERALD_FONT_GREEN);
-                    SetDynamicMenuElements();
+                } else {
+                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Levelgroup problem","Can not select levelgroup!",NULL);
+                    nErrorCode = -1;
                 }
-                nLastLevelButton = nLevelButton;
-                nLevelButton = GetLevelButton();
-                if ((nLastLevelButton == 0) && (Actualplayer.bValid)) {
-                    if (nLevelButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {
-                        if (Actualplayer.uLevel > 0) {
-                            Actualplayer.uLevel--;
-                        }
-                    } else if (nLevelButton == EMERALD_STEEL_ARROW_UP_PRESSED) {
-                        if (Actualplayer.uLevel < Actualplayer.uHandicap) {
-                            Actualplayer.uLevel++;
-                        }
-                    }
-                    if (nLevelButton != 0) {
-                        SetMenuText(MainMenu.uMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
-                        sprintf(szText,"%u       ",Actualplayer.uLevel);
-                    }
-                }
-                nLastLevelButton = nLevelButton;
-                if (nLevelButton != 0) SDL_Log("LevelButton:%d",nLevelButton);
-
-                if ((!bPrepareExit) && (nColorDimm < 100)) {
-                    nColorDimm = nColorDimm + 4;
-                    SetAllTextureColors(nColorDimm);
-                    uModVolume = uModVolume + 4;
-                    SetModVolume(uModVolume);
-                }
-                PlayMusic();
-                if (nErrorCode == 0) {
-                    nErrorCode = RenderMenuElements(pRenderer);
-                }
-                ShowButtons(pRenderer);
-                if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_CREATE_PLAYER))) {
-                    ActivateInputPlayernameMode();  // Eingabemodus für Namenseingabe aktivieren
-                }
-                SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-                SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
-                Playfield.uFrameCounter++;
             }
-        } else {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Levelgroup problem","Can not select levelgroup!",NULL);
-            nErrorCode = -1;
         }
     }
     SetAllTextureColors(100);
@@ -1530,6 +1596,981 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     FreeButton(BUTTONLABEL_DELETE_PLAYER);
     FreeButton(BUTTONLABEL_LEVELEDITOR);
     FreeButton(BUTTONLABEL_HIGHSCORES);
+    return nErrorCode;
+}
+
+/* Star
+
+#define MAX_POINTS  10
+
+    float fColorDimmP;
+    Sint16 CenterX;
+    Sint16 CenterY;
+    Sint16 NewCenterX;
+    Sint16 NewCenterY;
+    Sint16 StarX[MAX_POINTS];
+    Sint16 StarY[MAX_POINTS];
+    Sint16 NewStarX[MAX_POINTS];
+    Sint16 NewStarY[MAX_POINTS];
+    float fAngle;
+    uint32_t uRainBowColor;
+    uint8_t uRed,uGreen,uBlue;
+    float fF;
+    bool bUp = true;
+    uint8_t uRain;
+
+    // Idee: https://www.youtube.com/watch?v=Tm7SOZzGUIM
+    // Damit sich das Objekt um seinen eigenen Mittelpunkt dreht, muss sich der Mittelpunkt des Objekts im
+    // Koordinatensystem an 0/0 befinden.
+    StarX[0] = 0;    // Obere Spitze des Sterns
+    StarY[0] = -254;
+    StarX[1] = 58;
+    StarY[1] = -86;
+    StarX[2] = 240;
+    StarY[2] = -68;
+    StarX[3] = 93;
+    StarY[3] = 24;
+    StarX[4] = 148;
+    StarY[4] = 196;
+    StarX[5] = 0;
+    StarY[5] = 91;
+    StarX[6] = -148;
+    StarY[6] = 196;
+    StarX[7] = -93;
+    StarY[7] = 24;
+    StarX[8] = -240;
+    StarY[8] = -86;
+    StarX[9] = -57;
+    StarY[9] = -86;
+    CenterX = Config.uResX / 2;
+    CenterY = Config.uResY / 2;
+    SetModVolume(uModVolume);
+
+    uRain = 0;
+    fAngle = 0;
+    fF = 0.5;
+
+        fColorDimmP = (float)nColorDimm / 100;
+
+        NewCenterX = 400 * cos(fAngle);
+        NewCenterY = 150 * sin(fAngle);
+        // SDL_RenderDrawPoint(pRenderer,NewCenterX + CenterX,NewCenterY + CenterY);
+        // Neue Punkte mit Matrix-Multiplikation berechnen
+        for (I = 0; I < MAX_POINTS; I++) {
+            NewStarX[I] = (StarX[I] * cos(-fAngle * 2 * fF) - StarY[I] * sin(fAngle * 4)) + CenterX + NewCenterX ;
+            NewStarY[I] = (StarX[I] * sin(fAngle * 4) + StarY[I] * cos(-fAngle * 2 * fF)) + CenterY  + NewCenterY;
+            //SDL_RenderDrawPoint(pRenderer,NewStarX[I],NewStarY[I]);
+        }
+        if (bUp) {
+            fF = fF + 0.001;
+            if (fF > 1) {
+                bUp = false;
+            }
+        } else {
+            fF = fF - 0.001;
+            if (fF < 0.5) {
+                bUp = true;
+            }
+        }
+        fAngle = fAngle + 0.01;
+        if (fAngle > 10 * 3.14159) fAngle = 0;
+
+
+        if (bUp) {
+            uRed = 0xFF;
+            uGreen = 0xFF;
+            uBlue = 0xFF;
+        } else {
+            uRainBowColor = GetRainbowColors(uRain);
+            uBlue = uRainBowColor;
+            uGreen = uRainBowColor >> 8;
+            uRed = uRainBowColor >> 16;
+            uRain++;
+            if (uRain == 255) uRain = 0;
+        }
+
+        SDL_SetRenderDrawColor(pRenderer,(float)uRed * fColorDimmP,(float)uGreen * fColorDimmP,(float)uBlue * fColorDimmP,SDL_ALPHA_OPAQUE);
+        // Linien
+        for (I = 0; I < MAX_POINTS; I++) {
+            if (I < (MAX_POINTS - 1)) {
+                SDL_RenderDrawLine(pRenderer,NewStarX[I],NewStarY[I],NewStarX[I + 1],NewStarY[I + 1]);
+            } else {
+                SDL_RenderDrawLine(pRenderer,NewStarX[I],NewStarY[I],NewStarX[0],NewStarY[0]);
+            }
+        }
+        //filledPolygonRGBA(pRenderer,NewStarX,NewStarY,MAX_POINTS,0xFF,0xFF,0x00,0xFF);
+        SDL_SetRenderDrawColor(pRenderer,0,0,0x40,SDL_ALPHA_OPAQUE);
+        if (bUp) SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+
+*/
+
+
+/*----------------------------------------------------------------------------
+Name:           RotateColors
+------------------------------------------------------------------------------
+Beschreibung: Rotiert eine Farbenpalette nach oben, d.h. zu "kleineren" Speicheradressen.
+Parameter
+      Eingang: pColors, RGBCOLOR *, Farbpalette
+               nCount, int, Anzahl Farben in der Palette
+               nCycles, int, Anzahl Rotierungen
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+void RotateColors(RGBCOLOR *pColors,int nCount,int nCycles) {
+    RGBCOLOR TmpColor;
+    uint32_t I,C;
+
+    if (pColors != NULL) {
+        for (C = 0; C < nCycles; C++) {
+            // Farbe scrollen
+            TmpColor = pColors[0];
+            for (I = 0; I < (nCount - 1); I++) {
+                pColors[I] = pColors[I + 1];
+            }
+            pColors[I] = TmpColor;
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowControllersAndJoysticks
+------------------------------------------------------------------------------
+Beschreibung: Zeigt die Gamecontroller, Joysticks und das Keyboard im
+              Settingsmenü an.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Ausgang: -
+
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: MainMenu.x
+------------------------------------------------------------------------------*/
+int ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
+    uint32_t I;
+    SDL_Rect DestR;
+    int nErrorCode = 0;
+
+    for (I = 0; (I < MAX_GAMECONTROLLERS) && (nErrorCode == 0); I++) {
+        DestR.x = MainMenu.uXoffs + 80;
+        DestR.y = MainMenu.uYoffs + 112 + I * 160;
+        DestR.w = 117;
+        DestR.h = 95;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(746),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+    }
+    for (I = 0; (I < MAX_JOYSTICKS) && (nErrorCode == 0); I++) {
+        DestR.x = MainMenu.uXoffs + 342;
+        DestR.y = MainMenu.uYoffs + 90 + I * 160;
+        DestR.w = 123;
+        DestR.h = 129;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(748),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+    }
+    DestR.x = MainMenu.uXoffs + 70;
+    DestR.y = MainMenu.uYoffs + 570;
+    DestR.w = 405;
+    DestR.h = 146;
+    // Keyboard
+    if (nErrorCode == 0) {
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(749),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowRec
+------------------------------------------------------------------------------
+Beschreibung: Zeigt einen farbigen Rahmen für die Gamecontroller, Joysticks
+              und das Keyboard im Settingsmenü an.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+               pColors, RGBCOLOR *, Zeiger auf Farbpalette für Farb-Rahmen (mind. 700 Elemente)
+               nXpos, int, X-Position für Rahmen, relative Position im Menü
+               nYpos, int, Y-Position für Rahmen, relative Position im Menü
+               nWidth, int, Breite des Rahmen in Pixeln
+               nHeight, int, Höhe des Rahmen in Pixeln
+               nDimm, int, Dimmwert in Prozent (100 = volle Helligkeit
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: MainMenu.x
+------------------------------------------------------------------------------*/
+int ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int nXpos, int nYpos, int nWidth, int nHeight, int nDimm) {
+    int nP;
+    int nX,nY;
+    int nErrorCode = 0;
+
+    nP = 0;
+    // Obere Line
+    for (nX = 0; (nX < nWidth) && (nErrorCode == 0); nX++) {
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos + 1);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos + 2);
+        nP++;
+    }
+    // Rechte senkrechte Linie
+    for (nY = 0; (nY < nHeight - 2) && (nErrorCode == 0); nY++) {
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos + nY);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX - 1, nYpos + nY);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX - 2, nYpos + nY);
+        nP++;
+    }
+    // Untere Linie
+    for (nX = nX; (nX > 0) && (nErrorCode == 0); nX--) {
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos + nY);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos + nY - 1);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos + nY + 1);
+        nP++;
+    }
+    // Linke senkrechte Linie
+    for (nY = nY; (nY > 0) && (nErrorCode == 0); nY--) {
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX, nYpos + nY);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + 1, nYpos + nY);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + 2, nYpos + nY);
+        nP++;
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           PrepareSettingsMenu
+------------------------------------------------------------------------------
+Beschreibung: Baut einen Teil des Settingsmenüs, wie Beschriftung und Mauern / Abtrennungen.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: MainMenu.x
+------------------------------------------------------------------------------*/
+void PrepareSettingsMenu(void) {
+    uint32_t I;
+
+    SetMenuText(MainMenu.uMenuScreen,"INPUT DEVICES",2,1,EMERALD_FONT_BLUE);
+    for (I = 0; I < EMERALD_HIGHSCORE_LISTLEN + 2; I++) {
+        MainMenu.uMenuScreen[(I + 1) * MainMenu.uXdim + 16] = EMERALD_STEEL;    // Senkrechte zwischen Joysticks und anderen Settings
+        MainMenu.uMenuScreen[(I + 1) * MainMenu.uXdim + 28] = EMERALD_STEEL;    // Senkrechte zwischen Inputs-Settings und Video-Settings
+    }
+    for (I = 0; I < 15; I++) {
+        MainMenu.uMenuScreen[2 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+        MainMenu.uMenuScreen[7 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+        MainMenu.uMenuScreen[12 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+        MainMenu.uMenuScreen[17 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+    }
+    for (I = 0; I < 15; I++) {
+        MainMenu.uMenuScreen[(I + 3) * MainMenu.uXdim + 8] = EMERALD_STEEL;     // Senkrechte Abtrennung zwischen Controller & Joysticks
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SettingsMenu
+------------------------------------------------------------------------------
+Beschreibung: Baut das Setup-Menü auf. Hier kann das Eingabegerät, Fenstergröße,
+              usw. konfiguriert werden
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x, Config.x,
+               GameController.x, Joystick.x
+------------------------------------------------------------------------------*/
+int SettingsMenu(SDL_Renderer *pRenderer) {
+    SDL_Rect RecAxisButton;
+    int nErrorCode = 0;
+    int nButton = 0;
+    int nLastButton = 0;
+    int nAxisButton = 0;
+    int nLastAxisButton = 0;
+    int nColorDimm = 0;
+    int nXpos;
+    int nYpos;
+    int nRec1PixelCount;
+    int nRec2PixelCount;
+    uint32_t uModVolume = 0;
+    uint32_t I;
+    uint32_t uRainbowColor;
+    uint32_t uLastDetectionTime;    // letzter Zeitpunkt der Joystick-/Gamecontroller-Erkennung
+    bool bExit = false;
+    bool bPrepareExit = false;
+    bool bShowRec1;                 // Rahmen 1 (Gamecontroller/Joystick) anzeigen, sonst Rahmen 2 (Keyboard)
+    bool bActive;
+    char szText[256];
+    // Farbpunkte für Rahmen 1
+    RGBCOLOR RgbColorsRec1[2 * COLOR_REC_1_W + 2 * (COLOR_REC_1_H - 2)];    // 700
+    // Farbpunkte für Rahmen 2
+    RGBCOLOR RgbColorsRec2[2 * COLOR_REC_2_W + 2 * (COLOR_REC_2_H - 2)];
+    CHECKBOX Checkbox_StartDynamiteKeyboard;
+    CHECKBOX Checkbox_GC_Dir_Digitalpad;
+    CHECKBOX Checkbox_GC_Dir_LeftAxis;
+    CHECKBOX Checkbox_GC_Dir_RightAxis;
+    CHECKBOX Checkbox_GC_Btn_Fire_A;
+    CHECKBOX Checkbox_GC_Btn_Fire_B;
+    CHECKBOX Checkbox_GC_Btn_Fire_X;
+    CHECKBOX Checkbox_GC_Btn_Fire_Y;
+    CHECKBOX Checkbox_GC_Btn_Dynamite_A;
+    CHECKBOX Checkbox_GC_Btn_Dynamite_B;
+    CHECKBOX Checkbox_GC_Btn_Dynamite_X;
+    CHECKBOX Checkbox_GC_Btn_Dynamite_Y;
+    CHECKBOX Checkbox_GC_Btn_Exit_A;
+    CHECKBOX Checkbox_GC_Btn_Exit_B;
+    CHECKBOX Checkbox_GC_Btn_Exit_X;
+    CHECKBOX Checkbox_GC_Btn_Exit_Y;
+
+    CHECKBOX Checkbox_Gamemusic;
+    CHECKBOX Checkbox_ShowHighScores;
+
+    if (RegisterCheckbox(&Checkbox_StartDynamiteKeyboard,Config.bStartDynamiteWithSpace,"START DYNAMITE WITH SPACE",600 + MainMenu.uXoffs,70 + MainMenu.uYoffs,false) != 0) {
+        return -1;
+    }
+    bActive = (Config.uControllerDirections == 0);
+    if (RegisterCheckbox(&Checkbox_GC_Dir_Digitalpad,bActive,"DIGITALPAD",600 + MainMenu.uXoffs,140 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.uControllerDirections == 1);
+    if (RegisterCheckbox(&Checkbox_GC_Dir_LeftAxis,bActive,"LEFT AXIS",600 + MainMenu.uXoffs,162 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.uControllerDirections == 2);
+    if (RegisterCheckbox(&Checkbox_GC_Dir_RightAxis,bActive,"RIGHT AXIS",600 + MainMenu.uXoffs,184 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerFireButton == 'A');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Fire_A,bActive,"A",600 + MainMenu.uXoffs,250 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerFireButton == 'B');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Fire_B,bActive,"B",600 + MainMenu.uXoffs,272 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerFireButton == 'X');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Fire_X,bActive,"X",600 + MainMenu.uXoffs,294 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerFireButton == 'Y');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Fire_Y,bActive,"Y",600 + MainMenu.uXoffs,316 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerStartDynamiteButton == 'A');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Dynamite_A,bActive,"A",600 + MainMenu.uXoffs,380 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerStartDynamiteButton == 'B');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Dynamite_B,bActive,"B",600 + MainMenu.uXoffs,402 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerStartDynamiteButton == 'X');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Dynamite_X,bActive,"X",600 + MainMenu.uXoffs,424 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerStartDynamiteButton == 'Y');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Dynamite_Y,bActive,"Y",600 + MainMenu.uXoffs,446 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerExitButton == 'A');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Exit_A,bActive,"A",600 + MainMenu.uXoffs,510 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerExitButton == 'B');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Exit_B,bActive,"B",600 + MainMenu.uXoffs,532 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerExitButton == 'X');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Exit_X,bActive,"X",600 + MainMenu.uXoffs,554 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    bActive = (Config.cControllerExitButton == 'Y');
+    if (RegisterCheckbox(&Checkbox_GC_Btn_Exit_Y,bActive,"Y",600 + MainMenu.uXoffs,576 + MainMenu.uYoffs,true) != 0) {
+        return -1;
+    }
+    if (RegisterCheckbox(&Checkbox_Gamemusic,Config.bGameMusic,"GAME MUSIC",980 + MainMenu.uXoffs,70 + MainMenu.uYoffs,false) != 0) {
+        return -1;
+    }
+    if (RegisterCheckbox(&Checkbox_ShowHighScores,Config.bShowHighscores,"SHOW HIGHSCORES",980 + MainMenu.uXoffs,92 + MainMenu.uYoffs,false) != 0) {
+        return -1;
+    }
+    nRec1PixelCount = 2 * COLOR_REC_1_W + 2 * (COLOR_REC_1_H - 2);
+    // Rahmen von Rechteck 1 mit Farben füllen
+    for (I = 0; I < nRec1PixelCount; I++) {
+        uRainbowColor = GetRainbowColors(I % 254);
+        RgbColorsRec1[I].uBlue = uRainbowColor;
+        RgbColorsRec1[I].uGreen = uRainbowColor >> 8;
+        RgbColorsRec1[I].uRed = uRainbowColor >> 16;
+        RgbColorsRec1[I].uAlpha = 0xFF;
+    }
+    nRec2PixelCount = 2 * COLOR_REC_2_W + 2 * (COLOR_REC_2_H - 2);
+    for (I = 0; I < nRec2PixelCount; I++) {
+        uRainbowColor = GetRainbowColors(I % 254);
+        RgbColorsRec2[I].uBlue = uRainbowColor;
+        RgbColorsRec2[I].uGreen = uRainbowColor >> 8;
+        RgbColorsRec2[I].uRed = uRainbowColor >> 16;
+        RgbColorsRec2[I].uAlpha = 0xFF;
+    }
+    uLastDetectionTime = SDL_GetTicks();
+    // Der Highscore-Button wird hier auch verwendet -> kein Problem, da lokal
+    if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",MainMenu.uXoffs + 1100,MainMenu.uYoffs + 742,true,false) != 0) {
+        return -1;
+    }
+    if (SetModMusic(11) != 0) {
+        return -1;
+    }
+    WaitNoKey();
+    SetMenuBorderAndClear();
+    PrepareSettingsMenu();
+
+    do {
+        UpdateInputStates();
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 50 + MainMenu.uYoffs,0,"KEYBOARD");
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 120 + MainMenu.uYoffs,0,"GAMECONTROLLER DIRECTION");
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 230 + MainMenu.uYoffs,0,"GAMECONTROLLER FIRE BUTTON");
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 360 + MainMenu.uYoffs,0,"GAMECONTROLLER DYNAMITE BUTTON");
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 490 + MainMenu.uYoffs,0,"GAMECONTROLLER EXIT BUTTON");
+        sprintf(szText,"AXIS LEFT: -%05d",abs(Config.nAxisLeftThreshold));
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 620 + MainMenu.uYoffs,0,szText);
+        sprintf(szText,"AXIS RIGHT: %05d",Config.nAxisRightThreshold);
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 647 + MainMenu.uYoffs,0,szText);
+        sprintf(szText,"AXIS UP:   -%05d",abs(Config.nAxisUpThreshold));
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 674 + MainMenu.uYoffs,0,szText);
+        sprintf(szText,"AXIS DOWN:  %05d",Config.nAxisDownThreshold);
+        PrintLittleFont(pRenderer,570 + MainMenu.uXoffs, 701 + MainMenu.uYoffs,0,szText);
+
+        PrintLittleFont(pRenderer,950 + MainMenu.uXoffs, 50 + MainMenu.uYoffs,0,"OTHER SETTINGS");
+
+
+
+
+        // Minus-Buttons für AXIS
+        RecAxisButton.x = MainMenu.uXoffs + 760;
+        RecAxisButton.y = MainMenu.uYoffs + 616;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+        RecAxisButton.x = MainMenu.uXoffs + 760;
+        RecAxisButton.y = MainMenu.uYoffs + 643;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+        RecAxisButton.x = MainMenu.uXoffs + 760;
+        RecAxisButton.y = MainMenu.uYoffs + 670;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+        RecAxisButton.x = MainMenu.uXoffs + 760;
+        RecAxisButton.y = MainMenu.uYoffs + 697;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+        // Plus-Buttons für AXIS
+        RecAxisButton.x = MainMenu.uXoffs + 810;
+        RecAxisButton.y = MainMenu.uYoffs + 616;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+        RecAxisButton.x = MainMenu.uXoffs + 810;
+        RecAxisButton.y = MainMenu.uYoffs + 643;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+        RecAxisButton.x = MainMenu.uXoffs + 810;
+        RecAxisButton.y = MainMenu.uYoffs + 670;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+        RecAxisButton.x = MainMenu.uXoffs + 810;
+        RecAxisButton.y = MainMenu.uYoffs + 697;
+        RecAxisButton.w = 22;
+        RecAxisButton.h = 22;
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+
+        nLastAxisButton = nAxisButton;
+        nAxisButton = GetSettingsMenuAxisButton();
+
+        if ((nAxisButton == 0) && (nLastAxisButton != 0)) {
+            SDL_Log("AXIS-Button: %d",nLastAxisButton);
+            nErrorCode = WriteConfigFile();
+        }
+        switch (nAxisButton) {
+            case (1):       // AXIS LEFT MINUS
+                if (Config.nAxisLeftThreshold > (-32768 + 100)) {
+                    Config.nAxisLeftThreshold = Config.nAxisLeftThreshold - 100;
+                }
+                break;
+            case (2):       // AXIS LEFT PLUS
+                if (Config.nAxisLeftThreshold < - 100) {
+                    Config.nAxisLeftThreshold = Config.nAxisLeftThreshold + 100;
+                }
+                break;
+            case (3):       // AXIS RIGHT MINUS
+                if (Config.nAxisRightThreshold > 100) {
+                    Config.nAxisRightThreshold = Config.nAxisRightThreshold - 100;
+                }
+                break;
+            case (4):       // AXIS RIGHT PLUS
+                if (Config.nAxisRightThreshold < 32767 - 100) {
+                    Config.nAxisRightThreshold = Config.nAxisRightThreshold + 100;
+                }
+                break;
+            case (5):       // AXIS UP MINUS
+                if (Config.nAxisUpThreshold > (-32768 + 100)) {
+                    Config.nAxisUpThreshold = Config.nAxisUpThreshold - 100;
+                }
+                break;
+            case (6):       // AXIS UP PLUS
+                if (Config.nAxisUpThreshold < - 100) {
+                    Config.nAxisUpThreshold = Config.nAxisUpThreshold + 100;
+                }
+                break;
+            case (7):       // AXIS DOWN MINUS
+                if (Config.nAxisDownThreshold > 100) {
+                    Config.nAxisDownThreshold = Config.nAxisDownThreshold - 100;
+                }
+                break;
+            case (8):       // AXIS DOWN PLUS
+                if (Config.nAxisDownThreshold < 32767 - 100) {
+                    Config.nAxisDownThreshold = Config.nAxisDownThreshold + 100;
+                }
+                break;
+        }
+        if (Checkbox_StartDynamiteKeyboard.bChanged) {
+            if (Checkbox_StartDynamiteKeyboard.bActive) {
+                Config.bStartDynamiteWithSpace = true;
+            } else {
+                Config.bStartDynamiteWithSpace = false;
+            }
+            Checkbox_StartDynamiteKeyboard.bChanged = false; // bestätigen
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_Gamemusic.bChanged) {
+            if (Checkbox_Gamemusic.bActive) {
+                Config.bGameMusic = true;
+            } else {
+                Config.bGameMusic = false;
+            }
+            Checkbox_Gamemusic.bChanged = false; // bestätigen
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_ShowHighScores.bChanged) {
+            if (Checkbox_ShowHighScores.bActive) {
+                Config.bShowHighscores = true;
+            } else {
+                Config.bShowHighscores = false;
+            }
+            Checkbox_ShowHighScores.bChanged = false; // bestätigen
+            nErrorCode = WriteConfigFile();
+        }
+
+
+        ////////////////// RADIO DIRECTION /////////////////////////////
+        if (Checkbox_GC_Dir_Digitalpad.bChanged) {
+            Checkbox_GC_Dir_Digitalpad.bChanged = false;
+            Checkbox_GC_Dir_Digitalpad.bActive = true;
+            Checkbox_GC_Dir_LeftAxis.bActive = false;
+            Checkbox_GC_Dir_RightAxis.bActive = false;
+            Config.uControllerDirections = 0;
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Dir_LeftAxis.bChanged) {
+            Checkbox_GC_Dir_LeftAxis.bChanged = false;
+            Checkbox_GC_Dir_Digitalpad.bActive = false;
+            Checkbox_GC_Dir_LeftAxis.bActive = true;
+            Checkbox_GC_Dir_RightAxis.bActive = false;
+            Config.uControllerDirections = 1;
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Dir_RightAxis.bChanged) {
+            Checkbox_GC_Dir_RightAxis.bChanged = false;
+            Checkbox_GC_Dir_Digitalpad.bActive = false;
+            Checkbox_GC_Dir_LeftAxis.bActive = false;
+            Checkbox_GC_Dir_RightAxis.bActive = true;
+            Config.uControllerDirections = 2;
+            nErrorCode = WriteConfigFile();
+        }
+        /////////////// RADIO FIRE BUTTON //////////////////////////////
+        if (Checkbox_GC_Btn_Fire_A.bChanged) {
+            Checkbox_GC_Btn_Fire_A.bChanged = false;
+            Checkbox_GC_Btn_Fire_A.bActive = true;
+            Checkbox_GC_Btn_Fire_B.bActive = false;
+            Checkbox_GC_Btn_Fire_X.bActive = false;
+            Checkbox_GC_Btn_Fire_Y.bActive = false;
+            Config.cControllerFireButton = 'A';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Fire_B.bChanged) {
+            Checkbox_GC_Btn_Fire_B.bChanged = false;
+            Checkbox_GC_Btn_Fire_B.bActive = true;
+            Checkbox_GC_Btn_Fire_A.bActive = false;
+            Checkbox_GC_Btn_Fire_X.bActive = false;
+            Checkbox_GC_Btn_Fire_Y.bActive = false;
+            Config.cControllerFireButton = 'B';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Fire_X.bChanged) {
+            Checkbox_GC_Btn_Fire_X.bChanged = false;
+            Checkbox_GC_Btn_Fire_X.bActive = true;
+            Checkbox_GC_Btn_Fire_A.bActive = false;
+            Checkbox_GC_Btn_Fire_B.bActive = false;
+            Checkbox_GC_Btn_Fire_Y.bActive = false;
+            Config.cControllerFireButton = 'X';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Fire_Y.bChanged) {
+            Checkbox_GC_Btn_Fire_Y.bChanged = false;
+            Checkbox_GC_Btn_Fire_Y.bActive = true;
+            Checkbox_GC_Btn_Fire_A.bActive = false;
+            Checkbox_GC_Btn_Fire_B.bActive = false;
+            Checkbox_GC_Btn_Fire_X.bActive = false;
+            Config.cControllerFireButton = 'Y';
+            nErrorCode = WriteConfigFile();
+        }
+        /////////////// RADIO START DYNAMITE BUTTON ////////////////////
+        if (Checkbox_GC_Btn_Dynamite_A.bChanged) {
+            Checkbox_GC_Btn_Dynamite_A.bChanged = false;
+            Checkbox_GC_Btn_Dynamite_A.bActive = true;
+            Checkbox_GC_Btn_Dynamite_B.bActive = false;
+            Checkbox_GC_Btn_Dynamite_X.bActive = false;
+            Checkbox_GC_Btn_Dynamite_Y.bActive = false;
+            Config.cControllerStartDynamiteButton = 'A';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Dynamite_B.bChanged) {
+            Checkbox_GC_Btn_Dynamite_B.bChanged = false;
+            Checkbox_GC_Btn_Dynamite_B.bActive = true;
+            Checkbox_GC_Btn_Dynamite_A.bActive = false;
+            Checkbox_GC_Btn_Dynamite_X.bActive = false;
+            Checkbox_GC_Btn_Dynamite_Y.bActive = false;
+            Config.cControllerStartDynamiteButton = 'B';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Dynamite_X.bChanged) {
+            Checkbox_GC_Btn_Dynamite_X.bChanged = false;
+            Checkbox_GC_Btn_Dynamite_X.bActive = true;
+            Checkbox_GC_Btn_Dynamite_A.bActive = false;
+            Checkbox_GC_Btn_Dynamite_B.bActive = false;
+            Checkbox_GC_Btn_Dynamite_Y.bActive = false;
+            Config.cControllerStartDynamiteButton = 'X';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Dynamite_Y.bChanged) {
+            Checkbox_GC_Btn_Dynamite_Y.bChanged = false;
+            Checkbox_GC_Btn_Dynamite_Y.bActive = true;
+            Checkbox_GC_Btn_Dynamite_A.bActive = false;
+            Checkbox_GC_Btn_Dynamite_B.bActive = false;
+            Checkbox_GC_Btn_Dynamite_X.bActive = false;
+            Config.cControllerStartDynamiteButton = 'Y';
+            nErrorCode = WriteConfigFile();
+        }
+        /////////////// RADIO EXIT BUTTON //////////////////////////////
+        if (Checkbox_GC_Btn_Exit_A.bChanged) {
+            Checkbox_GC_Btn_Exit_A.bChanged = false;
+            Checkbox_GC_Btn_Exit_A.bActive = true;
+            Checkbox_GC_Btn_Exit_B.bActive = false;
+            Checkbox_GC_Btn_Exit_X.bActive = false;
+            Checkbox_GC_Btn_Exit_Y.bActive = false;
+            Config.cControllerExitButton = 'A';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Exit_B.bChanged) {
+            Checkbox_GC_Btn_Exit_B.bChanged = false;
+            Checkbox_GC_Btn_Exit_B.bActive = true;
+            Checkbox_GC_Btn_Exit_A.bActive = false;
+            Checkbox_GC_Btn_Exit_X.bActive = false;
+            Checkbox_GC_Btn_Exit_Y.bActive = false;
+            Config.cControllerExitButton = 'B';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Exit_X.bChanged) {
+            Checkbox_GC_Btn_Exit_X.bChanged = false;
+            Checkbox_GC_Btn_Exit_X.bActive = true;
+            Checkbox_GC_Btn_Exit_A.bActive = false;
+            Checkbox_GC_Btn_Exit_B.bActive = false;
+            Checkbox_GC_Btn_Exit_Y.bActive = false;
+            Config.cControllerExitButton = 'X';
+            nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_GC_Btn_Exit_Y.bChanged) {
+            Checkbox_GC_Btn_Exit_Y.bChanged = false;
+            Checkbox_GC_Btn_Exit_Y.bActive = true;
+            Checkbox_GC_Btn_Exit_A.bActive = false;
+            Checkbox_GC_Btn_Exit_B.bActive = false;
+            Checkbox_GC_Btn_Exit_X.bActive = false;
+            Config.cControllerExitButton = 'Y';
+            nErrorCode = WriteConfigFile();
+        }
+
+
+
+
+        if (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit)) {
+            bPrepareExit = true;
+        }
+        //printf("x:%u  y:%u\n",InputStates.nMouseXpos,InputStates.nMouseYpos);
+        if ((!bPrepareExit) && (nColorDimm < 100)) {
+            nColorDimm = nColorDimm + 4;
+            SetAllTextureColors(nColorDimm);
+            uModVolume = uModVolume + 4;
+            SetModVolume(uModVolume);
+        } else if (bPrepareExit) {
+            if (nColorDimm > 0) {
+                nColorDimm = nColorDimm - 4;
+                SetAllTextureColors(nColorDimm);
+                uModVolume = uModVolume -4;
+                SetModVolume(uModVolume);
+            } else {
+                bExit = true;
+            }
+        }
+        if (Config.uInputdevice == 1) { // Joystick?
+            nXpos = 288;
+            if (Config.uDeviceIndex > (MAX_JOYSTICKS - 1)) {    // Bei falschem Wert auf Joystick 0 stellen
+                Config.uDeviceIndex = 0;
+            }
+            nYpos = 96 + Config.uDeviceIndex * 160;
+            bShowRec1 = true;
+        } else if (Config.uInputdevice == 2) {  // Gamecontroller?
+            nXpos = 32;
+            if (Config.uDeviceIndex > (MAX_GAMECONTROLLERS - 1)) {    // Bei falschem Wert auf Gamecontroller 0 stellen
+                Config.uDeviceIndex = 0;
+            }
+            nYpos = 96 + Config.uDeviceIndex * 160;
+            bShowRec1 = true;
+        } else {
+            nXpos = 32;
+            nYpos = 576;
+            bShowRec1 = false;
+        }
+
+        if (SDL_GetTicks() - uLastDetectionTime > 2000) {
+            DetectJoystickAndGameController();
+            uLastDetectionTime = SDL_GetTicks();
+        }
+        for (I = 0; I < MAX_GAMECONTROLLERS; I++) {
+            if (GameController.ID[I] != -1) {
+                DrawGrid(pRenderer,32 + MainMenu.uXoffs,96 + MainMenu.uYoffs + I * 160, 224,128,0,(128 * nColorDimm) / 100,0,255,4);
+            } else {
+                DrawGrid(pRenderer,32 + MainMenu.uXoffs,96 + MainMenu.uYoffs + I * 160, 224,128,(128 * nColorDimm) / 100,0,0,255,4);
+            }
+        }
+        for (I = 0; I < MAX_JOYSTICKS; I++) {
+            if (Joystick.ID[I] != -1) {
+                DrawGrid(pRenderer,288 + MainMenu.uXoffs,96 + MainMenu.uYoffs + I * 160, 224,128,0,(128 * nColorDimm) / 100,0,255,4);
+            } else {
+                DrawGrid(pRenderer,288 + MainMenu.uXoffs,96 + MainMenu.uYoffs + I * 160, 224,128,(128 * nColorDimm) / 100,0,0,255,4);
+            }
+        }
+        nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+        if (nErrorCode == 0) {
+            nErrorCode = RenderMenuElements(pRenderer);
+            if (nErrorCode == 0) {
+                nErrorCode = ShowControllersAndJoysticks(pRenderer);
+                if (nErrorCode == 0) {
+                    if (bShowRec1) {
+                        // Farbe für Rahmen 1 scrollen
+                        RotateColors(RgbColorsRec1,nRec1PixelCount,5);
+                        nErrorCode = ShowRec(pRenderer,RgbColorsRec1,nXpos + MainMenu.uXoffs,nYpos + MainMenu.uYoffs,COLOR_REC_1_W,COLOR_REC_1_H,nColorDimm);
+                    } else {
+                        // Farbe für Rahmen 2 scrollen
+                        RotateColors(RgbColorsRec2,nRec2PixelCount,5);
+                        nErrorCode = ShowRec(pRenderer,RgbColorsRec2,nXpos + MainMenu.uXoffs,nYpos + MainMenu.uYoffs,COLOR_REC_2_W,COLOR_REC_2_H,nColorDimm);
+                    }
+                }
+            }
+        }
+        ShowCheckboxes(pRenderer,nColorDimm);
+        nLastButton = nButton;
+        nButton = GetSettingsMenuButton();
+        if (((nButton != 0) && (nLastButton != nButton)) && (nErrorCode == 0)) {
+            SDL_Log("Button: %d",nButton);
+            switch (nButton) {
+                case (1):   // Gamecontroller 0
+                    Config.uInputdevice = 2;
+                    Config.uDeviceIndex = 0;
+                    break;
+                case (2):   // Gamecontroller 1
+                    Config.uInputdevice = 2;
+                    Config.uDeviceIndex = 1;
+                    break;
+                case (3):   // Gamecontroller 2
+                    Config.uInputdevice = 2;
+                    Config.uDeviceIndex = 2;
+                    break;
+                case (4):   // Joystick 0
+                    Config.uInputdevice = 1;
+                    Config.uDeviceIndex = 0;
+                    break;
+                case (5):   // Joystick 1
+                    Config.uInputdevice = 1;
+                    Config.uDeviceIndex = 1;
+                    break;
+                case (6):   // Joystick 2
+                    Config.uInputdevice = 1;
+                    Config.uDeviceIndex = 2;
+                    break;
+                case (7):   // Keyboard
+                    Config.uInputdevice = 0;
+                    Config.uDeviceIndex = 0;
+                    break;
+            }
+            nErrorCode = WriteConfigFile();
+        }
+        PlayMusic(false);
+        ShowButtons(pRenderer);
+        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+        SDL_RenderClear(pRenderer);
+        SDL_Delay(5);
+        Playfield.uFrameCounter++;
+    } while ((!bExit) && (nErrorCode == 0));
+    FreeButton(BUTTONLABEL_EXIT_HIGHSCORES);
+    DeRegisterCheckbox(&Checkbox_StartDynamiteKeyboard);
+    DeRegisterCheckbox(&Checkbox_GC_Dir_Digitalpad);
+    DeRegisterCheckbox(&Checkbox_GC_Dir_LeftAxis);
+    DeRegisterCheckbox(&Checkbox_GC_Dir_RightAxis);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Fire_A);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Fire_B);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Fire_X);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Fire_Y);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Dynamite_A);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Dynamite_B);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Dynamite_X);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Dynamite_Y);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Exit_A);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Exit_B);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Exit_X);
+    DeRegisterCheckbox(&Checkbox_GC_Btn_Exit_Y);
+    DeRegisterCheckbox(&Checkbox_Gamemusic);
+    DeRegisterCheckbox(&Checkbox_ShowHighScores);
+    DetectJoystickAndGameController();
+    OpenJoystickOrGameController();
+    WaitNoKey();
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetSettingsMenuAxisButton
+------------------------------------------------------------------------------
+Beschreibung: Prüft, welcher Plus-/Minus-Button für die AXIS-Bereiche gedrückt ist.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = kein Button gedrückt
+                    1 = Minus LEFT AXIS
+                    2 = Plus LEFT AXIS
+                    3 = Minus RIGHT AXIS
+                    4 = Plus RIGHT AXIS
+                    5 = Minus UP-AXIS
+                    6 = Plus UP AXIS
+                    7 = Minus DOWN AXIS
+                    8 = Plus DOWN AXIS
+Seiteneffekte: InputStates.x, MainMenu.x
+------------------------------------------------------------------------------*/
+int GetSettingsMenuAxisButton(void) {
+    int nButton = 0;
+
+    if (InputStates.bLeftMouseButton) {
+        if ((InputStates.nMouseXpos >= (760 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (782 + MainMenu.uXoffs))) {
+            // Linke Spalte: Minusbuttons
+            if ((InputStates.nMouseYpos >= (616 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (638 + MainMenu.uYoffs))) {
+                nButton = 1;    // Minus LEFT AXIS
+            } else if ((InputStates.nMouseYpos >= (643 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (665 + MainMenu.uYoffs))) {
+                nButton = 3;    // Minus RIGHT AXIS
+            } else if ((InputStates.nMouseYpos >= (670 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (692 + MainMenu.uYoffs))) {
+                nButton = 5;    // Minus UP AXIS
+            } else if ((InputStates.nMouseYpos >= (697 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (719 + MainMenu.uYoffs))) {
+                nButton = 7;    // Minus DOWN AXIS
+            }
+        } else if ((InputStates.nMouseXpos >= (810 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (832 + MainMenu.uXoffs))) {
+            // Rechte Spalte: Plusbuttons
+            if ((InputStates.nMouseYpos >= (616 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (638 + MainMenu.uYoffs))) {
+                nButton = 2;    // Plus LEFT AXIS
+            } else if ((InputStates.nMouseYpos >= (643 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (665 + MainMenu.uYoffs))) {
+                nButton = 4;    // Plus RIGHT AXIS
+            } else if ((InputStates.nMouseYpos >= (670 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (692 + MainMenu.uYoffs))) {
+                nButton = 6;    // Plus UP AXIS
+            } else if ((InputStates.nMouseYpos >= (697 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (719 + MainMenu.uYoffs))) {
+                nButton = 8;    // Plus DOWN AXIS
+            }
+        }
+    }
+    return nButton;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetSettingsMenuButton
+------------------------------------------------------------------------------
+Beschreibung: Prüft, welcher Bereich bzw. Button im Settings-Menü gedrückt ist.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = kein Button gedrückt
+                    1 = GameController 0
+                    2 = GameController 1
+                    3 = GameController 2
+                    4 = Joystick 0
+                    5 = Joystick 1
+                    6 = Joystick 2
+                    7 = Keyboard
+Seiteneffekte: InputStates.x, MainMenu.x
+------------------------------------------------------------------------------*/
+int GetSettingsMenuButton(void) {
+    int nButton = 0;
+
+    if (InputStates.bLeftMouseButton) {
+        // Gamecontroller liegen bei X 32 bis 255
+        if (((InputStates.nMouseXpos >= (32 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (256 + MainMenu.uXoffs))) &&
+            ((InputStates.nMouseYpos >= (96 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (224 + MainMenu.uYoffs)))) {
+            nButton = 1;    // Gamecontroller 0
+        } else if (((InputStates.nMouseXpos >= (32 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (256 + MainMenu.uXoffs))) &&
+                ((InputStates.nMouseYpos >= (256 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (384 + MainMenu.uYoffs)))) {
+            nButton = 2;    // Gamecontroller 1
+        } else if (((InputStates.nMouseXpos >= (32 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (256 + MainMenu.uXoffs))) &&
+                ((InputStates.nMouseYpos >= (416 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (544 + MainMenu.uYoffs)))) {
+            nButton = 3;    // Gamecontroller 2
+        } else if (((InputStates.nMouseXpos >= (32 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (512 + MainMenu.uXoffs))) &&
+                ((InputStates.nMouseYpos >= (576 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (736 + MainMenu.uYoffs)))) {
+            nButton = 7;    // Keyboard
+        // Joysticks liegen bei X 288 bis 512
+        } else if (((InputStates.nMouseXpos >= (288 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (512 + MainMenu.uXoffs))) &&
+                ((InputStates.nMouseYpos >= (96 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (224 + MainMenu.uYoffs)))) {
+            nButton = 4;    // Joystick 0
+        } else if (((InputStates.nMouseXpos >= (288 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (512 + MainMenu.uXoffs))) &&
+                ((InputStates.nMouseYpos >= (256 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (384 + MainMenu.uYoffs)))) {
+            nButton = 5;    // Joystick 1
+        } else if (((InputStates.nMouseXpos >= (288 + MainMenu.uXoffs)) && (InputStates.nMouseXpos < (512 + MainMenu.uXoffs))) &&
+                ((InputStates.nMouseYpos >= (416 + MainMenu.uYoffs)) && (InputStates.nMouseYpos < (544 + MainMenu.uYoffs)))) {
+            nButton = 6;    // Joystick 2
+        }
+    }
+    return nButton;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           RenderSettingsbutton
+------------------------------------------------------------------------------
+Beschreibung: Zeigt im Hauptmenü des Spiels oben links den drehenden Settingsbutton.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+
+Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Seiteneffekte: MainMenu.x
+------------------------------------------------------------------------------*/
+int RenderSettingsbutton(SDL_Renderer *pRenderer) {
+    int nErrorCode = 0;
+    SDL_Rect DestR;
+
+    DestR.x = MainMenu.uXoffs + 1;
+    DestR.y = MainMenu.uYoffs + 1;
+    DestR.w = 30;
+    DestR.h = 30;
+    if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(747),NULL,&DestR,MainMenu.fSettingsbuttonAngle,NULL, SDL_FLIP_NONE) != 0) {
+        nErrorCode = -1;
+        SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+    }
+    MainMenu.fSettingsbuttonAngle = MainMenu.fSettingsbuttonAngle + 2;
     return nErrorCode;
 }
 
@@ -1646,7 +2687,7 @@ int DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
             uModVolume = uModVolume + 2;
             SetAllTextureColors(nColorDimm);
             SetModVolume(uModVolume);
-            PlayMusic();
+            PlayMusic(false);
             nErrorCode = RenderMenuElements(pRenderer);
             if (nErrorCode == 0) {
                 SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
@@ -1663,7 +2704,7 @@ int DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
             uModVolume = uModVolume - 2;
             SetAllTextureColors(nColorDimm);
             SetModVolume(uModVolume);
-            PlayMusic();
+            PlayMusic(false);
             nErrorCode = RenderMenuElements(pRenderer);
             if (nErrorCode == 0) {
                 SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
@@ -1755,11 +2796,11 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
             nGreen = (((uRainBowRGB >> 8) & 0xFF) * nColorDimm) / 100;
             nBlue = ((uRainBowRGB & 0xFF) * nColorDimm) / 100;
             SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue,SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer,MainMenu.uXoffs + 0, MainMenu.uYoffs + ((I + 3) * FONT_H), DEFAULT_WINDOW_W - 1, MainMenu.uYoffs + ((I + 3) * FONT_H));
+            SDL_RenderDrawLine(pRenderer,MainMenu.uXoffs + 0, MainMenu.uYoffs + ((I + 3) * FONT_H), MainMenu.uXoffs + DEFAULT_WINDOW_W - 1, MainMenu.uYoffs + ((I + 3) * FONT_H));
             SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Muss am Ende stehen, damit Hintergrund wieder dunkel wird
         }
         UpdateManKey();
-        PlayMusic();
+        PlayMusic(false);
         RenderMenuElements(pRenderer);
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 2;

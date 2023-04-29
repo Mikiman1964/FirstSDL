@@ -1,7 +1,8 @@
 #include <SDL2/SDL.h>
 #include <ctype.h>
 #include <stdio.h>
-#include "buttons.h"
+#include "buttons_checkboxes.h"
+#include "config.h"
 #include "editor.h"
 #include "EmeraldMine.h"
 #include "EmeraldMineMainMenu.h"
@@ -4272,7 +4273,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                 bExit = true;
             }
         }
-        PlayMusic();
+        PlayMusic(false);
         if (nErrorCode == 0) {
             nErrorCode = RenderMenuElements(pRenderer);
         }

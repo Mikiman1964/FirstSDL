@@ -79,6 +79,8 @@ void CleanInvalidFieldsForCentralExplosion(uint32_t I) {
             case (EMERALD_YAM):
             case (EMERALD_MEGABOMB):
             case (EMERALD_GREEN_DROP):
+                // SDL_Log("%s:   at K = %u  with element: %u",__FUNCTION__,K,Playfield.pLevel[uCoordinate]); //
+
                 switch (Playfield.pStatusAnimation[uCoordinate] & 0x0000FF00) { // Animationsstatus
                     case (EMERALD_ANIM_UP):
                         if (Playfield.pLevel[uCoordinate - Playfield.uLevel_X_Dimension] == EMERALD_INVALID) {
@@ -112,6 +114,15 @@ void CleanInvalidFieldsForCentralExplosion(uint32_t I) {
                             Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;   // Nicht sprengbares aber bewegliches Objekt zum Stillstand bringen
                         }
                         break;
+                    default:
+                        if ( (Playfield.pLevel[uCoordinate]) && (Playfield.pLevel[uCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID) &&
+                             ((Playfield.pStatusAnimation[uCoordinate] ==  EMERALD_ANIM_GREEN_DROP_1) ||
+                             (Playfield.pStatusAnimation[uCoordinate] == EMERALD_ANIM_GREEN_DROP_2)) ) {
+                            Playfield.pLevel[uCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                            Playfield.pInvalidElement[uCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
+                            Playfield.pStatusAnimation[uCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+                            Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;   // Nicht sprengbares aber bewegliches Objekt zum Stillstand bringen
+                        }
                 }
                 break;
         }
@@ -143,6 +154,9 @@ void ControlCentralExplosion(uint32_t I) {
         for (K = 0; K < 8; K++) {
             uCoordinate = I + Playfield.nCentralExplosionCoordinates[K];
             uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate]);
+
+            // SDL_Log("K[%02u]: element: %u  ---> %u",K,Playfield.pLevel[uCoordinate],uCheckExplosion); // raus
+
             switch (uCheckExplosion & 0xFFFF) {
                 case (EMERALD_EXPLOSION_EMPTY):
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
@@ -603,6 +617,7 @@ uint32_t CheckExplosionElement(uint16_t uElement) {
         case (EMERALD_FONT_GREEN_OE):
         case (EMERALD_FONT_GREEN_UE):
             uExplosion = EMERALD_EXPLOSION_EMPTY;
+            // SDL_Log("%s: set explosion to EMPTY for element: %u",__FUNCTION__,uElement);//raus
             break;
         case (EMERALD_MAN):
             uExplosion = EMERALD_EXPLOSION_EMPTY_MAN;
@@ -702,7 +717,7 @@ uint32_t CheckExplosionElement(uint16_t uElement) {
             break;
         default:
             uExplosion = EMERALD_EXPLOSION_NONE;
-
+            // SDL_Log("Set to none: uElement = %u",uElement); // raus
     }
     return uExplosion;
 }

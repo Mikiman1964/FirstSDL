@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <math.h>
 #include "asteroids.h"
+#include "config.h"
 #include "loadlevel.h"
 #include "mySDL.h"
 #include "mystd.h"

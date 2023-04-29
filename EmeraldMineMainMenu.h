@@ -7,10 +7,17 @@
 
 #define EMERALD_STEEL_ARROW_DOWN_PRESSED    1
 #define EMERALD_STEEL_ARROW_UP_PRESSED      2
+#define EMERALD_STEEL_SETTINGS_PRESSED      3
 
 #define MAX_NAMES_IN_LIST                   4
 #define MAX_LEVELGROUPS_IN_LIST             4
 #define MAX_LEVELTITLES_IN_LIST             31
+
+#define COLOR_REC_1_W                       224
+#define COLOR_REC_1_H                       128
+
+#define COLOR_REC_2_W                       480
+#define COLOR_REC_2_H                       160
 
 
 typedef struct {
@@ -28,10 +35,11 @@ typedef struct {
     int      nState;
     uint32_t uMaxFlashIndex;
     uint32_t uFlashIndex;
+    float    fSettingsbuttonAngle;
 } MAINMENU;
 
 void InitMainMenu(void);
-int GetLevelButton(void);
+int GetMainMenuButton(void);
 int GetPlayerListButton(void);
 int GetLevelgroupListButton(void);
 int EmeraldMineMainMenu(SDL_Renderer *pRenderer);
@@ -54,5 +62,12 @@ void InitLists(void);
 int EvaluateGame(int *pnNewHighscoreIndex, uint32_t *puLevelPlayed);
 uint16_t GetFontElementByChar(char sign,uint32_t uFont);
 uint32_t GetRainbowColors(uint16_t uWert);
-
+int RenderSettingsbutton(SDL_Renderer *pRenderer);
+int SettingsMenu(SDL_Renderer *pRenderer);
+void RotateColors(RGBCOLOR *pColors,int nCount,int nCycles);
+int ShowControllersAndJoysticks(SDL_Renderer *pRenderer);
+int ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int nXpos, int nYpos, int nWidth, int nHeight, int nDimm);
+void PrepareSettingsMenu(void);
+int GetSettingsMenuButton(void);
+int GetSettingsMenuAxisButton(void);
 #endif // EMERALDMINEMAINMENUE_H_INCLUDED

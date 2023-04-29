@@ -1,7 +1,8 @@
 #include <SDL2/SDL.h>
-#include "mySDL.h"
+#include "config.h"
 #include "copper.h"
 #include "loadlevel.h"
+#include "mySDL.h"
 #include "mystd.h"
 
 

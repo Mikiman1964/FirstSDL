@@ -727,7 +727,6 @@ typedef struct {
     uint32_t        uShowMessageNo;                             // Nachricht Nr. x zeigen, 0 = keine Nachricht
     uint32_t        uMaxYamExplosionIndex;                      // Max. Yam-Explosions-Index in diesem Level
     uint32_t        uYamExplosion;                              // Aktuelle YAM-Explosion
-    uint32_t        uFireCount;                                 // Für Zündung von Dynamit.
     uint32_t        uDynamitePos;                               // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung
     uint32_t        uDynamiteStatusAnim;                        // Status/Animation für manuell gezündetes Dynamit
     uint32_t        uPlayTimeStart;                             // Zeitpunkt, wann Level gestartet wurde
