@@ -641,7 +641,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
                 bExit = true;
             }
         }
-        PlayMusic();
+        PlayMusic(false);
     }
     WaitNoKey();
     if (nErrorCode == 0) {
@@ -785,7 +785,7 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
                     bExit = true;
                 }
             }
-            PlayMusic();
+            PlayMusic(false);
         }
         WaitNoKey();
         if (nErrorCode == 0) {
@@ -941,7 +941,7 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
                     bExit = true;
                 }
             }
-            PlayMusic();
+            PlayMusic(false);
         }
         WaitNoKey();
         if (nErrorCode == 0) {

@@ -38,7 +38,7 @@ typedef struct {
 
 /////////////////////// Für names.dat ////////////////START//////////
 typedef struct {
-    bool     bDelete;
+    bool     bDelete;   // wird nicht verwendet
     uint8_t  uHash[16];
     uint32_t uHandicap;
     uint32_t uGamesPlayed;
@@ -75,16 +75,6 @@ typedef struct {
 
 
 
-
-typedef struct {
-    bool        bStartDynamiteWithSpace;                                        // true = Dynamite wird mit Space gezündet
-    bool        bFullScreen;                                                    // true = Spiel läuft als Fullscreen
-    bool        bEditorZoom;                                                    // true = 32x32 Pixel, sonst 16x16 Pixel
-    uint32_t    uResX;                                                          // Auflösung X bzw. Fensterbreite
-    uint32_t    uResY;                                                          // Auflösung Y bzw. Fensterhöhe
-    uint8_t     uLevelgroupMd5Hash[16];                                         // zuletzt gewählte Levelgruppe als MD5 Hash
-    char        szPlayername[EMERALD_PLAYERNAME_LEN + 1];                       // letzter Spieler
-} CONFIG;
 
 
 typedef struct {
@@ -141,18 +131,15 @@ int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores);
 int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores);
 void ShowSelectedLevelgroup(void);
 void ShowAvailableLevelgroups(void);
-int WriteNamesFile(void);
 int DeleteName(char *pszName);
 int InsertNewName(char *pszName);
 int SelectName(char *pszname, uint8_t *puHash);
 int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash);
 int InsertGroupHashForName(char *pszName, uint8_t *puHash);
-int ReadNamesFile(void);
-void ShowNames(void);
+int CleanNameHashes(void);
 void ShowActualPlayer(void);
-int WriteDefaultConfigFile(void);
+void ShowNames(void);
+int WriteNamesFile(void);
 int WriteDefaultNamesFile(void);
-int WriteConfigFile(void);
-int ReadConfigFile(void);
-void ShowConfigFile(void);
+int ReadNamesFile(void);
 #endif // LOADLEVEL_H_INCLUDED

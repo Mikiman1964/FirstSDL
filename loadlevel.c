@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
+#include "config.h"
 #include "editor.h"
 #include "EmeraldMine.h"
 #include "EmeraldMineMainMenu.h"
@@ -18,11 +19,12 @@
 
 extern PLAYFIELD Playfield;
 extern SDL_DisplayMode ge_DisplayMode;
+extern CONFIG Config;
 
 uint32_t g_LevelgroupFilesCount;
 LEVELGROUPFILE LevelgroupFiles[EMERALD_MAX_LEVELGROUPFILES];
 LEVELGROUP SelectedLevelgroup;
-CONFIG Config;
+
 NAMES Names;
 ACTUALPLAYER Actualplayer;
 IMPORTLEVEL ImportLevel;
@@ -1112,7 +1114,6 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.bSwitchDoorImpluse = false;
         Playfield.uShowMessageNo = 0;
         Playfield.uYamExplosion = 0;          // Aktuelle YAM-Explosion
-        Playfield.uFireCount = 0;
         Playfield.uDynamitePos = 0xFFFFFFFF;  // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung
         Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND; // Status/Animation für manuell gezündetes Dynamit
         InitRollUnderground();
@@ -2015,7 +2016,7 @@ int GetLevelgroupFiles(void) {
                     if (pXml != NULL) {
                         if ((strstr((char*)pXml,"<levelgroup>") != NULL) && (strstr((char*)pXml,"</levelgroup>") != NULL)) {  // levelgroup tags gefunden?
                             if (CalculateLevelGroupMd5Hash(pXml,uCalculatedLevelgroupMd5Hash) == 0) { // muss vor ezxml_parse_str() durchgeführt werden, da Library Original ändert
-                                //char *p1 = GetMd5String2(uCalculatedLevelgroupMd5Hash);
+                                //GetMd5String2(uCalculatedLevelgroupMd5Hash);
                                 //SDL_Log("LG: %s  --> Hash: %s",entry->d_name,p1);
                                 xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
                                 if (xml != NULL) {
@@ -2296,30 +2297,6 @@ void ShowAvailableLevelgroups(void) {
 
 
 /*----------------------------------------------------------------------------
-Name:           WriteDefaultConfigFile
-------------------------------------------------------------------------------
-Beschreibung: Schreibt eine Werks-Konfiguration.
-
-Parameter
-      Eingang: -
-      Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Config.x
-------------------------------------------------------------------------------*/
-int WriteDefaultConfigFile(void) {
-    SDL_Log("Writing default config file ...");
-    memset(&Config,0,sizeof(Config));       // löscht auch letzten Spieler
-    Config.bStartDynamiteWithSpace = true;  // true = Dynamite wird mit Space gezündet
-    Config.bFullScreen = false;             // Spiel läuft als Fullscreen
-    Config.bEditorZoom = false;             // Editor läuft mit 16x16 Pixeln
-    Config.uResX = DEFAULT_WINDOW_W;        // Standard-Auflösung X bzw. Fensterbreite
-    Config.uResY = DEFAULT_WINDOW_H;                // Auflösung Y bzw. Fensterhöhe
-    memset(Config.uLevelgroupMd5Hash,0,16); // MD5-Hash auf "00000000000000000000000000000000" setzen
-    return WriteConfigFile();
-}
-
-
-/*----------------------------------------------------------------------------
 Name:           WriteDefaultNamesFile
 ------------------------------------------------------------------------------
 Beschreibung: Schreibt eine leere Namens-Datei (names.xml)
@@ -2367,199 +2344,6 @@ int WriteNamesFile(void) {
     }
     memcpy(Names.uSecurityHash,uResultHash,16);
     return WriteFile(EMERALD_NAMES_FILENAME,(uint8_t *)&Names,sizeof(Names),false);
-}
-
-
-/*----------------------------------------------------------------------------
-Name:           ShowConfigFile
-------------------------------------------------------------------------------
-Beschreibung: Zeigt die Konfigurations-Struktur
-
-Parameter
-      Eingang: -
-      Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Config.x
-------------------------------------------------------------------------------*/
-void ShowConfigFile(void) {
-    char szMd5String[32 + 1];
-
-    GetMd5String(Config.uLevelgroupMd5Hash,szMd5String);
-    SDL_Log("============ Config.xml =============");
-    SDL_Log("Start dynamite with space:  %d",Config.bStartDynamiteWithSpace);
-    SDL_Log("Full screen mode:           %d",Config.bFullScreen);
-    SDL_Log("Editor zoom:                %d",Config.bEditorZoom);
-    SDL_Log("X-Resolution:               %u",Config.uResX);
-    SDL_Log("Y-Resolution:               %u",Config.uResY);
-    SDL_Log("Last levelgroup hash:       %s",szMd5String);
-    SDL_Log("Last player:                %s",Config.szPlayername);
-}
-
-
-/*----------------------------------------------------------------------------
-Name:           WriteConfigFile
-------------------------------------------------------------------------------
-Beschreibung: Schreibt den Inhalt der Struktur Config.x als XML-File.
-
-Parameter
-      Eingang: -
-      Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Config.x
-------------------------------------------------------------------------------*/
-int WriteConfigFile(void) {
-    char szXML[16 * 1024];
-    char szMd5String[32 + 1];
-    char szNum[32];
-
-    memset(szXML,0,sizeof(szXML));
-    strcpy(szXML,"<?xml version=\"1.0\"?>\n");
-    strcat(szXML,"<configuration>\n");
-    strcat(szXML,"  <screen>\n");
-    strcat(szXML,"    <resolution>\n");
-    strcat(szXML,"      <x>");
-    sprintf(szNum,"%d",Config.uResX);
-    strcat(szXML,szNum);
-    strcat(szXML,"</x>\n");
-    strcat(szXML,"      <y>");
-    sprintf(szNum,"%d",Config.uResY);
-    strcat(szXML,szNum);
-    strcat(szXML,"</y>\n");
-    strcat(szXML,"    </resolution>\n");
-    strcat(szXML,"    <fullscreen>");
-    if (Config.bFullScreen) {
-        strcat(szXML,"1");
-    } else {
-        strcat(szXML,"0");
-    }
-    strcat(szXML,"</fullscreen>\n");
-    strcat(szXML,"  </screen>\n");
-    strcat(szXML,"  <start_dynamite_with_space>");
-    if (Config.bStartDynamiteWithSpace) {
-        strcat(szXML,"1");
-    } else {
-        strcat(szXML,"0");
-    }
-    strcat(szXML,"</start_dynamite_with_space>\n");
-    strcat(szXML,"  <last_played_levelgroup_md5_hash>");
-    GetMd5String(Config.uLevelgroupMd5Hash,szMd5String);
-    strcat(szXML,szMd5String);
-    strcat(szXML,"</last_played_levelgroup_md5_hash>\n");
-    strcat(szXML,"  <last_player_name>");
-    strcat(szXML,Config.szPlayername);
-    strcat(szXML,"</last_player_name>\n");
-    strcat(szXML,"  <editor_zoom>");
-    if (Config.bEditorZoom) {
-        strcat(szXML,"1");
-    } else {
-        strcat(szXML,"0");
-    }
-    strcat(szXML,"</editor_zoom>\n");
-    strcat(szXML,"</configuration>\n");
-    return WriteFile(EMERALD_CONFIG_FILENAME,(uint8_t *)szXML,(uint32_t)strlen(szXML),false);
-}
-
-
-/*----------------------------------------------------------------------------
-Name:           ReadConfigFile
-------------------------------------------------------------------------------
-Beschreibung: Liest die Konfigurationsdatei und befüllt die Struktur Config.x
-
-Parameter
-      Eingang: -
-      Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Config.x, Actualplayer.x
-------------------------------------------------------------------------------*/
-int ReadConfigFile(void) {
-    ezxml_t xml = NULL;
-    ezxml_t screen,fullscreen,resolution,x,y,dynamite,levelgrouphash,playername,editorzoom;
-    int nErrorCode;
-    uint8_t *pXml;
-    uint32_t uXmlLen;
-    uint32_t uResX;
-    uint32_t uResY;
-    char szErrorMessage[256];
-
-    nErrorCode = -1;
-    memset(&Config,0,sizeof(Config));       // löscht auch letzten Spieler
-    memset(&Actualplayer,0,sizeof(Actualplayer));
-    pXml = ReadFile(EMERALD_CONFIG_FILENAME,&uXmlLen);     // Levelgruppen-Datei einlesen
-    if (pXml != NULL) {
-        // Prüfen, ob Schreibrechte bestehen und versuchen gelesene Datei zurück zu schreiben
-        if (WriteFile(EMERALD_CONFIG_FILENAME,pXml,uXmlLen,false) == 0) {
-            if ((strstr((char*)pXml,"<configuration>") != NULL) && (strstr((char*)pXml,"</configuration>") != NULL)) {  // configuration tags gefunden?
-                xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
-                if (xml != NULL) {
-                    screen = ezxml_child(xml,"screen");
-                    if (screen != NULL) {
-                        fullscreen = ezxml_child(screen,"fullscreen");
-                        if (fullscreen != NULL) {
-                            Config.bFullScreen = (strtol(fullscreen->txt,NULL,10) == 1);
-                            resolution = ezxml_child(screen,"resolution");
-                            if (resolution != NULL) {
-                                x = ezxml_child(resolution,"x");
-                                if (x != NULL) {
-                                    Config.uResX = strtol(x->txt,NULL,10);
-                                    y = ezxml_child(resolution,"y");
-                                    if (y != NULL) {
-                                        Config.uResY = strtol(y->txt,NULL,10);
-                                        dynamite = ezxml_child(xml,"start_dynamite_with_space");
-                                        if (dynamite != NULL) {
-                                            Config.bStartDynamiteWithSpace = (strtol(dynamite->txt,NULL,10) == 1);
-                                            editorzoom = ezxml_child(xml,"editor_zoom");
-                                            if (editorzoom != NULL) {
-                                                Config.bEditorZoom = (strtol(editorzoom->txt,NULL,10) == 1);
-                                                levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
-                                                if (levelgrouphash != NULL) {
-                                                    GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
-                                                    playername = levelgrouphash = ezxml_child(xml,"last_player_name");
-                                                    if (playername != NULL) {
-                                                        if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
-                                                            strcpy(Config.szPlayername,playername->txt);
-                                                        }
-                                                        // Auflösung checken
-                                                        // Zunächst prüfen, ob X- und Y-Auflösung durch FONT_W bzw. FONT_H teilbar
-                                                        uResX = Config.uResX;
-                                                        uResY = Config.uResY;
-                                                        uResX = uResX / FONT_W;
-                                                        uResX = uResX * FONT_W;
-                                                        uResY = uResY / FONT_H;
-                                                        uResY = uResY * FONT_H;
-                                                        if ((uResX >= DEFAULT_WINDOW_W) && (uResY >= DEFAULT_WINDOW_H)) {
-                                                            // ggf. die abgerundeten Werte in die Konfiguration übernehmen
-                                                            Config.uResX = uResX;
-                                                            Config.uResY = uResY;
-                                                            nErrorCode = 0;
-                                                        } else {
-                                                            sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,uResX,uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
-                                                            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
-                                                            nErrorCode = -2;    // Programmende
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Write problem","Can not write config.xml file!\nPlease check write permissions.",NULL);
-            nErrorCode = -2;    // Programmende
-        }
-    }
-    SAFE_FREE(xml);
-    SAFE_FREE(pXml);
-    if (nErrorCode == 0) {
-        nErrorCode = WriteConfigFile(); // ggf. angepasste Auflösung schreiben
-    } else if (nErrorCode == -1) {
-        nErrorCode = WriteDefaultConfigFile();
-    }
-    return nErrorCode;
 }
 
 
@@ -2643,8 +2427,6 @@ void ShowNames(void) {
             for (G = 0; G <EMERALD_MAX_LEVELGROUPFILES; G++) {
                 if (memcmp(Names.Name[N].GroupHash[G].uHash,"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",16) != 0) {
                     uHashCount++;
-                } else {
-                    break;
                 }
             }
             SDL_Log("%02d: %s  Hashes: %u",N,Names.Name[N].szName,uHashCount);
@@ -2654,6 +2436,49 @@ void ShowNames(void) {
     }
     SDL_Log("=============================================");
 
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CleanNameHashes
+------------------------------------------------------------------------------
+Beschreibung: Bereinigt die Struktur Names.x von nicht vorhandenen Levelgruppen-Hashes.
+              Vor Aufruf dieser Funktion müssen folgende Funktionen mit Erfolg
+              aufgerufen worden sein:
+              * GetLevelgroupFiles():  Übersicht von vorhandenen Levelgroup-Hashes
+              * ReadNamesFile(): Aktuelle Namen mit Hashes und Handicaps usw.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: Names.x, LevelgroupFiles[].x, g_LevelgroupFilesCount
+------------------------------------------------------------------------------*/
+int CleanNameHashes(void) {
+    uint32_t N;     // Name
+    uint32_t G;     // Level-Gruppenhash aus Names.x
+    uint32_t L;     // Level-Gruppenhash aus Levelgroup.x
+    bool bHashFound;
+
+    for (N = 0; N < Names.uNameCount; N++) {                    // Alle Namen prüfen
+        for (G = 0; G <EMERALD_MAX_LEVELGROUPFILES; G++) {      // Alle Hashes dieses Namens prüfen
+            if (memcmp(Names.Name[N].GroupHash[G].uHash,"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",16) != 0) {
+                bHashFound = false;
+                for (L = 0; (L < g_LevelgroupFilesCount) && (!bHashFound); L++) {
+                    bHashFound = (memcmp(Names.Name[N].GroupHash[G].uHash,LevelgroupFiles[L].uMd5Hash,16) == 0);
+                }
+                if (!bHashFound) {
+                    memset(Names.Name[N].GroupHash[G].uHash,0,16);
+                    Names.Name[N].GroupHash[G].uHandicap = 0;
+                    Names.Name[N].GroupHash[G].uGamesPlayed = 0;
+                    Names.Name[N].GroupHash[G].uGamesWon = 0;
+                    Names.Name[N].GroupHash[G].uTotalScore = 0;
+                    Names.Name[N].GroupHash[G].uPlayTimeS = 0;
+                }
+            }
+        }
+    }
+    return WriteNamesFile();
 }
 
 
@@ -2749,7 +2574,7 @@ int InsertNewName(char *pszName) {
 Name:           InsertGamesValuesIntoNamesFile
 ------------------------------------------------------------------------------
 Beschreibung: Die Werte aus der Struktur Actualplayer.x werden in die Strukturen
-              der namensliste hinterlegt.
+              der Namensliste hinterlegt.
 
 Parameter
       Eingang: pszName, char*, Zeiger auf Spielernamen, für den Werte gespeichert werden sollen

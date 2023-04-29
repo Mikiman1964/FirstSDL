@@ -11,12 +11,12 @@
 
 /*
 1000 Level / Gruppe
-32 Zeichen / Playername
+29 Zeichen / Playername + 1 (String-Terminierung)
 4 Bytes / Punktzahl
 20 Einträge / Level
 
 Max. Platzbedarf pro Levelgruppe:
-1000 * 20 * (32 + 4) = 720.000 Bytes
+1000 * 20 * (29 + 1 + 4) = 680.000 Bytes
 */
 
 
@@ -32,9 +32,9 @@ typedef struct {
 } HIGHSCOREFILE;
 
 
-int CheckHighScoresDirectory(void);
+int CheckHighScoresDir(void);
 int WriteHighScoreFile(uint8_t *puLevelgroupHash);
 int ReadHighScoreFile(uint8_t *puLevelgroupHash);
 int InsertScore(char *szName, uint32_t uLevel, uint32_t uScore);
-
+int CleanUpHighScoreDir(void);
 #endif // HIGHSCORES_H_INCLUDED

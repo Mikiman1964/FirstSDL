@@ -1,16 +1,20 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include "highscores.h"
+#include "loadlevel.h"
 #include "mystd.h"
 
 HIGHSCOREFILE HighscoreFile;
+extern uint32_t g_LevelgroupFilesCount;
+extern LEVELGROUPFILE LevelgroupFiles[EMERALD_MAX_LEVELGROUPFILES];
 
 
 /*----------------------------------------------------------------------------
-Name:           CheckHighScoresDirectory
+Name:           CheckHighScoresDir
 ------------------------------------------------------------------------------
 Beschreibung: Prüft das Highscores-Directory und legt dieses an, falls es nicht existiert.
 Parameter
@@ -20,8 +24,8 @@ Parameter
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CheckHighScoresDirectory(void) {
-    return CheckAndCreateDirectory(EMERALD_HIGHSCORES_DIRECTORYNAME);
+int CheckHighScoresDir(void) {
+    return CheckAndCreateDir(EMERALD_HIGHSCORES_DIRECTORYNAME);
 }
 
 
@@ -148,5 +152,61 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore) {
         }
     }
     SDL_Log("%s: Code: %d",__FUNCTION__,nErrorCode);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CleanUpHighScoreDir
+------------------------------------------------------------------------------
+Beschreibung: Löscht Highscore-Dateien, für die es keine Levelgruppe (mehr) gibt.
+              Die verfügbaren Levelgroupfiles müssen bereits zur Verfügung stehen,
+              d.h. die Funktion GetLevelgroupFiles() wurde erfolgreich aufgerufen.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: LevelgroupFiles.x, g_LevelgroupFilesCount
+------------------------------------------------------------------------------*/
+int CleanUpHighScoreDir(void) {
+    int nErrorCode;
+    DIR *dir;
+    struct dirent *entry;
+    size_t FilenameLen;
+    char  szHiscoreMD5Hash[32 + 1];
+    uint8_t uHiscoreMD5Hash[16];
+    char szFilename[256];
+    bool bActive;
+    uint32_t I;
+
+    nErrorCode = -1;
+    if ((dir = opendir(EMERALD_HIGHSCORES_DIRECTORYNAME)) == NULL) {
+        SDL_Log("%s: can not open directory: %s, error: %s",__FUNCTION__,EMERALD_HIGHSCORES_DIRECTORYNAME,strerror(errno));
+        return nErrorCode;
+    }
+    nErrorCode = 0;
+    while (((entry = readdir(dir)) != NULL) && (nErrorCode == 0) ) {
+        FilenameLen = strlen(entry->d_name);
+        if (FilenameLen == 41) {
+            // Nur Dateien der folgenden Form prüfen: high_16228DC49F7E51AFA051D6FFCF13AD02.dat  5 + 32 + 4 = 41 Zeichen
+            if ((memcmp(entry->d_name + FilenameLen - 4,EMERALD_HIGHSCORES_FILENAME_EXTENSION,4) == 0)  && (memcmp(entry->d_name,EMERALD_HIGHSCORES_FILENAME,5) == 0)) {
+                memset(szHiscoreMD5Hash,0,sizeof(szHiscoreMD5Hash));
+                memcpy(szHiscoreMD5Hash,entry->d_name + 5,32);
+                GetMd5HashFromString(szHiscoreMD5Hash,uHiscoreMD5Hash);
+                // Prüfen, ob der Hash in den Levelgruppen zu finden ist
+                bActive = false;
+                for (I = 0; (I < g_LevelgroupFilesCount) && (!bActive); I++) {
+                    bActive = (memcmp(uHiscoreMD5Hash,LevelgroupFiles[I].uMd5Hash,16) == 0);
+                }
+                if (!bActive) {
+                    strcpy(szFilename,EMERALD_HIGHSCORES_DIRECTORYNAME);
+                    strcat(szFilename,"/");                                     // Funktioniert auch unter Windows
+                    strcat(szFilename,entry->d_name);
+                    SDL_Log("%s: deleting %s ...",__FUNCTION__,entry->d_name);
+                    nErrorCode = unlink(szFilename);
+                }
+            }
+        }
+    }
     return nErrorCode;
 }
