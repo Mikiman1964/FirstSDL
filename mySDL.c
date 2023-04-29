@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <SDL2/SDL.h>
+#include "config.h"
 #include "loadlevel.h"
 #include "miniz.h"
 #include "mySDL.h"
@@ -30,15 +31,17 @@ Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitle) {
     SDL_Window *pWindow = NULL;
+    Uint32 uFlags;
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) == 0) {
+    uFlags = SDL_WINDOW_OPENGL;// | SDL_WINDOW_FULLSCREEN;
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0) {
         pWindow = SDL_CreateWindow(
                   pszWindowTitle,             // window title
                   SDL_WINDOWPOS_UNDEFINED,    // initial x position
                   SDL_WINDOWPOS_UNDEFINED,    // initial y position
                   nWindowW,                   // width, in pixels
                   nWindowH,                   // height, in pixels
-                  SDL_WINDOW_OPENGL           // flags
+                  uFlags                      // Flags
         );
         if (pWindow == NULL) {
             SDL_Log("%s: SDL_CreateWindow() failed: %s",__FUNCTION__,SDL_GetError());
@@ -52,7 +55,7 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
 Name:           GetDisplayMode
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt den aktuellen Anzeigemodus mit Fensterposition.
-              Das Mous wird in ge_DisplayMode zurückgegeben.
+              Das Modus wird in ge_DisplayMode zurückgegeben.
 Parameter
       Eingang: pWindow, SDL_Window *, Fenster-Handle
       Ausgang: npWindowPosX, int *, aktuelle X-Fensterposition
@@ -179,9 +182,9 @@ int LoadTextures(SDL_Renderer *pRenderer) {
 
     pStartCompressedGfx = &_binary_gfx_compressed_bin_start;
     uCompressedSize = &_binary_gfx_compressed_bin_end - &_binary_gfx_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
-    SDL_Log("%s: compressed gfx packet size: %u",__FUNCTION__,uCompressedSize);
+    // SDL_Log("%s: compressed gfx packet size: %u",__FUNCTION__,uCompressedSize);
     uUnCompressedSize = *(uint32_t*)pStartCompressedGfx;
-    SDL_Log("%s: gfx packet size: %d Bytes",__FUNCTION__,uUnCompressedSize);
+    SDL_Log("%s: gfx packet size: %d Bytes / compressed: %d Bytes",__FUNCTION__,uUnCompressedSize,uCompressedSize);
     pStartGfxPacket = malloc(uUnCompressedSize);
     if (pStartGfxPacket == NULL) {
         SDL_Log("%s: can not allocate memory for decompressed graphics (%u bytes)",__FUNCTION__,uUnCompressedSize);
@@ -714,7 +717,7 @@ Beschreibung: Zeichnet ein Rechteck / einen Balken für die Levelgruppen- und Nam
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                uXpos, uint32_t, X-Position für Balken
-               uYpos, uint32_t, X-Position für Balken
+               uYpos, uint32_t, Y-Position für Balken
                uWidth, uint32_t, Breite des Balkens
                uHeight, uint32_t, Höhe des Balkens
                uRed, uint8_t, Rot-Anteil für Farbe des Balkens
@@ -738,6 +741,41 @@ int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uW
         if (SDL_RenderFillRect(pRenderer,&DestR) == 0) {
             nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
         }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           DrawGrid
+------------------------------------------------------------------------------
+Beschreibung: Zeichnet ein Kreuzgitter mit anzugebender Farbe und Zeilen-/Spaltenabstand.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+               uXpos, uint32_t, X-Position für Gitter
+               uYpos, uint32_t, Y-Position für Gitter
+               uWidth, uint32_t, Breite des Gitters
+               uHeight, uint32_t, Höhe des Gitters
+               uRed, uint8_t, Rot-Anteil für Farbe des Gitters
+               uGreen, uint8_t, Grün-Anteil für Farbe des Gitters
+               uBlue, uint8_t, Blau-Anteil für Farbe des Gitters
+               uGridSpace, uint32_t, Zeilen- und Spaltenabstand der Gitter-Linien
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace) {
+    int nErrorCode = 0;
+    uint32_t X,Y;
+
+    nErrorCode = SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uAlpha);
+    // Vertikale Linien zeichnen
+    for (X = uXpos; (X <= (uXpos + uWidth)) && (nErrorCode == 0); X = X + uGridSpace) {
+        nErrorCode = SDL_RenderDrawLine(pRenderer,X, uYpos, X, uYpos + uHeight);
+    }
+    // Horizontale Linien zeichnen
+    for (Y = uYpos; (Y <= (uYpos + uHeight)) && (nErrorCode == 0); Y = Y + uGridSpace) {
+        nErrorCode = SDL_RenderDrawLine(pRenderer,uXpos, Y, uXpos + uWidth, Y);
     }
     return nErrorCode;
 }

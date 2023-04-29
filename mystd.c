@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include <errno.h>
 #include <dirent.h>
 #include <stdint.h>
@@ -148,29 +147,27 @@ void GetMd5String(uint8_t *puMd5Hash, char *pszMd5String) {
 }
 
 
+char g_szMD5String[32 + 1];
 /*----------------------------------------------------------------------------
 Name:           GetMd5String2
 ------------------------------------------------------------------------------
-Beschreibung: Gibt einen char-Pointer auf einen MD5-Hash-String zurück. Falls
-              das nicht möglich ist, wird NULL zurück gegeben.
-              Diese Funktion alloziert bei Erfolg Speicher, der außerhalb dieser
-              Funktion freigegeben werden muss.
+Beschreibung: Gibt einen char-Pointer auf einen MD5-Hash-String zurück.
+              Diese Funktion verwendet statischen Speicher, d.h. er
+              darf nicht freigegeben werden.
+              Funktion ist somit nicht threadsicher!
+
 Parameter
       Eingang: puMd5Hash, uint8_t *, Zeiger auf MD5-Hash (mindestens 16 Bytes)
-Rückgabewert:  char *, Zeiger auf MD5-String, bei Fehler NULL
-Seiteneffekte: -
+Rückgabewert:  char *, Zeiger auf MD5-String, Bei Fehler wird "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+                       zurückgegeben.
+Seiteneffekte: g_szMD5String;
 ------------------------------------------------------------------------------*/
 char *GetMd5String2(uint8_t *puMd5Hash) {
-    char *pszMD5;
-
-    pszMD5 = NULL;
+    strcpy(g_szMD5String,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
     if (puMd5Hash != NULL) {
-        pszMD5 = malloc(32 + 1);
-        if (pszMD5 != NULL) {
-          GetMd5String(puMd5Hash,pszMD5);
-        }
+          GetMd5String(puMd5Hash,g_szMD5String);
     }
-    return pszMD5;
+    return g_szMD5String;
 }
 
 
@@ -197,7 +194,7 @@ void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash) {
                 puMd5Hash[I] = (strtol(szHex,NULL,16) & 0xFF);
             }
         } else {
-            SDL_Log("%s: string must contain 32 characters",__FUNCTION__);
+            printf("%s: string must contain 32 characters\n",__FUNCTION__);
         }
     }
 }
@@ -548,7 +545,7 @@ int GetLineLen(char *pszText, int nCursorPos) {
 
 
 /*----------------------------------------------------------------------------
-Name:           CheckAndCreateDirectory
+Name:           CheckAndCreateDir
 ------------------------------------------------------------------------------
 Beschreibung: Prüft ein Directory und legt dieses an, falls es nicht existiert.
 Parameter
@@ -558,7 +555,7 @@ Parameter
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CheckAndCreateDirectory(char *pszDirectoryName) {
+int CheckAndCreateDir(char *pszDirectoryName) {
     int nErrorCode;
     DIR *dir;
     bool bTryToCreateDir;
@@ -570,7 +567,7 @@ int CheckAndCreateDirectory(char *pszDirectoryName) {
         if (dir != NULL) {
             nErrorCode = closedir(dir);     // Directory besteht und kann nun wieder geschlossen werden
         } else {
-            SDL_Log("can not open dir, error: %s",strerror(errno));
+            printf("can not open dir, error: %s\n",strerror(errno));
             if (errno == ENOTDIR) {         // File existiert, ist aber kein Directory
                 bTryToCreateDir = (remove(pszDirectoryName) == 0);  // remove kann beides (Dir/File) löschen
             } else if (errno == ENOENT) {   // Directory/File gibt es nicht
@@ -583,13 +580,10 @@ int CheckAndCreateDirectory(char *pszDirectoryName) {
                     nErrorCode = mkdir(pszDirectoryName);
                 #endif
                 if (nErrorCode != 0) {
-                    SDL_Log("can not create dir, error: %s",strerror(errno));
+                    printf("can not create dir, error: %s\n",strerror(errno));
                 }
             }
         }
-    }
-    if (nErrorCode != 0) {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Directory problem","Can not create directory!\nPlease check write permissions.",NULL);
     }
     return nErrorCode;
 }

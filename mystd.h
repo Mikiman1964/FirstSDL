@@ -43,7 +43,7 @@ uint32_t xorshift128(void); // https://de.wikipedia.org/wiki/Xorshift
 void DumpMem(uint8_t *pcMem, int nLen);
 uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen);
 int WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppend);
-int CheckAndCreateDirectory(char *pszDirectoryName);
+int CheckAndCreateDir(char *pszDirectoryName);
 uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64Len, bool bNewLine);
 int GetLineFeedCount(char *pszText);
 int GetLineLen(char *pszText, int nCursorPos);

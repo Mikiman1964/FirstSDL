@@ -26,6 +26,13 @@
 #define EMERALD_MAX_CHARACTERS_PER_LINE         96              // Maximal 96 Zeichen pro Zeile in Message
 
 
+typedef struct {
+    uint8_t uRed;
+    uint8_t uGreen;
+    uint8_t uBlue;
+    uint8_t uAlpha;
+} RGBCOLOR;
+
 // Prototypen
 SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char * pszWindowTitle);
 int GetDisplayMode(SDL_Window *pWindow, int *pnWindowPosX, int *pnWindowPosY);
@@ -40,4 +47,5 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
 void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, char *pszText);
 int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText);
 int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp);
+int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace);
 #endif // MYSDL_H_INCLUDED

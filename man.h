@@ -13,6 +13,8 @@ typedef struct {
     uint32_t uDirection;
     uint32_t uLastDirection;                // letzte Richtung
     bool bFire;
+    bool bExit;                             // nur über GameController
+    uint32_t uFireCount;                    // Für Zündung von Dynamit.
     uint32_t uLastActiveDirection;          // letzte aktive Richtung, die bestand
     uint32_t uLastDirectionFrameCount;      // Frame, an dem zuletzt eine neue Richtungsauslösung erfolgte
     uint32_t uLastNoDirectionFrameCount;    // Frame, an dem zuletzt eine Richtungsauslösung beendet wurde

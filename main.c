@@ -2,11 +2,13 @@
 #include <SDL2/SDL.h>
 #include <math.h>
 #include "asteroids.h"
-#include "buttons.h"
+#include "buttons_checkboxes.h"
+#include "config.h"
 #include "copper.h"
 #include "editor.h"
 #include "EmeraldMine.h"
 #include "EmeraldMineMainMenu.h"
+#include "gamecontroller.h"
 #include "highscores.h"
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
@@ -84,6 +86,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         return -1;
     }
     InitButtons();
+    InitCheckboxes();
     InitLevelgroups();
     InitAsteroidLayer();
     if (InitVisibibleCopperSegments() != 0) {
@@ -96,6 +99,8 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     if (pWindow == NULL) {
         return -1;
     }
+    DetectJoystickAndGameController();
+    OpenJoystickOrGameController();
     bHasDisplayMode = ((GetDisplayMode(pWindow,&nWindowPosX, &nWindowPosY)) == 0);
     pRenderer = CreateRenderer(pWindow);        // Renderer für erzeugtes Fenster erstellen
     if (pRenderer == NULL) {
@@ -118,7 +123,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         return nMenuChoose;
     }
     if (nMenuChoose == 1) {
-        return EmeraldMineMainMenu(pRenderer);         // Emerald-Mine-Hauptmenü mit Spiel
+        return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel
     }
     if (nMenuChoose == 2) {
         SDL_Log("Start SDL2 Demo");
@@ -126,22 +131,25 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     if (SetModMusic(3) != 0) {        // Mit MOD 3 class_cracktro#15 starten
         return -1;
     }
+    // SDL_SetWindowSize(pWindow, 640,480); // Fenster nachträglich verändern
     SDL_WarpMouseInWindow(pWindow,10,10);
     do {
         UpdateInputStates();
     }  while(InputStates.bQuit);
 
-    // InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont)
     uScroller1Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller1,2,Config.uResY / 2,szMessage1,0.3,0.02,100,1,true,false) != 0) {
+    if (InitScroller(&Scroller1,2,0,Config.uResX,Config.uResY / 2,szMessage1,0.3,0.02,100,1,true,false) != 0) {
         return -1;
     }
     uScroller2Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller2,1,0,szMessage2,0,0,0,1,false,false) != 0) {
+
+    //int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont);
+
+    if (InitScroller(&Scroller2,1,0,Config.uResX,0,szMessage2,0,0,0,1,false,false) != 0) {
         return -1;
     }
     uScroller3Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller3,2,0,szMessage3,0,0,0,1,false,false) != 0) {
+    if (InitScroller(&Scroller3,2,0,Config.uResX,0,szMessage3,0,0,0,1,false,false) != 0) {
         return -1;
     }
     uAsteroidsTimer = SDL_GetTicks();
@@ -232,8 +240,8 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         }
         // Scroller2 mit Sinus-Verlauf
         fAngle2 = fAngle2 + 0.01;
-        fSin2 = sin(fAngle2) * 365;
-        Scroller2.nYpos = 370 + (int)fSin2;
+        fSin2 = sin(fAngle2) * (Config.uResY / 2.1);
+        Scroller2.nYpos = ((Config.uResY - FONT_H) / 2) + (int)fSin2;
 
         // Scroller3 mit Sinus-Verlauf
         // Steigungsumkehr des sinus 3 für Scroller 3 erkennen -> Steigung für Sinus ist erste Ableitung, also Cosinus
@@ -241,8 +249,8 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         fScroller3AlteSteigung = cos(fAngle3);
         fAngle3 = fAngle3 + 0.02;
         fScroller3NeueSteigung = cos(fAngle3);
-        fSin3 = sin(fAngle3) * 410;
-        Scroller3.nYpos = 370 + (int)fSin3;
+        fSin3 = sin(fAngle3) * (Config.uResY / 1.9);
+        Scroller3.nYpos = ((Config.uResY - FONT_H) / 2) + (int)fSin3;
         if ( ((fScroller3AlteSteigung > 0) && (fScroller3NeueSteigung < 0)) || ((fScroller3AlteSteigung < 0) && (fScroller3NeueSteigung > 0)) ) {
             bScroller3Vor = !bScroller3Vor;     // Scroller 3 umkreist den Rest
         }
@@ -326,7 +334,7 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
                 uModVolume = 100;
             }
         } else  {
-            PlayMusic();
+            PlayMusic(true);
         }
         // Fenster-Verschiebung im Drunken-Asteroids Modus
         if ((bHasDisplayMode) && (bDrunkenAsteroids)) {

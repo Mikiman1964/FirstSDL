@@ -1,20 +1,27 @@
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
+#include "config.h"
 #include "modplay.h"
 
 ModPlayerStatus_t mp;
 AUDIOPLAYER Audioplayer;
 
+extern CONFIG Config;
+
 // Externe Pointer und Indexe
-extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;     // 1. Mod von banana
-extern uint8_t _binary_ripped_mod_start;extern uint8_t _binary_ripped_mod_end;         // 2. Mod von ?
-extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;       // 3. class cracktro#15 Mod von maktone,1999
-extern uint8_t _binary_gtrash3f_mod_start;extern uint8_t _binary_gtrash3f_mod_end;     // 4. global trash 3 V2 von Jesper Kyd, 1991
-extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;       // 5. class11.mod (class11.time flies) von Maktone
-extern uint8_t _binary_2kad04_mod_start;extern uint8_t _binary_2kad04_mod_end;         // 6. 2kad04.mod (2000AD:cracktro:IV) von Maktone
-extern uint8_t _binary_2kad02_mod_start;extern uint8_t _binary_2kad02_mod_end;         // 7. 2kad02.mod (2000AD cracktro02)  von Maktone
-extern uint8_t _binary_brewery_mod_start;extern uint8_t _binary_brewery_mod_end;       // 8. brewery.mod (the brewery)  von Maktone
+extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;                      // 1. Mod von banana
+extern uint8_t _binary_ripped_mod_start;extern uint8_t _binary_ripped_mod_end;                          // 2. Mod von ?
+extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;                        // 3. class cracktro#15 Mod von maktone,1999
+extern uint8_t _binary_gtrash3f_mod_start;extern uint8_t _binary_gtrash3f_mod_end;                      // 4. global trash 3 V2 von Jesper Kyd, 1991
+extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;                        // 5. class11.mod (class11.time flies) von Maktone
+extern uint8_t _binary_2kad04_mod_start;extern uint8_t _binary_2kad04_mod_end;                          // 6. 2kad04.mod (2000AD:cracktro:IV) von Maktone
+extern uint8_t _binary_2kad02_mod_start;extern uint8_t _binary_2kad02_mod_end;                          // 7. 2kad02.mod (2000AD cracktro02)  von Maktone
+extern uint8_t _binary_brewery_mod_start;extern uint8_t _binary_brewery_mod_end;                        // 8. brewery.mod (the brewery)  von Maktone
+extern uint8_t _binary_class05_1999_mod_start;extern uint8_t _binary_class05_1999_mod_end;              // 9. class05 von Maktone
+extern uint8_t _binary_softworld_mod_start;extern uint8_t _binary_softworld_mod_end;                    // 10. softworld von Maktone
+extern uint8_t _binary_circus_time_2_1993_mod_start;extern uint8_t _binary_circus_time_2_1993_mod_end;  // 11. circus time 2 von voyce/delight
+
 
 
 uint8_t* g_pMusicPointer[(MAX_MUSICINDEX + 1) * 2];          // 2 Pointer / Musik + Pärchen NULL-Pointer
@@ -40,11 +47,12 @@ void InitMusicPointer(void) {
     g_pMusicPointer[6] = &_binary_gtrash3f_mod_start;g_pMusicPointer[7] = &_binary_gtrash3f_mod_end;
     g_pMusicPointer[8] = &_binary_class11_mod_start;g_pMusicPointer[9] = &_binary_class11_mod_end;
     g_pMusicPointer[10] = &_binary_2kad04_mod_start;g_pMusicPointer[11] = &_binary_2kad04_mod_end;
-
     g_pMusicPointer[12] = &_binary_2kad02_mod_start;g_pMusicPointer[13] = &_binary_2kad02_mod_end;
     g_pMusicPointer[14] = &_binary_brewery_mod_start;g_pMusicPointer[15] = &_binary_brewery_mod_end;
-
-    g_pMusicPointer[16] = NULL;g_pMusicPointer[17] = NULL;// Ende
+    g_pMusicPointer[16] = &_binary_class05_1999_mod_start;g_pMusicPointer[17] = &_binary_class05_1999_mod_end;
+    g_pMusicPointer[18] = &_binary_softworld_mod_start;g_pMusicPointer[19] = &_binary_softworld_mod_end;
+    g_pMusicPointer[20] = &_binary_circus_time_2_1993_mod_start;g_pMusicPointer[21] = &_binary_circus_time_2_1993_mod_end;
+    g_pMusicPointer[22] = NULL;g_pMusicPointer[23] = NULL;// Ende
 }
 
 /*----------------------------------------------------------------------------
@@ -138,22 +146,30 @@ Beschreibung: Spielt ein MOD-File ab. Diese Funktion muss zyklisch aufgerufen we
               worden sein
 
 Parameter
-      Eingang: -
+      Eingang: bIgnoreConfig, bool, true = COnfig.bGameMusic wird ignoriert
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
-Seiteneffekte: Audioplayer.x,
+Seiteneffekte: Audioplayer.x, Config.x
 ------------------------------------------------------------------------------*/
-int PlayMusic(void) {
+int PlayMusic(bool bIgnoreConfig) {
     int nErrorCode;
+    // ModPlayerStatus_t *m;
 
-    if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
-        RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);
-        nErrorCode = SDL_QueueAudio(Audioplayer.audio_device,Audioplayer. audiobuffer, Audioplayer.sdl_audio.samples * 4); // 2 channels, 2 bytes/sample
-        if (nErrorCode != 0) {
-            SDL_Log("%s: SDL_QueueAudio() failed: %s",__FUNCTION__,SDL_GetError());
+    // m = &mp;
+    // printf("\rRow %02d, order %02d/%02d (pattern %02d) @ speed %d", m->row, m->order, m->orders - 1, m->ordertable[m->order], m->speed);
+
+    if ((Config.bGameMusic) || (bIgnoreConfig)) {
+        if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
+            RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);
+            nErrorCode = SDL_QueueAudio(Audioplayer.audio_device,Audioplayer. audiobuffer, Audioplayer.sdl_audio.samples * 4); // 2 channels, 2 bytes/sample
+            if (nErrorCode != 0) {
+                SDL_Log("%s: SDL_QueueAudio() failed: %s",__FUNCTION__,SDL_GetError());
+            }
+        } else {
+            nErrorCode = 0; // Queue ist noch voll
         }
     } else {
-        nErrorCode = 0; // Queue ist noch voll
+        nErrorCode = 0; // Es soll nicht gespielt werden
     }
     return nErrorCode;
 }
@@ -199,6 +215,26 @@ void CheckMusicSwitch(const Uint8 *pKeyboardArray) {
     if (pKeyboardArray[SDL_SCANCODE_6]) {
         if (Audioplayer.nNextMusicIndex == 0) {
             Audioplayer.nNextMusicIndex = 6;
+        }
+    }
+    if (pKeyboardArray[SDL_SCANCODE_7]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 7;
+        }
+    }
+    if (pKeyboardArray[SDL_SCANCODE_8]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 8;
+        }
+    }
+    if (pKeyboardArray[SDL_SCANCODE_9]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 9;
+        }
+    }
+    if (pKeyboardArray[SDL_SCANCODE_0]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 10;
         }
     }
 }
@@ -424,7 +460,8 @@ ModPlayerStatus_t *ProcessMOD() {
 							mp.skiporderrequest = 0;
 					}
 
-					if(effval_tmp > 0x3F) effval_tmp = 0;
+					//if(effval_tmp > 0x3F) effval_tmp = 0;
+					if(effval_tmp > 0x63) effval_tmp = 0;
 
 					mp.skiporderdestrow = (effval_tmp >> 4) * 10 + (effval_tmp & 0xF); // What were the ProTracker guys smoking?!
 					break;
@@ -748,6 +785,9 @@ ModPlayerStatus_t *InitMOD(uint8_t *mod, int samplerate) {
 
 	// MIK int8_t *samplemem = mod + 1084 + 1024 * mp.maxpattern;
 	int8_t *samplemem = (int8_t *)(mod + 1084 + 1024 * mp.maxpattern);
+
+
+
 	mp.patterndata = mod + 1084;
 
 	for(int i = 0; i < 31; i++) {

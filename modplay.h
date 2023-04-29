@@ -6,7 +6,7 @@
 #define SAMPLERATE 44100
 #define AUDIO_BUFFERSIZE 4096
 
-#define MAX_MUSICINDEX   8       // Anzahl der verfügbaren Musikstücke
+#define MAX_MUSICINDEX   11       // Anzahl der verfügbaren Musikstücke
 
 typedef struct {
     SDL_AudioDeviceID audio_device;
@@ -71,7 +71,7 @@ typedef struct {
 void InitMusicPointer(void);
 int InitAudioplayerStruct(void);
 int SetModMusic(int nMusicIndex);
-int PlayMusic(void);
+int PlayMusic(bool bIgnoreConfig);
 void CheckMusicSwitch(const Uint8 *pKeyboardArray);
 void SetModVolume(uint8_t uVolumePercent);
 

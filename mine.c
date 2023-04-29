@@ -351,7 +351,9 @@ void ControlManWithDynamiteOn(uint32_t I) {
                 Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
                 PreparePlaySound(SOUND_MAN_CRIES,I);
             }
-            ControlCentralExplosion(I);
+            // Folgender Aufruf hatte zum Ergebnis, dass z.B. eine darüberliegende Standmine in derselben Steuerungsphase mit explodiert.
+            // Darunter liegende Standmine explodiert erst in der nächsten Phase. (Richtig)
+            // ControlCentralExplosion(I);
             PreparePlaySound(SOUND_EXPLOSION,I);
             break;
         default:

@@ -1,6 +1,8 @@
+#include "config.h"
 #include "EmeraldMine.h"
 #include "emerald.h"
 #include "explosion.h"
+#include "gamecontroller.h"
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
 #include "man.h"
@@ -24,20 +26,55 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: ManKey.x, InputStates.x, PLayfield.x
+Seiteneffekte: ManKey.x, InputStates.x, PLayfield.x, Config.x
 ------------------------------------------------------------------------------*/
 void UpdateManKey() {
     UpdateInputStates();
-    if (InputStates.pKeyboardArray[SDL_SCANCODE_UP]) {
-        ManKey.uDirection = MANKEY_UP;
-    } else if (InputStates.pKeyboardArray[SDL_SCANCODE_DOWN]) {
-        ManKey.uDirection = MANKEY_DOWN;
-    } else if (InputStates.pKeyboardArray[SDL_SCANCODE_LEFT]) {
-        ManKey.uDirection = MANKEY_LEFT;
-    } else if (InputStates.pKeyboardArray[SDL_SCANCODE_RIGHT]) {
-        ManKey.uDirection = MANKEY_RIGHT;
+    MAN_DIRECTIONS ManDirections;
+
+    if (GetJoystickOrGameControllerStatus(&ManDirections) == 0) {     // Falls Device nicht abgefragt werden kann/soll, dann Keyboard nehmen
+        if (ManDirections.bLeft) {
+            ManKey.uDirection = MANKEY_LEFT;
+        } else if (ManDirections.bRight) {
+            ManKey.uDirection = MANKEY_RIGHT;
+        } else if (ManDirections.bUp) {
+            ManKey.uDirection = MANKEY_UP;
+        } else if (ManDirections.bDown) {
+            ManKey.uDirection = MANKEY_DOWN;
+        } else {
+            ManKey.uDirection = MANKEY_NONE;
+        }
+        ManKey.bFire = ManDirections.bFire;
+        if (ManDirections.bExit) {
+            ManKey.bExit = true;    // wird in RunGame() bestätigt
+        }
+        if (ManDirections.bDynamite) {
+            ManKey.uFireCount++;
+            //SDL_Log("FireCount: %u",ManKey.uFireCount);
+        } else {
+            ManKey.uFireCount = 0;
+        }
     } else {
-        ManKey.uDirection = MANKEY_NONE;
+        // Keyboard
+        if (InputStates.pKeyboardArray[SDL_SCANCODE_LEFT]) {
+            ManKey.uDirection = MANKEY_LEFT;
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_RIGHT]) {
+            ManKey.uDirection = MANKEY_RIGHT;
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_UP]) {
+            ManKey.uDirection = MANKEY_UP;
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_DOWN]) {
+            ManKey.uDirection = MANKEY_DOWN;
+        } else {
+            ManKey.uDirection = MANKEY_NONE;
+        }
+        ManKey.bFire = (InputStates.pKeyboardArray[SDL_SCANCODE_LCTRL]);
+        // Zündung des Dynamits mit Feuertaste oder Space
+        if (  (((ManKey.bFire) && (!Config.bStartDynamiteWithSpace)) || ((InputStates.pKeyboardArray [SDL_SCANCODE_SPACE]) && (Config.bStartDynamiteWithSpace)))  && (Playfield.uDynamitePos == 0xFFFFFFFF) && (ManKey.uDirection == MANKEY_NONE)) {
+            ManKey.uFireCount++;
+            //SDL_Log("FireCount: %u",ManKey.uFireCount);
+        } else {
+            ManKey.uFireCount = 0;
+        }
     }
     if (ManKey.uLastDirection != ManKey.uDirection) {
         if (ManKey.uDirection != MANKEY_NONE) {
@@ -48,7 +85,6 @@ void UpdateManKey() {
         }
     }
     ManKey.uLastDirection = ManKey.uDirection;
-    ManKey.bFire = (InputStates.pKeyboardArray[SDL_SCANCODE_LCTRL]);
 }
 
 
@@ -87,7 +123,7 @@ Parameter
                uDirection, uint32_t, Richtung, in die Man laufen möchte
       Ausgang: -
 Rückgabewert:  Richtung, in die Man gelaufen ist als Animation
-Seiteneffekte: Playfield.x, ManKey.x
+Seiteneffekte: Playfield.x, ManKey.x, Config.x
 ------------------------------------------------------------------------------*/
 uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     uint32_t uRetDirection;
@@ -105,17 +141,10 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
         Playfield.bManDead = true;
         return uRetDirection;
     }
-    // Zündung des Dynamits mit Feuertaste oder Space
-    if (  (((ManKey.bFire) && (!Config.bStartDynamiteWithSpace)) || ((InputStates.pKeyboardArray [SDL_SCANCODE_SPACE]) && (Config.bStartDynamiteWithSpace)))  && (Playfield.uDynamitePos == 0xFFFFFFFF) && (ManKey.uDirection == MANKEY_NONE)) {
-        Playfield.uFireCount++;
-        SDL_Log("FireCount: %u",Playfield.uFireCount);
-    } else {
-        Playfield.uFireCount = 0;
-    }
 
-    if ((Playfield.uFireCount > 5) && (Playfield.uDynamiteCount > 0)) { // Bei 6 zündet das Dynamit
+    if ((ManKey.uFireCount > (4 * 16)) && (Playfield.uDynamiteCount > 0)) { // Bei 6 zündet das Dynamit
         Playfield.uDynamiteCount--;
-        Playfield.uFireCount = 0;
+        ManKey.uFireCount = 0;
         Playfield.uDynamitePos = I;
         Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_START;
         PreparePlaySound(SOUND_DYNAMITE_START,I);
@@ -214,7 +243,8 @@ Parameter
                uAnimation, uint32_t, gewünschte Animation des Man
       Ausgang: -
 Rückgabewert:  uint32_t, tatsächlich ausgeführte Animation des Man
-Seiteneffekte: Playfield.x, ge_szElementNames[], ge_DisplayMode.refresh_rate
+Seiteneffekte: Playfield.x, ge_szElementNames[], ge_DisplayMode.refresh_rate,
+               ManKey.x
 ------------------------------------------------------------------------------*/
 uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimation) {
     uint32_t uElement;      // Element, dass Man berührt bzw. anläuft
@@ -700,7 +730,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_KEY_GREEN):
             Playfield.bHasGreenKey = true;
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreKey;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
@@ -743,7 +773,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_TIME_COIN):
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreTimeCoin;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             Playfield.uTimeToPlay = Playfield.uTimeToPlay + Playfield.uAdditonalTimeCoinTime;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
@@ -787,7 +817,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_HAMMER):
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreHammer;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             Playfield.uHammerCount++;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
@@ -831,7 +861,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_DYNAMITE_OFF):
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreDynamite;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             Playfield.uDynamiteCount++;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
@@ -876,7 +906,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_KEY_BLUE):
             Playfield.bHasBlueKey = true;
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreKey;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
@@ -920,7 +950,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_KEY_YELLOW):
             Playfield.bHasYellowKey = true;
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreKey;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
@@ -964,7 +994,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_KEY_RED):
             Playfield.bHasRedKey = true;
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreKey;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
@@ -1008,7 +1038,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_KEY_WHITE):
             Playfield.uWhiteKeyCount++;
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreKey;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
@@ -1056,7 +1086,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             Playfield.bHasBlueKey = true;
             Playfield.bHasYellowKey = true;
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreKey;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
@@ -1099,7 +1129,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_SAND):
             Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Sand-Rand-Status muss gelöscht werden
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_DIG_SAND,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
@@ -1157,7 +1187,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 return uRetAnimation;
             }
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreEmerald;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             if (Playfield.uEmeraldsToCollect > 0) {
                 Playfield.uEmeraldsToCollect--;
@@ -1218,7 +1248,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 return uRetAnimation;
             }
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScorePerl;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             if (Playfield.uEmeraldsToCollect < 5) {
                 Playfield.uEmeraldsToCollect = 0;
@@ -1281,7 +1311,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 return uRetAnimation;
             }
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreRuby;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             if (Playfield.uEmeraldsToCollect < 2) {
                 Playfield.uEmeraldsToCollect = 0;
@@ -1344,7 +1374,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 return uRetAnimation;
             }
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreCrystal;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             if (Playfield.uEmeraldsToCollect < 8) {
                 Playfield.uEmeraldsToCollect = 0;
@@ -1407,7 +1437,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 return uRetAnimation;
             }
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreSaphir;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             if (Playfield.uEmeraldsToCollect < 3) {
                 Playfield.uEmeraldsToCollect = 0;
@@ -1462,7 +1492,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_MESSAGE_7):
         case (EMERALD_MESSAGE_8): // 0x48
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreMessage;
-            Playfield.uFireCount = 0;
+            ManKey.uFireCount = 0;
             Playfield.uShowMessageNo = uElement - EMERALD_MESSAGE_1 + 1;    // Ergibt 1-8
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
@@ -1538,7 +1568,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_WALL_WITH_TIME_COIN):
             if ((uAnimation != EMERALD_ANIM_STAND) && (ManKey.bFire) && (Playfield.uHammerCount > 0)) {
                 Playfield.uHammerCount--;
-                Playfield.uFireCount = 0;
+                ManKey.uFireCount = 0;
                 SetManArm(uActPos,uAnimation);
                 Playfield.pLevel[uTouchPos] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                 switch (uElement) {
