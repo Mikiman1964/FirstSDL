@@ -1,3 +1,4 @@
+#include "config.h"
 #include "EmeraldMine.h"
 #include "GetTextureIndexByElement.h"
 #include "loadlevel.h"
@@ -1008,20 +1009,23 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         // SDL_Log("%s: element %x comes from blue wall",__FUNCTION__,uNewMagicElement);
                         nYoffs_0 = nAnimationCount * 2;
                         switch (uNewMagicElement) {
-                            case(EMERALD_EMERALD):      // Stein -> Emerald
+                            case (EMERALD_EMERALD):      // Stein -> Emerald
                                 uTextureIndex_0 = 226 + nAnimationCount / 2;     // Emerald, fallend
                                 break;
-                            case(EMERALD_SAPPHIRE):     // Emerald -> Saphir
+                            case (EMERALD_SAPPHIRE):     // Emerald -> Saphir
                                 uTextureIndex_0 = 248 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 9; // Saphir fallend
                                 break;
-                            case(EMERALD_STONE):        // Saphir -> Stein
+                            case (EMERALD_STONE):        // Saphir -> Stein
                                 uTextureIndex_0 = 71;
                                 break;
-                            case(EMERALD_BOMB):        // Rubin -> Bombe (noch klein)
+                            case (EMERALD_BOMB):        // Perle -> Bombe
                                 uTextureIndex_0 = 271 + nAnimationCount % 8;
                                 break;
-                            case(EMERALD_CRYSTAL):     // Kristall -> Kristall
+                            case (EMERALD_CRYSTAL):     // Kristall -> Kristall
                                 uTextureIndex_0 = 309;
+                                break;
+                            case (EMERALD_MEGABOMB):    // Rubin -> Megabombe
+                                uTextureIndex_0 = 524 + ((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) % 5;
                                 break;
                             default:
                                 SDL_Log("%s: warning: new unhandled magic element: %x at %d",__FUNCTION__,uNewMagicElement,I);

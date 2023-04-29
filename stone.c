@@ -101,6 +101,8 @@ void ControlStone(uint32_t I) {
                         SDL_Log("Stone hit running magic wall");
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                         ElementGoesMagicWall(I,EMERALD_EMERALD);
+                        PreparePlaySound(SOUND_SQUEAK,I);
+
                     } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                         SDL_Log("Stone start magic wall");
@@ -108,6 +110,7 @@ void ControlStone(uint32_t I) {
                         Playfield.uTimeMagicWallLeft = Playfield.uTimeMagicWall;
                         Playfield.bMagicWallRunning = true;
                         ElementGoesMagicWall(I,EMERALD_EMERALD);
+                        PreparePlaySound(SOUND_SQUEAK,I);
                     } else {
                         SDL_Log("Stone hit used magic wall");
                         PreparePlaySound(SOUND_STONE_FALL,I);

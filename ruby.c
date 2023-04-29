@@ -64,14 +64,16 @@ void ControlRuby(uint32_t I) {
                 if (Playfield.bMagicWallRunning) {
                     SDL_Log("Rubin hit running magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
-                    ElementGoesMagicWall(I,EMERALD_BOMB);
+                    ElementGoesMagicWall(I,EMERALD_MEGABOMB);
+                    PreparePlaySound(SOUND_SQUEAK,I);
                 } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     SDL_Log("Rubin start magic wall");
                     Playfield.bMagicWallWasOn = true;
                     Playfield.uTimeMagicWallLeft = Playfield.uTimeMagicWall;
                     Playfield.bMagicWallRunning = true;
-                    ElementGoesMagicWall(I,EMERALD_BOMB);
+                    ElementGoesMagicWall(I,EMERALD_MEGABOMB);
+                    PreparePlaySound(SOUND_SQUEAK,I);
                 } else {
                     SDL_Log("Rubin hit used magic wall");
                     PreparePlaySound(SOUND_PING,I);

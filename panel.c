@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "config.h"
 #include "EmeraldMine.h"
 #include "KeyboardMouse.h"
 #include "loadlevel.h"

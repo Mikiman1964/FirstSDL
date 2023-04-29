@@ -62,6 +62,7 @@ void ControlPerl(uint32_t I) {
                     SDL_Log("Perl hit running magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     ElementGoesMagicWall(I,EMERALD_BOMB);
+                    PreparePlaySound(SOUND_SQUEAK,I);
                 } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     SDL_Log("Perl start magic wall");
@@ -69,6 +70,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.uTimeMagicWallLeft = Playfield.uTimeMagicWall;
                     Playfield.bMagicWallRunning = true;
                     ElementGoesMagicWall(I,EMERALD_BOMB);
+                    PreparePlaySound(SOUND_SQUEAK,I);
                 } else {
                     SDL_Log("Perl hit used magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_PERL_BREAK;

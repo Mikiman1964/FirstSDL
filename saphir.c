@@ -65,6 +65,7 @@ void ControlSaphir(uint32_t I) {
                     SDL_Log("Sapphire hit running magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     ElementGoesMagicWall(I,EMERALD_STONE);
+                    PreparePlaySound(SOUND_SQUEAK,I);
                 } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     SDL_Log("Sapphire start magic wall");
@@ -72,6 +73,7 @@ void ControlSaphir(uint32_t I) {
                     Playfield.uTimeMagicWallLeft = Playfield.uTimeMagicWall;
                     Playfield.bMagicWallRunning = true;
                     ElementGoesMagicWall(I,EMERALD_STONE);
+                    PreparePlaySound(SOUND_SQUEAK,I);
                 } else {
                     SDL_Log("Sapphire hit used magic wall");
                     PreparePlaySound(SOUND_PING,I);

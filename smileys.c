@@ -1,3 +1,4 @@
+#include "config.h"
 #include "loadlevel.h"
 #include "mySDL.h"
 #include "mystd.h"
