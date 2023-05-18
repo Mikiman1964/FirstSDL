@@ -12,8 +12,10 @@ typedef struct {
     bool bMidMouseButton;
     bool bRightMouseButton;
     int nMouseWheelY;               // Y-Mausrad, < 0 = Rad scroll down, > 0 = Rad scroll up
-    int nMouseXpos;                 // Maus X-Position
-    int nMouseYpos;                 // Maus Y-Position
+    int nMouseXpos_Absolute;        // Absolute Maus X-Position
+    int nMouseYpos_Absolute;        // Absolute Maus Y-Position
+    int nMouseXpos_Relative;        // Relative Maus X-Position
+    int nMouseYpos_Relative;        // Relative Maus Y-Position
     bool bQuit;                     // Fensterkreuz gedrückt
 } INPUTSTATES;
 

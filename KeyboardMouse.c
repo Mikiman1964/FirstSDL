@@ -3,6 +3,8 @@
 
 
 INPUTSTATES InputStates;
+extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           InitInputStates
@@ -34,7 +36,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: InputStates.x
+Seiteneffekte: InputStates.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 void  UpdateInputStates(void) {
     Uint32 uMouseButtons;
@@ -56,7 +58,9 @@ void  UpdateInputStates(void) {
             InputStates.uLastKey1 = 0;
         }
     }
-    uMouseButtons = SDL_GetMouseState(&InputStates.nMouseXpos,&InputStates.nMouseYpos);    // Maus abfragen
+    uMouseButtons = SDL_GetMouseState(&InputStates.nMouseXpos_Absolute,&InputStates.nMouseYpos_Absolute);    // Maus abfragen
+    InputStates.nMouseXpos_Relative = InputStates.nMouseXpos_Absolute - ge_uXoffs;
+    InputStates.nMouseYpos_Relative = InputStates.nMouseYpos_Absolute - ge_uYoffs;
     InputStates.bLeftMouseButton = ((uMouseButtons & SDL_BUTTON_LMASK) != 0);
     InputStates.bMidMouseButton = ((uMouseButtons & SDL_BUTTON_MMASK) != 0);
     InputStates.bRightMouseButton = ((uMouseButtons & SDL_BUTTON_RMASK) != 0);

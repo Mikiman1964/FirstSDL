@@ -2,6 +2,7 @@
 #include "config.h"
 #include "gamecontroller.h"
 #include "SDL2/SDL_gamecontroller.h"
+#include "SDL2/SDL_joystick.h"
 
 GAMECONTROLLER GameController;
 JOYSTICK Joystick;
@@ -11,18 +12,22 @@ extern CONFIG Config;
 Name:           DetectJoystickAndGameController
 ------------------------------------------------------------------------------
 Beschreibung:   Erkennt angeschlossene Joysticks und Gamecontroller.
-                Die Funktion füllt die Strukturen Joystick.x und GameController.x.
+                Die Funktion fÃ¼llt die Strukturen Joystick.x und GameController.x.
                 Gefundene Joystick- und GameController-IDs werden in Joystick.ID[] und
                 GameController.ID[] hinterlegt.
+                Hinweise:
+                Joystick COMPETITION PRO wird unter Linux als Gamecontroller erkannt, lÃ¤sst sich aber als Joystick Ã¶ffnen.
+                Unter Windows wird der COMPETITION PRO als Joystick erkannt, lÃ¤sst sich aber nicht als GameController Ã¶ffnen
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Joystick.x, GameController.x
 ------------------------------------------------------------------------------*/
 void DetectJoystickAndGameController(void) {
     int I;
-    int nStickCount;    // Das können Joysticks oder GameController sein
+    int nStickCount;                // Das kÃ¶nnen Joysticks oder GameController sein
+    bool bJoystickAsGameController; // Bei Joystick als GameController die Tasten tauschen
 
     memset(&GameController,0,sizeof(GameController));
     for (I = 0; I < MAX_GAMECONTROLLERS; I++) {
@@ -35,7 +40,7 @@ void DetectJoystickAndGameController(void) {
     }
     nStickCount = SDL_NumJoysticks();
     for (I = 0; I < nStickCount; I++) {
-        if (SDL_IsGameController(I)) {      // Stick ist ein Gamecontroller
+        if (IsGameController(I,&bJoystickAsGameController)) {      // Stick ist ein Gamecontroller
             if (GameController.nCount < MAX_GAMECONTROLLERS) {
                 GameController.ID[GameController.nCount] = I;
                 GameController.nCount++;
@@ -43,6 +48,7 @@ void DetectJoystickAndGameController(void) {
         } else {                            // Stick ist ein Joystick
             if (Joystick.nCount < MAX_JOYSTICKS) {
                 Joystick.ID[Joystick.nCount] = I;
+                Joystick.Value[Joystick.nCount].bJoystickAsGameController = bJoystickAsGameController;
                 Joystick.nCount++;
             }
         }
@@ -57,16 +63,61 @@ void DetectJoystickAndGameController(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           IsGameController
+------------------------------------------------------------------------------
+Beschreibung:   Eigene und erweiterte Abfrage, ob es sich beim GerÃ¤t um einen
+                Gamecontroller oder Joystick handelt.
+                Unter Linux wird der Joystick COMPETITION PRO als GameController
+                erkannt.
+                Hinweise:
+                Joystick COMPETITION PRO wird unter Linux als Gamecontroller erkannt, lÃ¤sst sich aber als Joystick Ã¶ffnen.
+                Unter Windows wird der COMPETITION PRO als Joystick erkannt, lÃ¤sst sich aber nicht als GameController Ã¶ffnen
+Parameter
+      Eingang: nJoystickIndex, int, 0 - SDL_NumJoysticks() - 1
+      Ausgang: pbJoystickAsGameController, bool, Joystick lÃ¤uft als Gamecontroller
+RÃ¼ckgabewert:  bool, true = GerÃ¤t ist Gamecontroller, false = Joystick
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+bool IsGameController(int nJoystickIndex, bool *pbJoystickAsGameController) {
+    bool bIsGameController = false;
+    const char *pName;
+
+    if (pbJoystickAsGameController == NULL) {
+        return false;
+    }
+    *pbJoystickAsGameController = false;
+    if (SDL_IsGameController(nJoystickIndex)) {
+        // Stick ist erstmal ein Gamecontroller
+        pName = SDL_GameControllerNameForIndex(nJoystickIndex); // Im Header steht nichts davon, dass der String freigegeben werden muss!
+        if (pName != NULL) {
+            if (strstr(pName,JOYSTICK_NAME) == NULL) { // "COMPETITION PRO" nicht gefunden, daher GameController
+                bIsGameController = true;
+            } else {
+                *pbJoystickAsGameController = true;     // Bei Joysticks, die Ã¼ber den GameController laufen, mÃ¼ssen Buttons anders abgefragt werden
+            }
+        } else {
+            bIsGameController = true;   // Kein Devicename auswertbar -> dann bei GameController bleiben
+        }
+    }
+    return bIsGameController;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           OpenJoystickOrGameController
 ------------------------------------------------------------------------------
-Beschreibung:   Öffnet einen Joystick oder Gamecontroller in Abhängig der gespeicherten
+Beschreibung:   Ã–ffnet einen Joystick oder Gamecontroller in AbhÃ¤ngig der gespeicherten
                 Einstellungen.
-                Die Funktion füllt die Strukturen Joystick.x bzw. GameController.x. mit
-                dem Gerätehandle.
+                Die Funktion fÃ¼llt die Strukturen Joystick.x bzw. GameController.x. mit
+                dem GerÃ¤tehandle.
+                Hinweise:
+                Joystick COMPETITION PRO wird unter Linux als Gamecontroller erkannt, lÃ¤sst sich aber als Joystick Ã¶ffnen.
+                Unter Windows wird der COMPETITION PRO als Joystick erkannt, lÃ¤sst sich aber nicht als GameController Ã¶ffnen
+
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = gewünschtes Gerät konnte geöffnet werden, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = gewÃ¼nschtes GerÃ¤t konnte geÃ¶ffnet werden, sonst Fehler
 Seiteneffekte: Joystick.x, GameController.x, Config.x
 ------------------------------------------------------------------------------*/
 int OpenJoystickOrGameController(void) {
@@ -76,7 +127,7 @@ int OpenJoystickOrGameController(void) {
         if (Config.uDeviceIndex < MAX_JOYSTICKS) {
             if (Joystick.ID[Config.uDeviceIndex] != -1) {
                 Joystick.nActiveJoystickId = Joystick.ID[Config.uDeviceIndex] ;
-                Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier = SDL_GameControllerOpen(Joystick.nActiveJoystickId);
+                Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier = SDL_JoystickOpen(Joystick.nActiveJoystickId);
                 if (Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier != NULL) {
                     SDL_Log("%s: joystick with device id: %d  opened",__FUNCTION__,Joystick.nActiveJoystickId);
                     nErrorCode = 0;
@@ -108,7 +159,7 @@ int OpenJoystickOrGameController(void) {
         }
     } else {
         SDL_Log("%s: no device opened",__FUNCTION__);
-        nErrorCode = 0;                    // Es soll kein Gerät geöffnet werden
+        nErrorCode = 0;                    // Es soll kein GerÃ¤t geÃ¶ffnet werden
     }
     return nErrorCode;
 }
@@ -122,48 +173,118 @@ Beschreibung:   Fragt einen Joystick oder Gamecontroller ab und legt die
                 Informationen in den Strukturen Joystick.x bzw. GameController.x ab.
 Parameter
       Eingang: -
-      Ausgang: pManDirections, MAN_DIRECTIONS *, Richtungszustände für Man-Bewegung
-Rückgabewert:  int, 0 = Statusabfrage OK, sonst Fehler bzw. keine Abfrage durchgeführt
+      Ausgang: pManDirections, MAN_DIRECTIONS *, RichtungszustÃ¤nde fÃ¼r Man-Bewegung
+RÃ¼ckgabewert:  int, 0 = Statusabfrage OK, sonst Fehler bzw. keine Abfrage durchgefÃ¼hrt
 Seiteneffekte: Joystick.x, GameController.x, Config.x
 ------------------------------------------------------------------------------*/
 int GetJoystickOrGameControllerStatus(MAN_DIRECTIONS *pManDirections) {
     int nErrorCode = -1;
-    SDL_GameController *pHandle;
+    SDL_GameController *pGCHandle;
+    SDL_Joystick *pJoyHandle;
+    int nJoyAxis0;
+    int nJoyAxis1;
 
     if (Config.uInputdevice == 1) {         // Joystick?
-        pHandle = Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier;
-
-        // ************** TODO ************** //
-
-
-        nErrorCode = -1;                    // funktioniert noch nicht, da kein Joystick zu Testzwecken verfügar
+        pJoyHandle = Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier;
+        if (pJoyHandle != NULL) {
+            // Ein Abziehen des Joysticks kann nicht erkannt werden? SDL_JoystickName() liefert auch bei abgezogenen Joystickden Namen
+            // SDL_Log("JoyName: %s",SDL_JoystickName(pJoyHandle));
+            nJoyAxis0 = SDL_JoystickGetAxis(pJoyHandle,0);
+            nJoyAxis1 = SDL_JoystickGetAxis(pJoyHandle,1);
+            Joystick.Value[Config.uDeviceIndex].bLeft = (nJoyAxis0 < -32000);
+            Joystick.Value[Config.uDeviceIndex].bRight = (nJoyAxis0 > 32000);
+            Joystick.Value[Config.uDeviceIndex].bUp = (nJoyAxis1 < -32000);
+            Joystick.Value[Config.uDeviceIndex].bDown = (nJoyAxis1 > 32000);
+            if (Joystick.Value[Config.uDeviceIndex].bJoystickAsGameController) {
+                // SDL_Log("Gamecontroller-Joystick");
+                Joystick.Value[Config.uDeviceIndex].bButtonA = (SDL_JoystickGetButton(pJoyHandle,3) == 1); // Linker groÃŸer runder Button
+                Joystick.Value[Config.uDeviceIndex].bButtonB = (SDL_JoystickGetButton(pJoyHandle,0) == 1); // Rechter groÃŸer runder Button
+                Joystick.Value[Config.uDeviceIndex].bButtonX = (SDL_JoystickGetButton(pJoyHandle,4) == 1); // Linker dreieckiger Button
+                Joystick.Value[Config.uDeviceIndex].bButtonY = (SDL_JoystickGetButton(pJoyHandle,1) == 1); // Rechter dreieckiger Button
+            } else {
+                // SDL_Log("Real-Joystick");
+                Joystick.Value[Config.uDeviceIndex].bButtonA = (SDL_JoystickGetButton(pJoyHandle,0) == 1); // Linker groÃŸer runder Button
+                Joystick.Value[Config.uDeviceIndex].bButtonB = (SDL_JoystickGetButton(pJoyHandle,1) == 1); // Rechter groÃŸer runder Button
+                Joystick.Value[Config.uDeviceIndex].bButtonX = (SDL_JoystickGetButton(pJoyHandle,2) == 1); // Linker dreieckiger Button
+                Joystick.Value[Config.uDeviceIndex].bButtonY = (SDL_JoystickGetButton(pJoyHandle,3) == 1); // Rechter dreieckiger Button
+            }
+            /*
+            SDL_Log("A:%d  B:%d  X:%d  Y:%d",
+                    Joystick.Value[Config.uDeviceIndex].bButtonA,
+                    Joystick.Value[Config.uDeviceIndex].bButtonB,
+                    Joystick.Value[Config.uDeviceIndex].bButtonX,
+                    Joystick.Value[Config.uDeviceIndex].bButtonY);
+            */
+            pManDirections->bLeft = Joystick.Value[Config.uDeviceIndex].bLeft;
+            pManDirections->bRight = Joystick.Value[Config.uDeviceIndex].bRight;
+            pManDirections->bUp = Joystick.Value[Config.uDeviceIndex].bUp;
+            pManDirections->bDown = Joystick.Value[Config.uDeviceIndex].bDown;
+            // Firebutton
+            if (Config.cJoystickFireButton == 'A') {
+                pManDirections->bFire = Joystick.Value[Config.uDeviceIndex].bButtonA;
+            } else if (Config.cJoystickFireButton == 'B') {
+                pManDirections->bFire = Joystick.Value[Config.uDeviceIndex].bButtonB;
+            } else if (Config.cJoystickFireButton == 'X') {
+                pManDirections->bFire = Joystick.Value[Config.uDeviceIndex].bButtonX;
+            } else if (Config.cJoystickFireButton == 'Y') {
+                pManDirections->bFire = Joystick.Value[Config.uDeviceIndex].bButtonY;
+            } else {
+                pManDirections->bFire = Joystick.Value[Config.uDeviceIndex].bButtonA;
+            }
+            // Dynamit-Button
+            if (Config.cJoystickStartDynamiteButton == 'A') {
+                pManDirections->bDynamite = Joystick.Value[Config.uDeviceIndex].bButtonA;
+            } else if (Config.cJoystickStartDynamiteButton == 'B') {
+                pManDirections->bDynamite = Joystick.Value[Config.uDeviceIndex].bButtonB;
+            } else if (Config.cJoystickStartDynamiteButton == 'X') {
+                pManDirections->bDynamite = Joystick.Value[Config.uDeviceIndex].bButtonX;
+            } else if (Config.cJoystickStartDynamiteButton == 'Y') {
+                pManDirections->bDynamite = Joystick.Value[Config.uDeviceIndex].bButtonY;
+            } else {
+                pManDirections->bDynamite = Joystick.Value[Config.uDeviceIndex].bButtonX;
+            }
+            // Exit-Button
+            if (Config.cJoystickExitButton == 'A') {
+                pManDirections->bExit = Joystick.Value[Config.uDeviceIndex].bButtonA;
+            } else if (Config.cJoystickExitButton == 'B') {
+                pManDirections->bExit = Joystick.Value[Config.uDeviceIndex].bButtonB;
+            } else if (Config.cJoystickExitButton == 'X') {
+                pManDirections->bExit = Joystick.Value[Config.uDeviceIndex].bButtonX;
+            } else if (Config.cJoystickExitButton == 'Y') {
+                pManDirections->bExit = Joystick.Value[Config.uDeviceIndex].bButtonY;
+            } else {
+                pManDirections->bExit = false;
+            }
+            nErrorCode = 0;
+         }
     } else if (Config.uInputdevice == 2) { // Gamecontroller?
-        pHandle = GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier;
-        if (pHandle != NULL) {
+        pGCHandle = GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier;
+        if (pGCHandle != NULL) {
             if (SDL_IsGameController(GameController.nActiveGameControllerId)) { // Wird false, wenn Controller im Betrieb abgezogen wird
+                // SDL_Log("GCName: %s",SDL_GameControllerName(pGCHandle));
                 // Buttons und Digital Pad
-                GameController.Value[Config.uDeviceIndex].bButtonA = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_A) == 1);
-                GameController.Value[Config.uDeviceIndex].bButtonB = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_B) == 1);
-                GameController.Value[Config.uDeviceIndex].bButtonX = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_X) == 1);
-                GameController.Value[Config.uDeviceIndex].bButtonY = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_Y) == 1);
-                GameController.Value[Config.uDeviceIndex].bDigitalPadLeft = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_DPAD_LEFT) == 1);
-                GameController.Value[Config.uDeviceIndex].bDigitalPadRight = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_DPAD_RIGHT) == 1);
-                GameController.Value[Config.uDeviceIndex].bDigitalPadUp = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_DPAD_UP) == 1);
-                GameController.Value[Config.uDeviceIndex].bDigitalPadDown = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_DPAD_DOWN) == 1);
-                GameController.Value[Config.uDeviceIndex].bLeftShoulder = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_LEFTSHOULDER) == 1);
-                GameController.Value[Config.uDeviceIndex].bRightShoulder = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) == 1);
-                GameController.Value[Config.uDeviceIndex].bBurger = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_START) == 1);
-                GameController.Value[Config.uDeviceIndex].bGuide = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_GUIDE) == 1);
-                GameController.Value[Config.uDeviceIndex].bBack = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_BACK) == 1);
-                GameController.Value[Config.uDeviceIndex].bLeftStick = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_LEFTSTICK) == 1);
-                GameController.Value[Config.uDeviceIndex].bRightStick = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_RIGHTSTICK) == 1);
+                GameController.Value[Config.uDeviceIndex].bButtonA = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_A) == 1);
+                GameController.Value[Config.uDeviceIndex].bButtonB = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_B) == 1);
+                GameController.Value[Config.uDeviceIndex].bButtonX = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_X) == 1);
+                GameController.Value[Config.uDeviceIndex].bButtonY = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_Y) == 1);
+                GameController.Value[Config.uDeviceIndex].bDigitalPadLeft = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_DPAD_LEFT) == 1);
+                GameController.Value[Config.uDeviceIndex].bDigitalPadRight = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_DPAD_RIGHT) == 1);
+                GameController.Value[Config.uDeviceIndex].bDigitalPadUp = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_DPAD_UP) == 1);
+                GameController.Value[Config.uDeviceIndex].bDigitalPadDown = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_DPAD_DOWN) == 1);
+                GameController.Value[Config.uDeviceIndex].bLeftShoulder = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_LEFTSHOULDER) == 1);
+                GameController.Value[Config.uDeviceIndex].bRightShoulder = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) == 1);
+                GameController.Value[Config.uDeviceIndex].bBurger = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_START) == 1);
+                GameController.Value[Config.uDeviceIndex].bGuide = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_GUIDE) == 1);
+                GameController.Value[Config.uDeviceIndex].bBack = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_BACK) == 1);
+                GameController.Value[Config.uDeviceIndex].bLeftStick = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_LEFTSTICK) == 1);
+                GameController.Value[Config.uDeviceIndex].bRightStick = (SDL_GameControllerGetButton(pGCHandle,SDL_CONTROLLER_BUTTON_RIGHTSTICK) == 1);
                 // Achsen
-                GameController.Value[Config.uDeviceIndex].nLeftAxisX = SDL_GameControllerGetAxis(pHandle,SDL_CONTROLLER_AXIS_LEFTX);
-                GameController.Value[Config.uDeviceIndex].nLeftAxisY = SDL_GameControllerGetAxis(pHandle,SDL_CONTROLLER_AXIS_LEFTY);
-                GameController.Value[Config.uDeviceIndex].nRightAxisX = SDL_GameControllerGetAxis(pHandle,SDL_CONTROLLER_AXIS_RIGHTX);
-                GameController.Value[Config.uDeviceIndex].nRightAxisY = SDL_GameControllerGetAxis(pHandle,SDL_CONTROLLER_AXIS_RIGHTY);
-                GameController.Value[Config.uDeviceIndex].nTriggerLeft = SDL_GameControllerGetAxis(pHandle,SDL_CONTROLLER_AXIS_TRIGGERLEFT);
-                GameController.Value[Config.uDeviceIndex].nTriggerRight = SDL_GameControllerGetAxis(pHandle,SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+                GameController.Value[Config.uDeviceIndex].nLeftAxisX = SDL_GameControllerGetAxis(pGCHandle,SDL_CONTROLLER_AXIS_LEFTX);
+                GameController.Value[Config.uDeviceIndex].nLeftAxisY = SDL_GameControllerGetAxis(pGCHandle,SDL_CONTROLLER_AXIS_LEFTY);
+                GameController.Value[Config.uDeviceIndex].nRightAxisX = SDL_GameControllerGetAxis(pGCHandle,SDL_CONTROLLER_AXIS_RIGHTX);
+                GameController.Value[Config.uDeviceIndex].nRightAxisY = SDL_GameControllerGetAxis(pGCHandle,SDL_CONTROLLER_AXIS_RIGHTY);
+                GameController.Value[Config.uDeviceIndex].nTriggerLeft = SDL_GameControllerGetAxis(pGCHandle,SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+                GameController.Value[Config.uDeviceIndex].nTriggerRight = SDL_GameControllerGetAxis(pGCHandle,SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
                 /*
                 SDL_Log("LAX:%d  LAY:%d  RAX:%d  RAY:%d  TL:%d  TR:%d",
                          GameController.Value[Config.uDeviceIndex].nLeftAxisX,
@@ -208,7 +329,7 @@ int GetJoystickOrGameControllerStatus(MAN_DIRECTIONS *pManDirections) {
                 } else if (Config.cControllerExitButton == 'Y') {
                     pManDirections->bExit = GameController.Value[Config.uDeviceIndex].bButtonY;
                 } else {
-                    pManDirections->bDynamite = GameController.Value[Config.uDeviceIndex].bButtonB;
+                    pManDirections->bExit = false;
                 }
                 if (Config.uControllerDirections == 0) {            // 0 = Digital Pad, 1 = Left Axis, 2 = Right Axis
                     pManDirections->bLeft = GameController.Value[Config.uDeviceIndex].bDigitalPadLeft;
@@ -240,7 +361,7 @@ int GetJoystickOrGameControllerStatus(MAN_DIRECTIONS *pManDirections) {
             }
         }
     }
-    // else -> kein Gerät -> Rückgabe -1
+    // else -> kein GerÃ¤t -> RÃ¼ckgabe -1
     return nErrorCode;
 }
 
@@ -248,23 +369,23 @@ int GetJoystickOrGameControllerStatus(MAN_DIRECTIONS *pManDirections) {
 /*----------------------------------------------------------------------------
 Name:           CloseJoystickOrGameController
 ------------------------------------------------------------------------------
-Beschreibung:   Schließt das Geräthandle eines Joysticks oder Gamecontrollers.
+Beschreibung:   SchlieÃŸt das GerÃ¤thandle eines Joysticks oder Gamecontrollers.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = gewünschtes Gerät konnte geöffnet werden, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = gewÃ¼nschtes GerÃ¤t konnte geÃ¶ffnet werden, sonst Fehler
 Seiteneffekte: Joystick.x, GameController.x, Config.x
 ------------------------------------------------------------------------------*/
 void CloseJoystickOrGameController(void) {
-    SDL_GameController *pHandle = NULL;
-
-    if (Config.uInputdevice == 1) {         // Joystick?
-        pHandle = Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier;
-    } else if (Config.uInputdevice == 2) { // Gamecontroller?
-        pHandle = GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier;
+    if (Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier != NULL) {
+         SDL_JoystickClose(Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier);
+         Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier = NULL;
+         SDL_Log("Close Joystick with device index: %u",Config.uDeviceIndex);
     }
-    if (pHandle != NULL) {
-        SDL_GameControllerClose(pHandle);
+    if (GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier != NULL) {
+        SDL_GameControllerClose(GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier);
+        GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier = NULL;
+        SDL_Log("Close GameController with device index: %u",Config.uDeviceIndex);
     }
     Joystick.uLastDetectTime = SDL_GetTicks();
     GameController.uLastDetectTime = SDL_GetTicks();
@@ -280,7 +401,7 @@ Beschreibung:   Zeigt den Zustand der GameController-Buttons.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: GameController.x, Config.x
 ------------------------------------------------------------------------------*/
 void ShowGameControllerButtons(void) {

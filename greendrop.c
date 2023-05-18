@@ -57,6 +57,9 @@ void ControlGreenDrop(uint32_t I) {
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
             PreparePlaySound(SOUND_MAN_CRIES,I);
             Playfield.bManDead = true;
+            Playfield.pLevel[I] = EMERALD_GREEN_CHEESE;     // Tropfen, der Man getroffen hat, verwandelt sich in Käse
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            PreparePlaySound(SOUND_CHEESE,I);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) {
             SDL_Log("Green drop hit stand mine");
             ControlCentralExplosion(I + Playfield.uLevel_X_Dimension);
@@ -84,40 +87,50 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlGreenCheese(uint32_t I) {
     int nRandom;
+    int nLoops;
     int nDirectionRandom;
 
-    nRandom = randn(1,1000);       // Ergibt Zufallszahl zwischen 1-1000
+    nRandom = randn(1,9990);       // Ergibt Zufallszahl zwischen 1-9990
     if (Playfield.uCheeseSpreadSpeed >= nRandom) {
-        nDirectionRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten
-        switch (nDirectionRandom) {
-            case (1):           // links prüfen
-                if ( (Playfield.pLevel[I - 1] == EMERALD_SPACE) || (Playfield.pLevel[I - 1] == EMERALD_SAND) ) {
-                    Playfield.pLevel[I - 1] = EMERALD_GREEN_DROP_COMES;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
-                }
-                break;
-            case (2):           // oben prüfen
-                if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SAND) ) {
-                    Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_GREEN_DROP_COMES;
-                    Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                }
-                break;
-            case (3):           // rechts prüfen
-                if ( (Playfield.pLevel[I + 1] == EMERALD_SPACE) || (Playfield.pLevel[I + 1] == EMERALD_SAND) ) {
-                    Playfield.pLevel[I + 1] = EMERALD_GREEN_DROP_COMES;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-                }
-                break;
-            case (4):           // unten prüfen
-                if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAND) ) {
-                    Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_GREEN_DROP_COMES;
-                    Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-                }
-                break;
-            default:            // nichts machen
-                break;
-
+        if (Playfield.uCheeseSpreadSpeed > 9000) {
+            nLoops = 3;
+        } else if (Playfield.uCheeseSpreadSpeed > 8000) {
+            nLoops = 2;
+        } else {
+            nLoops = 1;
         }
+        do {
+            nDirectionRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten
+            switch (nDirectionRandom) {
+                case (1):           // links prüfen
+                    if ( (Playfield.pLevel[I - 1] == EMERALD_SPACE) || (Playfield.pLevel[I - 1] == EMERALD_SAND) ) {
+                        Playfield.pLevel[I - 1] = EMERALD_GREEN_DROP_COMES;
+                        Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
+                    }
+                    break;
+                case (2):           // oben prüfen
+                    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SAND) ) {
+                        Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_GREEN_DROP_COMES;
+                        Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+                    }
+                    break;
+                case (3):           // rechts prüfen
+                    if ( (Playfield.pLevel[I + 1] == EMERALD_SPACE) || (Playfield.pLevel[I + 1] == EMERALD_SAND) ) {
+                        Playfield.pLevel[I + 1] = EMERALD_GREEN_DROP_COMES;
+                        Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    }
+                    break;
+                case (4):           // unten prüfen
+                    if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAND) ) {
+                        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_GREEN_DROP_COMES;
+                        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                    }
+                    break;
+                default:            // nichts machen
+                    break;
+            }
+            nLoops--;
+        } while (nLoops > 0);
     }
 }
 
