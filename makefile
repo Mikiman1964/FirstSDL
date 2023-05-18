@@ -1,30 +1,32 @@
-compiler := gcc
+CC := gcc
+FLAGS := `sdl2-config --libs --cflags` --std=c99 -lm -Wall
+HDRS := $(wildcard *.h)
+SRCS := $(wildcard *.c)
+OBJS := $(SRCS:%.c=tmp/%.o) $(wildcard Gfx/*.o) $(wildcard Sfx/*.o)
+EXEC := bin/Release/FirstSDL2
+#---------------------------------------------------------- test
 
-sources := $(wildcard \
-             *.c \
-            )
+.SUFFIXES:
+#---------------------------------------------------------- Targets
 
-myexe := FirstSDL2
+.PHONY: all
 
-objects := $(sources:%.c=%.o) 
-objects := $(objects) $(wildcard Gfx/*.o) $(wildcard Sfx/*.o)
+all: $(EXEC)
 
-CFLAGS = -Wall \
-         -c \
+$(EXEC): $(OBJS) $(HDRS)
+	$(CC) -o $@ $(OBJS) $(FLAGS) && echo "EXEC [OK]  $@"
 
-libs :=  -lm \
-	 -lSDL2main \
-	 -lSDL2 \
+# --------------------------------------------------------------
 
 
-all: $(objects)
-	rm -f $(myexe)
-	@echo "Linking ...."
-	$(compiler) $+ -s $(libs) $(libincludes) -Wl,-Map,$(myexe).map -o bin/Release/$(myexe)
-%.o: %.c
-	$(compiler) -o $@  $(CFLAGS) $(includes) $<
+tmp/%.o: %.c
+	@$(CC) $(FLAGS) -c $< -o $@ && echo "tmp/%.o: %.c [OK]  $@"
 
-clean:
-	rm -f *.o
-	rm -f bin/Release/$(myexe)
+
+.PHONY: clean, clear
+
+clean clear:
+	@rm -f bin/Release/FirstSDL2 && echo "[CL]  out/"
+	@rm -f tmp/* && echo "[CL]  tmp/"
+
 

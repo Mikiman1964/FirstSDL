@@ -48,7 +48,7 @@ void UpdateManKey() {
         if (ManDirections.bExit) {
             ManKey.bExit = true;    // wird in RunGame() bestätigt
         }
-        if (ManDirections.bDynamite) {
+        if ((ManDirections.bDynamite) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])) {
             ManKey.uFireCount++;
             //SDL_Log("FireCount: %u",ManKey.uFireCount);
         } else {
@@ -75,6 +75,9 @@ void UpdateManKey() {
         } else {
             ManKey.uFireCount = 0;
         }
+    }
+    if (ManKey.bFire) {
+        ManKey.uLastFireFrameCount = Playfield.uFrameCounter;
     }
     if (ManKey.uLastDirection != ManKey.uDirection) {
         if (ManKey.uDirection != MANKEY_NONE) {

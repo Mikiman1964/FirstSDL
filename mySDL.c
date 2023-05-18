@@ -7,15 +7,19 @@
 #include "mystd.h"
 #include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
 
-
 int g_nGfxCount = 0;         // gefundenen Grafiken
 uint8_t g_uIntensityProzent = 100;
 SDL_Texture **g_pTextures;   // Pointer Array für Texturen
+USABLEDISPLAYMODES UsableDisplayModes;
+SHOWABLEDISPLAYMODES ShowableDisplayModes;
 
 extern SDL_DisplayMode ge_DisplayMode;
+extern SDL_Window *ge_pWindow;
 extern uint8_t _binary_gfx_compressed_bin_start;extern uint8_t _binary_gfx_compressed_bin_end;
 extern uint32_t Gfx[];
 extern CONFIG Config;
+extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           InitSDL_Window
@@ -27,24 +31,43 @@ Parameter
                pszWindowTitle, const char *, Zeiger auf Text für Fenster-Titel
       Ausgang: -
 Rückgabewert:  SDL_Window * , Zeiger auf Fenster-Handle, NULL = Fehler
-Seiteneffekte: -
+Seiteneffekte: ShowableDisplayModes.x, Config.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitle) {
     SDL_Window *pWindow = NULL;
     Uint32 uFlags;
 
-    uFlags = SDL_WINDOW_OPENGL;// | SDL_WINDOW_FULLSCREEN;
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0) {
-        pWindow = SDL_CreateWindow(
-                  pszWindowTitle,             // window title
-                  SDL_WINDOWPOS_UNDEFINED,    // initial x position
-                  SDL_WINDOWPOS_UNDEFINED,    // initial y position
-                  nWindowW,                   // width, in pixels
-                  nWindowH,                   // height, in pixels
-                  uFlags                      // Flags
-        );
-        if (pWindow == NULL) {
-            SDL_Log("%s: SDL_CreateWindow() failed: %s",__FUNCTION__,SDL_GetError());
+    uFlags = SDL_WINDOW_OPENGL; //  | SDL_WINDOW_FULLSCREEN;
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0) {
+        if (GetDesktopDisplayMode() == 0) { // Stellt auch die Anzahl der Displays fest und das zu verwendene Display (Config.uDisplayUse)
+            if (GetUsableDisplayModes(Config.uDisplayUse) == 0) {
+                // Falls die Konfigurationsdatei von einem anderen Rechner übernommen wurde, kann es sein, dass die eingestellte Fenstergröße,
+                // die maximal Unterstützte überschreitet.
+                if ((nWindowW > ShowableDisplayModes.nW[0]) || (nWindowH > ShowableDisplayModes.nH[0])) {
+                    SDL_Log("%s: adjust config resolution from %u x %u to %u x %u",__FUNCTION__,nWindowW,nWindowH,ShowableDisplayModes.nW[0],ShowableDisplayModes.nH[0]);
+                    // korrigieren
+                    nWindowW = ShowableDisplayModes.nW[0];
+                    nWindowH = ShowableDisplayModes.nH[0];
+                    Config.uResX = nWindowW;
+                    Config.uResY = nWindowH;
+                    ge_uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
+                    ge_uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
+                    if (WriteConfigFile() != 0) {
+                        return NULL;
+                    }
+                }
+                pWindow = SDL_CreateWindow(
+                          pszWindowTitle,             // window title
+                          SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewählt
+                          SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewählt
+                          nWindowW,                   // width, in pixels
+                          nWindowH,                   // height, in pixels
+                          uFlags                      // Flags
+                );
+                if (pWindow == NULL) {
+                    SDL_Log("%s: SDL_CreateWindow() failed: %s",__FUNCTION__,SDL_GetError());
+                }
+            }
         }
     }
     return pWindow;
@@ -52,42 +75,195 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
 
 
 /*----------------------------------------------------------------------------
-Name:           GetDisplayMode
+Name:           GetDesktopDisplayMode
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt den aktuellen Anzeigemodus mit Fensterposition.
+Beschreibung: Ermittelt den aktuellen Desktop-Anzeigemodus und die Fensterposition.
               Das Modus wird in ge_DisplayMode zurückgegeben.
+              Zusätzlich wird die Anzahl der verfügbaren Displays ermittelt
 Parameter
-      Eingang: pWindow, SDL_Window *, Fenster-Handle
-      Ausgang: npWindowPosX, int *, aktuelle X-Fensterposition
-               npWindowPosY, int *, aktuelle Y-Fensterposition
+      Eingang: -
+      Ausgang: -
 Rückgabewert:  int, 0 = Modus konnte ermittelt werden, sonst nicht
-Seiteneffekte: ge_DisplayMode
+Seiteneffekte: ge_DisplayMode, Config.x
 ------------------------------------------------------------------------------*/
-int GetDisplayMode(SDL_Window *pWindow, int *pnWindowPosX, int *pnWindowPosY) {
+int GetDesktopDisplayMode(void) {
     int nRet;
+    int nDisplays;
 
-    nRet = -1;
-    if ((pWindow != NULL) && (pnWindowPosX != NULL) && (pnWindowPosY != NULL)) {
-        *pnWindowPosX = 0;
-        *pnWindowPosY = 0;
-        if (SDL_GetCurrentDisplayMode(0, &ge_DisplayMode) == 0) {
-            SDL_GetWindowPosition(pWindow,pnWindowPosX,pnWindowPosY);   // ist void-Funktion
-            SDL_Log("%s   Display width: %03d   Display height: %d     WindowsPosX: %d    WindowsPosY: %d    Refreshrate: %d",
-                    __FUNCTION__,ge_DisplayMode.w,ge_DisplayMode.h,*pnWindowPosX,*pnWindowPosY,ge_DisplayMode.refresh_rate);
-            nRet = 0;
-        } else {
-            SDL_Log("%s: SDL_GetCurrentDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
+    nDisplays = SDL_GetNumVideoDisplays();
+    SDL_Log("%s: Displays: %d",__FUNCTION__,nDisplays);
+    // Falls in der Konfiguration eine zu hohe Displaynummer eingestellt ist, wird hier korrigiert
+    if (nDisplays >= 1) {
+        if (Config.uDisplay > (nDisplays - 1)) {
+            Config.uDisplayUse = nDisplays - 1;
+            if (Config.uDisplayUse > 1) {   // Es wird primary (0) und secondary (1) Display unterstützt
+                Config.uDisplayUse = 1;
+            }
+            SDL_Log("%s: display: %u is not available ... use display: %u",__FUNCTION__,Config.uDisplay,Config.uDisplayUse);
         }
-        // Das Schlimmste verhindern
-        if ( (nRet == -1) || (ge_DisplayMode.refresh_rate == 0) ) {
-            ge_DisplayMode.refresh_rate = 60;
-            *pnWindowPosX = 0;
-            *pnWindowPosY = 0;
+        nRet = SDL_GetDesktopDisplayMode(Config.uDisplayUse,&ge_DisplayMode);
+        if (nRet == 0) {
+            SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,ge_DisplayMode.w,ge_DisplayMode.h,ge_DisplayMode.refresh_rate);
+        } else {
+            SDL_Log("%s: SDL_GetDesktopDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
         }
     } else {
-        SDL_Log("%s: null pointer found",__FUNCTION__);
+        // Es gibt kein Display !
+        nRet = -1;
+    }
+    // Das Schlimmste verhindern
+    if ( (nRet != 0) || (ge_DisplayMode.refresh_rate == 0) ) {
+        ge_DisplayMode.refresh_rate = 60;
     }
     return nRet;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           RestoreDesktop
+------------------------------------------------------------------------------
+Beschreibung: Stellt die ursprüngliche Desktop-Auflösung wieder her.
+              Unter Ubuntu 16.04 (vielleicht auch bei anderen Linuxen) ist es wichtig, nach
+              Ausschalten des Fullscreens wieder die ursprüngliche Desktop-Auflösung herzustellen.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: ge_pWindow, ge_DisplayMode
+------------------------------------------------------------------------------*/
+void RestoreDesktop(void) {
+    SDL_SetWindowSize(ge_pWindow,ge_DisplayMode.w,ge_DisplayMode.h);
+    SDL_SetWindowFullscreen(ge_pWindow,0); //  0 = Fullscreen  ausschalten
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetUsableDisplayModes
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt alle nutzbaren/brauchbaren Display-Einstellungen.
+                    Nutzbar ist wie folgt definiert:
+                    * Xres >= 1280
+                    * Yres >= 768
+                    * Refreshrate: 60 Hz
+                    * 24 Bit Farbtiefe
+              Vor Aufruf dieser Funktion muss das Video-Subsystem (SDL_Init)
+              bereits initialisiert worden sein.
+Parameter
+      Eingang: uDisplay, uint32_t, Display (0 = primary oder 1 = secondary), welches genutzt werden soll
+      Ausgang: -
+Rückgabewert:  int , 0 = Alles OK, sonst Fehler
+Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x, Config.x
+------------------------------------------------------------------------------*/
+int GetUsableDisplayModes(uint32_t uDisplay) {
+    int nModeIndex;
+    int nDisplayModeCount;
+    SDL_DisplayMode DisplayMode;
+    Uint32 uFormat;
+
+    UsableDisplayModes.nDisplayModeCount = 0;
+    nDisplayModeCount = SDL_GetNumDisplayModes(Config.uDisplayUse);
+    if (nDisplayModeCount < 1) {
+        SDL_Log("%s: SDL_GetNumDisplayModes failed: %s",__FUNCTION__,SDL_GetError());
+        return -1;
+    }
+    for (nModeIndex = 0; (nModeIndex < nDisplayModeCount) && (UsableDisplayModes.nDisplayModeCount < MAX_USABLE_DISPLAYMODES); nModeIndex++) {
+        if (SDL_GetDisplayMode(0,nModeIndex,&DisplayMode) != 0) {
+            SDL_Log("%s: SDL_GetDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
+            return -1;
+        }
+        uFormat = DisplayMode.format;
+        if ((DisplayMode.refresh_rate == 60) &&
+            (DisplayMode.w >= DEFAULT_WINDOW_W) &&
+            (DisplayMode.h >= DEFAULT_WINDOW_H) &&
+            (SDL_BITSPERPIXEL(uFormat) == 24)) {
+            UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount] = DisplayMode.w;
+            UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount] = DisplayMode.h;
+            UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount] = nModeIndex;
+            UsableDisplayModes.nDisplayModeCount++;
+        }
+    }
+    // Bis hier ist alles gut gegangen -> ShowableDisplayModes.x befüllen
+    //SDL_Log("%s: usable display modes: %d",__FUNCTION__,UsableDisplayModes.nDisplayModeCount);
+    /*
+    for (int I = 0; I < UsableDisplayModes.nDisplayModeCount; I++) {
+        SDL_Log("%04d X %04d",UsableDisplayModes.nW[I],UsableDisplayModes.nH[I]);
+    }
+    */
+    return GetShowableDisplayModes();
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetShowableDisplayModes
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt aus den nutzbaren/brauchbaren Display-Einstellungen
+              eine Anzeigeliste. Ggf. müssen einige Displaymodes verworfen
+              werden, da die Anzeigeliste z.Z. begrenzt ist. (22 Einträge)
+
+              Vor Aufruf dieser Funktion muss das Video-Subsystem (SDL_Init)
+              bereits initialisiert und die Struktur
+              UsableDisplayModes.x durch die Funktion GetUsableDisplayModes()
+              befüllt worden sein.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int , 0 = Alles OK, sonst Fehler
+Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x
+------------------------------------------------------------------------------*/
+int GetShowableDisplayModes(void) {
+    int nErrorCode = -1;
+    int I;
+    int S;
+    int nToChoose;
+    int nDistance;  // Sprungabstand aus Usable-Liste ab Index 1
+    int nW;
+    int nH;
+
+    if (UsableDisplayModes.nDisplayModeCount > 0) {
+        nErrorCode = 0;
+        // Können alle brauchbaren Modi in die Anzeigeliste übernommen werden?
+        if (UsableDisplayModes.nDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES) {
+            ShowableDisplayModes.nDisplayModeCount = 0;
+            for (I = 0; I < UsableDisplayModes.nDisplayModeCount; I++) {
+                ShowableDisplayModes.nW[I] = UsableDisplayModes.nW[I];
+                ShowableDisplayModes.nH[I] = UsableDisplayModes.nH[I];
+                ShowableDisplayModes.nModeIndex[I] = UsableDisplayModes.nModeIndex[I];
+            }
+            ShowableDisplayModes.nDisplayModeCount = UsableDisplayModes.nDisplayModeCount;
+        } else {
+            ShowableDisplayModes.nW[0] = UsableDisplayModes.nW[0];
+            ShowableDisplayModes.nH[0] = UsableDisplayModes.nH[0];
+            ShowableDisplayModes.nModeIndex[0] = UsableDisplayModes.nModeIndex[0];  // Displaymode mit der höchsten Auflösung übernehmen
+            ShowableDisplayModes.nDisplayModeCount = 1;
+            nToChoose = MAX_SHOWABLE_DISPLAYMODES - 2;
+            nDistance = (UsableDisplayModes.nDisplayModeCount - 2) / nToChoose;
+            I = 1;  // Index für Usable
+            S = 1;  // Index für Showable
+            while ((nToChoose > 0) && (S < MAX_SHOWABLE_DISPLAYMODES) && (I < MAX_USABLE_DISPLAYMODES)) {
+                nW = UsableDisplayModes.nW[I];
+                nH = UsableDisplayModes.nH[I];
+                ShowableDisplayModes.nW[S] = nW;
+                ShowableDisplayModes.nH[S] = nH;
+                ShowableDisplayModes.nModeIndex[S] = UsableDisplayModes.nModeIndex[I];
+                S++;
+                ShowableDisplayModes.nDisplayModeCount++;
+                I = I + nDistance;
+                nToChoose--;
+            }
+            if (S < MAX_SHOWABLE_DISPLAYMODES) {
+                ShowableDisplayModes.nW[S] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
+                ShowableDisplayModes.nH[S] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
+                ShowableDisplayModes.nModeIndex[S] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
+                ShowableDisplayModes.nDisplayModeCount++;
+            } else {
+                ShowableDisplayModes.nW[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
+                ShowableDisplayModes.nH[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
+                ShowableDisplayModes.nModeIndex[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
+                // Letzter Eintrag wird überschrieben, daher ShowableDisplayModes.nDisplayModeCount nicht erhöhen
+            }
+        }
+    }
+    return nErrorCode;
 }
 
 
@@ -318,14 +494,14 @@ Parameter
                uH, uint32_t, Höhe des Rechtecks in Pixeln
       Ausgang: -
       Rückgabewert:   int, 0 = alles OK, sonst Fehler
-Seiteneffekte:  -
+Seiteneffekte:  ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH) {
     int nErrorCode;
     SDL_Rect rect;
 
-    rect.x = nXpos;
-    rect.y = nYpos;
+    rect.x = nXpos + ge_uXoffs;
+    rect.y = nYpos + ge_uYoffs;
     rect.w = uW;
     rect.h = uH;
     if (SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0){  // Farbe für Rechteck setzen
@@ -425,11 +601,12 @@ Parameter
                         0 = Texture 347 - LittleFont_Green.bmp
                         1 = Texture 559 - Font_8_15_Courier_transp
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
+               bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
       Rückgabewert: 0 = OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText) {
+int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText, bool bAbsolute) {
     // Der komplette Zeichensatz liegt in Texture 347 vor. Für ein Darstellung eines Zeichens, muss die "richtige" Stelle ausgewählt werden.
     // Der Zeichensatz ist so aufgebaut, dass alle vorhandenen Zeichen in einer Zeile vorliegen.
     int nErrorCode;
@@ -493,8 +670,13 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
                 SrcR.w = uFontW;
                 SrcR.h = uFontH;
                 // Zielbereich im Renderer
-                DestR.x = nPrintXpos;
-                DestR.y = nPrintYpos;
+                if (bAbsolute) {
+                    DestR.x = nPrintXpos;
+                    DestR.y = nPrintYpos;
+                } else {
+                    DestR.x = nPrintXpos + ge_uXoffs;
+                    DestR.y = nPrintYpos + ge_uYoffs;
+                }
                 DestR.w = uFontW * fSizeFactor;
                 DestR.h = uFontH * fSizeFactor;
                 if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),&SrcR,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
@@ -696,7 +878,7 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
             if (nErrorCode == 0) {
                 nXoffset = ((uWinH * (FONT_H / 2)) - (uLines * FONT_LITTLE_347_H)) / 2;
                 //SDL_Log("Lines: %u    WinH: %u    XOffset: %d",uLines,uWinH,nXoffset);
-                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, 0,pszText);
+                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, 0,pszText,K_ABSOLUTE);
             } else {
                 SDL_Log("%s: SDL_RenderFillRect() failed: %s",__FUNCTION__,SDL_GetError());
             }
@@ -724,17 +906,23 @@ Parameter
                uGreen, uint8_t, Grün-Anteil für Farbe des Balkens
                uBlue, uint8_t, Blau-Anteil für Farbe des Balkens
                uTransp, uint8_t, Transparenz der Farbe
+               bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp) {
+int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute) {
     int nErrorCode = -1;
     SDL_Rect DestR;
 
     // Balken zeichnen
-    DestR.x = uXpos;
-    DestR.y = uYpos;
+    if (bAbsolute) {
+        DestR.x = uXpos;
+        DestR.y = uYpos;
+    } else {
+        DestR.x = uXpos + ge_uXoffs;
+        DestR.y = uYpos + ge_uYoffs;
+    }
     DestR.w = uWidth;
     DestR.h = uHeight;
     if (SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uTransp) == 0) {   // dunkelblaue, halbtransparente Fensterfläche
@@ -762,7 +950,7 @@ Parameter
                uGridSpace, uint32_t, Zeilen- und Spaltenabstand der Gitter-Linien
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace) {
     int nErrorCode = 0;
@@ -771,11 +959,11 @@ int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t u
     nErrorCode = SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uAlpha);
     // Vertikale Linien zeichnen
     for (X = uXpos; (X <= (uXpos + uWidth)) && (nErrorCode == 0); X = X + uGridSpace) {
-        nErrorCode = SDL_RenderDrawLine(pRenderer,X, uYpos, X, uYpos + uHeight);
+        nErrorCode = SDL_RenderDrawLine(pRenderer,X + ge_uXoffs, uYpos + ge_uYoffs, X + ge_uXoffs, uYpos + uHeight + ge_uYoffs);
     }
     // Horizontale Linien zeichnen
     for (Y = uYpos; (Y <= (uYpos + uHeight)) && (nErrorCode == 0); Y = Y + uGridSpace) {
-        nErrorCode = SDL_RenderDrawLine(pRenderer,uXpos, Y, uXpos + uWidth, Y);
+        nErrorCode = SDL_RenderDrawLine(pRenderer,uXpos + ge_uXoffs, Y + ge_uYoffs, uXpos + uWidth + ge_uXoffs, Y + ge_uYoffs);
     }
     return nErrorCode;
 }

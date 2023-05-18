@@ -18,6 +18,7 @@ typedef struct {
     uint32_t uLastActiveDirection;          // letzte aktive Richtung, die bestand
     uint32_t uLastDirectionFrameCount;      // Frame, an dem zuletzt eine neue Richtungsauslösung erfolgte
     uint32_t uLastNoDirectionFrameCount;    // Frame, an dem zuletzt eine Richtungsauslösung beendet wurde
+    uint32_t uLastFireFrameCount;           // Frame, an dem zuletzt eine Firebutton-Auslösung erkannt wurde
     uint32_t uLastSwitchFrameCount;         // Letzte-Richtung-Frame, an dem Man einen Schalter umgelegt hat (Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird)
 } MANKEY;
 

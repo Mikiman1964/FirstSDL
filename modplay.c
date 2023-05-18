@@ -146,7 +146,7 @@ Beschreibung: Spielt ein MOD-File ab. Diese Funktion muss zyklisch aufgerufen we
               worden sein
 
 Parameter
-      Eingang: bIgnoreConfig, bool, true = COnfig.bGameMusic wird ignoriert
+      Eingang: bIgnoreConfig, bool, true = Config.bGameMusic wird ignoriert
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x, Config.x
@@ -157,7 +157,6 @@ int PlayMusic(bool bIgnoreConfig) {
 
     // m = &mp;
     // printf("\rRow %02d, order %02d/%02d (pattern %02d) @ speed %d", m->row, m->order, m->orders - 1, m->ordertable[m->order], m->speed);
-
     if ((Config.bGameMusic) || (bIgnoreConfig)) {
         if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
             RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);

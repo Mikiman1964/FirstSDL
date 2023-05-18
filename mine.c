@@ -17,11 +17,15 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineUp(uint32_t I) {
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
+    }
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_UP_TO_RIGHT;
+        return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
@@ -70,11 +74,15 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineRight(uint32_t I) {
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
+    }
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_RIGHT_TO_DOWN;
+        return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
@@ -126,11 +134,15 @@ void ControlMineDown(uint32_t I) {
         // MineDown kann vom Replikator geboren werden, dann hier nichts machen
         return;
     }
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
+    }
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
+        return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
 
@@ -191,11 +203,15 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineLeft(uint32_t I) {
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
+    }
+    // Hat Mine Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_LEFT_TO_UP;
+        return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {

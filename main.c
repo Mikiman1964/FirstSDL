@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED // ansonsten kommt folgende Linker-Fehlermeldung: undefined reference to 'WinMain'
 #include <SDL2/SDL.h>
+#include "SDL2/SDL_mixer.h"
 #include <math.h>
 #include "asteroids.h"
 #include "buttons_checkboxes.h"
@@ -13,21 +14,29 @@
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
 #include "modplay.h"
+#include "sound.h"
 #include "mySDL.h"
 #include "mystd.h"
 #include "levelconverter.h"
 #include "scroller.h"
 
+
+void PrintSDLVersion(void);
+
 SDL_DisplayMode ge_DisplayMode;
+SDL_Window *ge_pWindow = NULL;
+uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
+uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
 extern AUDIOPLAYER Audioplayer;
+
 
 int main(int argc, char *argv[]) {
     bool bRun;
     bool bPrepareExit;
     bool bDrunkenAsteroids = false;
-    bool bHasDisplayMode = false;;
     float fAngle2 = 0;
     float fSin2;
     float fAngle3 = 0;
@@ -39,14 +48,13 @@ int main(int argc, char *argv[]) {
     float fFDLogoAngle = 0;
     uint32_t uFDLogoLastShown = SDL_GetTicks();
     SDL_Rect DestR_FDLogo;
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - APRIL 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - MAY 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE             "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5 OR 6 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
     uint8_t szMessage3[] = {"HALLO SASCHIMANN, ICH HABE NOCHMAL EIN BISSCHEN AN DIESEM SCH|NEN DEMO WEITER GEBAUT. ES SOLLTE DURCH DEN COPPER-EFFEKT NUN NOCH HYPNOTISCHER AUF DEN ZUSEHER WIRKEN. ICH WERDE IN N{CHSTER\
  ZEIT MAL SCHAUEN, OB ICH DAS SPIEL WEITER PORTIERE, BIS JETZT GEHT ES GANZ GUT VON DER HAND. BIS DENN ERSTMAL     9  8  7  6  5  4  3  2  1  0                                                    "};
 
     uint32_t uLastKeyTime = 0;
-    SDL_Window *pWindow = NULL;
     SDL_Renderer *pRenderer = NULL;
     uint32_t uCurrentTicks;
     SCROLLER Scroller1;
@@ -63,11 +71,6 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     float fScroller3NeueSteigung;
     bool bAsteroidsStarted = false;
     uint32_t uAsteroidsTimer;
-    int nWindowPosX;
-    int nWindowPosY;
-    int nWindowDirection = 0;
-    int nWindowSpeedX = 1;
-    int nWindowSpeedY = 1;
     int nMenuChoose;
     uint32_t uCopperTimer;
     bool bCopperScoll = false;
@@ -75,6 +78,10 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     uint8_t uAsteroidsGfx = 0;
     uint8_t uBallonsGfx = 0;
 
+    PrintSDLVersion();
+    ge_uXoffs = 0;
+    ge_uYoffs = 0;
+    ge_pWindow = NULL;
     InitXorShift();
     if (ReadConfigFile() != 0) {            // Konfigurationsfile wird für Fenstergröße bzw. Bildschirmauflösung früh eingelesen.
         return -1;
@@ -95,61 +102,74 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
     if (InitInputStates() != 0) {
         return -1;
     }
-    pWindow = InitSDL_Window((int)Config.uResX, Config.uResY, WINDOW_TITLE);     // SDL_Init() und Fenster erzeugen
-    if (pWindow == NULL) {
+    ge_pWindow = InitSDL_Window((int)Config.uResX, Config.uResY, WINDOW_TITLE);     // SDL_Init() und Fenster erzeugen
+    if (ge_pWindow == NULL) {
         return -1;
+    }
+    if (Config.bFullScreen) {
+        if (SDL_SetWindowFullscreen(ge_pWindow,SDL_WINDOW_FULLSCREEN) != 0) {
+            RestoreDesktop();
+            SDL_DestroyWindow(ge_pWindow);
+            return -1;
+        }
     }
     DetectJoystickAndGameController();
     OpenJoystickOrGameController();
-    bHasDisplayMode = ((GetDisplayMode(pWindow,&nWindowPosX, &nWindowPosY)) == 0);
-    pRenderer = CreateRenderer(pWindow);        // Renderer für erzeugtes Fenster erstellen
+    pRenderer = CreateRenderer(ge_pWindow);        // Renderer für erzeugtes Fenster erstellen
     if (pRenderer == NULL) {
+        RestoreDesktop();
         return -1;
     }
+
     // Audiostruktur initialisieren und Audiodevice öffnen. darf erst nach InitSDL_Window() aufgerufen werden
     if (InitAudioplayerStruct() != 0) {
+        RestoreDesktop();
+        return -1;
+    }
+    if (InitGameSound() != 0) {
         return -1;
     }
     // Renderer mit schwarz löschen
     SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
     SDL_RenderClear(pRenderer);
     SDL_RenderPresent(pRenderer);
-
     if (LoadTextures(pRenderer) != 0) {         // Für alle Bitmaps Texturen erzeugen
+        RestoreDesktop();
         return -1;
     }
     nMenuChoose = Menu(pRenderer);              // Demomenü aufrufen
     if ((nMenuChoose == 3) || (nMenuChoose == -1)) {
+        RestoreDesktop();
         return nMenuChoose;
     }
     if (nMenuChoose == 1) {
-        return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel
+        return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop();
     }
     if (nMenuChoose == 2) {
         SDL_Log("Start SDL2 Demo");
     }
     if (SetModMusic(3) != 0) {        // Mit MOD 3 class_cracktro#15 starten
+        RestoreDesktop();
         return -1;
     }
-    // SDL_SetWindowSize(pWindow, 640,480); // Fenster nachträglich verändern
-    SDL_WarpMouseInWindow(pWindow,10,10);
+    SDL_WarpMouseInWindow(ge_pWindow,10,10);
     do {
         UpdateInputStates();
     }  while(InputStates.bQuit);
 
     uScroller1Timer = SDL_GetTicks();
     if (InitScroller(&Scroller1,2,0,Config.uResX,Config.uResY / 2,szMessage1,0.3,0.02,100,1,true,false) != 0) {
+        RestoreDesktop();
         return -1;
     }
     uScroller2Timer = SDL_GetTicks();
-
-    //int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont);
-
     if (InitScroller(&Scroller2,1,0,Config.uResX,0,szMessage2,0,0,0,1,false,false) != 0) {
+        RestoreDesktop();
         return -1;
     }
     uScroller3Timer = SDL_GetTicks();
     if (InitScroller(&Scroller3,2,0,Config.uResX,0,szMessage3,0,0,0,1,false,false) != 0) {
+        RestoreDesktop();
         return -1;
     }
     uAsteroidsTimer = SDL_GetTicks();
@@ -204,7 +224,6 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
                 SetModVolume(uModVolume);
             }
             SDL_Log("plus, V:%u",uModVolume);
-
         }
         if (InputStates.pKeyboardArray[SDL_SCANCODE_KP_MINUS]) {
             if (uModVolume > 0) {
@@ -336,79 +355,48 @@ MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990 
         } else  {
             PlayMusic(true);
         }
-        // Fenster-Verschiebung im Drunken-Asteroids Modus
-        if ((bHasDisplayMode) && (bDrunkenAsteroids)) {
-            SDL_GetWindowPosition(pWindow,&nWindowPosX,&nWindowPosY);
-            if (nWindowDirection == 0) {    // Rechts runter
-                nWindowPosX = nWindowPosX + nWindowSpeedX;
-                nWindowPosY = nWindowPosY + nWindowSpeedY;
-                if (nWindowPosX > ge_DisplayMode.w - Config.uResX - 40) {    // Fenster stößt rechts an (- 40 wegen Fensterrahmen)
-                    SDL_Log("%s: [rechts/runter] -> Fenster stoesst rechts an",__FUNCTION__);
-                    nWindowDirection = 3;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                } else if (nWindowPosY > ge_DisplayMode.h - Config.uResY - 40) { // Fenster stößt unten an, -40 wegen Fensterrhamen
-                    SDL_Log("%s: [rechts/runter] -> Fenster stoesst unten an",__FUNCTION__);
-                    nWindowDirection = 1;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                }
-            } else if (nWindowDirection == 1) { // Rechts hoch
-                nWindowPosX = nWindowPosX + nWindowSpeedX;
-                nWindowPosY = nWindowPosY - nWindowSpeedY;
-                if (nWindowPosX > ge_DisplayMode.w - Config.uResX - 40) {   // Fenster stößt rechts an, - 40 wegen Fensterrahmen
-                    SDL_Log("%s: [rechts/hoch] -> Fenster stoesst rechts an",__FUNCTION__);
-                    nWindowDirection = 2;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                } else if  (nWindowPosY < 30) {      // Fenster stößt oben an, 30 statt 0 wegen Fensterrahmen
-                    SDL_Log("%s: [rechts/hoch] -> Fenster stoesst oben an",__FUNCTION__);
-                    nWindowDirection = 0;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                }
-            } else if (nWindowDirection == 2) { // Links hoch
-                nWindowPosX = nWindowPosX - nWindowSpeedX;
-                nWindowPosY = nWindowPosY - nWindowSpeedY;
-                if (nWindowPosX < 60) {                // Fenster stößt links an, 60 statt 0 wegen Fensterrahmen
-                    SDL_Log("%s: [links/hoch] -> Fenster stoesst links an",__FUNCTION__);
-                    nWindowDirection = 1;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                } else if (nWindowPosY < 30) {       // Fenster stößt oben an, 30 statt 0 wegen Fensterrahmen
-                    SDL_Log("%s: [links/hoch] -> Fenster stoesst oben an",__FUNCTION__);
-                    nWindowDirection = 3;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                }
-            } else {                            // Links runter
-                nWindowPosX = nWindowPosX - nWindowSpeedX;
-                nWindowPosY = nWindowPosY + nWindowSpeedY;
-                if (nWindowPosX < 60) {              // Fenster stößt links an, 60 statt 0 wegen Fensterrahmen
-                    SDL_Log("%s: [links/runter] -> Fenster stoesst links an",__FUNCTION__);
-                    nWindowDirection = 0;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                } else if (nWindowPosY > ge_DisplayMode.h - Config.uResY - 40) { // Fenster stößt unten an, - 40 wegen Fensterrahmen
-                    SDL_Log("%s: [links/runter] -> Fenster stoesst unten an",__FUNCTION__);
-                    nWindowDirection = 2;
-                    nWindowSpeedX = (int)randf(1.1,5.1);
-                    nWindowSpeedY = (int)randf(1.1,5.1);
-                }
-            }
-            SDL_SetWindowPosition(pWindow,nWindowPosX,nWindowPosY);
-        }
     }
     //////////////////////////////////////////////////////////////// Hauptschleife ENDE
+    RestoreDesktop();
     SDL_CloseAudioDevice(Audioplayer.audio_device);
     SAFE_FREE(Audioplayer.pTheMusic);
+
+    FreeWavChunks();
+    Mix_CloseAudio();
+
     FreeTextures();
     FreeScroller(&Scroller1);
     FreeScroller(&Scroller2);
     FreeScroller(&Scroller3);
     FreeCopper();
     SDL_DestroyRenderer(pRenderer);
-    SDL_DestroyWindow(pWindow);
+    SDL_DestroyWindow(ge_pWindow);
     SDL_Quit();
     return 0;
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           PrintSDLVersion
+------------------------------------------------------------------------------
+Beschreibung: Gibt die SDL-Version aus (Header und Library)
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+void PrintSDLVersion(void) {
+    SDL_version compiled;
+    SDL_version linked;
+
+    SDL_VERSION(&compiled);
+    SDL_GetVersion(&linked);
+
+    printf("Compiled against SDL version %u.%u.%u, linked against SDL version %u.%u.%u\n",
+           compiled.major,compiled.minor,compiled.patch,
+           linked.major,linked.minor,linked.patch);
+
+}
+
+
