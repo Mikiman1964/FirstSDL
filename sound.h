@@ -38,18 +38,18 @@
 #define SOUND_DYNAMITE_START    0b00100000000000000000000000000000      // Dynamit wird gestartet
 #define SOUND_FREE_6            0b01000000000000000000000000000000      // -
 
-
+#define MAX_WAV_CHUNKS          32                                      // Maximale Anzahl von WAV-Chunks
 
 typedef struct {
-    SDL_AudioSpec sdl_audio;
-    SDL_AudioDeviceID audio_device;
-    short sAudiobuffer[MAX_SOUND_SAMPLES];   // Maximale Anzahl von Samples, 1 Sample = 2 Bytes (short)
-    uint32_t uAudioSize;                    // in Bytes, nicht in Samples -> Eingabe für SDL_QueueAudio()
     uint32_t uAllSounds;                    // OR-verknüpfte Sounds, die abgespielt werden sollen
 } GAMESOUND;
 
 int InitGameSound(void);
 void PreparePlaySound(uint32_t uSound, uint32_t uCoordinate);
 int PlayAllSounds(void);                    // Mixt alle Sounds in GameSound.uAllSounds und spielt diese ab.
+
+
+void FreeWavChunks(void);
+int CreateWavChunks(void);
 
 #endif // SOUND_H_INCLUDED
