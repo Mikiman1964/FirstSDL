@@ -64,6 +64,11 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     ///////
     uint8_t uVerticalBeamColor;
     uint8_t uHorizontalBeamColor;
+    uint32_t uResX, uResY;
+
+    // Sichtbare Fläche aufrunden statt abrunden
+    uResX = ((Config.uResX + FONT_W) / FONT_W) * FONT_W;
+    uResY = ((Config.uResY + FONT_H) / FONT_H) * FONT_H;
 
     uPostAnimationIndex = 0;
     // Die Eingangsparameter "grob" prüfen, damit nichts Schlimmes passiert
@@ -85,8 +90,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     uUpperLeftLevelIndex = (*pnXpos / FONT_W) + (*pnYpos / FONT_H) * Playfield.uLevel_X_Dimension;
     nErrorCode = 0;
     // Den sichtbaren Teil des Levels in den Renderer kopieren.
-    for (uY = 0; (uY <= ((Config.uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
-        for (uX = 0; (uX <= (Config.uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
+    for (uY = 0; (uY <= ((uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
+        for (uX = 0; (uX <= (uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
             // Levelindex berechnen
             I = uUpperLeftLevelIndex + uY * Playfield.uLevel_X_Dimension + uX;
             if (I > ((Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension) - 1)) {
@@ -769,7 +774,6 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         nYoffs = nXoffs;
                         fScaleW = 0.5 + nAnimationCount * 0.031;
                         fScaleH = fScaleW;
-
                     } else {
                         if (nAnimationCount <= 7) { // 0 ... 7
                             fScaleW = 1 - nAnimationCount * 0.02;   // 1 ..... 0.86
@@ -783,7 +787,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         } else if (uSelfStatus == EMERALD_ANIM_GREEN_DROP_2) {
                             nYoffs = (FONT_H / 2) + nAnimationCount;
                         } else {
-                            SDL_Log("%s: green drop, something wrong!",__FUNCTION__);
+                            SDL_Log("%s: green drop, something wrong!  uSelfStatus = %x",__FUNCTION__,uSelfStatus);
                         }
                     }
                     fScaleH = fScaleW;
@@ -968,37 +972,42 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         uTextureIndex = 279 + 5;
                     }
                     break;
+
                 case (EMERALD_EXPLOSION_TO_ELEMENT_1):
-                    if (nAnimationCount < 14) {
-                        uTextureIndex = 279 + nAnimationCount / 2;
-                    } else {
-                        uTextureIndex = 279 + 5;
-                    }
+                    uTextureIndex = 279 + nAnimationCount / 3; // bei (nAnimationCount = 15) -> 284
                     break;
                 case (EMERALD_EXPLOSION_TO_ELEMENT_2):
                     switch (nAnimationCount) {
                         case (0):
+                            uTextureIndex = 284;
+                            break;
                         case (1):
-                            uTextureIndex = 279 + 4;
-                            break;
                         case (2):
+                            uTextureIndex = 285;
+                            break;
                         case (3):
-                            uTextureIndex = 279 + 3;
-                            break;
                         case (4):
+                            uTextureIndex = 284;
+                            break;
                         case (5):
-                            uTextureIndex = 279 + 2;
-                            break;
                         case (6):
-                        case (7):
-                            uTextureIndex = 279 + 1;
+                            uTextureIndex = 283;
                             break;
+                        case (7):
                         case (8):
+                            uTextureIndex = 282;
+                            break;
                         case (9):
-                            uTextureIndex = 279 + 0;
-                        break;
-                        default:
-                            uTextureIndex = 0;  // Space
+                        case (10):
+                            uTextureIndex = 281;
+                            break;
+                        case (11):
+                        case (12):
+                        case (13):
+                            uTextureIndex = 280;
+                            break;
+                        default:    // 14 und 15
+                            uTextureIndex = 279;
                             break;
                     }
                     break;
@@ -3191,11 +3200,11 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             // 2. Element befindet sich am linken Rand und will nach rechts in den sichtbaren Bereich
                             //SDL_Log("%s: invalid element at left found    Anim:%x   T:%u",__FUNCTION__,Playfield.pStatusAnimation[I],SDL_GetTicks());
                             nXoffs = -FONT_H + nAnimationCount * 2;
-                        } else if ((uX == (Config.uResX / FONT_W)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_RIGHT)) {
+                        } else if ((uX == (uResX / FONT_W)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_RIGHT)) {
                             // 3. Element befindet sich am rechten Rand und will nach links in den sichtbaren Bereich
                             //SDL_Log("%s: invalid element at right found    Anim:%x   T:%u",__FUNCTION__,Playfield.pStatusAnimation[I],SDL_GetTicks());
                             nXoffs = FONT_H - nAnimationCount * 2;
-                        } else if ( (uY == ((Config.uResY - PANEL_H) / FONT_H)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_DOWN)) {
+                        } else if ( (uY == ((uResY - PANEL_H) / FONT_H)) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_DOWN)) {
                             // 4. Element befindet sich am unteren Rand und will nach oben in den sichtbaren Bereich
                             //SDL_Log("%s: invalid element at bottom found    Anim:%x   T:%u",__FUNCTION__,Playfield.pStatusAnimation[I],SDL_GetTicks());
                             nYoffs = FONT_H - nAnimationCount * 2;
