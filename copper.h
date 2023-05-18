@@ -1,7 +1,6 @@
 #ifndef COPPER_H_INCLUDED
 #define COPPER_H_INCLUDED
 
-#include <SDL2/SDL.h>
 #include <stdbool.h>
 
 #define COPPER_COLORLINES_PER_SEGMENT       26                                              // Anzahl Faaben pro Segment
@@ -31,6 +30,6 @@ int InitVisibibleCopperSegments();
 void CalculateColorFlow(int nMaxRed, int nMaxGreen, int nMaxBlue);
 void PrecalculateSegments(int nMaxRed, int nMaxGreen, int nMaxBlue);
 void ScrollVisibleSegments(void);
-int DoCopper(SDL_Renderer *pRenderer, bool bScroll);
+int DoCopper(SDL_Renderer *pRenderer,bool bScroll);
 void FreeCopper(void);
 #endif // COPPER_H_INCLUDED

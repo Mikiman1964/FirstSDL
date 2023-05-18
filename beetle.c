@@ -17,11 +17,15 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBeetleUp(uint32_t I) {
-    // Hat Käfer Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BEETLE_WILL_EXPLODE) {
         ControlCentralBeetleExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
-        return; // Für den Mäfer ist hier Ende Gelände
+        return; // Für den Käfer ist das Spiel hier zu Ende
+    }
+    // Hat Käfer Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_UP_TO_LEFT;
+        return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
     // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
@@ -70,11 +74,15 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBeetleRight(uint32_t I) {
-    // Hat Käfer Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BEETLE_WILL_EXPLODE) {
         ControlCentralBeetleExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
-        return; // Für den Mäfer ist hier Ende Gelände
+        return; // Für den Käfer ist das Spiel hier zu Ende
+    }
+    // Hat Käfer Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_RIGHT_TO_UP;
+        return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
     // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE)
@@ -136,13 +144,18 @@ void ControlBeetleDown(uint32_t I) {
     if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
         // BeetleDown kann vom Replikator geboren werden, dann hier nichts machen
         return;
-    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
-        // Hat Käfer Kontakt zu grünem Käse ?
-        if (IsGreenCheeseAround(I)) {
-            ControlCentralBeetleExplosion(I);
-            PreparePlaySound(SOUND_EXPLOSION,I);
-            return; // Für den Mäfer ist hier Ende Gelände
-        }
+    }
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BEETLE_WILL_EXPLODE) {
+        ControlCentralBeetleExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+        return; // Für den Käfer ist das Spiel hier zu Ende
+    }
+    // Hat Käfer Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_DOWN_TO_RIGHT;
+        return; // Für den Käfer ist das Spiel nächste Runde zu Ende
+    }
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
         Playfield.pStatusAnimation[I] = 0;
         if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE)    // Ist nach unten frei?
@@ -210,11 +223,15 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBeetleLeft(uint32_t I) {
-    // Hat Käfer Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BEETLE_WILL_EXPLODE) {
         ControlCentralBeetleExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
-        return; // Für den Mäfer ist hier Ende Gelände
+        return; // Für den Käfer ist das Spiel hier zu Ende
+    }
+    // Hat Käfer Kontakt zu grünem Käse ?
+    if (IsGreenCheeseAround(I)) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_LEFT_TO_DOWN;
+        return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
     // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE)

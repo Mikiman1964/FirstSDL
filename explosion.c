@@ -154,9 +154,6 @@ void ControlCentralExplosion(uint32_t I) {
         for (K = 0; K < 8; K++) {
             uCoordinate = I + Playfield.nCentralExplosionCoordinates[K];
             uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate]);
-
-            // SDL_Log("K[%02u]: element: %u  ---> %u",K,Playfield.pLevel[uCoordinate],uCheckExplosion); // raus
-
             switch (uCheckExplosion & 0xFFFF) {
                 case (EMERALD_EXPLOSION_EMPTY):
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
@@ -617,7 +614,6 @@ uint32_t CheckExplosionElement(uint16_t uElement) {
         case (EMERALD_FONT_GREEN_OE):
         case (EMERALD_FONT_GREEN_UE):
             uExplosion = EMERALD_EXPLOSION_EMPTY;
-            // SDL_Log("%s: set explosion to EMPTY for element: %u",__FUNCTION__,uElement);//raus
             break;
         case (EMERALD_MAN):
             uExplosion = EMERALD_EXPLOSION_EMPTY_MAN;
@@ -717,7 +713,6 @@ uint32_t CheckExplosionElement(uint16_t uElement) {
             break;
         default:
             uExplosion = EMERALD_EXPLOSION_NONE;
-            // SDL_Log("Set to none: uElement = %u",uElement); // raus
     }
     return uExplosion;
 }

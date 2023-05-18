@@ -8,23 +8,22 @@
 #define EMERALD_STEEL_ARROW_DOWN_PRESSED    1
 #define EMERALD_STEEL_ARROW_UP_PRESSED      2
 #define EMERALD_STEEL_SETTINGS_PRESSED      3
+#define EMERALD_STEEL_EXIT_PRESSED          4
 
 #define MAX_NAMES_IN_LIST                   4
 #define MAX_LEVELGROUPS_IN_LIST             4
 #define MAX_LEVELTITLES_IN_LIST             31
-
+// Farbige Rahmen für Gamecontroller und Joystick im Settingsmenü
 #define COLOR_REC_1_W                       224
 #define COLOR_REC_1_H                       128
-
 #define COLOR_REC_2_W                       480
 #define COLOR_REC_2_H                       160
 
+#define MAX_STAR_POINTS                     10
 
 typedef struct {
     uint32_t uXdim;
     uint32_t uYdim;
-    uint32_t uXoffs;
-    uint32_t uYoffs;
     uint16_t uMenuScreen[(DEFAULT_WINDOW_W / FONT_W) * (DEFAULT_WINDOW_H / FONT_H)];
     uint8_t  uLevelgroupList[MAX_LEVELGROUPS_IN_LIST];  // Es sind maximal 4 Elemente zu sehen
     uint8_t  uNamesList[MAX_NAMES_IN_LIST];             // Es sind maximal 4 Elemente zu sehen

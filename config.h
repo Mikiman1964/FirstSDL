@@ -25,7 +25,12 @@ typedef struct {
     int16_t     nAxisLeftThreshold;                                             // 0 bis 32767
     int16_t     nAxisRightThreshold;                                            // 0 bis 32767
     int16_t     nAxisUpThreshold;                                               // 0 bis 32767
-    int16_t     nAxisDownThreshold;                                               // 0 bis 32767
+    int16_t     nAxisDownThreshold;                                             // 0 bis 32767
+    char        cJoystickFireButton;                                            // 'A', 'B', 'X' oder 'Y'
+    char        cJoystickStartDynamiteButton;                                   // 'A', 'B', 'X' oder 'Y'
+    char        cJoystickExitButton;                                            // 'A', 'B', 'X' oder 'Y'
+    uint32_t    uDisplay;                                                       // Ab 0 gezählt (eingestellt)
+    uint32_t    uDisplayUse;                                                    // Ab 0 gezählt (Dieses wird vervendet)
 } CONFIG;
 
 

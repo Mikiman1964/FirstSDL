@@ -2,17 +2,12 @@
 TODO
 * Gras einbauen
 * Unsichtbaren Sand einbauen
-* Unabhängige Sound-Kanäle -> SDL_Mixer erforderlich?
-* Explosionen mit Sumpf und Tropfen testen (erster Test sieht gut aus)
-* grünen Käse noch agressiver machen, wenn hohe Rate eingestellt
-* Fullscreen-Unterstützung
-* Import Level: Konverter für alte/DC3/DOS-Levels bauen, DC3-Konverter bereits lauffähig -> Unteren Teil eines Repliklators richtig berücksichtigen
-* Berührt Mine von unten einen Tropfen, wird sofort eine Explosion ausgelöst, ohne dass vorher Käse entstehen kann. Passiert allerdings bei DC3 auch.
-* Undo für Editor
-* Level von Levelgruppe zu Levelgruppe kopieren
-* Joystick-/Gamecontroller-Support
-* Konfigurationsmenü erweitern: Kann Tastatur erkannt werden? Sieht nicht so aus.
-* Yam-Sprengung erzeugt Replikator bzw. Säurebecken -> Kommt es zu Fehlfunktionen, wenn R. bzw. S nicht vollständig erzeugt werden kann?
+* Explosion
+    * Explosionen mit Sumpf und Tropfen testen (erster Test sieht gut aus)
+* Leveleditor
+    * Level von Levelgruppe zu Levelgruppe kopieren
+    * Import Level: Konverter für alte/DC3/DOS-Levels bauen, DC3-Konverter bereits lauffähig -> Unteren Teil eines Repliklators richtig berücksichtigen
+    * Undo für Editor
 */
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -21,7 +16,6 @@ TODO
 #include "beetle.h"
 #include "bomb.h"
 #include "buttons_checkboxes.h"
-#include "config.h"
 #include "crystal.h"
 #include "EmeraldMine.h"
 #include "EmeraldMineMainMenu.h"
@@ -64,10 +58,11 @@ extern uint8_t ge_uLevel[];
 extern uint8_t ge_uBeamColors[];
 extern uint8_t g_uIntensityProzent;
 extern SMILEY Smileys[MAX_SMILEYS];
-extern CONFIG Config;
 extern LEVELGROUP SelectedLevelgroup;
 extern MAINMENU MainMenu;
 extern AUDIOPLAYER Audioplayer;
+extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           Menu
@@ -77,7 +72,8 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
-Seiteneffekte: Playfield.x für FrameCounter, Config.x, Audioplayer.x, MainMenu.x
+Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
+               ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int Menu(SDL_Renderer *pRenderer) {
     uint32_t uModVolume;
@@ -86,8 +82,6 @@ int Menu(SDL_Renderer *pRenderer) {
     int nColorDimm;
     float fAngle;
     SDL_Rect DestR;
-    uint32_t uXoffs;
-    uint32_t uYoffs;
     uint32_t uFrameCounter;
     uint32_t I;
     uint32_t uTextureIndex;
@@ -125,16 +119,14 @@ int Menu(SDL_Renderer *pRenderer) {
         720,672,EMERALD_FONT_MINUS,752,672,EMERALD_FONT_2,784,672,EMERALD_FONT_0,816,672,EMERALD_FONT_2,848,672,EMERALD_FONT_3
     };
 
-    uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
-    uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
     InitSmileys();
     uFrameCounter = 0;
     nErrorCode = 0;
     nChoose = -1;
     // Buttons erzeugen
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",uXoffs + 320,uYoffs + 260,true,false);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",uXoffs + 320,uYoffs + 356,true,false);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",uXoffs + 320,uYoffs + 580,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",320,260,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",320,356,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",320,580,true,false);
     nErrorCode = nErrorCode + SetModMusic(5);
     SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
     uModVolume = 0;
@@ -153,38 +145,37 @@ int Menu(SDL_Renderer *pRenderer) {
         PlayMusic(true);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],uFrameCounter % 16,&fAngle);
-            DestR.x = 128 + uXoffs + uPositionsAndElements[I * 3 + 0];
-            DestR.y = uYoffs + uPositionsAndElements[I * 3 + 1];
+            DestR.x = 128 + ge_uXoffs + uPositionsAndElements[I * 3 + 0];
+            DestR.y = ge_uYoffs + uPositionsAndElements[I * 3 + 1];
             DestR.w = FONT_W;
             DestR.h = FONT_H;
             if (nErrorCode == 0) {
                 if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                     nErrorCode = -1;
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
-                    SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 }
             }
         }
-        PrintLittleFont(pRenderer,uXoffs + 448,uYoffs + 264,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.");
-        PrintLittleFont(pRenderer,uXoffs + 448,uYoffs + 360,0,"USE THE FOLLOWING KEYS:");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 390,0,"* MOUSEWHEEL TO ZOOM BALLONS");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 405,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS AND ASTEROID");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 435,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 450,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 465,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 480,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 495,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 510,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO");
-        PrintLittleFont(pRenderer,uXoffs + 468,uYoffs + 525,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.");
-        PrintLittleFont(pRenderer,uXoffs + 448,uYoffs + 584,0,"NUFF SAID");
+        PrintLittleFont(pRenderer,448,264,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.",K_RELATIVE);
+        PrintLittleFont(pRenderer,448,360,0,"USE THE FOLLOWING KEYS:",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,390,0,"* MOUSEWHEEL TO ZOOM BALLONS",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,405,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS AND ASTEROID",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,435,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,450,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,465,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,480,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,495,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,510,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,525,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.",K_RELATIVE);
+        PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE);
         nErrorCode = ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
             nChoose = 1;
         } else if (IsButtonPressed(BUTTONLABEL_CALL_DEMO)) {
             nChoose = 2;
-        } else if (IsButtonPressed(BUTTONLABEL_CALL_QUIT)) {
+        } else if ((IsButtonPressed(BUTTONLABEL_CALL_QUIT)) || (InputStates.bQuit) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE])) {
             nChoose = 3;
         }
         if ((nChoose != -1) && (nColorDimm > 0)) {
@@ -236,9 +227,6 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bPause = false;
     nRet = 0;
     nColorDimm = 0;
-    if (InitGameSound() != 0) {
-        return -1;
-    }
     bLevelRun = (InitialisePlayfield(uLevel) == 0);
     // Renderer mit schwarz löschen
     SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
@@ -259,8 +247,11 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     nCheckLevelCount = 0;
     ManKey.uLastActiveDirection = MANKEY_NONE;
     ManKey.uLastDirectionFrameCount = 0;
+    ManKey.uLastFireFrameCount = 0;
     ManKey.uFireCount = 0;
     ManKey.bExit = false;
+
+    SDL_ShowCursor(SDL_DISABLE);    // Mauspfeil verstecken
     while (bLevelRun) {
         UpdateManKey();
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bExit)) {
@@ -318,7 +309,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             }
         }
         RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);  // nCheckLevelCount 0 ... 15
-        if (bDebug) PrintLittleFont(pRenderer,400,700,0,"DEBUG MODE ON, PRESS X TO TOGGLE");
+        if (bDebug) PrintLittleFont(pRenderer,400,700,0,"DEBUG MODE ON, PRESS X TO TOGGLE",K_ABSOLUTE);
         if (!bPause) {
             nCheckLevelCount++;
         }
@@ -352,6 +343,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         if (bDebug) SDL_Delay(100);
 
     }
+    SDL_ShowCursor(SDL_ENABLE);    // Mauspfeil verstecken
     Playfield.uPlayTimeEnd = SDL_GetTicks();
     SetAllTextureColors(100);           // Farben beim Verlassen wieder auf volle Helligekit
     SAFE_FREE(Playfield.pLevel);
@@ -361,7 +353,6 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     for (I = 0; I < EMERALD_MAX_MESSAGES; I++) {
         SAFE_FREE(Playfield.pMessage[I]);
     }
-    SDL_CloseAudioDevice(GameSound.audio_device);
     WaitNoKey();
     return 0;
 }

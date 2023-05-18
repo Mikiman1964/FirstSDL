@@ -4,6 +4,8 @@
 
 CONFIG Config;
 extern ACTUALPLAYER Actualplayer;
+extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           ShowConfigFile
@@ -20,7 +22,6 @@ void ShowConfigFile(void) {
     char szMd5String[32 + 1];
     char szString[64];
 
-
     GetMd5String(Config.uLevelgroupMd5Hash,szMd5String);
     SDL_Log("============ Config.xml =============");
     SDL_Log("Start dynamite with space:      %d",Config.bStartDynamiteWithSpace);
@@ -28,6 +29,7 @@ void ShowConfigFile(void) {
     SDL_Log("Editor zoom:                    %d",Config.bEditorZoom);
     SDL_Log("Game music:                     %d",Config.bGameMusic);
     SDL_Log("Show highscores:                %d",Config.bShowHighscores);
+    SDL_Log("Display:                        %u",Config.uDisplay);
     SDL_Log("X-Resolution:                   %u",Config.uResX);
     SDL_Log("Y-Resolution:                   %u",Config.uResY);
     SDL_Log("Last levelgroup hash:           %s",szMd5String);
@@ -70,6 +72,9 @@ void ShowConfigFile(void) {
     SDL_Log("Gamecontroller right threshold: %d",Config.nAxisRightThreshold);
     SDL_Log("Gamecontroller up threshold:    %d",Config.nAxisUpThreshold);
     SDL_Log("Gamecontroller down threshold:  %d",Config.nAxisDownThreshold);
+    SDL_Log("Joystick Firebutton:            %c",Config.cJoystickFireButton);
+    SDL_Log("Joystick Dynamitebutton:        %c",Config.cJoystickStartDynamiteButton);
+    SDL_Log("Joystick Exitbutton:            %c",Config.cJoystickExitButton);
 }
 
 
@@ -92,6 +97,7 @@ int WriteDefaultConfigFile(void) {
     Config.bEditorZoom = false;                     // Editor läuft mit 16x16 Pixeln
     Config.bGameMusic = true;                       // true = Modfiles in den Gamemenüs abspielen
     Config.bShowHighscores = true;                  // true = Highscores zeigen, wenn genug Punkte
+    Config.uDisplay = 0;                            // Ersten Montitor ansprechen
     Config.uResX = DEFAULT_WINDOW_W;                // Standard-Auflösung X bzw. Fensterbreite
     Config.uResY = DEFAULT_WINDOW_H;                // Auflösung Y bzw. Fensterhöhe
     memset(Config.uLevelgroupMd5Hash,0,16);         // MD5-Hash auf "00000000000000000000000000000000" setzen
@@ -100,11 +106,14 @@ int WriteDefaultConfigFile(void) {
     Config.uControllerDirections = 0;               // 0 = Digital Pad, 1 = Left Axis, 2 = Right Axis
     Config.cControllerFireButton = 'B';             // 'A', 'B', 'X' oder 'Y'
     Config.cControllerStartDynamiteButton = 'Y';    // 'A', 'B', 'X' oder 'Y'
-    Config.cControllerExitButton = 'X';             // 'A', 'B', 'X' oder 'Y'
+    Config.cControllerExitButton = 'X';             // 'A', 'B', 'X', 'Y' oder 'N' = NONE
     Config.nAxisLeftThreshold = -30000;             // -32768 bis 0
     Config.nAxisRightThreshold = 30000;             // 0 bis 32767
     Config.nAxisUpThreshold = -30000;               // -32768 bis 0
     Config.nAxisDownThreshold = 30000;              // 0 bis 32767
+    Config.cJoystickFireButton  = 'A';              // 'A', 'B', 'X' oder 'Y'               'A' = linker runder Nutton
+    Config.cJoystickStartDynamiteButton = 'X';      // 'A', 'B', 'X' oder 'Y'               'X' = linker dreieckiger Button
+    Config.cJoystickExitButton = 'Y';               // 'A', 'B', 'X', 'Y' oder 'N' = NONE   'Y' = rechter dreieckiger Button
     return WriteConfigFile();
 }
 
@@ -125,10 +134,14 @@ int WriteConfigFile(void) {
     char szMd5String[32 + 1];
     char szString[256];
 
+    SDL_Log("%s: T: %u",__FUNCTION__,SDL_GetTicks());
     memset(szXML,0,sizeof(szXML));
     strcpy(szXML,"<?xml version=\"1.0\"?>\n");
     strcat(szXML,"<configuration>\n");
     strcat(szXML,"<screen>\n");
+    strcat(szXML,"  <!--primary display is num 0, second display 1-->\n");
+    sprintf(szString,"  <display_num>%u</display_num>\n",Config.uDisplay);
+    strcat(szXML,szString);
     strcat(szXML,"  <resolution>\n");
     sprintf(szString,"    <x>%d</x>\n",Config.uResX);
     strcat(szXML,szString);
@@ -205,7 +218,7 @@ int WriteConfigFile(void) {
     strcat(szXML,"    <!--button_start_dynamite can be X, Y, A, or B-->\n");
     sprintf(szString,"    <button_start_dynamite>%c</button_start_dynamite>\n",Config.cControllerStartDynamiteButton);
     strcat(szXML,szString);
-    strcat(szXML,"    <!--button_exit can be X, Y, A, or B-->\n");
+    strcat(szXML,"    <!--button_exit can be X, Y, A, B or N for NONE-->\n");
     sprintf(szString,"    <button_exit>%c</button_exit>\n",Config.cControllerExitButton);
     strcat(szXML,szString);
     strcat(szXML,"    <!--directions can be DIGITAL, LEFTAXIS or RIGHTAXIS-->\n");
@@ -238,6 +251,17 @@ int WriteConfigFile(void) {
     sprintf(szString,"    <axis_down_threshold>%d</axis_down_threshold>\n",Config.nAxisDownThreshold);
     strcat(szXML,szString);
     strcat(szXML,"  </controller_settings>\n");
+    strcat(szXML,"  <joystick_settings>\n");
+    strcat(szXML,"    <!--button_fire can be X, Y, A, or B-->\n");
+    sprintf(szString,"    <button_fire>%c</button_fire>\n",Config.cJoystickFireButton);
+    strcat(szXML,szString);
+    strcat(szXML,"    <!--button_start_dynamite can be X, Y, A, or B-->\n");
+    sprintf(szString,"    <button_start_dynamite>%c</button_start_dynamite>\n",Config.cJoystickStartDynamiteButton);
+    strcat(szXML,szString);
+    strcat(szXML,"    <!--button_exit can be X, Y, A, B or N for NONE-->\n");
+    sprintf(szString,"    <button_exit>%c</button_exit>\n",Config.cJoystickExitButton);
+    strcat(szXML,szString);
+    strcat(szXML,"  </joystick_settings>\n");
     strcat(szXML,"</input_device>\n");
     strcat(szXML,"</configuration>\n");
     return WriteFile(EMERALD_CONFIG_FILENAME,(uint8_t *)szXML,(uint32_t)strlen(szXML),false);
@@ -253,17 +277,15 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Config.x, Actualplayer.x
+Seiteneffekte: Config.x, Actualplayer.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int ReadConfigFile(void) {
     ezxml_t xml = NULL;
-    ezxml_t screen,fullscreen,resolution,x,y,dynamite,gamemusic,highscores,levelgrouphash,playername,editorzoom;
-    ezxml_t inputdevice,devicename,deviceindex,controllersettings,button,directions,threshold;
+    ezxml_t screen,fullscreen,resolution,display,x,y,dynamite,gamemusic,highscores,levelgrouphash,playername,editorzoom;
+    ezxml_t inputdevice,devicename,deviceindex,controllersettings,joysticksettings,button,directions,threshold;
     int nErrorCode;
     uint8_t *pXml;
     uint32_t uXmlLen;
-    uint32_t uResX;
-    uint32_t uResY;
     char szErrorMessage[256];
 
     nErrorCode = -1;
@@ -289,85 +311,101 @@ int ReadConfigFile(void) {
                                     y = ezxml_child(resolution,"y");
                                     if (y != NULL) {
                                         Config.uResY = strtol(y->txt,NULL,10);
-                                        highscores = ezxml_child(xml,"show_highscores");
-                                        if (highscores != NULL) {
-                                            Config.bShowHighscores = (strtol(highscores->txt,NULL,10) == 1);
-                                            gamemusic = ezxml_child(xml,"game_music");
-                                            if (gamemusic != NULL) {
-                                                Config.bGameMusic = (strtol(gamemusic->txt,NULL,10) == 1);
-                                                dynamite = ezxml_child(xml,"start_dynamite_with_space");
-                                                if (dynamite != NULL) {
-                                                    Config.bStartDynamiteWithSpace = (strtol(dynamite->txt,NULL,10) == 1);
-                                                    editorzoom = ezxml_child(xml,"editor_zoom");
-                                                    if (editorzoom != NULL) {
-                                                        Config.bEditorZoom = (strtol(editorzoom->txt,NULL,10) == 1);
-                                                        levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
-                                                        if (levelgrouphash != NULL) {
-                                                            GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
-                                                            playername = levelgrouphash = ezxml_child(xml,"last_player_name");
-                                                            if (playername != NULL) {
-                                                                if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
-                                                                    strcpy(Config.szPlayername,playername->txt);
-                                                                }
-                                                                // Auflösung checken
-                                                                // Zunächst prüfen, ob X- und Y-Auflösung durch FONT_W bzw. FONT_H teilbar
-                                                                uResX = Config.uResX;
-                                                                uResY = Config.uResY;
-                                                                uResX = uResX / FONT_W;
-                                                                uResX = uResX * FONT_W;
-                                                                uResY = uResY / FONT_H;
-                                                                uResY = uResY * FONT_H;
-                                                                if ((uResX >= DEFAULT_WINDOW_W) && (uResY >= DEFAULT_WINDOW_H)) {
-                                                                    // ggf. die abgerundeten Werte in die Konfiguration übernehmen
-                                                                    Config.uResX = uResX;
-                                                                    Config.uResY = uResY;
-                                                                    inputdevice = ezxml_child(xml,"input_device");
-                                                                    if (inputdevice != NULL) {
-                                                                        devicename = ezxml_child(inputdevice,"device_name");
-                                                                        if (devicename != NULL) {
-                                                                            if (strcmp(devicename->txt,"JOYSTICK") == 0) {
-                                                                                Config.uInputdevice = 1;
-                                                                            } else if (strcmp(devicename->txt,"CONTROLLER") == 0) {
-                                                                                Config.uInputdevice = 2;
-                                                                            } else {
-                                                                                Config.uInputdevice = 0; // NONE oder UNKNOWN
-                                                                            }
-                                                                            deviceindex = ezxml_child(inputdevice,"device_index");
-                                                                            if (deviceindex != NULL) {
-                                                                                Config.uDeviceIndex = strtol(deviceindex->txt,NULL,10);
-                                                                                controllersettings = ezxml_child(inputdevice,"controller_settings");
-                                                                                if (controllersettings != NULL) {
-                                                                                    button = ezxml_child(controllersettings,"button_fire");
-                                                                                    if (button != NULL) {   // Fire-Button
-                                                                                        Config.cControllerFireButton = button->txt[0];
-                                                                                        button = ezxml_child(controllersettings,"button_start_dynamite");
-                                                                                        if (button != NULL) {
-                                                                                            Config.cControllerStartDynamiteButton = button->txt[0];
-                                                                                            button = ezxml_child(controllersettings,"button_exit");
+                                        display = ezxml_child(screen,"display_num");
+                                        if (display != NULL) {
+                                            Config.uDisplay = strtol(display->txt,NULL,10);
+                                            if (Config.uDisplay > 1) {
+                                                Config.uDisplay = 1;
+                                            }
+                                            Config.uDisplayUse = Config.uDisplay; // Wird später ggf. noch angepasst
+                                            highscores = ezxml_child(xml,"show_highscores");
+                                            if (highscores != NULL) {
+                                                Config.bShowHighscores = (strtol(highscores->txt,NULL,10) == 1);
+                                                gamemusic = ezxml_child(xml,"game_music");
+                                                if (gamemusic != NULL) {
+                                                    Config.bGameMusic = (strtol(gamemusic->txt,NULL,10) == 1);
+                                                    dynamite = ezxml_child(xml,"start_dynamite_with_space");
+                                                    if (dynamite != NULL) {
+                                                        Config.bStartDynamiteWithSpace = (strtol(dynamite->txt,NULL,10) == 1);
+                                                        editorzoom = ezxml_child(xml,"editor_zoom");
+                                                        if (editorzoom != NULL) {
+                                                            Config.bEditorZoom = (strtol(editorzoom->txt,NULL,10) == 1);
+                                                            levelgrouphash = ezxml_child(xml,"last_played_levelgroup_md5_hash");
+                                                            if (levelgrouphash != NULL) {
+                                                                GetMd5HashFromString(levelgrouphash->txt,Config.uLevelgroupMd5Hash);
+                                                                playername = levelgrouphash = ezxml_child(xml,"last_player_name");
+                                                                if (playername != NULL) {
+                                                                    if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
+                                                                        strcpy(Config.szPlayername,playername->txt);
+                                                                    }
+                                                                    // Auflösung checken
+                                                                    if ((Config.uResX >= DEFAULT_WINDOW_W) && (Config.uResY >= DEFAULT_WINDOW_H)) {
+                                                                        // ggf. die abgerundeten Werte in die Konfiguration übernehmen
+                                                                        ge_uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
+                                                                        ge_uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
+                                                                        inputdevice = ezxml_child(xml,"input_device");
+                                                                        if (inputdevice != NULL) {
+                                                                            devicename = ezxml_child(inputdevice,"device_name");
+                                                                            if (devicename != NULL) {
+                                                                                if (strcmp(devicename->txt,"JOYSTICK") == 0) {
+                                                                                    Config.uInputdevice = 1;
+                                                                                } else if (strcmp(devicename->txt,"CONTROLLER") == 0) {
+                                                                                    Config.uInputdevice = 2;
+                                                                                } else {
+                                                                                    Config.uInputdevice = 0; // NONE oder UNKNOWN
+                                                                                }
+                                                                                deviceindex = ezxml_child(inputdevice,"device_index");
+                                                                                if (deviceindex != NULL) {
+                                                                                    Config.uDeviceIndex = strtol(deviceindex->txt,NULL,10);
+                                                                                    controllersettings = ezxml_child(inputdevice,"controller_settings");
+                                                                                    if (controllersettings != NULL) {
+                                                                                        button = ezxml_child(controllersettings,"button_fire");
+                                                                                        if (button != NULL) {   // Fire-Button
+                                                                                            Config.cControllerFireButton = button->txt[0];
+                                                                                            button = ezxml_child(controllersettings,"button_start_dynamite");
                                                                                             if (button != NULL) {
-                                                                                                Config.cControllerExitButton = button->txt[0];
-                                                                                                directions = ezxml_child(controllersettings,"directions");
-                                                                                                if (directions != NULL) {
-                                                                                                    if (strcmp(directions->txt,"LEFTAXIS") == 0) {
-                                                                                                        Config.uControllerDirections = 1;
-                                                                                                    } else if (strcmp(directions->txt,"RIGHTAXIS") == 0) {
-                                                                                                        Config.uControllerDirections = 2;
-                                                                                                    } else {
-                                                                                                        Config.uControllerDirections = 0; // DIGITAL oder UNKNOWN
-                                                                                                    }
-                                                                                                    threshold = ezxml_child(controllersettings,"axis_left_threshold");
-                                                                                                    if (threshold != NULL) {
-                                                                                                        Config.nAxisLeftThreshold = strtol(threshold->txt,NULL,10);
-                                                                                                        threshold = ezxml_child(controllersettings,"axis_right_threshold");
+                                                                                                Config.cControllerStartDynamiteButton = button->txt[0];
+                                                                                                button = ezxml_child(controllersettings,"button_exit");
+                                                                                                if (button != NULL) {
+                                                                                                    Config.cControllerExitButton = button->txt[0];
+                                                                                                    directions = ezxml_child(controllersettings,"directions");
+                                                                                                    if (directions != NULL) {
+                                                                                                        if (strcmp(directions->txt,"LEFTAXIS") == 0) {
+                                                                                                            Config.uControllerDirections = 1;
+                                                                                                        } else if (strcmp(directions->txt,"RIGHTAXIS") == 0) {
+                                                                                                            Config.uControllerDirections = 2;
+                                                                                                        } else {
+                                                                                                            Config.uControllerDirections = 0; // DIGITAL oder UNKNOWN
+                                                                                                        }
+                                                                                                        threshold = ezxml_child(controllersettings,"axis_left_threshold");
                                                                                                         if (threshold != NULL) {
-                                                                                                            Config.nAxisRightThreshold = strtol(threshold->txt,NULL,10);
-                                                                                                            threshold = ezxml_child(controllersettings,"axis_up_threshold");
+                                                                                                            Config.nAxisLeftThreshold = strtol(threshold->txt,NULL,10);
+                                                                                                            threshold = ezxml_child(controllersettings,"axis_right_threshold");
                                                                                                             if (threshold != NULL) {
-                                                                                                                Config.nAxisUpThreshold = strtol(threshold->txt,NULL,10);
-                                                                                                                threshold = ezxml_child(controllersettings,"axis_down_threshold");
+                                                                                                                Config.nAxisRightThreshold = strtol(threshold->txt,NULL,10);
+                                                                                                                threshold = ezxml_child(controllersettings,"axis_up_threshold");
                                                                                                                 if (threshold != NULL) {
-                                                                                                                    Config.nAxisDownThreshold = strtol(threshold->txt,NULL,10);
-                                                                                                                    nErrorCode = 0;
+                                                                                                                    Config.nAxisUpThreshold = strtol(threshold->txt,NULL,10);
+                                                                                                                    threshold = ezxml_child(controllersettings,"axis_down_threshold");
+                                                                                                                    if (threshold != NULL) {
+                                                                                                                        Config.nAxisDownThreshold = strtol(threshold->txt,NULL,10);
+                                                                                                                        joysticksettings = ezxml_child(inputdevice,"joystick_settings");
+                                                                                                                        if (joysticksettings != NULL) {
+                                                                                                                            button = ezxml_child(joysticksettings,"button_fire");
+                                                                                                                            if (button != NULL) {   // Fire-Button
+                                                                                                                                Config.cJoystickFireButton = button->txt[0];
+                                                                                                                                button = ezxml_child(joysticksettings,"button_start_dynamite");
+                                                                                                                                if (button != NULL) {
+                                                                                                                                    Config.cJoystickStartDynamiteButton = button->txt[0];
+                                                                                                                                    button = ezxml_child(joysticksettings,"button_exit");
+                                                                                                                                    if (button != NULL) {
+                                                                                                                                        Config.cJoystickExitButton = button->txt[0];
+                                                                                                                                        nErrorCode = 0;
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
                                                                                                                 }
                                                                                                             }
                                                                                                         }
@@ -379,11 +417,11 @@ int ReadConfigFile(void) {
                                                                                 }
                                                                             }
                                                                         }
+                                                                    } else {
+                                                                        sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,Config.uResX,Config.uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
+                                                                        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
+                                                                        nErrorCode = -2;    // Programmende
                                                                     }
-                                                                } else {
-                                                                    sprintf(szErrorMessage,"%s:\nbad resolution X(%u)/Y(%u), minimum required: X(%u)/Y(%u)\nPlease adjust your config.xml",__FUNCTION__,uResX,uResY,DEFAULT_WINDOW_W,DEFAULT_WINDOW_H);
-                                                                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Resolution problem",szErrorMessage,NULL);
-                                                                    nErrorCode = -2;    // Programmende
                                                                 }
                                                             }
                                                         }

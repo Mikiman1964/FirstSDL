@@ -595,6 +595,8 @@
 #define EMERALD_ANIM_MONSTER_KILLS_RIGHT        0x3C000000      // Monster (Alien oder Yam) tötet nach rechts
 #define EMERALD_ANIM_MONSTER_KILLS_DOWN         0x3D000000      // Monster (Alien oder Yam) tötet nach unten
 #define EMERALD_ANIM_YAM_WAS_BLOCKED            0x3E000000      // Yam war in der letzten Control-Phase blockiert
+#define EMERALD_ANIM_MINE_WILL_EXPLODE          0x3F000000      // Mine wird nächste Kontrollrunde sprengen
+#define EMERALD_ANIM_BEETLE_WILL_EXPLODE        0x40000000      // Käfer wird nächste Kontrollrunde sprengen
 
 #define EMERALD_STANDARD_SPEED                  false
 #define EMERALD_DOUBLE_SPEED                    true

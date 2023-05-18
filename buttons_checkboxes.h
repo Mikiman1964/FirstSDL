@@ -11,6 +11,9 @@
 #define MAX_CHECKBOXES          100
 #define MAX_CHECKBOXTEXT_LEN    100
 
+#define CHK_USE                 true
+#define  CHK_UNUSE               false
+
 typedef struct {
     bool      bActive;
     bool      bPressed;
@@ -24,6 +27,7 @@ typedef struct {
 
 typedef struct {
     int     nRegisterIndex;
+    bool    bUse;
     bool    bActive;
     bool    bPressed;
     bool    bChanged;
@@ -35,9 +39,9 @@ typedef struct {
 
 
 void InitCheckboxes(void);
-int RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int nXpos, int nYpos, bool bRadio);
+int RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int nXpos, int nYpos, bool bRadio, bool bUse);
 int DeRegisterCheckbox(CHECKBOX *pCheckbox);
-int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm);
+int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute);
 
 void InitButtons(void);
 void FreeButton(char *pszLabel);
