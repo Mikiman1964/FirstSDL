@@ -1,7 +1,7 @@
 #include "sound.h"
 #include "EmeraldMine.h"
 #include "mySDL.h"
-#include "SDL2/SDL_mixer.h"
+#include "sdlmixer_SDL_mixer.h"
 
 GAMESOUND GameSound;
 extern PLAYFIELD Playfield;
@@ -121,13 +121,15 @@ void PreparePlaySound(uint32_t uSound, uint32_t uCoordinate) {
     uint32_t uTopLeftYpos;   // obere linke Ecke, Y-Position (Level-Koordinate)
     uint32_t uElementXpos;
     uint32_t uElementYpos;
+    bool     bAlwaysOn;      // Sound ist unabhängig vom sichtbaren Bereich aktiv
 
+    bAlwaysOn = ((uSound & 0x80000000) != 0);
+    uSound = uSound & 0x7FFFFFFF;               // Always-Bit ausblenden
     // Falls Sound bisher noch nicht aktiv ist, muss hier die Koordinate geprüft werden, ob wir uns im sichtbaren Bereich befinden
     if ((GameSound.uAllSounds & uSound) == 0) {
-        if ((uSound & 0x80000000) != 0) {   // unabhängig vom sichtbaren Bereich aktiv ?
+        if (bAlwaysOn) {   // unabhängig vom sichtbaren Bereich aktiv ?
             GameSound.uAllSounds |= uSound;
-        }
-        else {
+        } else {
             // Pixel-Koordinate in Level-Koordinate umrechnen
             uTopLeftXpos = Playfield.nTopLeftXpos / FONT_W;
             uTopLeftYpos = Playfield.nTopLeftYpos / FONT_H;
@@ -183,7 +185,6 @@ Name:           CreateWavChunks
 ------------------------------------------------------------------------------
 Beschreibung: Erzeugt WAV-Chunks aus WAV-Dateien. Die WAV-Chunks können mit
               SDL_Mixer direkt auf einem Kanal/Track ausgegeben werden.
-              Programms aufgerufen.
               Vor Aufruf dieser Funktion muss der Audio-Mixer mit Mix_OpenAudio
               geöffnet worden sein und die Anzahl der Tracks mit Mix_AllocateChannels()
               ggf. erhöht worden sein.
