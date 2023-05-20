@@ -1454,7 +1454,9 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
                                     SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-                                    //memset(&Actualplayer,0,sizeof(Actualplayer)); // Welchen Grund hatte das Zurücksetzen des aktuellen Spielers?
+                                    memset(&Actualplayer,0,sizeof(Actualplayer));
+                                    // Welchen Grund hatte das Zurücksetzen des aktuellen Spielers?
+                                    // Grund: Die alten Spielerdaten (vor Leveleditor-Aufruf) stehen dann im Menü.
                                     nErrorCode = PreEditorMenu(pRenderer);
                                     if (nErrorCode == 0) {
                                         // Eine ggf. geänderte Levelgruppe nun mit Highscorefile ausstatten
@@ -1800,6 +1802,7 @@ Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x, Config.x,
 ------------------------------------------------------------------------------*/
 int SettingsMenu(SDL_Renderer *pRenderer) {
     SDL_Rect RecAxisButton;
+    int nDisplays;
     int nErrorCode = 0;
     int nButton = 0;
     int nLastButton = 0;
@@ -1903,6 +1906,8 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
     uRain = 0;
     fAngle = 0;
     fF = 0.5;
+
+    nDisplays = SDL_GetNumVideoDisplays();
 
     if (RegisterCheckbox(&Checkbox_StartDynamiteKeyboard,Config.bStartDynamiteWithSpace,"START DYNAMITE WITH SPACE",600,70,false,CHK_USE) != 0) {
         return -1;
@@ -2033,11 +2038,11 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
         return -1;
     }
     bActive = (Config.uDisplay == 0);   // Primary Display
-    if (RegisterCheckbox(&Checkbox_Display1,bActive,"DISPLAY 1 (RESTART APP)",980,178,true,CHK_USE) != 0) {
+    if (RegisterCheckbox(&Checkbox_Display1,bActive,"DISPLAY 1 (RESTART APP)",980,178,true,(nDisplays > 1)) != 0) {
         return -1;
     }
     bActive = (Config.uDisplay == 1);   // Secondary Display
-    if (RegisterCheckbox(&Checkbox_Display2,bActive,"DISPLAY 2 (RESTART APP)",980,200,true,CHK_USE) != 0) {
+    if (RegisterCheckbox(&Checkbox_Display2,bActive,"DISPLAY 2 (RESTART APP)",980,200,true,(nDisplays > 1)) != 0) {
         return -1;
     }
     if ((ShowableDisplayModes.nDisplayModeCount > 0 ) && (ShowableDisplayModes.nDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES)) {

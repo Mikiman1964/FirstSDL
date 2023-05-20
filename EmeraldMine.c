@@ -112,7 +112,7 @@ int Menu(SDL_Renderer *pRenderer) {
         1120,288,EMERALD_STEEL,1120,320,EMERALD_STEEL,1120,352,EMERALD_STEEL,1120,384,EMERALD_STEEL,1120,416,EMERALD_STEEL,1120,448,EMERALD_STEEL,1120,480,EMERALD_STEEL,1120,512,EMERALD_STEEL,
         1120,544,EMERALD_STEEL,1120,576,EMERALD_STEEL,1120,608,EMERALD_STEEL,1120,640,EMERALD_STEEL,1120,672,EMERALD_STEEL,1120,704,EMERALD_STEEL,
         // "Menüpunkte"
-        128,256,EMERALD_RUBY,128,352,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
+        128,224,EMERALD_RUBY,128,288,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
         // "PROGRAMMED IN 2023"
         144,672,EMERALD_FONT_P,176,672,EMERALD_FONT_R,208,672,EMERALD_FONT_O,240,672,EMERALD_FONT_G,272,672,EMERALD_FONT_R,304,672,EMERALD_FONT_A,336,672,EMERALD_FONT_M,368,672,EMERALD_FONT_M,
         400,672,EMERALD_FONT_E,432,672,EMERALD_FONT_D,496,672,EMERALD_FONT_I,528,672,EMERALD_FONT_N,592,672,EMERALD_FONT_2,624,672,EMERALD_FONT_0,656,672,EMERALD_FONT_2,688,672,EMERALD_FONT_2,
@@ -124,8 +124,8 @@ int Menu(SDL_Renderer *pRenderer) {
     nErrorCode = 0;
     nChoose = -1;
     // Buttons erzeugen
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",320,260,true,false);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",320,356,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",320,228,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",320,292,true,false);
     nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",320,580,true,false);
     nErrorCode = nErrorCode + SetModMusic(5);
     SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
@@ -156,19 +156,25 @@ int Menu(SDL_Renderer *pRenderer) {
                 }
             }
         }
-        PrintLittleFont(pRenderer,448,264,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.",K_RELATIVE);
-        PrintLittleFont(pRenderer,448,360,0,"USE THE FOLLOWING KEYS:",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,390,0,"* MOUSEWHEEL TO ZOOM BALLONS",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,405,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS AND ASTEROID",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,435,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,450,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,465,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,480,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,495,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,510,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,525,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.",K_RELATIVE);
+        PrintLittleFont(pRenderer,448,232,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.",K_RELATIVE);
+        PrintLittleFont(pRenderer,448,296,0,"USE THE FOLLOWING KEYS:",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,311,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,326,0,"* MOUSEWHEEL TO ZOOM BALLONS",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,341,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS, ASTEROIDS AND SMILEYS",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,356,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,371,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,386,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,401,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,416,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,431,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,446,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,461,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,476,0,"* '5' FOR MUSIC 5 -> CLASS11.TIME FLIES BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,491,0,"* '6' FOR MUSIC 6 -> 2000AD:CRACKTRO:IV BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,506,0,"* '7' FOR MUSIC 7 -> 2000AD:CRACKTRO02 BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,521,0,"* '8' FOR MUSIC 8 -> BREWERY BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,536,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,551,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE);
         PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE);
         nErrorCode = ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {

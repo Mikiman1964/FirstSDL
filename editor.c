@@ -1108,6 +1108,10 @@ Rückgabewert:  -
 Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 void CalcEditorViewArea(void) {
+
+    uint32_t uX;
+
+
     // Sichtbaren Bereich berechnen
     if (Ed.bHalfSize) {
         Ed.uFont_W = FONT_W / 2;
@@ -1145,7 +1149,13 @@ void CalcEditorViewArea(void) {
         Ed.uShiftLevelXpix = 0;
     }
     // Positionsüberläufe abfangen
-    Ed.nMaxXpos = (Ed.uLevel_X_Dimension * Ed.uFont_W) - Config.uResX + Ed.uPanelW; // + Ed.uFont_W;
+    if ((Config.uResX % FONT_W) != 0) {
+        uX = Config.uResX;
+        uX = ((uX + FONT_W - 1) / FONT_W) * FONT_W;     // Aufrunden auf nächste passende X-Auflösung
+        Ed.nMaxXpos = (Ed.uLevel_X_Dimension * Ed.uFont_W) - uX + Ed.uPanelW + Ed.uFont_W;
+    } else {
+        Ed.nMaxXpos = (Ed.uLevel_X_Dimension * Ed.uFont_W) - Config.uResX + Ed.uPanelW;
+    }
     if (Ed.nMaxXpos < 0) {
         Ed.nMaxXpos = 0;
     }
