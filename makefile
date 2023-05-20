@@ -1,13 +1,9 @@
 CC := gcc
-FLAGS := `sdl2-config --libs --cflags` --std=c99 -lm -Wall
+FLAGS := `sdl2-config --libs --cflags` --std=gnu18 -lm -Wall
 HDRS := $(wildcard *.h)
 SRCS := $(wildcard *.c)
 OBJS := $(SRCS:%.c=tmp/%.o) $(wildcard Gfx/*.o) $(wildcard Sfx/*.o)
 EXEC := bin/Release/FirstSDL2
-#---------------------------------------------------------- test
-
-.SUFFIXES:
-#---------------------------------------------------------- Targets
 
 .PHONY: all
 
@@ -15,8 +11,6 @@ all: $(EXEC)
 
 $(EXEC): $(OBJS) $(HDRS)
 	$(CC) -o $@ $(OBJS) $(FLAGS) && echo "EXEC [OK]  $@"
-
-# --------------------------------------------------------------
 
 
 tmp/%.o: %.c

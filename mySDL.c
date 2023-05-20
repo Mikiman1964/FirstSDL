@@ -109,6 +109,7 @@ int GetDesktopDisplayMode(void) {
         }
     } else {
         // Es gibt kein Display !
+        SDL_Log("%s: no display found",__FUNCTION__);
         nRet = -1;
     }
     // Das Schlimmste verhindern
@@ -152,7 +153,7 @@ Parameter
       Eingang: uDisplay, uint32_t, Display (0 = primary oder 1 = secondary), welches genutzt werden soll
       Ausgang: -
 Rückgabewert:  int , 0 = Alles OK, sonst Fehler
-Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x, Config.x
+Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x
 ------------------------------------------------------------------------------*/
 int GetUsableDisplayModes(uint32_t uDisplay) {
     int nModeIndex;
@@ -161,13 +162,13 @@ int GetUsableDisplayModes(uint32_t uDisplay) {
     Uint32 uFormat;
 
     UsableDisplayModes.nDisplayModeCount = 0;
-    nDisplayModeCount = SDL_GetNumDisplayModes(Config.uDisplayUse);
+    nDisplayModeCount = SDL_GetNumDisplayModes(uDisplay);
     if (nDisplayModeCount < 1) {
         SDL_Log("%s: SDL_GetNumDisplayModes failed: %s",__FUNCTION__,SDL_GetError());
         return -1;
     }
     for (nModeIndex = 0; (nModeIndex < nDisplayModeCount) && (UsableDisplayModes.nDisplayModeCount < MAX_USABLE_DISPLAYMODES); nModeIndex++) {
-        if (SDL_GetDisplayMode(0,nModeIndex,&DisplayMode) != 0) {
+        if (SDL_GetDisplayMode(uDisplay,nModeIndex,&DisplayMode) != 0) {
             SDL_Log("%s: SDL_GetDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
             return -1;
         }
