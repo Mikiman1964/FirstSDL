@@ -29,6 +29,9 @@ extern MAINMENU MainMenu;
 extern IMPORTLEVEL ImportLevel;
 extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
 extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
+extern LEVELFILESLIST MsDosLevelFileList[EMERALD_MAX_IMPORTFILES];
+
 
 
 uint8_t g_PanelColorPatterns[] = {
@@ -538,6 +541,22 @@ char ge_szElementNames[][64] =
                           "STEEL, DC3 IMPORT",                  // 0X1EF
                           "STEEL, RENAME LEVELGROUP",           // 0X1F0
                           "STEEL, PASSWORD",                    // 0X1F1
+                          "GRASS",                              // 0X1F2
+                          "GRASS COMES, INTERNAL ELEMENT",      // 0X1F3
+                          "SANDMINE",                           // 0X1F4
+                          "SAND, INVISIBLE",                    // 0X1F5
+                          "CONVEYOR BELT, RED",                 // 0X1F6
+                          "CONVEYOR BELT SWITCH, RED",          // 0X1F7
+                          "CONVEYOR BELT, GREEN",               // 0X1F8
+                          "CONVEYOR BELT SWITCH, GREEN",        // 0X1F9
+                          "CONVEYOR BELT, BLUE",                // 0X1FA
+                          "CONVEYOR BELT SWITCH, BLUE",         // 0X1FB
+                          "CONVEYOR BELT, YELLOW",              // 0X1FC
+                          "CONVEYOR BELT SWITCH, YELLOW",       // 0X1FD
+                          "EDITOR MESSAGE 1, INTERNAL ELEMENT", // 0X1FE
+                          "EDITOR MESSAGE 2, INTERNAL ELEMENT", // 0X1FF
+                          "EDITOR MESSAGE 3, INTERNAL ELEMENT", // 0X200
+                          "EDITOR MESSAGE 4, INTERNAL ELEMENT", // 0X201
                          };
 
 // Level-Elemente, die aktuell angezeigt werden
@@ -554,14 +573,15 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_DOOR_ONLY_LEFT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_DOOR_ONLY_RIGHT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_MAGIC_WALL,EMERALD_MAGIC_WALL_STEEL,EMERALD_MAGIC_WALL_SWITCH,EMERALD_LIGHT_SWITCH,
                             EMERALD_MINE_LEFT,EMERALD_MINE_DOWN,EMERALD_MINE_RIGHT,EMERALD_MINE_UP,EMERALD_BEETLE_LEFT,EMERALD_BEETLE_DOWN,EMERALD_BEETLE_RIGHT,EMERALD_BEETLE_UP,
                             EMERALD_MOLE_LEFT,EMERALD_MOLE_DOWN,EMERALD_MOLE_RIGHT,EMERALD_MOLE_UP,EMERALD_YAM,EMERALD_ALIEN,EMERALD_GREEN_CHEESE,EMERALD_GREEN_DROP,
-                            EMERALD_MAN,EMERALD_HAMMER,EMERALD_TIME_COIN,EMERALD_DYNAMITE_OFF,EMERALD_DYNAMITE_ON,EMERALD_WHEEL,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_MAN,EMERALD_HAMMER,EMERALD_TIME_COIN,EMERALD_DYNAMITE_OFF,EMERALD_DYNAMITE_ON,EMERALD_WHEEL,EMERALD_GRASS,EMERALD_SAND_INVISIBLE,
                             EMERALD_REPLICATOR_RED_TOP_LEFT,EMERALD_REPLICATOR_RED_TOP_MID,EMERALD_REPLICATOR_RED_TOP_RIGHT,EMERALD_REPLICATOR_RED_SWITCH,EMERALD_REPLICATOR_YELLOW_TOP_LEFT,EMERALD_REPLICATOR_YELLOW_TOP_MID,EMERALD_REPLICATOR_YELLOW_TOP_RIGHT,EMERALD_REPLICATOR_YELLOW_SWITCH,
                             EMERALD_REPLICATOR_RED_BOTTOM_LEFT,EMERALD_SPACE,EMERALD_REPLICATOR_RED_BOTTOM_RIGHT,EMERALD_SPACE,EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT,EMERALD_SPACE,EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT,EMERALD_SPACE,
                             EMERALD_REPLICATOR_GREEN_TOP_LEFT,EMERALD_REPLICATOR_GREEN_TOP_MID,EMERALD_REPLICATOR_GREEN_TOP_RIGHT,EMERALD_REPLICATOR_GREEN_SWITCH,EMERALD_REPLICATOR_BLUE_TOP_LEFT,EMERALD_REPLICATOR_BLUE_TOP_MID,EMERALD_REPLICATOR_BLUE_TOP_RIGHT,EMERALD_REPLICATOR_BLUE_SWITCH,
                             EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT,EMERALD_SPACE,EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT,EMERALD_SPACE,EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT,EMERALD_SPACE,EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT,EMERALD_SPACE,
-                            EMERALD_LIGHTBARRIER_RED_LEFT,EMERALD_LIGHTBARRIER_RED_DOWN,EMERALD_LIGHTBARRIER_RED_RIGHT,EMERALD_LIGHTBARRIER_RED_DOWN,EMERALD_LIGHTBARRIER_YELLOW_LEFT,EMERALD_LIGHTBARRIER_YELLOW_DOWN,EMERALD_LIGHTBARRIER_YELLOW_RIGHT,EMERALD_LIGHTBARRIER_YELLOW_DOWN,
-                            EMERALD_LIGHTBARRIER_GREEN_LEFT,EMERALD_LIGHTBARRIER_GREEN_DOWN,EMERALD_LIGHTBARRIER_GREEN_RIGHT,EMERALD_LIGHTBARRIER_GREEN_DOWN,EMERALD_LIGHTBARRIER_BLUE_LEFT,EMERALD_LIGHTBARRIER_BLUE_DOWN,EMERALD_LIGHTBARRIER_BLUE_RIGHT,EMERALD_LIGHTBARRIER_BLUE_DOWN,
-                            EMERALD_LIGHTBARRIER_RED_SWITCH,EMERALD_LIGHTBARRIER_YELLOW_SWITCH,EMERALD_LIGHTBARRIER_GREEN_SWITCH,EMERALD_LIGHTBARRIER_BLUE_SWITCH,EMERALD_SPACE,EMERALD_SAND,EMERALD_SWAMP,EMERALD_SWAMP_STONE,
+                            EMERALD_CONVEYORBELT_RED,EMERALD_CONVEYORBELT_SWITCH_RED,EMERALD_CONVEYORBELT_YELLOW,EMERALD_CONVEYORBELT_SWITCH_YELLOW,EMERALD_CONVEYORBELT_GREEN,EMERALD_CONVEYORBELT_SWITCH_GREEN,EMERALD_CONVEYORBELT_BLUE,EMERALD_CONVEYORBELT_SWITCH_BLUE,
+                            EMERALD_LIGHTBARRIER_RED_LEFT,EMERALD_LIGHTBARRIER_RED_DOWN,EMERALD_LIGHTBARRIER_RED_RIGHT,EMERALD_LIGHTBARRIER_RED_UP,EMERALD_LIGHTBARRIER_YELLOW_LEFT,EMERALD_LIGHTBARRIER_YELLOW_DOWN,EMERALD_LIGHTBARRIER_YELLOW_RIGHT,EMERALD_LIGHTBARRIER_YELLOW_UP,
+                            EMERALD_LIGHTBARRIER_GREEN_LEFT,EMERALD_LIGHTBARRIER_GREEN_DOWN,EMERALD_LIGHTBARRIER_GREEN_RIGHT,EMERALD_LIGHTBARRIER_GREEN_UP,EMERALD_LIGHTBARRIER_BLUE_LEFT,EMERALD_LIGHTBARRIER_BLUE_DOWN,EMERALD_LIGHTBARRIER_BLUE_RIGHT,EMERALD_LIGHTBARRIER_BLUE_UP,
+                            EMERALD_LIGHTBARRIER_RED_SWITCH,EMERALD_LIGHTBARRIER_YELLOW_SWITCH,EMERALD_LIGHTBARRIER_GREEN_SWITCH,EMERALD_LIGHTBARRIER_BLUE_SWITCH,EMERALD_SANDMINE,EMERALD_SAND,EMERALD_SWAMP,EMERALD_SWAMP_STONE,
                             EMERALD_ACIDPOOL_TOP_LEFT,EMERALD_ACIDPOOL_TOP_MID,EMERALD_ACIDPOOL_TOP_RIGHT,EMERALD_NUT,EMERALD_BOMB,EMERALD_MEGABOMB,EMERALD_STANDMINE,EMERALD_STONE,
                             EMERALD_ACIDPOOL_BOTTOM_LEFT,EMERALD_ACIDPOOL_BOTTOM_MID,EMERALD_ACIDPOOL_BOTTOM_RIGHT,EMERALD_EMERALD,EMERALD_RUBY,EMERALD_SAPPHIRE,EMERALD_PERL,EMERALD_CRYSTAL,
                             EMERALD_MESSAGE_1,EMERALD_MESSAGE_2,EMERALD_MESSAGE_3,EMERALD_MESSAGE_4,EMERALD_MESSAGE_5,EMERALD_MESSAGE_6,EMERALD_MESSAGE_7,EMERALD_MESSAGE_8,
@@ -573,10 +593,8 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_WALL_WITH_EMERALD,EMERALD_WALL_WITH_RUBY,EMERALD_WALL_WITH_SAPPHIRE,EMERALD_WALL_WITH_PERL,EMERALD_WALL_WITH_CRYSTAL,EMERALD_WALL_WITH_STONE,EMERALD_WALL_WITH_NUT,EMERALD_WALL_WITH_WHEEL,
                             EMERALD_WALL_WITH_KEY_RED,EMERALD_WALL_WITH_KEY_GREEN,EMERALD_WALL_WITH_KEY_BLUE,EMERALD_WALL_WITH_KEY_YELLOW,EMERALD_WALL_WITH_KEY_WHITE,EMERALD_WALL_WITH_KEY_GENERAL,EMERALD_WALL_WITH_BOMB,EMERALD_WALL_WITH_MEGABOMB,
                             EMERALD_WALL_WITH_DYNAMITE,EMERALD_WALL_WITH_ENDDOOR,EMERALD_WALL_WITH_ENDDOOR_READY,EMERALD_WALL_WITH_MINE_UP,EMERALD_WALL_WITH_BEETLE_UP,EMERALD_WALL_WITH_YAM,EMERALD_WALL_WITH_ALIEN,EMERALD_WALL_WITH_MOLE_UP,
-                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
-                            EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_INVALID
+                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_INVALID
                             };
-
 
 uint16_t g_PanelElementsMachines[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_EMERALD,EMERALD_RUBY,EMERALD_SAPPHIRE,EMERALD_PERL,EMERALD_CRYSTAL,EMERALD_STONE,EMERALD_NUT,EMERALD_SPACE,
@@ -707,6 +725,7 @@ Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 DYNSTRING *GetLevelXmlFile(void) {
     char szNum[32];
+    char szNum2[32];
     uint32_t uBase64Len;
     uint32_t uBase64MessageLen;
     uint32_t I;
@@ -739,6 +758,8 @@ DYNSTRING *GetLevelXmlFile(void) {
     DynStringAdd(XML,"    <score_time_factor>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</score_time_factor>\r\n");
     sprintf(szNum,"%u",Ed.uCheeseSpreadSpeed);
     DynStringAdd(XML,"    <speed_cheese_spread>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</speed_cheese_spread>\r\n");
+    sprintf(szNum,"%u",Ed.uGrassSpreadSpeed);
+    DynStringAdd(XML,"    <speed_grass_spread>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</speed_grass_spread>\r\n");
     DynStringAdd(XML,"  </values>\r\n");
     DynStringAdd(XML,"  <leveldimension>\r\n");
     sprintf(szNum,"%u",Ed.uLevel_X_Dimension);
@@ -876,6 +897,128 @@ DYNSTRING *GetLevelXmlFile(void) {
     DynStringAdd(XML,"      <active>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</active>\r\n");
     DynStringAdd(XML,"    </yellow>\r\n");
     DynStringAdd(XML,"  </lightbarriers>\r\n");
+    DynStringAdd(XML,"  <conveyorbelts>\r\n");
+    DynStringAdd(XML,"    <red>\r\n");
+    switch (Ed.uConveybeltRedState) {
+        case (EMERALD_CONVEYBELT_LEFT):
+            strcpy(szNum,"left");
+            strcpy(szNum2,"right");
+            break;
+        case (EMERALD_CONVEYBELT_RIGHT):
+            strcpy(szNum,"right");
+            strcpy(szNum2,"left");
+            break;
+        case (EMERALD_CONVEYBELT_OFF):
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+        default:
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+    }
+    DynStringAdd(XML,"      <direction_at_start>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</direction_at_start>\r\n");
+    DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
+    DynStringAdd(XML,"    </red>\r\n");
+    DynStringAdd(XML,"    <green>\r\n");
+    switch (Ed.uConveybeltGreenState) {
+        case (EMERALD_CONVEYBELT_LEFT):
+            strcpy(szNum,"left");
+            strcpy(szNum2,"right");
+            break;
+        case (EMERALD_CONVEYBELT_RIGHT):
+            strcpy(szNum,"right");
+            strcpy(szNum2,"left");
+            break;
+        case (EMERALD_CONVEYBELT_OFF):
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+        default:
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+    }
+    DynStringAdd(XML,"      <direction_at_start>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</direction_at_start>\r\n");
+    DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
+    DynStringAdd(XML,"    </green>\r\n");
+    DynStringAdd(XML,"    <blue>\r\n");
+    switch (Ed.uConveybeltBlueState) {
+        case (EMERALD_CONVEYBELT_LEFT):
+            strcpy(szNum,"left");
+            strcpy(szNum2,"right");
+            break;
+        case (EMERALD_CONVEYBELT_RIGHT):
+            strcpy(szNum,"right");
+            strcpy(szNum2,"left");
+            break;
+        case (EMERALD_CONVEYBELT_OFF):
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+        default:
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+    }
+    DynStringAdd(XML,"      <direction_at_start>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</direction_at_start>\r\n");
+    DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
+    DynStringAdd(XML,"    </blue>\r\n");
+    DynStringAdd(XML,"    <yellow>\r\n");
+    switch (Ed.uConveybeltYellowState) {
+        case (EMERALD_CONVEYBELT_LEFT):
+            strcpy(szNum,"left");
+            strcpy(szNum2,"right");
+            break;
+        case (EMERALD_CONVEYBELT_RIGHT):
+            strcpy(szNum,"right");
+            strcpy(szNum2,"left");
+            break;
+        case (EMERALD_CONVEYBELT_OFF):
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+        default:
+            strcpy(szNum,"off");
+            if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                strcpy(szNum2,"left");
+            } else {
+                strcpy(szNum2,"right");
+            }
+            break;
+    }
+    DynStringAdd(XML,"      <direction_at_start>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</direction_at_start>\r\n");
+    DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
+    DynStringAdd(XML,"    </yellow>\r\n");
+    DynStringAdd(XML,"  </conveyorbelts>\r\n");
     DynStringAdd(XML,"  <messages>\r\n");
     for (I = 1; (I <= EMERALD_MAX_MESSAGES) && (!bError); I++) {
         szM[1] = I + 0x30;
@@ -1030,6 +1173,14 @@ int CopyPlayfieldValueToEditor(void) {
         Ed.uReplicatorBlueObject = Playfield.uReplicatorBlueObject;
         Ed.bReplicatorYellowOn = Playfield.bReplicatorYellowOn;
         Ed.uReplicatorYellowObject = Playfield.uReplicatorYellowObject;
+        Ed.uConveybeltRedState = Playfield.uConveybeltRedState;
+        Ed.uConveybeltRedDirection = Playfield.uConveybeltRedDirection;
+        Ed.uConveybeltGreenState = Playfield.uConveybeltGreenState;
+        Ed.uConveybeltGreenDirection = Playfield.uConveybeltGreenDirection;
+        Ed.uConveybeltBlueState = Playfield.uConveybeltBlueState;
+        Ed.uConveybeltBlueDirection = Playfield.uConveybeltBlueDirection;
+        Ed.uConveybeltYellowState = Playfield.uConveybeltYellowState;
+        Ed.uConveybeltYellowDirection = Playfield.uConveybeltYellowDirection;
         strcpy(Ed.szLevelTitle,Playfield.szLevelTitle);
         strcpy(Ed.szLevelAuthor,Playfield.szLevelAuthor);
         strcpy(Ed.szVersion,Playfield.szVersion);
@@ -1054,6 +1205,7 @@ int CopyPlayfieldValueToEditor(void) {
         Ed.uEmeraldsToCollect = Playfield.uEmeraldsToCollect;
         Ed.uTimeScoreFactor = Playfield.uTimeScoreFactor;
         Ed.uCheeseSpreadSpeed = Playfield.uCheeseSpreadSpeed;
+        Ed.uGrassSpreadSpeed = Playfield.uGrassSpreadSpeed;;
         Ed.uTimeToPlay = Playfield.uTimeToPlay / ge_DisplayMode.refresh_rate;
         Ed.uAdditonalTimeCoinTime = Playfield.uAdditonalTimeCoinTime / ge_DisplayMode.refresh_rate;
         Ed.uTimeWheelRotation = Playfield.uTimeWheelRotation / ge_DisplayMode.refresh_rate;
@@ -1176,36 +1328,53 @@ Name:           SetLevelBorder
 Beschreibung: Setzt die Level-Umrandung mit EMERALD_STEEL.
 Parameter
       Eingang: pLevel, uint16_t *, Zeiger auf Levelspeicher
+               bClear, bool, true = Spielfeld auf EMERALD_SPACE setzen
+               bAlwaysSteel, bool,
+                true = der Außenrand wird immer auf EMERALD_STEEL gesetzt, auch wenn bereits ein kompatibles Stahl-Element (IsSteel()) vorhanden ist
+                false = falls der Außenrand bereits ein kompatibles Stahl-Element (IsSteel()) enhält, wird dieses Element belassen.
       Ausgang: -
 Rückgabewert:  int, 0 = alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
-int SetLevelBorder(uint16_t *pLevel) {
+int SetLevelBorder(uint16_t *pLevel, bool bClear, bool AlwaysSteel) {
     uint32_t I;
+    uint32_t X,Y;
+
 
     if (pLevel == NULL) {
         SDL_Log("%s: null pointer found",__FUNCTION__);
         return -1;
     }
-
-    for (I = 0; I < Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension; I++) {
-        pLevel[I] = EMERALD_SPACE;
+    if (bClear) {
+        for (Y = 1; Y < (Ed.uLevel_Y_Dimension - 1); Y++) {
+            for (X = 1; X < (Ed.uLevel_X_Dimension - 1); X++) {
+                pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
+            }
+        }
     }
     // Obere Zeile setzen
     for (I = 0; (I < Ed.uLevel_X_Dimension); I++) {
-        pLevel[I] = EMERALD_STEEL;
+        if (AlwaysSteel || (!IsSteel(pLevel[I]))) {
+            pLevel[I] = EMERALD_STEEL;
+        }
     }
     // Untere Zeile setzen
     for (I = Ed.uLevel_X_Dimension * (Ed.uLevel_Y_Dimension - 1); (I < Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension); I++) {
-        pLevel[I] = EMERALD_STEEL;
+        if (AlwaysSteel || (!IsSteel(pLevel[I]))) {
+            pLevel[I] = EMERALD_STEEL;
+        }
     }
     // Linke Spalte setzen
     for (I = 0; (I < Ed.uLevel_Y_Dimension); I++) {
-        pLevel[I * Ed.uLevel_X_Dimension] = EMERALD_STEEL;
+        if (AlwaysSteel || (!IsSteel(pLevel[I * Ed.uLevel_X_Dimension]))) {
+            pLevel[I * Ed.uLevel_X_Dimension] = EMERALD_STEEL;
+        }
     }
     // Rechte Spalte setzen
     for (I = 1; (I <= Ed.uLevel_Y_Dimension); I++) {
-        pLevel[I * Ed.uLevel_X_Dimension - 1] = EMERALD_STEEL;
+        if (AlwaysSteel || (!IsSteel(pLevel[I * Ed.uLevel_X_Dimension - 1]))) {
+            pLevel[I * Ed.uLevel_X_Dimension - 1] = EMERALD_STEEL;
+        }
     }
     return 0;
 }
@@ -1233,7 +1402,7 @@ uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos) {
     if ((Ed.uMenuState == MENUSTATE_LEVEL_TEXT) || (Ed.uMenuState == MENUSTATE_YAMS_TEXT)) {
         nMaxY = 644;    // Y-Werte sind absolut,
     } else {
-        nMaxY = 620;    // da vom oberen Rand gerechnet
+        nMaxY = 644;    // da vom oberen Rand gerechnet, ist >>zur Zeit<< identisch mit MENUSTATE_LEVEL_TEXT || MENUSTATE_YAMS_TEXT
     }
     uElement = EMERALD_NONE;
     if ((nMouseXpos >= Config.uResX - 184) && (nMouseXpos <= Config.uResX - 8)) {
@@ -1732,7 +1901,7 @@ Name:           EditorStateMachines
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_MACHINES befindet,
               wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration von
-              Replikatoren und Lichtschranken.
+              Replikatoren, Lichtschranken und Laufbändern.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
@@ -1744,7 +1913,6 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
     uint32_t uTextureIndex;
     uint32_t uElement;
     uint32_t I;
-    bool bXmouseReplicatorSwitch;
     bool bXmouseReplicatorObject;
     bool bYmouseRedReplicator;
     bool bYmouseYellowReplicator;
@@ -1787,25 +1955,46 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
                                         192,640,EMERALD_LIGHTBARRIER_GREEN_SWITCH,
                                         192,704,EMERALD_LIGHTBARRIER_BLUE_SWITCH,
                                         // Light barriers
-                                        96,512,EMERALD_LIGHTBARRIER_RED_RIGHT,
-                                        96,576,EMERALD_LIGHTBARRIER_YELLOW_RIGHT,
-                                        96,640,EMERALD_LIGHTBARRIER_GREEN_RIGHT,
-                                        96,704,EMERALD_LIGHTBARRIER_BLUE_RIGHT,
+                                        64,512,EMERALD_LIGHTBARRIER_RED_RIGHT,
+                                        64,576,EMERALD_LIGHTBARRIER_YELLOW_RIGHT,
+                                        64,640,EMERALD_LIGHTBARRIER_GREEN_RIGHT,
+                                        64,704,EMERALD_LIGHTBARRIER_BLUE_RIGHT,
                                         // Replicator objects
                                         64 + FONT_W,64 + FONT_H,EMERALD_SPACE,
                                         64 + FONT_W,64 + 4 * FONT_H,EMERALD_SPACE,
                                         64 + FONT_W,64 + 7 * FONT_H,EMERALD_SPACE,
                                         64 + FONT_W,64 + 10 * FONT_H,EMERALD_SPACE,
                                         // Light barriers streams
+                                        64 + 1 * FONT_W,64 + 14 * FONT_H,EMERALD_BEAM_RED_HORIZONTAL,
                                         64 + 2 * FONT_W,64 + 14 * FONT_H,EMERALD_BEAM_RED_HORIZONTAL,
                                         64 + 3 * FONT_W,64 + 14 * FONT_H,EMERALD_BEAM_RED_HORIZONTAL,
+                                        64 + 1 * FONT_W,64 + 16 * FONT_H,EMERALD_BEAM_YELLOW_HORIZONTAL,
                                         64 + 2 * FONT_W,64 + 16 * FONT_H,EMERALD_BEAM_YELLOW_HORIZONTAL,
                                         64 + 3 * FONT_W,64 + 16 * FONT_H,EMERALD_BEAM_YELLOW_HORIZONTAL,
+                                        64 + 1 * FONT_W,64 + 18 * FONT_H,EMERALD_BEAM_GREEN_HORIZONTAL,
                                         64 + 2 * FONT_W,64 + 18 * FONT_H,EMERALD_BEAM_GREEN_HORIZONTAL,
                                         64 + 3 * FONT_W,64 + 18 * FONT_H,EMERALD_BEAM_GREEN_HORIZONTAL,
+                                        64 + 1 * FONT_W,64 + 20 * FONT_H,EMERALD_BEAM_BLUE_HORIZONTAL,
                                         64 + 2 * FONT_W,64 + 20 * FONT_H,EMERALD_BEAM_BLUE_HORIZONTAL,
-                                        64 + 3 * FONT_W,64 + 20 * FONT_H,EMERALD_BEAM_BLUE_HORIZONTAL
+                                        64 + 3 * FONT_W,64 + 20 * FONT_H,EMERALD_BEAM_BLUE_HORIZONTAL,
+                                        672,64,EMERALD_CONVEYORBELT_RED,
+                                        704,64,EMERALD_CONVEYORBELT_RED,
+                                        736,64,EMERALD_CONVEYORBELT_RED,
+                                        800,64,EMERALD_CONVEYORBELT_SWITCH_RED,
+                                        672,160,EMERALD_CONVEYORBELT_YELLOW,
+                                        704,160,EMERALD_CONVEYORBELT_YELLOW,
+                                        736,160,EMERALD_CONVEYORBELT_YELLOW,
+                                        800,160,EMERALD_CONVEYORBELT_SWITCH_YELLOW,
+                                        672,256,EMERALD_CONVEYORBELT_GREEN,
+                                        704,256,EMERALD_CONVEYORBELT_GREEN,
+                                        736,256,EMERALD_CONVEYORBELT_GREEN,
+                                        800,256,EMERALD_CONVEYORBELT_SWITCH_GREEN,
+                                        672,352,EMERALD_CONVEYORBELT_BLUE,
+                                        704,352,EMERALD_CONVEYORBELT_BLUE,
+                                        736,352,EMERALD_CONVEYORBELT_BLUE,
+                                        800,352,EMERALD_CONVEYORBELT_SWITCH_BLUE,
                                         };
+
     uPositionsAndElements[32 * 3 + 2] = Ed.uReplicatorRedObject;
     uPositionsAndElements[33 * 3 + 2] = Ed.uReplicatorYellowObject;
     uPositionsAndElements[34 * 3 + 2] = Ed.uReplicatorGreenObject;
@@ -1813,21 +2002,26 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
     if (!Ed.bLightBarrierRedOn) {
         uPositionsAndElements[36 * 3 + 2] = EMERALD_SPACE;
         uPositionsAndElements[37 * 3 + 2] = EMERALD_SPACE;
+        uPositionsAndElements[38 * 3 + 2] = EMERALD_SPACE;
     }
     if (!Ed.bLightBarrierYellowOn) {
-        uPositionsAndElements[38 * 3 + 2] = EMERALD_SPACE;
         uPositionsAndElements[39 * 3 + 2] = EMERALD_SPACE;
-    }
-    if (!Ed.bLightBarrierGreenOn) {
         uPositionsAndElements[40 * 3 + 2] = EMERALD_SPACE;
         uPositionsAndElements[41 * 3 + 2] = EMERALD_SPACE;
     }
-    if (!Ed.bLightBarrierBlueOn) {
+    if (!Ed.bLightBarrierGreenOn) {
         uPositionsAndElements[42 * 3 + 2] = EMERALD_SPACE;
         uPositionsAndElements[43 * 3 + 2] = EMERALD_SPACE;
+        uPositionsAndElements[44 * 3 + 2] = EMERALD_SPACE;
     }
+    if (!Ed.bLightBarrierBlueOn) {
+        uPositionsAndElements[45 * 3 + 2] = EMERALD_SPACE;
+        uPositionsAndElements[46 * 3 + 2] = EMERALD_SPACE;
+        uPositionsAndElements[47 * 3 + 2] = EMERALD_SPACE;
+    }
+
     // Replikatoren
-    PrintLittleFont(pRenderer,368,24,0,"REPLICATORS",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,80,24,0,"REPLICATORS",K_ABSOLUTE);
     PrintLittleFont(pRenderer,192,112,0,"ACTIVE AT START:",K_ABSOLUTE);
     if (Ed.bReplicatorRedOn) {
         PrintLittleFont(pRenderer,352,112,0,"YES",K_ABSOLUTE);
@@ -1853,7 +2047,7 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,352,400,0,"NO",K_ABSOLUTE);
     }
     // Lichtschranken
-    PrintLittleFont(pRenderer,360,464,0,"LIGHT BARRIERS",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,80,464,0,"LIGHT BARRIERS",K_ABSOLUTE);
     PrintLittleFont(pRenderer,240,520,0,"ACTIVE AT START:",K_ABSOLUTE);
     if (Ed.bLightBarrierRedOn) {
         PrintLittleFont(pRenderer,400,520,0,"YES",K_ABSOLUTE);
@@ -1878,7 +2072,61 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
     } else {
         nErrorCode = PrintLittleFont(pRenderer,400,712,0,"NO",K_ABSOLUTE);
     }
-    for (I = 0; (I < 44) && (nErrorCode == 0); I++) {
+    // Laufbänder
+    PrintLittleFont(pRenderer,682,24,0,"CONVEYOR BELTS",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,848,72,0,"ACTIVE AT START:",K_ABSOLUTE);
+    if (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
+        PrintLittleFont(pRenderer,848 + 160,72,0,"LEFT",K_ABSOLUTE);
+    } else if (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) {
+        PrintLittleFont(pRenderer,848 + 160,72,0,"RIGHT",K_ABSOLUTE);
+    } else {
+        PrintLittleFont(pRenderer,848 + 160,72,0,"NO",K_ABSOLUTE);
+        if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+        } else {
+            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+        }
+    }
+    PrintLittleFont(pRenderer,848,168,0,"ACTIVE AT START:",K_ABSOLUTE);
+    if (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) {
+        PrintLittleFont(pRenderer,848 + 160,168,0,"LEFT",K_ABSOLUTE);
+    } else if (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) {
+        PrintLittleFont(pRenderer,848 + 160,168,0,"RIGHT",K_ABSOLUTE);
+    } else {
+        PrintLittleFont(pRenderer,848 + 160,168,0,"NO",K_ABSOLUTE);
+        if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+        } else {
+            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+        }
+    }
+    PrintLittleFont(pRenderer,848,264,0,"ACTIVE AT START:",K_ABSOLUTE);
+    if (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) {
+        PrintLittleFont(pRenderer,848 + 160,264,0,"LEFT",K_ABSOLUTE);
+    } else if (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) {
+        PrintLittleFont(pRenderer,848 + 160,264,0,"RIGHT",K_ABSOLUTE);
+    } else {
+        PrintLittleFont(pRenderer,848 + 160,264,0,"NO",K_ABSOLUTE);
+        if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+        } else {
+            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+        }
+    }
+    PrintLittleFont(pRenderer,848,360,0,"ACTIVE AT START:",K_ABSOLUTE);
+    if (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) {
+        PrintLittleFont(pRenderer,848 + 160,360,0,"LEFT",K_ABSOLUTE);
+    } else if (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) {
+        PrintLittleFont(pRenderer,848 + 160,360,0,"RIGHT",K_ABSOLUTE);
+    } else {
+        PrintLittleFont(pRenderer,848 + 160,360,0,"NO",K_ABSOLUTE);
+        if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+        } else {
+            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+        }
+    }
+    for (I = 0; (I < sizeof(uPositionsAndElements) / (3 * sizeof(uint32_t))) && (nErrorCode == 0); I++) {
         uElement = uPositionsAndElements[I * 3 + 2];
         uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],0,&fAngle);
         if ((uElement == EMERALD_REPLICATOR_RED_SWITCH) && Ed.bReplicatorRedOn) {
@@ -1897,6 +2145,22 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
             uTextureIndex++;
         } else if ((uElement == EMERALD_LIGHTBARRIER_BLUE_SWITCH) && Ed.bLightBarrierBlueOn) {
             uTextureIndex++;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_RED) && (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) {
+            uTextureIndex++;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_RED) && (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT)) {
+            uTextureIndex = uTextureIndex + 2;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) && (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) {
+            uTextureIndex++;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) && (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT)) {
+            uTextureIndex = uTextureIndex + 2;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) && (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) {
+            uTextureIndex++;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) && (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT)) {
+            uTextureIndex = uTextureIndex + 2;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) && (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT)) {
+            uTextureIndex++;
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) && (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT)) {
+            uTextureIndex = uTextureIndex + 2;
         }
         DestR.x = uPositionsAndElements[I * 3 + 0];
         DestR.y = uPositionsAndElements[I * 3 + 1];
@@ -1909,9 +2173,85 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
             }
         }
     }
+    // Dieser Block kann die Aktivität der Laufbänder umschalten
+    if (((InputStates.nMouseXpos_Absolute >= 800) && (InputStates.nMouseXpos_Absolute < (800 + FONT_W))) && (InputStates.bLeftMouseButton)) {
+        if ((InputStates.nMouseYpos_Absolute >= 64) && (InputStates.nMouseYpos_Absolute < (64 + FONT_H))) {
+            switch (Ed.uConveybeltRedState) {
+                case(EMERALD_CONVEYBELT_OFF):
+                    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_RIGHT;
+                    break;
+                case(EMERALD_CONVEYBELT_LEFT):
+                    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
+                    if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                        Ed.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    } else {
+                        Ed.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                    }
+                    break;
+                case(EMERALD_CONVEYBELT_RIGHT):
+                    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_LEFT;
+                    break;
+            }
+            WaitNoKey();
+        } else if ((InputStates.nMouseYpos_Absolute >= 160) && (InputStates.nMouseYpos_Absolute < (160 + FONT_H))) {
+            switch (Ed.uConveybeltYellowState) {
+                case(EMERALD_CONVEYBELT_OFF):
+                    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_RIGHT;
+                    break;
+                case(EMERALD_CONVEYBELT_LEFT):
+                    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
+                    if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                        Ed.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    } else {
+                        Ed.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                    }
+                    break;
+                case(EMERALD_CONVEYBELT_RIGHT):
+                    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_LEFT;
+                    break;
+            }
+            WaitNoKey();
+        } else if ((InputStates.nMouseYpos_Absolute >= 256) && (InputStates.nMouseYpos_Absolute < (256 + FONT_H))) {
+            switch (Ed.uConveybeltGreenState) {
+                case(EMERALD_CONVEYBELT_OFF):
+                    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_RIGHT;
+                    break;
+                case(EMERALD_CONVEYBELT_LEFT):
+                    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
+                    if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                        Ed.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    } else {
+                        Ed.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                    }
+                    break;
+                case(EMERALD_CONVEYBELT_RIGHT):
+                    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_LEFT;
+                    break;
+            }
+            WaitNoKey();
+        } else if ((InputStates.nMouseYpos_Absolute >= 352) && (InputStates.nMouseYpos_Absolute < (352 + FONT_H))) {
+            switch (Ed.uConveybeltBlueState) {
+                case(EMERALD_CONVEYBELT_OFF):
+                    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_RIGHT;
+                    break;
+                case(EMERALD_CONVEYBELT_LEFT):
+                    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
+                    if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                        Ed.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    } else {
+                        Ed.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                    }
+                    break;
+                case(EMERALD_CONVEYBELT_RIGHT):
+                    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_LEFT;
+                    break;
+            }
+            WaitNoKey();
+        }
+    }
+
     // Dieser Block kann die Aktivität der Replikatoren umschalten
-    bXmouseReplicatorSwitch = ((InputStates.nMouseXpos_Absolute >= 192) && (InputStates.nMouseXpos_Absolute <= 224));
-    if ((bXmouseReplicatorSwitch) && (InputStates.bLeftMouseButton)) {
+    if (((InputStates.nMouseXpos_Absolute >= 192) && (InputStates.nMouseXpos_Absolute <= 224)) && (InputStates.bLeftMouseButton)) {
         if ((InputStates.nMouseYpos_Absolute >= 64) && (InputStates.nMouseYpos_Absolute <= 96)) {
             Ed.bReplicatorRedOn = !Ed.bReplicatorRedOn;
             WaitNoKey();
@@ -2083,6 +2423,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         704,352,EMERALD_STEEL_ARROW_RIGHT,
                                         // 6.Zeile
                                         352,416,EMERALD_GREEN_CHEESE,
+                                        512,416,EMERALD_GRASS,
                                         // 7. Zeile
                                         32,480,EMERALD_EMERALD,
                                         64,480,EMERALD_RUBY,
@@ -2212,8 +2553,8 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             // Remaing time factor & Cheese spread speed
                             252,261,411,421,262,271,411,421,272,281,411,421,282,291,411,421, // ++++ Remaining time factor
                             252,261,437,447,262,271,437,447,272,281,437,447,282,291,437,447, // ---- Remaining time factor
-                            530,539,411,421,540,549,411,421,550,559,411,421,560,569,411,421, // ++++ Cheese spread speed
-                            530,539,437,447,540,549,437,447,550,559,437,447,560,569,437,447, // ---- Cheese spread speed
+                            446,455,411,421,456,465,411,421,466,475,411,421,476,485,411,421, // ++++ Cheese spread speed
+                            446,455,437,447,456,465,437,447,466,475,437,447,476,485,437,447, // ---- Cheese spread speed
                             // Emerald to collect
                             350,359,475,485,360,369,475,485,370,379,475,485,380,389,475,485, // ++++ Emeralds to collect
                             350,359,501,511,360,369,501,511,370,379,501,511,380,389,501,511, // ---- Emeralds to collect
@@ -2224,7 +2565,10 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             624,655,608,639,656,687,608,639,688,719,608,639,720,751,608,639, // ++++ Level-Dimension Y
                             624,655,672,703,656,687,672,703,688,719,672,703,720,751,672,703, // ---- Level-Dimension Y
                             // Message 1, Message 2       Message3        Message 4       Message 5       Message6        Message 7       Message 8
-                            896,960,64,96,896,960,128,160,896,960,192,224,896,960,256,288,896,960,320,352,896,960,384,416,896,960,448,480,896,960,512,544
+                            896,960,64,96,896,960,128,160,896,960,192,224,896,960,256,288,896,960,320,352,896,960,384,416,896,960,448,480,896,960,512,544,
+                            // Grass spread speed
+                            606,615,411,421,616,625,411,421,626,635,411,421,636,645,411,421, // ++++ Grass spread speed
+                            606,615,437,447,616,625,437,447,626,635,437,447,636,645,437,447, // ---- Grass spread speed
                             };
 
     // Rahmen und Füllung für Level-Title und Level Author zeichnen
@@ -2424,11 +2768,11 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         }
         sprintf(szText,"%04d",Ed.uTmpLevel_X_Dimension);
         for (I = 0; I < 4; I++) {
-            uPositionsAndElements[(104 + I) * 3 + 2] = EMERALD_FONT_0 + szText[I] - 0x30;
+            uPositionsAndElements[(105 + I) * 3 + 2] = EMERALD_FONT_0 + szText[I] - 0x30;
         }
         sprintf(szText,"%04d",Ed.uTmpLevel_Y_Dimension);
         for (I = 0; I < 4; I++) {
-            uPositionsAndElements[(126 + I) * 3 + 2] = EMERALD_FONT_0 + szText[I] - 0x30;
+            uPositionsAndElements[(127 + I) * 3 + 2] = EMERALD_FONT_0 + szText[I] - 0x30;
         }
         nErrorCode = PrintLittleFont(pRenderer,380,24,0,"SCORES",K_ABSOLUTE);
         // 1. Zeile
@@ -2565,12 +2909,18 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         sprintf(szText,"%04d",Ed.uTimeScoreFactor);
         PrintLittleFont(pRenderer,252,424,0,szText,K_ABSOLUTE);
         // Cheese spread speed
-        nErrorCode = PrintLittleFont(pRenderer,400,424,0,"SPREAD SPEED:",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,530,411,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,530,437,0,"----",K_ABSOLUTE);
+        nErrorCode = PrintLittleFont(pRenderer,386,424,0,"SPEED:",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,446,411,0,"++++",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,446,437,0,"----",K_ABSOLUTE);
         sprintf(szText,"%04d",Ed.uCheeseSpreadSpeed);
-        PrintLittleFont(pRenderer,530,424,0,szText,K_ABSOLUTE);
-        // Emeralda to collect
+        PrintLittleFont(pRenderer,446,424,0,szText,K_ABSOLUTE);
+        // Grass spread speed
+        nErrorCode = PrintLittleFont(pRenderer,546,424,0,"SPEED:",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,606,411,0,"++++",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,606,437,0,"----",K_ABSOLUTE);
+        sprintf(szText,"%04d",Ed.uGrassSpreadSpeed);
+        PrintLittleFont(pRenderer,606,424,0,szText,K_ABSOLUTE);
+        // Emeralds to collect
         nErrorCode = PrintLittleFont(pRenderer,240,488,0,"TO COLLECT:",K_ABSOLUTE);
         PrintLittleFont(pRenderer,350,475,0,"++++",K_ABSOLUTE);
         PrintLittleFont(pRenderer,350,501,0,"----",K_ABSOLUTE);
@@ -2605,8 +2955,9 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 uMaxY = uSwitches[I * 4 + 3];
                 if ((InputStates.nMouseXpos_Absolute >= uMinX) && (InputStates.nMouseXpos_Absolute <= uMaxX) && (InputStates.nMouseYpos_Absolute >= uMinY) && (InputStates.nMouseYpos_Absolute <= uMaxY)) {
                     nSwitchField = GetTimeScoresSwitchfieldAndOffset(I,&uSwitchFieldOffset);
+                    // SDL_Log("Switch: %u   nSwitchField: %d   uSwitchFieldOffset: %u  ",I,nSwitchField,uSwitchFieldOffset);
                     if (nSwitchField != -1) {
-                        if ((nSwitchField >= 0) && (nSwitchField <= 28)) {
+                        if (((nSwitchField >= 0) && (nSwitchField <= 28)) || (nSwitchField == 30)) {    // Feld 30 = Gras-Speed
                             ChangeTimeScoresValue(nSwitchField,uSwitchFieldOffset);
                         } else if (nSwitchField == 29) {    // Messages 1 - 8
                             Ed.MessageEditor.nEditMessage = uSwitchFieldOffset;
@@ -2673,6 +3024,9 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 if (uCursorPos > 0) {
                     Ed.szLevelTitle[uCursorPos - 1] = 0;
                 }
+                do {
+                    UpdateInputStates();
+                } while (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]);
             } else if ((InputStates.pKeyboardArray[SDL_SCANCODE_RETURN]) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE])) {
                 Ed.uMenuState = MENUSTATE_TIME_AND_SCORES; // Eingabe bei Enter und Escape verlassen
             }
@@ -2691,16 +3045,16 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                     Ed.szLevelAuthor[uCursorPos] = uKey;
                 }
             } else if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
-                 if (uCursorPos > 0) {
+                if (uCursorPos > 0) {
                     Ed.szLevelAuthor[uCursorPos - 1] = 0;
-                 }
+                }
+                do {
+                    UpdateInputStates();
+                } while (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]);
             } else if ((InputStates.pKeyboardArray[SDL_SCANCODE_RETURN]) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE])) {
                 Ed.uMenuState = MENUSTATE_TIME_AND_SCORES; // Eingabe bei Enter und Escape verlassen
             }
         }
-        do {
-            UpdateInputStates();
-        } while (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]);
         // Level-Dimension
         nErrorCode = PrintLittleFont(pRenderer,580,488,0,"LEVEL DIMENSION",K_ABSOLUTE);
     }
@@ -2869,6 +3223,11 @@ void ChangeTimeScoresValue(int nSwitchField,uint32_t uSwitchFieldOffset) {
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTmpLevel_Y_Dimension = uValue;
             break;
+        case(30):
+            uValue = Ed.uGrassSpreadSpeed;
+            uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
+            Ed.uGrassSpreadSpeed = uValue;
+            break;
     }
 }
 
@@ -2970,13 +3329,16 @@ int GetTimeScoresSwitchfieldAndOffset(uint32_t uSwitch,uint32_t *puSwitchOffset)
     int nSwitchfield;
 
     nSwitchfield = -1;
-    if ((uSwitch <= 239) && (puSwitchOffset != NULL)) {
+    if ((uSwitch <= 247) && (puSwitchOffset != NULL)) {
         if (uSwitch <= 231) {        // Die ersten 29 Felder mit 8 Schaltern
             nSwitchfield = uSwitch / 8; // Switchfield 0 bis 28
             *puSwitchOffset = uSwitch % 8;
         } else if ((uSwitch >= 232) && (uSwitch <= 239)) {  // Messages 1 - 8
             nSwitchfield = 29;
             *puSwitchOffset = (uSwitch - 232) % 8;
+        } else if ((uSwitch >= 240) && (uSwitch <= 247)) {  // Spread gras
+            nSwitchfield = 30;
+            *puSwitchOffset = (uSwitch - 240) % 8;
         }
     }
     return nSwitchfield;
@@ -3179,7 +3541,7 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
             for (I = 0; I < Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension; I++) {
                 pLevel[I] = EMERALD_SPACE;
             }
-            if (SetLevelBorder(pLevel) == 0) {
+            if (SetLevelBorder(pLevel,true,true) == 0) { // true = Spielfeld auf EMERALD_SPACE setzen, 2. true = Border aus EMERALD_STEEL
                 if (bCopyOldLeveldata) {
                     for (uY = 1; (uY < (uOldY_Dimension - 1)) && (uY < (Ed.uLevel_Y_Dimension - 1)); uY++) {
                         for (uX = 1; (uX < (uOldX_Dimension - 1)) && (uX < (Ed.uLevel_X_Dimension - 1)); uX++) {
@@ -3304,6 +3666,14 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
     Ed.uReplicatorGreenObject = EMERALD_SPACE;
     Ed.uReplicatorBlueObject = EMERALD_SPACE;
     Ed.uReplicatorYellowObject = EMERALD_SPACE;
+    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
+    Ed.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
+    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
+    Ed.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
+    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
+    Ed.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
+    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
+    Ed.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
     memset(Ed.szLevelTitle,0,sizeof(Ed.szLevelTitle));      // z.B. "Der Bunker"
     memset(Ed.szLevelAuthor,0,sizeof(Ed.szLevelAuthor));    // z.B. "Mikiman"
     strcpy(Ed.szVersion,EMERALD_VERSION);                   // z.B. "01.00"
@@ -3316,7 +3686,7 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
         Ed.uLevel_Y_Dimension = uYdim;
         Ed.pLevel = (uint16_t*)malloc(Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t));
         if (Ed.pLevel != NULL) {
-            SetLevelBorder(Ed.pLevel);
+            SetLevelBorder(Ed.pLevel,true,true); // true = Spielfeld auf EMERALD_SPACE setzen, 2. true = Border aus EMERALD_STEEL
             nErrorCode = 0;
         } else {
             SDL_Log("%s: malloc() failed for new level (x: %u  y: %u)",__FUNCTION__,uXdim,uYdim);
@@ -3803,7 +4173,7 @@ Seiteneffekte: InputStates.x, MainMenu.x
 uint32_t GetLevelnameBeamPosition(void) {
     uint32_t uBeamPosition = 0xFFFFFFFF;
     uint32_t I;
-    bool bMouseFound =  false;
+    bool bMouseFound = false;
 
     // Prüfen, ob Mauspfeil über Levelnamenliste steht und ggf. Balken einblenden
     if ((InputStates.nMouseXpos_Relative >= FONT_W) && (InputStates.nMouseXpos_Relative < 512 )) {
@@ -3821,9 +4191,48 @@ uint32_t GetLevelnameBeamPosition(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           GetImportFilesBeamPosition
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der Mauspfeil sich über
+              der Liste der Import-Dateiliste befindet.
+Parameter
+      Eingang: uLevelType, uint32_t, 0 = DC3, 1 = MSDOS
+      Ausgang: -
+Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung,
+               sonst 0 bis EMERALD_MAX_MAXIMPORTFILES_IN_LIST - 1 für einen der EMERALD_MAX_MAXIMPORTFILES_IN_LIST Import-Dateinamen
+Seiteneffekte: InputStates.x, MainMenu.x
+------------------------------------------------------------------------------*/
+uint32_t GetImportFilesBeamPosition(uint32_t uLevelType) {
+    uint32_t uBeamPosition = 0xFFFFFFFF;
+    uint32_t I;
+    bool bMouseFound = false;
+
+    // Prüfen, ob Mauspfeil über Levelnamenliste steht und ggf. Balken einblenden
+    if ((InputStates.nMouseXpos_Relative >= FONT_W) && (InputStates.nMouseXpos_Relative < (DEFAULT_WINDOW_W - FONT_W) )) {
+        for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (!bMouseFound); I++) {
+            if ((InputStates.nMouseYpos_Relative >= (35 + (I * 20))) && (InputStates.nMouseYpos_Relative < (55 + (I * 20)))) {
+                bMouseFound = true;
+
+                if (uLevelType == 0) {
+                    if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
+                        uBeamPosition = I;
+                    }
+                } else {
+                    if (MainMenu.uImportFileListDos[I] != 0xFFFF) {
+                        uBeamPosition = I;
+                    }
+                }
+            }
+        }
+    }
+    return uBeamPosition;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           MenuSelectLevelname
 ------------------------------------------------------------------------------
-Beschreibung: Erledigt die Auswahl einer Levels aus dem Pre-Editor-Menü heraus und
+Beschreibung: Erledigt die Auswahl eines Levels aus dem Pre-Editor-Menü und
               blendet die Balken für die Auswahl eines Levels ein, wenn sich
               der Mauspfeil über den Namen einer Gruppe befindet.
 Parameter
@@ -3842,6 +4251,38 @@ int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
         uBeamPosition = GetLevelnameBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
             nErrorCode = DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_347_H + 6) * uBeamPosition, FONT_W * 15, FONT_LITTLE_347_H + 6, 0x20,0x20,0xFF,0x60,K_RELATIVE);
+            if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
+                *puBeamPosition = uBeamPosition;
+            }
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:          ImportMenuSelectFile
+------------------------------------------------------------------------------
+Beschreibung: Erledigt die Auswahl einer Datei aus dem Import-Level-Menü
+              und blendet die Balken für die Auswahl einer Datei ein, wenn sich
+              der Mauspfeil über den Namen einer Datei befindet.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+               uLevelType, uint32_t, 0 = DC3, 1 = MSDOS
+      Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
+Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Seiteneffekte: MainMenu.x, InputStates.x
+------------------------------------------------------------------------------*/
+int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t uLevelType, uint32_t *puBeamPosition) {
+    int nErrorCode = -1;
+    uint32_t uBeamPosition;
+
+    if (puBeamPosition != NULL) {
+        nErrorCode = 0;
+        *puBeamPosition = 0xFFFFFFFF;
+        uBeamPosition = GetImportFilesBeamPosition(uLevelType);
+        if (uBeamPosition != 0xFFFFFFFF) {
+            nErrorCode = DrawBeam(pRenderer,FONT_W,35 + (FONT_LITTLE_347_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_347_H + 6, 0x20,0x20,0xFF,0x60,K_RELATIVE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
                 *puBeamPosition = uBeamPosition;
             }
@@ -3900,7 +4341,7 @@ Rückgabewert:  int, gedrückter Button
 Seiteneffekte: InputStates.x, SelectedLevelgroup, MainMenu.x, ImportLevel.x,
                ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-int HandlePreEditorButtons(SDL_Renderer *pRenderer, int nSelectedLevel) {
+int HandlePreEditorButtons(int nSelectedLevel) {
     uint32_t B;
     int nButton = 0;
     char szText[64];
@@ -4057,8 +4498,14 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     bool bPrepareExit = false;
     bool bExit = false;
     char szText[64];
+    uint32_t uScrollFastCounter;
     DYNSTRING *XML;
+    bool bWarnDefaultLevelGroup;
+    bool bColorToggle;
+    uint8_t uFontColor;
 
+    bColorToggle = false;
+    uScrollFastCounter = 0;
     InitLevelTitleList();
     uModVolume = 0;
     SetModVolume(uModVolume);
@@ -4075,6 +4522,8 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         return -1;
     }
     PreparePreEditormenu();
+
+    bWarnDefaultLevelGroup = (strcmp(SelectedLevelgroup.szFilename,EMERALD_DEFAULT_LEVELGROUP_FILENAME) == 0);
     do {
         UpdateInputStates();
         //printf("x:%u  y:%u   BeamPos: %d\n",InputStates.nMouseXpos,InputStates.nMouseYpos,nSelectedBeamPosition);
@@ -4091,8 +4540,14 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
             }
         }
         nLastButton = nButton;
-        nButton = HandlePreEditorButtons(pRenderer,nSelectedLevel);
-        if ((nLastButton == 0) && (nButton != 0)) {
+        nButton = HandlePreEditorButtons(nSelectedLevel);
+        // Für das schnelle Scrollen der Level-Liste
+        if ( ((nLastButton == 12) && (nButton == 12)) || ((nLastButton == 11) && (nButton == 11)) ) {
+            uScrollFastCounter++;
+        } else {
+            uScrollFastCounter = 0;
+        }
+        if ( ((nLastButton == 0) || (uScrollFastCounter > 10)) && (nButton != 0)) {
             switch (nButton) {
                 case (1):
                     nMoveState = 0;
@@ -4105,6 +4560,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     uModVolume = 0;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
+                    bWarnDefaultLevelGroup = false;
                     break;
                 case (2):
                     nMoveState = 0;
@@ -4142,8 +4598,6 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     PreparePreEditormenu();
                     nColorDimm = 0;
                     uModVolume = 0;
-                    nSelectedBeamPosition = -1;
-                    nSelectedLevel = -1;
                     break;
                 case (5):
                     nMoveState = 0;
@@ -4152,18 +4606,20 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     SDL_Log("%s:   edit level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
                     DimmMainMenu(pRenderer,false);
+                    // Level-Listenpositrion retten, da diese in LevelgroupOperaton_Edit() initialisiert wird
+                    memcpy(MainMenu.uLevelTitleListCopy,MainMenu.uLevelTitleList,sizeof(MainMenu.uLevelTitleList));
                     XML = Editor(pRenderer,nSelectedLevel);
-                    if (XML != NULL) {  // Hat Editor XML-Leveldaten bereit gestellt?
-                        LevelgroupOperaton_Edit(nSelectedLevel,XML);
+                    if (XML != NULL) {  // Hat Editor XML-Leveldaten bereitgestellt?
+                        LevelgroupOperaton_Edit(nSelectedLevel,XML);    // ruft InitLists() -> InitLevelTitleList() auf !
                         DynStringFree(XML);
                     }
-                    InitLevelTitleList();
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,true);
                     PreparePreEditormenu();
+
+                    // Beim "Edit" bleibt die Anzahl in der Leveliste konstant, d.h. sie kann wieder mit derselben Position angezeigt werden
+                    memcpy(MainMenu.uLevelTitleList,MainMenu.uLevelTitleListCopy,sizeof(MainMenu.uLevelTitleList));
                     nColorDimm = 0;
                     uModVolume = 0;
-                    nSelectedBeamPosition = -1;
-                    nSelectedLevel = -1;
                     break;
                 case (6):
                     SDL_Log("%s:   move level",__FUNCTION__);
@@ -4218,7 +4674,13 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveDestLevel = -1;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
+                    DimmMainMenu(pRenderer,false);
                     SDL_Log("%s:   import diamond caves 3 level",__FUNCTION__);
+                    nErrorCode = LevelgroupOperaton_ImportDC3(pRenderer);
+                    InitLevelTitleList();
+                    PreparePreEditormenu();
+                    nColorDimm = 0;
+                    uModVolume = 0;
                     break;
                 case (11):
                     SDL_Log("%s:   level list up",__FUNCTION__);
@@ -4245,7 +4707,6 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                 PrintLittleFont(pRenderer,176,110 + I * 20,0,SelectedLevelgroup.szLevelTitle[MainMenu.uLevelTitleList[I]],K_RELATIVE);
             }
         }
-
         nErrorCode = MenuSelectLevelname(pRenderer,&uBeamPosition);
         if (uBeamPosition != 0xFFFFFFFF) {
             nSelectedBeamPosition = uBeamPosition;
@@ -4295,6 +4756,19 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         PlayMusic(false);
         if (nErrorCode == 0) {
             nErrorCode = RenderMenuElements(pRenderer);
+        }
+
+        if (bWarnDefaultLevelGroup) {
+
+            if (bColorToggle) {
+                uFontColor = 0;
+            } else {
+                uFontColor = 2;
+            }
+            if ((Playfield.uFrameCounter % 10) == 0) {
+                bColorToggle = !bColorToggle;
+            }
+            PrintLittleFont(pRenderer,260,745,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_RELATIVE);
         }
         if ((IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES)) ||  ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || InputStates.bQuit)) {
             bPrepareExit = true;

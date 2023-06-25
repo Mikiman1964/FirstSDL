@@ -510,7 +510,7 @@ int ShowButtons(SDL_Renderer *pRenderer) {
             if  (InputStates.bLeftMouseButton && bButtonArea) {
                 // Buttonfläche erzeugen
                 Buttons[I].bPressed = true;
-                nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH);
+                nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
                 nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE);
                 ShowOtherButtons(pRenderer);
                 SDL_RenderPresent(pRenderer);   // Renderer anzeigen
@@ -522,7 +522,7 @@ int ShowButtons(SDL_Renderer *pRenderer) {
                                        (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
             } else {
                 // Buttonfläche erzeugen
-                nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH);
+                nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
             }
             // Weißer Button-Rand oben und links zeichnen
             SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
@@ -572,7 +572,7 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
             uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_559_W + FONT_LITTLE_559_W;
             uButtonH = BUTTON_H;
             // Buttonfläche erzeugen
-            nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH);
+            nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
             // Weißer Button-Rand oben und links zeichnen
             SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + ge_uYoffs); // oben

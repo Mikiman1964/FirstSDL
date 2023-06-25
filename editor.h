@@ -112,13 +112,21 @@ typedef struct {
     bool            bLightBarrierBlueOn;
     bool            bLightBarrierYellowOn;
     bool            bReplicatorRedOn;
-    uint8_t         uReplicatorRedObject;
+    uint16_t        uReplicatorRedObject;
     bool            bReplicatorGreenOn;
-    uint8_t         uReplicatorGreenObject;
+    uint16_t        uReplicatorGreenObject;
     bool            bReplicatorBlueOn;
-    uint8_t         uReplicatorBlueObject;
+    uint16_t        uReplicatorBlueObject;
     bool            bReplicatorYellowOn;
-    uint8_t         uReplicatorYellowObject;
+    uint16_t        uReplicatorYellowObject;
+    uint8_t         uConveybeltRedState;                        // CONVEYBELT_OFF, CONVEYBELT_LEFT, CONVEYBELT_RIGHT
+    uint8_t         uConveybeltRedDirection;                    // EMERALD_CONVEYBELT_TO_LEFT, EMERALD_CONVEYBELT_TO_RIGHT
+    uint8_t         uConveybeltGreenState;
+    uint8_t         uConveybeltGreenDirection;
+    uint8_t         uConveybeltBlueState;
+    uint8_t         uConveybeltBlueDirection;
+    uint8_t         uConveybeltYellowState;
+    uint8_t         uConveybeltYellowDirection;
     char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "Der Bunker"
     char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "Mikiman"
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
@@ -141,6 +149,7 @@ typedef struct {
     uint32_t        uEmeraldsToCollect;
     uint32_t        uTimeScoreFactor;
     uint32_t        uCheeseSpreadSpeed;
+    uint32_t        uGrassSpreadSpeed;
     uint32_t        uTimeToPlay;
     uint32_t        uAdditonalTimeCoinTime;                     // zusätzliche Zeit durch Zeitmünze
     uint32_t        uTimeWheelRotation;
@@ -169,11 +178,13 @@ void CalcEditorViewArea(void);
 int CreateEditorButtons(void);
 void FreeEditorButtons(void);
 int CopyPlayfieldValueToEditor(void);
-int SetLevelBorder(uint16_t *pLevel);
+int SetLevelBorder(uint16_t *pLevel, bool bClear, bool bAlwaysSteel);
 uint32_t GetLevelnameBeamPosition(void);
+uint32_t GetImportFilesBeamPosition(uint32_t uLevelType);
 int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
+int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t uLevelType, uint32_t *puBeamPosition);
 void InitLevelTitleList(void);
-int HandlePreEditorButtons(SDL_Renderer *pRenderer, int nSelectedLevel);
+int HandlePreEditorButtons(int nSelectedLevel);
 void PreparePreEditormenu(void);
 int PreEditorMenu(SDL_Renderer *pRenderer);
 int DrawEditorPanel(SDL_Renderer *pRenderer);

@@ -1,12 +1,12 @@
 /*
 TODO
-* Gras einbauen
-* Unsichtbaren Sand einbauen
+* doppeltes Rollen der Elemente vermeiden, wenn diese nicht auf Laufband liegen
 * Explosion
-    * Explosionen mit Sumpf und Tropfen testen (erster Test sieht gut aus)
+    * Explosionen mit Sumpf testen (erster Test sieht gut aus)
 * Leveleditor
-    * Level von Levelgruppe zu Levelgruppe kopieren
-    * Import Level: Konverter für alte/DC3/DOS-Levels bauen, DC3-Konverter bereits lauffähig -> Unteren Teil eines Repliklators richtig berücksichtigen
+    * Level von Levelgruppe zu Levelgruppe kopierbar machen (über eine Art Zwischenablage)
+    * Import Level: Konverter für alte DOS-Levels fertigstellen
+    * Import-Level: DOS-Import: YAMs und Leveldaten wie Zeiten, Scores usw. mit berücksichtigen
     * Undo für Editor
 */
 #include <SDL2/SDL.h>
@@ -26,6 +26,7 @@ TODO
 #include "greendrop.h"
 #include "highscores.h"
 #include "KeyboardMouse.h"
+#include "levelconverter.h"
 #include "loadlevel.h"
 #include "lightbarrier.h"
 #include "magicwall.h"
@@ -233,6 +234,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bPause = false;
     nRet = 0;
     nColorDimm = 0;
+    FillCheeseRandomNumbers();
     bLevelRun = (InitialisePlayfield(uLevel) == 0);
     // Renderer mit schwarz löschen
     SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
@@ -272,6 +274,8 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 bPrepareLevelExit = true;
             }
         }
+
+        //// DEBUG-Code
         if (InputStates.pKeyboardArray[SDL_SCANCODE_X]) {
             bDebug = !bDebug;
             if (bDebug) {
@@ -280,7 +284,11 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 SDL_Log("Debugmode = off");
             }
             WaitNoSpecialKey(SDL_SCANCODE_X);
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_I]) {
+            PrintPlayfieldValues();
         }
+        //// DEBUG-Code Ende
+
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_P]) || ((bPause) && (ManKey.bFire))) {
             bPause = !bPause;
             if (!bPause) {
@@ -298,10 +306,14 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 uKey = ManKey.uDirection;
             }
             uManDirection = ControlGame(uKey);
+            if ((Playfield.uEmeraldsToCollect == 0) && (!Playfield.bReadyToGo)) {
+                Playfield.bReadyToGo = true;
+                PreparePlaySound(SOUND_REPLICATOR_PLOP,Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension);
+            }
             PlayAllSounds();
         }
-        ScrollAndCenterLevel(uManDirection);
         if (!bPause) {
+            ScrollAndCenterLevel(uManDirection);
             CheckRunningWheel();
             CheckRunningMagicWall();
             CheckLight();
@@ -507,6 +519,8 @@ uint32_t ControlGame(uint32_t uDirection) {
                 ((uCleanStatus == EMERALD_ANIM_KEY_WHITE_SHRINK) && (Playfield.pLevel[I] == EMERALD_KEY_WHITE))  ||
                 ((uCleanStatus == EMERALD_ANIM_KEY_GENERAL_SHRINK) && (Playfield.pLevel[I] == EMERALD_KEY_GENERAL))  ||
                 ((uCleanStatus == EMERALD_ANIM_SAND_SHRINK) && (Playfield.pLevel[I] == EMERALD_SAND)) ||
+                ((uCleanStatus == EMERALD_ANIM_SAND_INVISIBLE_SHRINK) && (Playfield.pLevel[I] == EMERALD_SAND_INVISIBLE)) ||
+                ((uCleanStatus == EMERALD_ANIM_GRASS_SHRINK) && (Playfield.pLevel[I] == EMERALD_GRASS)) ||
                 ((uCleanStatus == EMERALD_ANIM_EMERALD_SHRINK) && (Playfield.pLevel[I] == EMERALD_EMERALD)) ||
                 ((uCleanStatus == EMERALD_ANIM_RUBY_SHRINK) && (Playfield.pLevel[I] == EMERALD_RUBY)) ||
                 ((uCleanStatus == EMERALD_ANIM_PERL_SHRINK) && (Playfield.pLevel[I] == EMERALD_PERL)) ||
@@ -673,6 +687,18 @@ uint32_t ControlGame(uint32_t uDirection) {
             case (EMERALD_SAND):
                 ControlSand(I);
                 break;
+            case (EMERALD_SAND_INVISIBLE):
+                ControlSandInvisible(I);
+                break;
+            case (EMERALD_SANDMINE):
+                ControlSandMine(I);
+                break;
+            case (EMERALD_GRASS):
+                ControlGrass(I);
+                break;
+            case (EMERALD_GRASS_COMES):
+                ControlGrassComes(I);
+                break;
             case (EMERALD_REPLICATOR_RED_TOP_MID):
                 ControlRedReplicator(I);
                 break;
@@ -684,6 +710,26 @@ uint32_t ControlGame(uint32_t uDirection) {
                 break;
             case (EMERALD_REPLICATOR_BLUE_TOP_MID):
                 ControlBlueReplicator(I);
+                break;
+            case (EMERALD_CONVEYORBELT_RED):
+                if (Playfield.uConveybeltRedState != EMERALD_CONVEYBELT_OFF) {
+                    PreparePlaySound(SOUND_CONVEYORBELT,I);
+                }
+                break;
+            case (EMERALD_CONVEYORBELT_YELLOW):
+                if (Playfield.uConveybeltYellowState != EMERALD_CONVEYBELT_OFF) {
+                    PreparePlaySound(SOUND_CONVEYORBELT,I);
+                }
+                break;
+            case (EMERALD_CONVEYORBELT_GREEN):
+                if (Playfield.uConveybeltGreenState != EMERALD_CONVEYBELT_OFF) {
+                    PreparePlaySound(SOUND_CONVEYORBELT,I);
+                }
+                break;
+            case (EMERALD_CONVEYORBELT_BLUE):
+                if (Playfield.uConveybeltBlueState != EMERALD_CONVEYBELT_OFF) {
+                    PreparePlaySound(SOUND_CONVEYORBELT,I);
+                }
                 break;
             case (EMERALD_MAN):
                 // Man wird vorab gesteuert, siehe oben
@@ -895,6 +941,9 @@ uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCou
         case (EMERALD_BOMB):
             uTextureIndex = 271 + nAnimationCount % 8;
             break;
+        case (EMERALD_MEGABOMB):
+            uTextureIndex = 524 + ((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) % 5;
+            break;
         case (EMERALD_PERL):
             uTextureIndex = 436 + nAnimationCount % 8;
             break;
@@ -934,19 +983,20 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_RUBY] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_PERL] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_CRYSTAL] = 0x1FF;
-    Playfield.uRollUnderground[EMERALD_NUT] = 0x1FF;                            // Nut rollt bei DC3 nicht von Schlüssel
+    Playfield.uRollUnderground[EMERALD_NUT] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_WALL_ROUND] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_WALL_ROUND_PIKE] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_STEEL_ROUND_PIKE] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_STEEL] = 0xEB;                           // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_CORNERED] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_WALL_INVISIBLE] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_KEY_RED] = 0x1FF;                        // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_KEY_YELLOW] = 0x1FF;                     // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_KEY_BLUE] = 0x1FF;                       // nicht bei DC3
-    Playfield.uRollUnderground[EMERALD_KEY_GREEN] = 0x1FF;                      // nicht bei DC3
-	Playfield.uRollUnderground[EMERALD_KEY_GENERAL] = 0x1FF;                    // nicht bei DC3
-	Playfield.uRollUnderground[EMERALD_KEY_WHITE] = 0x1FF;                      // nicht bei DC3
+    // Bei DC3 rollt nichts vom Schlüssel
+    // Playfield.uRollUnderground[EMERALD_KEY_RED] = 0x1FF;                        // nicht bei DC3
+    // Playfield.uRollUnderground[EMERALD_KEY_YELLOW] = 0x1FF;                     // nicht bei DC3
+    // Playfield.uRollUnderground[EMERALD_KEY_BLUE] = 0x1FF;                       // nicht bei DC3
+    // Playfield.uRollUnderground[EMERALD_KEY_GREEN] = 0x1FF;                      // nicht bei DC3
+	// Playfield.uRollUnderground[EMERALD_KEY_GENERAL] = 0x1FF;                    // nicht bei DC3
+	// Playfield.uRollUnderground[EMERALD_KEY_WHITE] = 0x1FF;                      // nicht bei DC3
     Playfield.uRollUnderground[EMERALD_WHEEL] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_LEFT] = 0x1FF;              // nicht bei DC3
     Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_RIGHT] = 0x1FF;             // nicht bei DC3
@@ -1138,6 +1188,7 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_WALL_WITH_YAM] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_ALIEN] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_CRYSTAL] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_TIME_COIN] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_REPLICATOR_RED_TOP_LEFT] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_REPLICATOR_RED_TOP_RIGHT] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_REPLICATOR_GREEN_TOP_LEFT] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
@@ -1160,6 +1211,10 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_LIGHT_SWITCH] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_MAGIC_WALL_SWITCH] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_SWITCH_SWITCHDOOR] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_CONVEYORBELT_SWITCH_RED] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_CONVEYORBELT_SWITCH_GREEN] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_CONVEYORBELT_SWITCH_BLUE] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_CONVEYORBELT_SWITCH_YELLOW] = 0xEB;      // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_DOOR_END_NOT_READY_STEEL] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_DOOR_END_READY_STEEL] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_DOOR_END_READY] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
@@ -1247,6 +1302,12 @@ uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation) {
             break;
         case (EMERALD_ANIM_SAND_SHRINK):
             uTextureIndex = 156;
+            break;
+        case (EMERALD_ANIM_SAND_INVISIBLE_SHRINK):
+            uTextureIndex = 783;
+            break;
+        case (EMERALD_ANIM_GRASS_SHRINK):
+            uTextureIndex = 750;
             break;
         case (EMERALD_ANIM_EMERALD_SHRINK):
             uTextureIndex = 226;
@@ -1438,6 +1499,64 @@ bool IsSteel(uint16_t uElement) {
     (uElement == EMERALD_STEEL_MSDOS_IMPORT) ||
     (uElement == EMERALD_STEEL_DC3_IMPORT) ||
     (uElement == EMERALD_STEEL_ADD_LEVELGROUP) ||
+    (uElement == EMERALD_REPLICATOR_RED_TOP_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_RED_TOP_MID) ||
+    (uElement == EMERALD_REPLICATOR_RED_TOP_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_RED_BOTTOM_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_RED_BOTTOM_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_RED_SWITCH) ||
+    (uElement == EMERALD_REPLICATOR_YELLOW_TOP_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_YELLOW_TOP_MID) ||
+    (uElement == EMERALD_REPLICATOR_YELLOW_TOP_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_YELLOW_SWITCH) ||
+    (uElement == EMERALD_MAGIC_WALL_SWITCH) ||
+    (uElement == EMERALD_MAGIC_WALL_STEEL) ||
+    (uElement == EMERALD_LIGHT_SWITCH) ||
+    (uElement == EMERALD_REPLICATOR_GREEN_TOP_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_GREEN_TOP_MID) ||
+    (uElement == EMERALD_REPLICATOR_GREEN_TOP_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_GREEN_SWITCH) ||
+    (uElement == EMERALD_REPLICATOR_BLUE_TOP_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_BLUE_TOP_MID) ||
+    (uElement == EMERALD_REPLICATOR_BLUE_TOP_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT) ||
+    (uElement == EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT) ||
+    (uElement == EMERALD_REPLICATOR_BLUE_SWITCH) ||
+    (uElement == EMERALD_LIGHTBARRIER_RED_UP) ||
+    (uElement == EMERALD_LIGHTBARRIER_RED_DOWN) ||
+    (uElement == EMERALD_LIGHTBARRIER_RED_LEFT) ||
+    (uElement == EMERALD_LIGHTBARRIER_RED_RIGHT) ||
+    (uElement == EMERALD_LIGHTBARRIER_GREEN_UP) ||
+    (uElement == EMERALD_LIGHTBARRIER_GREEN_DOWN) ||
+    (uElement == EMERALD_LIGHTBARRIER_GREEN_LEFT) ||
+    (uElement == EMERALD_LIGHTBARRIER_GREEN_RIGHT) ||
+    (uElement == EMERALD_LIGHTBARRIER_BLUE_UP) ||
+    (uElement == EMERALD_LIGHTBARRIER_BLUE_DOWN) ||
+    (uElement == EMERALD_LIGHTBARRIER_BLUE_LEFT) ||
+    (uElement == EMERALD_LIGHTBARRIER_BLUE_RIGHT) ||
+    (uElement == EMERALD_LIGHTBARRIER_YELLOW_UP) ||
+    (uElement == EMERALD_LIGHTBARRIER_YELLOW_DOWN) ||
+    (uElement == EMERALD_LIGHTBARRIER_YELLOW_LEFT) ||
+    (uElement == EMERALD_LIGHTBARRIER_YELLOW_RIGHT) ||
+    (uElement == EMERALD_LIGHTBARRIER_RED_SWITCH) ||
+    (uElement == EMERALD_LIGHTBARRIER_GREEN_SWITCH) ||
+    (uElement == EMERALD_LIGHTBARRIER_BLUE_SWITCH) ||
+    (uElement == EMERALD_LIGHTBARRIER_YELLOW_SWITCH) ||
+    (uElement == EMERALD_ACIDPOOL_TOP_LEFT) ||
+    (uElement == EMERALD_ACIDPOOL_TOP_RIGHT) ||
+    (uElement == EMERALD_ACIDPOOL_BOTTOM_LEFT) ||
+    (uElement == EMERALD_ACIDPOOL_BOTTOM_MID) ||
+    (uElement == EMERALD_ACIDPOOL_BOTTOM_RIGHT) ||
+    (uElement == EMERALD_WHEEL_TIMEDOOR) ||
+    (uElement == EMERALD_SWITCH_SWITCHDOOR) ||
+    (uElement == EMERALD_CONVEYORBELT_SWITCH_RED) ||
+    (uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) ||
+    (uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) ||
+    (uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) ||
     ((uElement >= EMERALD_FONT_STEEL_GREEN_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_GREEN_UE)) ||
     ((uElement >= EMERALD_FONT_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_UE))
     );

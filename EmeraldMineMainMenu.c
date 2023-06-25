@@ -35,6 +35,7 @@ extern SHOWABLEDISPLAYMODES ShowableDisplayModes;
 extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
 extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 extern SDL_DisplayMode ge_DisplayMode;
+extern IMPORTLEVEL ImportLevel;
 
 /*----------------------------------------------------------------------------
 Name:           GetRainbowColors
@@ -675,7 +676,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: Actualplayer.x, SelectedLevelgroup.x, InputStates.x
+Seiteneffekte: Actualplayer.x, SelectedLevelgroup.x, InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
@@ -686,7 +687,12 @@ int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
     if (uBeamPosition != 0xFFFFFFFF) {
         nErrorCode = DrawBeam(pRenderer,FONT_W,608 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 2 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_RELATIVE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
-            if (SelectAlternativeLevelgroup(LevelgroupFiles[uBeamPosition].uMd5Hash,true) == 0) {
+
+
+
+
+            if (SelectAlternativeLevelgroup(LevelgroupFiles[MainMenu.uLevelgroupList[uBeamPosition]].uMd5Hash,true) == 0) {
+            //if (SelectAlternativeLevelgroup(LevelgroupFiles[uBeamPosition].uMd5Hash,true) == 0) {
                 SDL_Log("Select %s, OK",SelectedLevelgroup.szLevelgroupname);
                 if (Actualplayer.bValid) {  // Der aktuelle Name wird nochmals ausgewählt, damit dieser ggf. den Levelgruppen-Hash bekommt
                     strcpy(szPlayername,Actualplayer.szPlayername); // Muss kopiert werden, da Selectname die Struktur Actualplayer.x löscht
@@ -760,6 +766,7 @@ Parameter
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: MainMenu.x, g_LevelgroupFilesCount, SelectedLevelgroup.x
+               ImportLevel.x
 ------------------------------------------------------------------------------*/
 void InitLists(void) {
     uint32_t I;
@@ -776,6 +783,16 @@ void InitLists(void) {
     }
     // Level-Titel-Liste initialisieren
     InitLevelTitleList();
+
+    // Filelisten für Level-Import (DC3 und MSDOS) initialisieren
+    memset(MainMenu.uImportFileListDc3,0xFF,sizeof(MainMenu.uImportFileListDc3));
+    for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDc3FileCount); I++) {
+        MainMenu.uImportFileListDc3[I] = I;
+    }
+    memset(MainMenu.uImportFileListDos,0xFF,sizeof(MainMenu.uImportFileListDos));
+    for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDosFileCount); I++) {
+        MainMenu.uImportFileListDos[I] = I;
+    }
 }
 
 
@@ -1035,7 +1052,7 @@ Parameter
       Ausgang: -
 
 Rückgabewert:  -
-Seiteneffekte: SelectedLevelgroup.x, MainMenu.x
+Seiteneffekte: SelectedLevelgroup.x, MainMenu.x, Config.x
 ------------------------------------------------------------------------------*/
 void SetStaticMenuElements(void) {
     SetMenuBorderAndClear();
@@ -1072,10 +1089,17 @@ void SetStaticMenuElements(void) {
     MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
     MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
     // Button-Untergrund "LEVELEDITOR"
-    MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+    if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+    } else {
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
+        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
+    }
     // Button-Untergrund "HIGHSCORES"
     MainMenu.uMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
     MainMenu.uMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
@@ -1092,14 +1116,16 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Names.x, g_LevelgroupFilesCount, MainMenu.x, Actualplayer.x
+Seiteneffekte: Names.x, g_LevelgroupFilesCount, MainMenu.x, Actualplayer.x, Config.x
 ------------------------------------------------------------------------------*/
 int SetDynamicMenuElements(void) {
     char szText[256];
     int nErrorCode = 0;
+    bool bShowLeveleditorButton;
     uint32_t I;
     uint32_t uKey;
 
+    bShowLeveleditorButton = (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR);
     sprintf(szText," AVAILABLE LEVELGROUPS:%03u    LEVELS  ",g_LevelgroupFilesCount);
     SetMenuText(MainMenu.uMenuScreen,szText,1,18,EMERALD_FONT_STEEL_BLUE);
     sprintf(szText,"      AVAILABLE PLAYERS:%03u           ",Names.uNameCount);
@@ -1180,6 +1206,12 @@ int SetDynamicMenuElements(void) {
             }
         } else {
             SetMenuText(MainMenu.uMenuScreen,"PLEASE CREATE A PLAYER",7,5,EMERALD_FONT_GREEN);
+            // Delete Player
+            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+            SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
         }
     } else if (MainMenu.nState == 1) {
         if (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) {  // Verlassen der Namens-Eingabe
@@ -1189,11 +1221,19 @@ int SetDynamicMenuElements(void) {
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
-            SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            if (bShowLeveleditorButton) {
+                SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            } else {
+                SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
+            }
             SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
             MainMenu.uMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
@@ -1210,11 +1250,19 @@ int SetDynamicMenuElements(void) {
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
-            SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            if (bShowLeveleditorButton) {
+                SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            } else {
+                SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
+                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
+            }
             SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
             MainMenu.uMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
@@ -1329,7 +1377,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     SCROLLER Scroller;
     uint8_t szMessage[] = {"START THE GAME WITH THE FIRE BUTTON (LEFT CTRL).  GAME MUSIC BY MAKTONE, VOYCE/DELIGHT AND JESPER KYD.  MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU).  \
     DATA (DE)COMPRESSOR 'MINIZ' BY RICH GELDREICH AND TENACIOUS SOFTWARE LLC.  XML READER 'EZXML' BY AARON VOISINE.  BASE64 DECODER BY CAMERON HARPER.  \
-    GAME GRAPHICS AND GAME SAMPLES TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.                     "};
+    GAME GRAPHICS AND SOUNDS TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.                     "};
 
     InitMainMenu();
     uXStart = ge_uXoffs + FONT_W;
@@ -1353,6 +1401,11 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     }
     if (CreateButton(BUTTONLABEL_LEVELEDITOR,"LEVELEDITOR",1135,518,true,false) != 0) {
         return -1;
+    }
+    if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
+        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+    } else {
+        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
     }
     if (CreateButton(BUTTONLABEL_HIGHSCORES,"HIGHSCORES",1139,550,true,false) != 0) {
         return -1;
@@ -1436,7 +1489,9 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     if (Actualplayer.bValid) {
                                         SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
                                     }
-                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
+                                        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    }
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
                                     SetStaticMenuElements();
                                     bPrepareExit = false;
@@ -1466,7 +1521,9 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     if (Actualplayer.bValid) {
                                         SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
                                     }
-                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
+                                        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    }
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
                                     nColorDimm = 0;
                                     uModVolume = 0;
@@ -1495,7 +1552,9 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     if (Actualplayer.bValid) {
                                         SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
                                     }
-                                    SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
+                                        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                    }
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
                                     nColorDimm = 0;
                                     uModVolume = 0;
@@ -1525,7 +1584,9 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                         if (Actualplayer.bValid) {
                                             SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
                                         }
-                                        SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                        if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
+                                            SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
+                                        }
                                         SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
                                     }
                                     SetStaticMenuElements();
@@ -2375,9 +2436,10 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
                 Config.bFullScreen = false;
                 // Unter Ubuntu 16.04 (vielleicht auch bei anderen Linuxen) ist es wichtig, nach Ausschalten des Fullscreens wieder
                 // zunächst die ursprüngliche Desktop-Auflösung herzustellen.
-                SDL_SetWindowSize(ge_pWindow,ge_DisplayMode.w,ge_DisplayMode.h);
+                SDL_SetWindowSize(ge_pWindow,ge_DisplayMode.w,ge_DisplayMode.h);    // Ist erst in SDL3 eine int-Funktion
                 nErrorCode = SDL_SetWindowFullscreen(ge_pWindow,0); //  0 = Fullscreen  ausschalten
-                SDL_SetWindowSize(ge_pWindow,Config.uResX,Config.uResY);
+                SDL_SetWindowSize(ge_pWindow,Config.uResX,Config.uResY);            // Ist erst in SDL3 eine int-Funktion
+                nErrorCode = CenterWindow(Config.uResX,Config.uResY);
                 InitMainMenu();
             }
             Checkbox_FullScreen.bChanged = false; // bestätigen
@@ -2400,7 +2462,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
                     SDL_Log("Resolution changed to %d X %d",ShowableDisplayModes.nW[I],ShowableDisplayModes.nH[I]);
                     // Fenstergröße ändern
                     SDL_SetWindowSize(ge_pWindow,Config.uResX,Config.uResY); // Ist erst in SDL3 eine int-Funktion
-                        // SDL_Log("%s: SDL_SetWindowSize() fsiled, Error: %s",__FUNCTION__,SDL_GetError());
+                    nErrorCode = CenterWindow(Config.uResX,Config.uResY);
                     InitMainMenu();
                     nErrorCode = WriteConfigFile();
                     // Stern muss neu initialisiert und zentriert werden
@@ -3162,7 +3224,7 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
     SetMenuBorderAndClear();
     nColorDimm = 0;
-    uRand = randn(0,10) & 0x01;         // Zufallszahl 0 oder 1
+    uRand = randn(0,1);             // Zufallszahl 0 oder 1
     if (SetModMusic(7 + uRand) != 0) {      // 7. 2kad02.mod (2000AD cracktro02) oder 8. the brewery  keweils von Maktone
         return -1;
     }

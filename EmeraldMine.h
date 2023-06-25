@@ -479,8 +479,28 @@
 #define EMERALD_STEEL_DC3_IMPORT                0x01EF            // Stahl DC3 (Diamond Caves 3)-Level-Import
 #define EMERALD_STEEL_RENAME_LEVELGROUP         0x01F0            // Stahl Levelgruppe umbenennen
 #define EMERALD_STEEL_PASSWORD                  0x01F1            // Stahl Passwort
+#define EMERALD_GRASS                           0x01F2            // Gras, kann sich ähnlich wie grüner Käse ausbreiten
+#define EMERALD_GRASS_COMES                     0x01F3            // Gras, welches gerade entsteht
+#define EMERALD_SANDMINE                        0x01F4            // Sandmine
+#define EMERALD_SAND_INVISIBLE                  0x01F5            // unsichtbarer Sand
+#define EMERALD_CONVEYORBELT_RED                0x01F6            // Laufband, rot
+#define EMERALD_CONVEYORBELT_SWITCH_RED         0x01F7            // Laufband-Schalter, rot
+#define EMERALD_CONVEYORBELT_GREEN              0x01F8            // Laufband, grün
+#define EMERALD_CONVEYORBELT_SWITCH_GREEN       0x01F9            // Laufband-Schalter, grün
+#define EMERALD_CONVEYORBELT_BLUE               0x01FA            // Laufband, blau
+#define EMERALD_CONVEYORBELT_SWITCH_BLUE        0x01FB            // Laufband-Schalter, blau
+#define EMERALD_CONVEYORBELT_YELLOW             0x01FC            // Laufband, gelb
+#define EMERALD_CONVEYORBELT_SWITCH_YELLOW      0x01FD            // Laufband-Schalter, gelb
+#define EMERALD_LEVELEDITOR_MESSAGE_1_4         0x01FE            // Leveleditor-Message 1/4, wenn fenster zu klein
+#define EMERALD_LEVELEDITOR_MESSAGE_2_4         0x01FF            // Leveleditor-Message 2/4, wenn fenster zu klein
+#define EMERALD_LEVELEDITOR_MESSAGE_3_4         0x0200            // Leveleditor-Message 3/4, wenn fenster zu klein
+#define EMERALD_LEVELEDITOR_MESSAGE_4_4         0x0201            // Leveleditor-Message 4/4, wenn fenster zu klein
 
-#define EMERALD_MAX_ELEMENT                     0x01F1            // hier immer das letzte Element eintragen
+
+
+
+#define EMERALD_MAX_ELEMENT                     0x0201            // hier immer das letzte Element eintragen
+
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 
@@ -488,6 +508,14 @@
 #define EMERALD_FONT_STEEL_BLUE                 0x01
 #define EMERALD_FONT_GREEN                      0x10
 #define EMERALD_FONT_STEEL_GREEN                0x11
+
+// Status der Laufbänder
+#define EMERALD_CONVEYBELT_OFF                  0
+#define EMERALD_CONVEYBELT_LEFT                 1
+#define EMERALD_CONVEYBELT_RIGHT                2
+// Schalt-Richtungen für Laufband-Umschalter
+#define EMERALD_CONVEYBELT_TO_LEFT              0
+#define EMERALD_CONVEYBELT_TO_RIGHT             1
 
 
 // Animationen (für Explosionen wird das niederwertigste uint16_t verwendet)
@@ -597,6 +625,8 @@
 #define EMERALD_ANIM_YAM_WAS_BLOCKED            0x3E000000      // Yam war in der letzten Control-Phase blockiert
 #define EMERALD_ANIM_MINE_WILL_EXPLODE          0x3F000000      // Mine wird nächste Kontrollrunde sprengen
 #define EMERALD_ANIM_BEETLE_WILL_EXPLODE        0x40000000      // Käfer wird nächste Kontrollrunde sprengen
+#define EMERALD_ANIM_GRASS_SHRINK               0x41000000      // Gras verschwindet
+#define EMERALD_ANIM_SAND_INVISIBLE_SHRINK      0x42000000      // unsichtbarer Sand verschwindet
 
 #define EMERALD_STANDARD_SPEED                  false
 #define EMERALD_DOUBLE_SPEED                    true
@@ -645,6 +675,7 @@ typedef struct {
     int             nCheckAcidPoolForYamExplosionTop[6];        // Für Yam-Explosion mit Säurebecken (obere Hälfte)
     int             nCheckAcidPoolForYamExplosionButtom[6];     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
     bool            bInitOK;
+    bool            bReadyToGo;                                 // Man hat genug Diamanten eingesammelt
     bool            bHasRedKey;
     bool            bHasGreenKey;
     bool            bHasBlueKey;
@@ -672,6 +703,14 @@ typedef struct {
     uint16_t        uReplicatorBlueObject;
     bool            bReplicatorYellowOn;
     uint16_t        uReplicatorYellowObject;
+    uint8_t         uConveybeltRedState;                        // CONVEYBELT_OFF, CONVEYBELT_LEFT, CONVEYBELT_RIGHT
+    uint8_t         uConveybeltRedDirection;                    // EMERALD_CONVEYBELT_TO_LEFT, EMERALD_CONVEYBELT_TO_RIGHT
+    uint8_t         uConveybeltGreenState;
+    uint8_t         uConveybeltGreenDirection;
+    uint8_t         uConveybeltBlueState;
+    uint8_t         uConveybeltBlueDirection;
+    uint8_t         uConveybeltYellowState;
+    uint8_t         uConveybeltYellowDirection;
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
     char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "DER BUNKER"
     char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "MIKIMAN"
@@ -695,6 +734,7 @@ typedef struct {
     uint32_t        uEmeraldsToCollect;
     uint32_t        uTimeScoreFactor;
     uint32_t        uCheeseSpreadSpeed;
+    uint32_t        uGrassSpreadSpeed;
     uint32_t        uTimeToPlay;
     uint32_t        uAdditonalTimeCoinTime;                     // zusätzliche Zeit durch Zeitmünze
     uint32_t        uTimeWheelRotation;

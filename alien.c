@@ -29,7 +29,7 @@ void ControlAlien(uint32_t I) {
         // Alien kann vom Replikator geboren werden, dann hier nichts machen
         return;
     }
-    if ((Playfield.pStatusAnimation[I] == EMERALD_ANIM_ALIEN_MOVED) || Playfield.bManDead) {
+    if ((Playfield.pStatusAnimation[I] == EMERALD_ANIM_ALIEN_MOVED) || Playfield.bManDead || Playfield.bWellDone) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     } else {
         // Aus linearer Koordinate (I) die eigene X- und Y-Koordinate ausrechnen

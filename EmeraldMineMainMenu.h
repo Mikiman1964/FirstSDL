@@ -2,6 +2,7 @@
 #define EMERALDMINEMAINMENUE_H_INCLUDED
 
 #include <SDL2/SDL.h>
+#include "levelconverter.h"
 #include "loadlevel.h"
 #include "mySDL.h"
 
@@ -21,6 +22,9 @@
 
 #define MAX_STAR_POINTS                     10
 
+#define MIN_Y_RESOLUTION_FOR_LEVELEDITOR    800
+
+
 typedef struct {
     uint32_t uXdim;
     uint32_t uYdim;
@@ -28,10 +32,13 @@ typedef struct {
     uint8_t  uLevelgroupList[MAX_LEVELGROUPS_IN_LIST];  // Es sind maximal 4 Elemente zu sehen
     uint8_t  uNamesList[MAX_NAMES_IN_LIST];             // Es sind maximal 4 Elemente zu sehen
     uint16_t uLevelTitleList[MAX_LEVELTITLES_IN_LIST];  // Es sind maximal 31 Elemente zu sehen
+    uint16_t uLevelTitleListCopy[MAX_LEVELTITLES_IN_LIST];  // Es sind maximal 31 Elemente zu sehen
+    uint16_t uImportFileListDc3[EMERALD_MAX_MAXIMPORTFILES_IN_LIST];
+    uint16_t uImportFileListDos[EMERALD_MAX_MAXIMPORTFILES_IN_LIST];
     uint8_t  uFlashBrightness[20];
     char     szTempName[EMERALD_PLAYERNAME_LEN + 1];
     uint32_t uCursorPos;
-    int      nState;
+    int      nState;            // 0 = Hauptmenü, 1 = Namenseingabe
     uint32_t uMaxFlashIndex;
     uint32_t uFlashIndex;
     float    fSettingsbuttonAngle;
