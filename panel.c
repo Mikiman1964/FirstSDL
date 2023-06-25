@@ -75,10 +75,10 @@ int ShowPanel(SDL_Renderer *pRenderer) {
     }
     if ((uRemainingSeconds > 0) && (uRemainingSeconds <= 10)) {
         if ((Playfield.uFrameCounter % ge_DisplayMode.refresh_rate) == 0) {
-            nErrorCode = CopyColorRect(pRenderer,255,0,0,6,Config.uResY - 26,98,20);
+            nErrorCode = CopyColorRect(pRenderer,255,0,0,6,Config.uResY - 26,98,20,K_ABSOLUTE);
             PreparePlaySound(SOUND_END_BELL,0);
         } else {
-            nErrorCode = CopyColorRect(pRenderer,255 - 4*(Playfield.uFrameCounter % 60),0,0,6,Config.uResY - 26,98,20);
+            nErrorCode = CopyColorRect(pRenderer,255 - 4 * (Playfield.uFrameCounter % 60),0,0,6,Config.uResY - 26,98,20,K_ABSOLUTE);
         }
     } else {
         nErrorCode = 0;

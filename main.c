@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     float fFDLogoAngle = 0;
     uint32_t uFDLogoLastShown = SDL_GetTicks();
     SDL_Rect DestR_FDLogo;
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - MAY 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - JUNE 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
@@ -72,6 +72,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     float fScroller3NeueSteigung;
     bool bAsteroidsStarted = false;
     uint32_t uAsteroidsTimer;
+    uint32_t X;
     int nMenuChoose;
     uint32_t uCopperTimer;
     bool bCopperScoll = false;
@@ -159,17 +160,22 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     }  while(InputStates.bQuit);
 
     uScroller1Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller1,2,0,Config.uResX,Config.uResY / 2,szMessage1,0.3,0.02,100,1,true,false) != 0) {
+    if ((Config.uResX % FONT_W) != 0) {
+        X = ((Config.uResX + 32) * FONT_W) / FONT_W;
+    } else {
+        X = Config.uResX;
+    }
+    if (InitScroller(&Scroller1,2,0,X,Config.uResY / 2,szMessage1,0.3,0.02,100,1,true,false) != 0) {
         RestoreDesktop();
         return -1;
     }
     uScroller2Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller2,1,0,Config.uResX,0,szMessage2,0,0,0,1,false,false) != 0) {
+    if (InitScroller(&Scroller2,1,0,X,0,szMessage2,0,0,0,1,false,false) != 0) {
         RestoreDesktop();
         return -1;
     }
     uScroller3Timer = SDL_GetTicks();
-    if (InitScroller(&Scroller3,2,0,Config.uResX,0,szMessage3,0,0,0,1,false,false) != 0) {
+    if (InitScroller(&Scroller3,2,0,X,0,szMessage3,0,0,0,1,false,false) != 0) {
         RestoreDesktop();
         return -1;
     }

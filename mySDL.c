@@ -35,9 +35,7 @@ Seiteneffekte: ShowableDisplayModes.x, Config.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitle) {
     SDL_Window *pWindow = NULL;
-    Uint32 uFlags;
 
-    uFlags = SDL_WINDOW_OPENGL; //  | SDL_WINDOW_FULLSCREEN;
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0) {
         if (GetDesktopDisplayMode() == 0) { // Stellt auch die Anzahl der Displays fest und das zu verwendene Display (Config.uDisplayUse)
             if (GetUsableDisplayModes(Config.uDisplayUse) == 0) {
@@ -62,7 +60,7 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
                           SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewählt
                           nWindowW,                   // width, in pixels
                           nWindowH,                   // height, in pixels
-                          uFlags                      // Flags
+                          0                           // Flags
                 );
                 if (pWindow == NULL) {
                     SDL_Log("%s: SDL_CreateWindow() failed: %s",__FUNCTION__,SDL_GetError());
@@ -135,6 +133,44 @@ Seiteneffekte: ge_pWindow, ge_DisplayMode
 void RestoreDesktop(void) {
     SDL_SetWindowSize(ge_pWindow,ge_DisplayMode.w,ge_DisplayMode.h);
     SDL_SetWindowFullscreen(ge_pWindow,0); //  0 = Fullscreen  ausschalten
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CenterWindow
+------------------------------------------------------------------------------
+Beschreibung: Zentriert das Fenster (ge_pWindow) auf dem Desktop.
+
+
+Parameter
+      Eingang: uWidth, uint32_t, Fensterbreite
+               uHeight, uint32_t, Fensterhöhe
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: ge_pWindow, ge_DisplayMode (Desktop-Größe)
+------------------------------------------------------------------------------*/
+int CenterWindow(uint32_t uWidth, uint32_t uHeight) {
+    int nErrorCode = -1;
+    int x,y;
+
+    if ((ge_pWindow != NULL) && (ge_DisplayMode.w > 0) && (ge_DisplayMode.h > 0)) {
+
+        // X-Zentrierung
+        if (ge_DisplayMode.w > uWidth) {
+            x = (ge_DisplayMode.w - uWidth) / 2;
+        } else {
+            x = 0;
+        }
+        // Y-Zentrierung
+        if (ge_DisplayMode.h > uHeight) {
+            y = (ge_DisplayMode.h - uHeight) / 2;
+        } else {
+            y = 0;
+        }
+        SDL_SetWindowPosition(ge_pWindow,x,y); // Ist erst in SDL3 eine int-Funktion
+        nErrorCode = 0;
+    }
+    return nErrorCode;
 }
 
 
@@ -493,16 +529,22 @@ Parameter
                nYpos, int, Y-Position im Render wo Rechteck positioniert werden soll
                uW, uint32_t, Breite des Rechtecks in Pixeln
                uH, uint32_t, Höhe des Rechtecks in Pixeln
+               bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
       Rückgabewert:   int, 0 = alles OK, sonst Fehler
 Seiteneffekte:  ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH) {
+int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH, bool bAbsolute) {
     int nErrorCode;
     SDL_Rect rect;
 
-    rect.x = nXpos + ge_uXoffs;
-    rect.y = nYpos + ge_uYoffs;
+    if (bAbsolute) {
+        rect.x = nXpos;
+        rect.y = nYpos;
+    } else {
+        rect.x = nXpos + ge_uXoffs;
+        rect.y = nYpos + ge_uYoffs;
+    }
     rect.w = uW;
     rect.h = uH;
     if (SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0){  // Farbe für Rechteck setzen
@@ -601,6 +643,7 @@ Parameter
                uFont, uint32_t, Zeichensatzes
                         0 = Texture 347 - LittleFont_Green.bmp
                         1 = Texture 559 - Font_8_15_Courier_transp
+                        2 = Texture 347 - LittleFont_Red.bmp
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
@@ -623,17 +666,21 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
     uint32_t uTextureIndex;
     uint32_t uCharCountPerLine;
 
-    if (uFont > 1) {
+    if (uFont > 2) {
         uFont = 1;
     }
     if (uFont == 0) {
         uFontW = FONT_LITTLE_347_W;
         uFontH = FONT_LITTLE_347_H;
         uTextureIndex = 347;
-    } else {
+    } else if (uFont == 1) {
         uFontW = FONT_LITTLE_559_W;
         uFontH = FONT_LITTLE_559_H;
         uTextureIndex = 559;
+    } else {
+        uFontW = FONT_LITTLE_347_W;
+        uFontH = FONT_LITTLE_347_H;
+        uTextureIndex = 782;
     }
     nPrintXpos = nXpos;
     nPrintYpos = nYpos;
@@ -664,7 +711,7 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
                     cSign = 0xFF;
                 }
             }
-            if ((cSign != 0xFF) && (uCharCountPerLine <= EMERALD_MAX_CHARACTERS_PER_LINE)) {
+            if (cSign != 0xFF) {
                 // Quellbereich aus Texture berechnen
                 SrcR.x =  (uint32_t)(cSign) * uFontW;
                 SrcR.y =  0;        // Ist immer 0, da alle vorhandenen Zeichen in einer Zeile vorliegen

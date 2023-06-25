@@ -65,7 +65,7 @@ int GetDesktopDisplayMode(void);
 SDL_Renderer *CreateRenderer(SDL_Window * pWindow);
 int LoadTextures(SDL_Renderer *pRenderer);
 int CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int nXpos, int nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle);
-int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH);
+int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH, bool bAbsolute);
 void FreeTextures(void);
 SDL_Texture *GetTextureByIndex(int nIndex);
 int SetAllTextureColors(uint8_t uIntensityProzent);
@@ -75,4 +75,5 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
 int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute);
 int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace);
 void RestoreDesktop(void);
+int CenterWindow(uint32_t uWidth, uint32_t uHeight);
 #endif // MYSDL_H_INCLUDED

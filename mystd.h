@@ -47,7 +47,7 @@ int CheckAndCreateDir(char *pszDirectoryName);
 uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64Len, bool bNewLine);
 int GetLineFeedCount(char *pszText);
 int GetLineLen(char *pszText, int nCursorPos);
-
+float myrandom(void);
 /*
 Copyright (c) 2012, Cameron Harper
 All rights reserved.

@@ -18,6 +18,7 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlNut(uint32_t I) {
     uint8_t uFree;  // Richtung, in die Nut rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+    uint16_t uHitElement;       // Element, welches getroffen wird
     uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_PUSH_RIGHT) {
@@ -61,23 +62,24 @@ void ControlNut(uint32_t I) {
     } else {                            // Unten ist nicht frei
         // Nut bleibt zunächst auf Platz liegen
         uHitCoordinate = I + Playfield.uLevel_X_Dimension;
+        uHitElement = Playfield.pLevel[uHitCoordinate];
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
             Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
             PreparePlaySound(SOUND_NUT_FALL,I);
-            if ( (Playfield.pLevel[uHitCoordinate] == EMERALD_WALL_ROUND_PIKE) || (Playfield.pLevel[uHitCoordinate] == EMERALD_STEEL_ROUND_PIKE) ) {
+            if ( (uHitElement == EMERALD_WALL_ROUND_PIKE) || (uHitElement == EMERALD_STEEL_ROUND_PIKE) ) {
                 SDL_Log("Nut hits wall with pike");
                 PreparePlaySound(SOUND_NUT_CRACK,I);
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_NUT_CRACK2;
                 Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreNutCracking;
                 return;
-            } else if (Playfield.pLevel[uHitCoordinate] == EMERALD_MAN) {
+            } else if (uHitElement == EMERALD_MAN) {
                 SDL_Log("Nut kills man");
                 Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
                 Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
                 PreparePlaySound(SOUND_MAN_CRIES,I);
                 Playfield.bManDead = true;
                 return;
-            } else if (Playfield.pLevel[uHitCoordinate] == EMERALD_STANDMINE) {
+            } else if (uHitElement == EMERALD_STANDMINE) {
                 SDL_Log("Nut hit stand mine");
                 ControlCentralExplosion(uHitCoordinate);
                 PreparePlaySound(SOUND_EXPLOSION,I);
@@ -85,7 +87,7 @@ void ControlNut(uint32_t I) {
             }
         }
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
-        if ((Playfield.uRollUnderground[Playfield.pLevel[I + Playfield.uLevel_X_Dimension]] & EMERALD_CHECKROLL_NUT) != 0) {
+        if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_NUT) != 0) {
             uFree = GetFreeRollDirections(I);
             if (uFree == 1) {   // Nut kann links rollen
                 // neuen Platz mit ungültigem Element besetzen
@@ -123,6 +125,82 @@ void ControlNut(uint32_t I) {
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
+            }
+        } else {    // Ab hier prüfen, ob Nuss durch Laufband bewegt werden kann
+            if (uHitElement == EMERALD_CONVEYORBELT_RED) {
+                if  ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            } else if (uHitElement == EMERALD_CONVEYORBELT_GREEN) {
+                if  ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            } else if (uHitElement == EMERALD_CONVEYORBELT_BLUE) {
+                if  ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            } else if (uHitElement == EMERALD_CONVEYORBELT_YELLOW) {
+                if  ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_NUT;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            } else {
+                // SDL_Log("Nut sleeps, Hitelement = %x",uHitElement);
             }
         }
     }

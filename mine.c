@@ -285,7 +285,10 @@ Seiteneffekte: Playfield.x
 bool IsStandMineExplode(uint16_t uElement) {
     return ( (uElement == EMERALD_ALIEN) || (uElement == EMERALD_YAM) ||
              (uElement == EMERALD_MINE_UP) || (uElement == EMERALD_MINE_RIGHT) || (uElement == EMERALD_MINE_DOWN) || (uElement == EMERALD_MINE_LEFT) ||
-             (uElement == EMERALD_BEETLE_UP) || (uElement == EMERALD_BEETLE_RIGHT) || (uElement == EMERALD_BEETLE_DOWN) || (uElement == EMERALD_BEETLE_LEFT) );
+             (uElement == EMERALD_MOLE_UP) || (uElement == EMERALD_MOLE_RIGHT) || (uElement == EMERALD_MOLE_DOWN) || (uElement == EMERALD_MOLE_LEFT) ||
+             (uElement == EMERALD_BEETLE_UP) || (uElement == EMERALD_BEETLE_RIGHT) || (uElement == EMERALD_BEETLE_DOWN) || (uElement == EMERALD_BEETLE_LEFT) ||
+             (uElement == EMERALD_GREEN_CHEESE)
+             );
 }
 
 

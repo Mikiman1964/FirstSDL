@@ -235,22 +235,16 @@ void GetActualTimestamp(char *pszTimestamp) {
 Name:           randn
 ------------------------------------------------------------------------------
 Beschreibung: Erzeugt Integer-Zufallszahl zwischen low und high.
-
+              Vorsicht: Der Bereich sollte nicht um den Nullpunkt gelegt werden, da es ansonsten falsche Ergebnisse gibt.
+              Quelle: https://mixable.blog/java-zufallszahlen-in-einem-bestimmten-bereich-erstellen/
 Parameter
-      Eingang: low, int, unterer Bereich für Zufallszahl
-      Ausgang: high, int, oberer Bereich für Zufallszahl
+      Eingang: low, int, unterer Bereich für Zufallszahl (einschließlich low)
+      Ausgang: high, int, oberer Bereich für Zufallszahl (einschließlich high)
 Rückgabewert:  int, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int randn(int low,int high) {
-    int nZ;
-
-    high++;     // Sehr unwahrscheinlich, dass high genau getroffen wird
-    low--;
-    do {
-        nZ = randf(low,high);
-    } while ((nZ >= high) || (nZ <= low));   // Falls high genau das maximum triffr, dann neue Zufallszahl holen
-    return nZ;
+int randn(int low, int high) {
+    return (int)((myrandom() * ((high - low) + 1)) + low);
 }
 
 
@@ -260,20 +254,36 @@ Name:           randf
 Beschreibung: Erzeugt float-Zufallszahl zwischen low und high.
               Quelle: https://stackoverflow.com/questions/22115241/how-to-generate-random-numbers-between-1-and-1-in-c
               von SteveL
+              Ausführlicher Test am 23.6.2023 mit low = -1, high = +1
+              Vorsicht: Falls der Bereich um den Nullpunkt gelegt werden soll, muss dieser symetrisch (z.B. -2,+2) sein.
+
 Parameter
-      Eingang: low, float, unterer Bereich für Zufallszahl
-      Ausgang: high, float, oberer Bereich für Zufallszahl
+      Eingang: low, float, unterer Bereich für Zufallszahl (nicht einschließlich low)
+      Ausgang: high, float, oberer Bereich für Zufallszahl (nicht einschließlich high)
 Rückgabewert:  float, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-float randf(float low,float high) {
+float randf(float low, float high) {
+    return  myrandom() * abs(low - high) + low;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           myrandom
+------------------------------------------------------------------------------
+Beschreibung: Erzeugt float-Zufallszahl zwischen 0 und < 1
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  float, Zufallswert zwischen 0 und < 1
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+float myrandom(void) {
     uint32_t uR;
-    float fR;
 
     uR = xorshift128();
-    fR = (float)uR / (float)0xFFFFFFFF;
-    return fR * abs(low - high) + low;
-    // Alter Code: rand() aus der glibc macht keine guten Zufallszahlen   return (rand()/(float)(RAND_MAX))*abs(low-high)+low;
+    return (float)uR / (float)0xFFFFFFFF;
 }
 
 

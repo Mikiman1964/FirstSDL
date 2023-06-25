@@ -41,8 +41,8 @@ void ControlMoleUp(uint32_t I) {
         bRightFree = (Playfield.pLevel[I + 1] == EMERALD_SPACE);
         if (bLeftFree && bRightFree) {
             // Ist links und rechts frei ?
-            nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-            if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl nach rechts
+            nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+            if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_RIGHT;
             } else {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_LEFT;
@@ -59,8 +59,8 @@ void ControlMoleUp(uint32_t I) {
             } else if  ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_LEFT | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
             } else {
-                nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-                if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl rechts zu drehen
+                nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+                if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_RIGHT | EMERALD_ANIM_BLOCKED_MOLE_SPIN_RIGHT;
                 } else {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_LEFT | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
@@ -109,8 +109,8 @@ void ControlMoleRight(uint32_t I) {
         bRightFree = (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE);
         if (bLeftFree && bRightFree) {
             // Ist oben und unten frei ?
-            nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-            if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl nach rechts
+            nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+            if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_DOWN;
             } else {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_UP;
@@ -127,8 +127,8 @@ void ControlMoleRight(uint32_t I) {
             } else if  ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_UP | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
             } else {
-                nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-                if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl rechts zu drehen
+                nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+                if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_DOWN | EMERALD_ANIM_BLOCKED_MOLE_SPIN_RIGHT;
                 } else {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_UP | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
@@ -187,8 +187,8 @@ void ControlMoleDown(uint32_t I) {
         bLeftFree = (Playfield.pLevel[I + 1] == EMERALD_SPACE);
         if (bLeftFree && bRightFree) {
             // Ist links und rechts frei ?
-            nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-            if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl nach rechts
+            nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+            if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_RIGHT;
             } else {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
@@ -205,9 +205,9 @@ void ControlMoleDown(uint32_t I) {
             } else if  ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_RIGHT | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
             } else {
-                nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-                if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl rechts zu drehen
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_RIGHT | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
+                nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+                if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
+                   Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_RIGHT | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
                 } else {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_LEFT | EMERALD_ANIM_BLOCKED_MOLE_SPIN_RIGHT;
                 }
@@ -250,8 +250,8 @@ void ControlMoleLeft(uint32_t I) {
         bLeftFree = (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE);
         if (bRightFree && bLeftFree) {
             // Ist oben und unten frei ?
-            nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-            if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl nach unten
+            nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+            if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_DOWN;
             } else {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_UP;
@@ -268,8 +268,8 @@ void ControlMoleLeft(uint32_t I) {
             } else if  ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_DOWN | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;
             } else {
-                nRandom = randn(0,255);         // Ergibt Zufallszahl zwischen 0-255
-                if (nRandom & 0x01) {           // Mole entscheidet sich bei ungeraden Zufallszahl rechts zu drehen
+                nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
+                if (nRandom == 1) {           // Mole entscheidet sich bei 1 nach rechts
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_UP | EMERALD_ANIM_BLOCKED_MOLE_SPIN_RIGHT;
                 } else {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_DOWN | EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT;

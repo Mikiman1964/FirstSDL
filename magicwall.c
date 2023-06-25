@@ -71,7 +71,7 @@ void CheckTimeDoorOpen(void) {
 Name:           ElementGoesMagicWall
 ------------------------------------------------------------------------------
 Beschreibung: Prüft, ob unter der Magic Wall frei ist. Wenn ja, wird dort ein
-              neues temoräres Element (EMERALD_INVALID->Zielelement) entstehen.
+              neues temporäres Element (EMERALD_INVALID->Zielelement) entstehen.
 Parameter
       Eingang: I, uint32_t, aktuelle Position des Elements, das in Magic Wall eintaucht
                DestElement, uint32_t, Zielelement, z.B. EMERALD_EMERALD

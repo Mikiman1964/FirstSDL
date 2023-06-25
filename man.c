@@ -103,7 +103,6 @@ Rückgabewert:  Richtung, in die Man gelaufen ist als Animation
 Seiteneffekte: Playfield.x, Mankey.x
 ------------------------------------------------------------------------------*/
 void ControlManDies(uint32_t I) {
-
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
@@ -313,6 +312,94 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 Playfield.uTimeDoorTimeLeft =  Playfield.uTimeDoorTime;
                 if (Playfield.uTimeDoorTime > 0) {
                     Playfield.bTimeDoorOpen = true;
+                }
+                ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
+                SetManArm(uActPos,uAnimation);
+                PreparePlaySound(SOUND_SWITCH,uTouchPos);
+            }
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_RED):
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+                switch (Playfield.uConveybeltRedState) {
+                    case (EMERALD_CONVEYBELT_LEFT):
+                    case (EMERALD_CONVEYBELT_RIGHT):
+                        Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
+                        break;
+                    case (EMERALD_CONVEYBELT_OFF):
+                        if (Playfield.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                            Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_LEFT;
+                            Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                        } else {
+                            Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_RIGHT;
+                            Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        }
+                        break;
+                }
+                ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
+                SetManArm(uActPos,uAnimation);
+                PreparePlaySound(SOUND_SWITCH,uTouchPos);
+            }
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+                switch (Playfield.uConveybeltGreenState) {
+                    case (EMERALD_CONVEYBELT_LEFT):
+                    case (EMERALD_CONVEYBELT_RIGHT):
+                        Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
+                        break;
+                    case (EMERALD_CONVEYBELT_OFF):
+                        if (Playfield.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                            Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_LEFT;
+                            Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                        } else {
+                            Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_RIGHT;
+                            Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        }
+                        break;
+                }
+                ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
+                SetManArm(uActPos,uAnimation);
+                PreparePlaySound(SOUND_SWITCH,uTouchPos);
+            }
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+                switch (Playfield.uConveybeltBlueState) {
+                    case (EMERALD_CONVEYBELT_LEFT):
+                    case (EMERALD_CONVEYBELT_RIGHT):
+                        Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
+                        break;
+                    case (EMERALD_CONVEYBELT_OFF):
+                        if (Playfield.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                            Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_LEFT;
+                            Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                        } else {
+                            Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_RIGHT;
+                            Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        }
+                        break;
+                }
+                ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
+                SetManArm(uActPos,uAnimation);
+                PreparePlaySound(SOUND_SWITCH,uTouchPos);
+            }
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+                switch (Playfield.uConveybeltYellowState) {
+                    case (EMERALD_CONVEYBELT_LEFT):
+                    case (EMERALD_CONVEYBELT_RIGHT):
+                        Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
+                        break;
+                    case (EMERALD_CONVEYBELT_OFF):
+                        if (Playfield.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+                            Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_LEFT;
+                            Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                        } else {
+                            Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_RIGHT;
+                            Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        }
+                        break;
                 }
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -1173,6 +1260,104 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     break;
             }
             break;
+        case (EMERALD_SAND_INVISIBLE):
+            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Sand-Rand-Status muss gelöscht werden
+            ManKey.uFireCount = 0;
+            PreparePlaySound(SOUND_DIG_SAND,uTouchPos);
+            switch (uAnimation) {
+                case (EMERALD_ANIM_UP):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoUp(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_DOWN):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoDown(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_LEFT):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoLeft(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_RIGHT):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoRight(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+            }
+            break;
+        case (EMERALD_SANDMINE):
+            if ((uAnimation != EMERALD_ANIM_STAND) && (ManKey.bFire)) { // Man "schnippt" Sandmine weg
+                ManKey.uFireCount = 0;
+                SetManArm(uActPos,uAnimation);
+                Playfield.pLevel[uTouchPos] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                Playfield.pStatusAnimation[uTouchPos] = EMERALD_SPACE;
+            } else {                                                    // Man läuft auf Sandmine und löst Explosion aus
+                ControlCentralExplosion(uTouchPos);
+            }
+            PreparePlaySound(SOUND_EXPLOSION,uTouchPos);
+            break;
+        case (EMERALD_GRASS):
+        case (EMERALD_GRASS_COMES):
+            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Gras-Rand-Status muss gelöscht werden
+            ManKey.uFireCount = 0;
+            PreparePlaySound(SOUND_DIG_SAND,uTouchPos);
+            switch (uAnimation) {
+                case (EMERALD_ANIM_UP):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_GRASS_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoUp(uActPos,EMERALD_ANIM_GRASS_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_DOWN):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_GRASS_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoDown(uActPos,EMERALD_ANIM_GRASS_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_LEFT):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_GRASS_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoLeft(uActPos,EMERALD_ANIM_GRASS_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_RIGHT):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_GRASS_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoRight(uActPos,EMERALD_ANIM_GRASS_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+            }
+            break;
         case (EMERALD_EMERALD):
             if (uTouchStatus == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
                 SDL_Log("%s: emerald sinks already !",__FUNCTION__);
@@ -1864,6 +2049,7 @@ void ControlWheels(uint32_t I) {
 Name:           CheckRunningWheel
 ------------------------------------------------------------------------------
 Beschreibung: Steuert laufendes Rad.
+              Wird aus EmeraldMine.c/RunGame() aufgerufen.
 Parameter
       Eingang: -
       Ausgang: -
