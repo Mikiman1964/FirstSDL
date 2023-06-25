@@ -166,10 +166,14 @@ void ControlBarrierUp(uint32_t I, uint32_t uColor) {
             uElement = EMERALD_BEAM_YELLOW_VERTICAL;
             break;
     }
-    do {
-        I = I - Playfield.uLevel_X_Dimension;
-        bGoOn = (HandleBeam(I,uElement,uColor) != 0);
-    } while (bGoOn);
+    // Falls Lichtschranke bereits von einer nach unten strahlenden Lichschranke beschienen wird, dann kann diese Lichtschranke nicht mehr strahlen.
+    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_BEAM_RED_VERTICAL) && (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_BEAM_YELLOW_VERTICAL) &&
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_BEAM_GREEN_VERTICAL) && (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_BEAM_BLUE_VERTICAL) ) {
+        do {
+            I = I - Playfield.uLevel_X_Dimension;
+            bGoOn = (HandleBeam(I,uElement,uColor) != 0);
+        } while (bGoOn);
+    }
  }
 
 
@@ -240,10 +244,14 @@ void ControlBarrierLeft(uint32_t I, uint32_t uColor) {
             uElement = EMERALD_BEAM_YELLOW_HORIZONTAL;
             break;
     }
-    do {
-        I--;
-        bGoOn = (HandleBeam(I,uElement,uColor) != 0);
-    } while (bGoOn);
+    // Falls Lichtschranke bereits von einer nach rechts strahlenden Lichschranke beschienen wird, dann kann diese Lichtschranke nicht mehr strahlen.
+    if ( (Playfield.pLevel[I - 1] != EMERALD_BEAM_RED_HORIZONTAL) && (Playfield.pLevel[I - 1] != EMERALD_BEAM_YELLOW_HORIZONTAL) &&
+         (Playfield.pLevel[I - 1] != EMERALD_BEAM_GREEN_HORIZONTAL) && (Playfield.pLevel[I - 1] != EMERALD_BEAM_BLUE_HORIZONTAL) ) {
+        do {
+            I--;
+            bGoOn = (HandleBeam(I,uElement,uColor) != 0);
+        } while (bGoOn);
+    }
 }
 
 

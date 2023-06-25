@@ -15,4 +15,5 @@ int LevelgroupOperaton_NewGroup(void);
 int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer);
 int LevelgroupOperaton_Password(SDL_Renderer *pRenderer);
 int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer);
+int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer);
 #endif // LEVELGROUPOPERATION_H_INCLUDED

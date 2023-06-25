@@ -1363,6 +1363,15 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_SAND):
             uTextureIndex = 171;
             break;
+        case (EMERALD_SAND_INVISIBLE):
+            uTextureIndex = 798;
+            break;
+        case (EMERALD_SANDMINE):
+            uTextureIndex = 781;
+            break;
+        case (EMERALD_GRASS):
+            uTextureIndex = 765;
+            break;
         case (EMERALD_SWAMP):
             uTextureIndex = 266;
             break;
@@ -1447,6 +1456,42 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             break;
         case (EMERALD_STEEL_PASSWORD):
             uTextureIndex = 745;
+            break;
+        case (EMERALD_CONVEYORBELT_RED):
+            uTextureIndex = 799;
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_RED):
+            uTextureIndex = 800;
+            break;
+        case (EMERALD_CONVEYORBELT_GREEN):
+            uTextureIndex = 803;
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
+            uTextureIndex = 804;
+            break;
+        case (EMERALD_CONVEYORBELT_BLUE):
+            uTextureIndex = 807;
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
+            uTextureIndex = 808;
+            break;
+        case (EMERALD_CONVEYORBELT_YELLOW):
+            uTextureIndex = 811;
+            break;
+        case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
+            uTextureIndex = 812;
+            break;
+        case (EMERALD_LEVELEDITOR_MESSAGE_1_4):
+            uTextureIndex = 815;
+            break;
+        case (EMERALD_LEVELEDITOR_MESSAGE_2_4):
+            uTextureIndex = 816;
+            break;
+        case (EMERALD_LEVELEDITOR_MESSAGE_3_4):
+            uTextureIndex = 817;
+            break;
+        case (EMERALD_LEVELEDITOR_MESSAGE_4_4):
+            uTextureIndex = 818;
             break;
         default:
             SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());

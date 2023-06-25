@@ -9,10 +9,6 @@
 #define EMERALD_DEFAULT_LEVELGROUP_FILENAME     "default_levelgroup.xml"        // Diese Levelgruppe ist immer vorhanden
 #define EMERALD_NAMES_FILENAME                  "names.dat"                     // Namen mit Handicaps, Games Played, Games Won und Totalscore für jede Levelgruppe
 
-#define EMERALD_IMPORTDOS_DIRECTORYNAME         "importdos"                     // Import-Directory für DOS-Level
-#define EMERALD_IMPORTDC3_DIRECTORYNAME         "importdc3"                     // Import-Directory für Diamond Caves 3-Bitmap-Level
-
-
 #define EMERALD_GROUPNAME_LEN                   25                              // Maximale Länge für Gruppennamen
 #define EMERALD_GROUP_PASSWORD_LEN              25                              // Maximale Länge für Passwort einer Levelgruppe
 #define EMERALD_MAX_LEVELGROUPFILES             100                             // Maximale Anzahl von Levelgruppen
@@ -27,13 +23,6 @@
 #define BUTTONLABEL_LEVELEDITOR                 "LEVELEDITOR"
 #define BUTTONLABEL_HIGHSCORES                  "SHOW_HIGHSCORES"
 #define BUTTONLABEL_EXIT_HIGHSCORES             "EXIT_HIGHSCORES"
-
-// Für IMPORT (DOS/DC3) ///////////////
-typedef struct {
-    uint32_t uDosFileCount;             // Anzahl der DOS-Levelfiles
-    uint32_t uDc3FileCount;             // Anzahl der DC3-Bimap-Levelfiles
-} IMPORTLEVEL;
-
 
 
 /////////////////////// Für names.dat ////////////////START//////////
@@ -99,7 +88,6 @@ typedef struct {
 } LEVELGROUP;
 
 
-int CheckImportLevelFiles(void);
 void PrintPlayfieldValues();
 ezxml_t GetLevelTag(ezxml_t xml,uint32_t uLevelNumber);
 int GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY);
@@ -108,6 +96,7 @@ int GetLevelScoresFromXml(ezxml_t xml);
 int GetOtherLevelValuesFromXml(ezxml_t xml);
 int GetLevelTimesFromXml(ezxml_t xml);
 int GetReplicatorLighbarrierSettingsFromXml(ezxml_t xml);
+int GetConveyorBeltSettingsFromXml(ezxml_t xml);
 int GetLetterMessagesFromXml(ezxml_t xml);
 int GetYamExplosionsFromXml(ezxml_t xml);
 int GetLeveldataFromXml(ezxml_t xml);

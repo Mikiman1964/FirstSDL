@@ -48,7 +48,7 @@ int WriteHighScoreFile(uint8_t *puLevelgroupHash) {
     nErrorCode = -1;
     if (puLevelgroupHash != NULL) {
         strcpy(szFilename,EMERALD_HIGHSCORES_DIRECTORYNAME);
-        strcat(szFilename,"/");                                     // Funktioniert aich unter Windows
+        strcat(szFilename,"/");                                     // Funktioniert auch unter Windows
         strcat(szFilename,EMERALD_HIGHSCORES_FILENAME);             // "high_"
         GetMd5String(puLevelgroupHash,szHashString);
         strcat(szFilename,szHashString);

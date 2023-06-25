@@ -1,15 +1,21 @@
+#include "buttons_checkboxes.h"
 #include "editor.h"
 #include "EmeraldMineMainMenu.h"
 #include "KeyboardMouse.h"
+#include "levelconverter.h"
 #include "levelgroupoperation.h"
 #include "loadlevel.h"
 #include "md5.h"
 #include "modplay.h"
 
+
 extern LEVELGROUP SelectedLevelgroup;
 extern unsigned char ge_new_levelgroup[];
+extern ED Ed;
 extern INPUTSTATES InputStates;
 extern MAINMENU MainMenu;
+extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
+extern LEVELFILESLIST MsDosLevelFileList[EMERALD_MAX_IMPORTFILES];
 
 
 /*----------------------------------------------------------------------------
@@ -964,5 +970,182 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
             }
         }
     }
+    return nErrorCode;
+}
+
+
+
+
+
+
+/*----------------------------------------------------------------------------
+Name:           LevelgroupOperaton_ImportDC3
+------------------------------------------------------------------------------
+Beschreibung: Bietet eine Dateiauswahl für den DC3-Levelimport an.
+Parameter
+      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x
+------------------------------------------------------------------------------*/
+int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
+    int nErrorCode = 0;
+    int nColorDimm;
+    int nNewLevelCount = 0;
+    uint32_t uBeamPosition;
+    uint32_t uModVolume;
+    uint32_t I;
+    bool bExit = false;
+    bool bPrepareExit = false;
+    uint32_t uXmlLen;
+    uint8_t *pLevelgroupXml = NULL;
+    uint8_t *puEndPart1 = NULL;
+    uint32_t uPart1Size;
+    uint8_t *puLastTag = NULL;
+    uint8_t *puPart1 = NULL;
+    uint8_t *puPart2 = NULL;
+    uint8_t *puRestPartStart = NULL;
+    char *puStartLevelCountTag = NULL;
+    char *puEndLevelCountTag = NULL;
+    DYNSTRING *XML = NULL;
+    DYNSTRING *S = NULL;
+    DYNSTRING *S2 = NULL;
+    char szFullFilename[EMERALD_MAX_FILENAME_LEN * 2];  // Mit Directory
+    char szLevelNumberTag[32];      // "level000"
+    char szLevelCount[16];
+    uint8_t uLevelgroupHash[16];
+
+    S = DynStringInit();
+    S2 = DynStringInit();
+    if ((S == NULL) || (S2 == NULL)) {
+        return -1;
+    }
+    nColorDimm = 0;
+    uModVolume = 0;
+    SetMenuBorderAndClear();
+    SetMenuText(MainMenu.uMenuScreen,"SELECT BITMAP TO IMPORT",-1,0,EMERALD_FONT_STEEL_BLUE);
+    while ((nErrorCode == 0) && (!bExit)) {
+        UpdateInputStates();
+
+        if (nErrorCode == 0) {
+            nErrorCode = RenderMenuElements(pRenderer);
+        }
+        // Import-Dateien auflisten
+        for (I = 0; I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST; I++) {
+            if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
+                PrintLittleFont(pRenderer,40,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_RELATIVE);
+            }
+        }
+        nErrorCode = ImportMenuSelectFile(pRenderer,EMERALD_LEVELTYPE_DC3,&uBeamPosition);
+        if (uBeamPosition != 0xFFFFFFFF) {
+            strcpy(szFullFilename,EMERALD_IMPORTDC3_DIRECTORYNAME);
+            strcat(szFullFilename,"/");             // Funktioniert auch unter Windows
+            strcat(szFullFilename,Dc3LevelFileList[MainMenu.uImportFileListDc3[uBeamPosition]].szFilename);
+            if (LevelConverterFromBitap(szFullFilename) == 0) {
+                // Ab hier befindet sich das konvertierte Bitmap-Level in Ed.x
+                if (SetLevelBorder(Ed.pLevel,false,false) == 0) { // 1. false = Level nicht auf EMERALD_SPACE setzen, 2. false = Nur auf EMERALD_STEEL setzen, wenn noch kein kompatibles Stahl-Element
+                    InitYamExplosions(Ed.YamExplosions);
+                    Ed.uReplicatorRedObject = EMERALD_SPACE;
+                    Ed.uReplicatorGreenObject = EMERALD_SPACE;
+                    Ed.uReplicatorBlueObject = EMERALD_SPACE;
+                    Ed.uReplicatorYellowObject = EMERALD_SPACE;
+                    XML = GetLevelXmlFile();
+                    if (XML != NULL) {
+                        if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
+                            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer
+                                if (UpdateCreateTimestamp(pLevelgroupXml) == 0) {
+                                    sprintf(szLevelNumberTag,"</level%03u>\r\n",SelectedLevelgroup.uLevelCount - 1);    // Ende-Tag des letzten Levels
+                                    puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
+                                    if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
+                                        uPart1Size = puEndPart1 - pLevelgroupXml + strlen(szLevelNumberTag);
+                                        puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                                        if (puPart1 != NULL) {
+                                            memset(puPart1,0,uPart1Size + 1);
+                                            memcpy(puPart1,pLevelgroupXml,uPart1Size);
+                                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level im String S.
+                                            sprintf(szLevelNumberTag,"<level%03u>\r\n",SelectedLevelgroup.uLevelCount);    // Start-Tag des neuen importierten Levels
+                                            DynStringAdd(S,szLevelNumberTag);       // Start-Tag hinzufügen
+                                            DynStringAdd(S,XML->pszString);         // Das importierte Level hinzufügen
+                                            sprintf(szLevelNumberTag,"</level%03u>\r\n",SelectedLevelgroup.uLevelCount);    // End-Tag des neuen importierten Levels
+                                            DynStringAdd(S,szLevelNumberTag);       // End-Tag hinzufügen
+                                            if ((puRestPartStart = (uint8_t*)strstr((char*)pLevelgroupXml,"<password_md5_hash>")) != NULL) {
+                                                if (puRestPartStart < puLastTag) {
+                                                    DynStringAdd(S,(char*)puRestPartStart);    // Den Rest hinzufügen
+                                                    if ((nNewLevelCount = RenumLevelgroup((uint8_t *)S->pszString)) > 0) {
+                                                        // Levelgruppe ist fast fertig, jetzt Anpassung von <levelcount>x</levelcount>
+                                                        puStartLevelCountTag = strstr(S->pszString,"<levelcount>");
+                                                        puEndLevelCountTag = strstr(S->pszString,"</levelcount>\r\n");
+                                                        if ((puStartLevelCountTag != NULL) && (puStartLevelCountTag > S->pszString) && (puEndLevelCountTag != NULL)) {
+                                                            uPart1Size = puStartLevelCountTag - S->pszString;
+                                                            puPart2 = malloc(uPart1Size + 1);
+                                                            if (puPart2 != NULL) {
+                                                                memset(puPart2,0,uPart1Size + 1);
+                                                                memcpy(puPart2,S->pszString,uPart1Size);
+                                                                DynStringAdd(S2,(char*)puPart2);
+                                                                DynStringAdd(S2,"<levelcount>");
+                                                                sprintf(szLevelCount,"%d",nNewLevelCount);
+                                                                DynStringAdd(S2,szLevelCount);
+                                                                DynStringAdd(S2,puEndLevelCountTag);
+                                                                if (UpdateLevelgroupHash((uint8_t*)S2->pszString,uLevelgroupHash) == 0) {
+                                                                    // Levelgruppe aktualisieren
+                                                                    if (WriteFile(SelectedLevelgroup.szFilename,(uint8_t*)S2->pszString,S2->nLen,false) == 0) {
+                                                                        if (GetLevelgroupFiles() == 0) {    // Wenn das nicht funktioniert, kann nicht weitergemacht werden!
+                                                                            if (SelectAlternativeLevelgroup(uLevelgroupHash,false) == 0) {
+                                                                                InitLists();
+                                                                                nErrorCode = 0;
+                                                                                bPrepareExit = true;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            WaitNoKey();
+        }
+        ShowButtons(pRenderer);
+        if ( (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES))) {
+            bPrepareExit = true;
+        }
+
+        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+
+
+        if ((!bPrepareExit) && (nColorDimm < 100)) {
+            nColorDimm = nColorDimm + 4;
+            SetAllTextureColors(nColorDimm);
+            uModVolume = uModVolume + 4;
+            SetModVolume(uModVolume);
+        } else if (bPrepareExit) {
+            if (nColorDimm > 0) {
+                nColorDimm = nColorDimm - 4;
+                SetAllTextureColors(nColorDimm);
+                uModVolume = uModVolume -4;
+                SetModVolume(uModVolume);
+            } else {
+                bExit = true;
+            }
+        }
+        PlayMusic(false);
+    }
+    DynStringFree(XML);
+    DynStringFree(S);
+    DynStringFree(S2);
+    SAFE_FREE(Ed.pLevel);
+    SAFE_FREE(pLevelgroupXml);
+    SAFE_FREE(puPart1);
+    SAFE_FREE(puPart2);
+    WaitNoKey();
     return nErrorCode;
 }

@@ -150,39 +150,3 @@ int FillLevelArea(int nX,int nY,uint16_t uFillElement,uint16_t uGroundElement) {
     SDL_Log("MaxP = %u",Fillstack.uMaxP);
     return nErrorCode;
 }
-
-
-/*----------------------------------------------------------------------------
-Name:           FillLevelArea
-------------------------------------------------------------------------------
-Beschreibung: Füllt einen (begrenzten) Levelbereich mit einem bestimmten Element.
-              Die Routine stammt von HN2 (Helge Nickel) einem ehemaligen Kommilitonen
-              aus dem Jahr 1995.
-              ACHTUNG: Durch die Rekursion kommt es leicht zu einem Stack-Overflow,
-              weswegen diese Routine nicht mehr zum Einsatz kommt.
-Parameter
-      Eingang: x, int, X-Position im Level
-               y, int, Y-Position im Level
-               uFillElement, uint16_t, Element, mit dem gefüllt werden soll
-               uGroundElement, uint16_t, Grund-Element, dass ersetzt werden soll
-Rückgabewert:  -
-Seiteneffekte: Ed.x
-------------------------------------------------------------------------------*/
-/*
-void FillLevelArea(int x,int y,uint16_t uFillElement,uint16_t uGroundElement) {
-    if (uFillElement == uGroundElement) {
-        return;
-    }
-    if (g_count > g_count_max) g_count_max = g_count;
-    if ( (x > 0) && (x < (Ed.uLevel_X_Dimension - 1)) && (y > 0) && (y < (Ed.uLevel_Y_Dimension - 1)) ) {
-        if (Ed.pLevel[Ed.uLevel_X_Dimension * y + x] == uGroundElement) {
-            Ed.pLevel[Ed.uLevel_X_Dimension * y + x] = uFillElement;
-
-            FillLevelArea(x + 1,y,uFillElement,uGroundElement);
-            FillLevelArea(x,y + 1,uFillElement,uGroundElement);
-            FillLevelArea(x - 1,y,uFillElement,uGroundElement);
-            FillLevelArea(x,y - 1,uFillElement,uGroundElement);
-        }
-    }
-}
-*/

@@ -1,4 +1,7 @@
 #include <SDL2/SDL.h>
+#include <errno.h>
+#include <dirent.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <stdint.h>
@@ -7,12 +10,21 @@
 #include "EmeraldMine.h"
 #include "KeyboardMouse.h"
 #include "levelconverter.h"
+#include "loadlevel.h"
 #include "md5.h"
 #include "mystd.h"
+
+BITMAP Bitmap;
+IMPORTLEVEL ImportLevel;
+LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
+LEVELFILESLIST DosLevelFileList[EMERALD_MAX_IMPORTFILES];
+extern ED Ed;
+extern INPUTSTATES InputStates;
 
 char g_szDC3_MD5[][33] =
     {
         "B65A30CB1DD469EC791B73B792A7D0B1",        // EMERALD_STEEL
+        "5ADB5F65B2664A6EC166642D7BC7B957",        // EMERALD_STEEL
         "8C66E89509E846A88DE0885E195A475C",        // EMERALD_REPLICATOR_RED_TOP_LEFT
         "19A7ACD4E9675B7B18C6EDBBA326771C",        // EMERALD_REPLICATOR_RED_TOP_MID
         "1BA2FE84CE7C45EB3A18C9AC0DDD33D2",        // EMERALD_REPLICATOR_RED_TOP_RIGHT
@@ -436,11 +448,61 @@ char g_szDC3_MD5[][33] =
         "8D76002D6BA3D8E14ACC29024A04DEEF",        // EMERALD_FONT_STEEL_GREEN_X
         "BAF5DC1F622879BE549ABA5D0E09EFAF",        // EMERALD_FONT_STEEL_GREEN_Y
         "059FAB801A991EAB1D36ED59DF267BF1",        // EMERALD_FONT_STEEL_GREEN_Z
+        "1699D73D461AD2596F362B6EAE0BFB0B",        // EMERALD_SANDMINE
+        "5F80C3A9DB7D6B34C38606040C2303EB",        // EMERALD_SANDMINE
+        "AD34A63CE7EC78F51127070A4D79B74A",        // EMERALD_SANDMINE
+        "C10C0AEE9492801E2C2BA3E821206509",        // EMERALD_SANDMINE
+        "4215918662588F6213D7B9CA13D69BBD",        // EMERALD_SANDMINE
+        "28CA804614C39CFC0A6DB2E0E846C8D7",        // EMERALD_SANDMINE
+        "3B1B70677E8389770284FFE42C7289EE",        // EMERALD_SANDMINE
+        "BA9EBF081CC07E3C96DA4DD3B09874AB",        // EMERALD_SANDMINE
+        "5FB664F07D58AE4F3E65E2A6FD45B00C",        // EMERALD_SANDMINE
+        "7BB1A3F7C22C533416F98C8E3063CFBC",        // EMERALD_SANDMINE
+        "58705E1CFDD16735577A3550D63D161C",        // EMERALD_SANDMINE
+        "015DFE5D618921AF5117486E540D60DE",        // EMERALD_SANDMINE
+        "E03218030D1063E457D781CEE72C758F",        // EMERALD_SANDMINE
+        "429FECB86472446587CAA381307E9075",        // EMERALD_SANDMINE
+        "6E875B0D8E73DEE3D34986221EB37063",        // EMERALD_SANDMINE
+        "0B11712E63217C7508BB27414E84B313",        // EMERALD_SANDMINE
+        "3202EE7224E9E52850B5CB5412037C30",        // EMERALD_GRASS
+        "7AE5B78E75EDD354FA03C4D3D56FFEDB",        // EMERALD_GRASS
+        "BCC0BEAA4ED00FAE49CE1F123D611823",        // EMERALD_GRASS
+        "FEEC18F8C41E650C1DE7C9B94BA35CC4",        // EMERALD_GRASS
+        "86E305D8305FCE06FECDD6EBD6CF89E3",        // EMERALD_GRASS
+        "1DA20B11A78D1E56CB8079E6FADB3068",        // EMERALD_GRASS
+        "3AF7D806BB74EB59D16FF64EB70D40D3",        // EMERALD_GRASS
+        "C5A16E191D0334E6204F7E4C2D9E64B3",        // EMERALD_GRASS
+        "67A03DCA61DA457EB2F2E27B00E846A4",        // EMERALD_GRASS
+        "C9A3D55E5F5E8B19AF61989C0C09FC10",        // EMERALD_GRASS
+        "B1955A8AC0FA8FC2CFDE04C252C15580",        // EMERALD_GRASS
+        "10C4A620F5DD3E9295EA8D1E41E7F6F8",        // EMERALD_GRASS
+        "A7420AAB0FC46A81CCECA25BD20E731D",        // EMERALD_GRASS
+        "FEF7D241D48861EA293DB3609760CD6A",        // EMERALD_GRASS
+        "3EA4F170F612EAB4F3F9C1E4D64D241A",        // EMERALD_GRASS
+        "2EAFC519601F6244281A1D2EC05C1698",        // EMERALD_GRASS
+        "9B273BE39FE1D317A733C0B858505007",        // EMERALD_SAND_INVISIBLE
+        "BE2AD1F28F86F9CCFC33DA6B1379F26F",        // EMERALD_CONVEYORBELT_SWITCH_RED
+        "CA1E99381523B014083DC9DC20C708CB",        // EMERALD_CONVEYORBELT_RED
+        "18B5C0B5A142DD30C56A521CEE2B48F7",        // EMERALD_CONVEYORBELT_RED
+        "D34D7E234C709D1613733EAD91FCF3E4",        // EMERALD_CONVEYORBELT_RED
+        "B8AE72153589FB084266821B7845B76D",        // EMERALD_CONVEYORBELT_SWITCH_YELLOW
+        "0031A2E03ADA039056364EA5043F7EBD",        // EMERALD_CONVEYORBELT_YELLOW
+        "875BDFDA489DD5A4C55E427B7406A23E",        // EMERALD_CONVEYORBELT_YELLOW
+        "23D989E28E2E9423180BC9E1FECF1143",        // EMERALD_CONVEYORBELT_YELLOW
+        "DEA87A14339B1D7BB0DCFF47455203F9",        // EMERALD_CONVEYORBELT_SWITCH_GREEN
+        "F1E681C677A6454A3AE62BF0AB005075",        // EMERALD_CONVEYORBELT_GREEN
+        "985311503A8E422C53B38CBBD86BF427",        // EMERALD_CONVEYORBELT_GREEN
+        "33501B00AE9E14D718FD59DA232335B2",        // EMERALD_CONVEYORBELT_GREEN
+        "C517744D390A4C6694EDD3C039DC72B4",        // EMERALD_CONVEYORBELT_SWITCH_BLUE
+        "2DC320FB3DE37B5771D6919E836B0FA0",        // EMERALD_CONVEYORBELT_BLUE
+        "AC0C922F3C498A50F65A47F4484F0A31",        // EMERALD_CONVEYORBELT_BLUE
+        "9AEE6C261AD32DC8861FBE3536C29F9C",        // EMERALD_CONVEYORBELT_BLUE
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",        // ENDE der MD5-Liste
     };
 
 uint16_t g_DC3_Elements[] = {
-        EMERALD_STEEL
+         EMERALD_STEEL
+        ,EMERALD_STEEL
         ,EMERALD_REPLICATOR_RED_TOP_LEFT
         ,EMERALD_REPLICATOR_RED_TOP_MID
         ,EMERALD_REPLICATOR_RED_TOP_RIGHT
@@ -864,35 +926,88 @@ uint16_t g_DC3_Elements[] = {
         ,EMERALD_FONT_STEEL_GREEN_X
         ,EMERALD_FONT_STEEL_GREEN_Y
         ,EMERALD_FONT_STEEL_GREEN_Z
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_SANDMINE
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_GRASS
+        ,EMERALD_SAND_INVISIBLE
+        ,EMERALD_CONVEYORBELT_SWITCH_RED
+        ,EMERALD_CONVEYORBELT_RED
+        ,EMERALD_CONVEYORBELT_RED
+        ,EMERALD_CONVEYORBELT_RED
+        ,EMERALD_CONVEYORBELT_SWITCH_YELLOW
+        ,EMERALD_CONVEYORBELT_YELLOW
+        ,EMERALD_CONVEYORBELT_YELLOW
+        ,EMERALD_CONVEYORBELT_YELLOW
+        ,EMERALD_CONVEYORBELT_SWITCH_GREEN
+        ,EMERALD_CONVEYORBELT_GREEN
+        ,EMERALD_CONVEYORBELT_GREEN
+        ,EMERALD_CONVEYORBELT_GREEN
+        ,EMERALD_CONVEYORBELT_SWITCH_BLUE
+        ,EMERALD_CONVEYORBELT_BLUE
+        ,EMERALD_CONVEYORBELT_BLUE
+        ,EMERALD_CONVEYORBELT_BLUE
 };
 
-extern ED Ed;
-BITMAP Bitmap;
-extern INPUTSTATES InputStates;
 
 
-int LevelConverter(uint32_t uConvert) {
-    if (uConvert == 0) {
-        return LevelConverterFromDosgame();
-    } else {
-        return LevelConverterFromBitap();
-    }
-}
 
+/*----------------------------------------------------------------------------
+Name:           LevelConverterFromDosGame
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert ein DOS-Level (MIK.EXE) in Leveldaten.
+              Das Ergebnis wird in Ed.x abgelegt.
+              Die Struktur Ed.x muss bereits teilweise initialisiert sein.
 
-int LevelConverterFromDosgame(void) {
+              Im Erfolgsfall alloziert die Funktion in Ed.pLevel Speicher für
+              das konvertierte Level.
+Parameter
+      Eingang: pszFilename, char *, Dateiname der Bitmap
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: Ed.x
+------------------------------------------------------------------------------*/
+int LevelConverterFromDosGame(char *pszFilename) {
     uint32_t I;
     uint32_t uFilesize;
     uint8_t *pDosLevel = NULL;;
     int nErrorCode = -1;;
-    char *pszFilename = {"LEVEL005.DAT"};
 
-    SDL_Log("%s",__FUNCTION__);
-    Ed.uLevel_X_Dimension = 64;
-    Ed.uLevel_Y_Dimension = 32;
+    if (pszFilename == NULL) {
+        return -1;
+    }
+    Ed.uLevel_X_Dimension = 64;     // Ist bei den DOS-Leveln
+    Ed.uLevel_Y_Dimension = 32;     // auf 64 x 32 fixiert.
     Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
     Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
-
     Ed.pLevel = malloc(Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t));
     if (Ed.pLevel != NULL) {
         pDosLevel = ReadFile(pszFilename,&uFilesize);
@@ -1185,18 +1300,32 @@ int LevelConverterFromDosgame(void) {
     } else {
         printf("can not allocate for level (%u x %u)\n",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension);
     }
-
-
-
-
-
     SAFE_FREE(pDosLevel);
+    if (nErrorCode != 0) {
+        SAFE_FREE(Ed.pLevel);
+    }
     return nErrorCode;
 }
 
-// Ed.x muss bereits teilweise initialisiert sein.
-int LevelConverterFromBitap(void) {
+
+/*----------------------------------------------------------------------------
+Name:           LevelConverterFromBitap
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert eine exportierte Diamond Caves III-Level-Bitmap
+              in Leveldaten. Das Ergebnis wird in Ed.x abgelegt.
+              Die Struktur Ed.x muss bereits teilweise initialisiert sein.
+
+              Im Erfolgsfall alloziert die Funktion in Ed.pLevel Speicher für
+              das konvertierte Level.
+Parameter
+      Eingang: pszFilename, char *, Dateiname der Bitmap
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: Ed.x, Bitmap.x
+------------------------------------------------------------------------------*/
+int LevelConverterFromBitap(char *pszFilename) {
     FILE *Readfile = NULL;
+    char szTimestamp[16];    // Format: YYYYMMDD_HHMMSS
     struct stat Fileinfo;
     uint8_t uBlockbuf[768];
     uint32_t X,Y,I;
@@ -1205,26 +1334,31 @@ int LevelConverterFromBitap(void) {
     char szMD5String[32 + 1];   // + 1 für Stringende
     char szNum[16];
     int nErrorCode = 0;
+    bool bBottomLeftReplicator;     // Linke und rechte Seite vom unteren Replikatorteil kann nicht unterschieden werden, daher Logik
 
+    bBottomLeftReplicator = false;
+    if (pszFilename == NULL) {
+        return -1;
+    }
     memset(uBlockbuf,0,sizeof(uBlockbuf));
     memset(&Bitmap,0,sizeof(Bitmap));
-    strcpy(Bitmap.szFilename,BITMAP_FILENAME);
+    strcpy(Bitmap.szFilename,pszFilename);
     if (stat(Bitmap.szFilename,&Fileinfo) != 0) {
-        printf("file not found: %s\n",Bitmap.szFilename);
+        SDL_Log("%s: file not found: %s",__FUNCTION__,Bitmap.szFilename);
         return -1;
     }
     Bitmap.uFilesize = Fileinfo.st_size;
     if  (Bitmap.uFilesize < BITMAP_MINSIZE) {
-        printf("bad filesize: %u\n",Bitmap.uFilesize);
+        SDL_Log("%s: bitmap to small (< 4096 Bytes), filesize: %u",__FUNCTION__,Bitmap.uFilesize);
         return -1;
     }
     Readfile = fopen(Bitmap.szFilename,"rb");
     if (Readfile == NULL) {
-        printf("can not open file %s\n",Bitmap.szFilename);
+        SDL_Log("%s: can not open file %s",__FUNCTION__,Bitmap.szFilename);
         return -1;
     }
     if (ReadBmHeader(Readfile,&Bitmap) != 0) {
-        printf("invalid bitmap header, file: %s\n",Bitmap.szFilename);
+        SDL_Log("%s: invalid bitmap header, file: %s",__FUNCTION__,Bitmap.szFilename);
         return -1;
     }
     Ed.uLevel_X_Dimension = Bitmap.nW / 16;
@@ -1234,18 +1368,15 @@ int LevelConverterFromBitap(void) {
 
     Ed.pLevel = malloc(Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t));
     if (Ed.pLevel == NULL) {
-        printf("can not allocate for level (%u x %u)\n",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension);
+        SDL_Log("%s: can not allocate memory for level (%u x %u)",__FUNCTION__,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension);
         return -1;
-
     }
     PrintBitmapInfos(&Bitmap);
     PrintLevelInfos(&Ed);
-
     for (Y = 0; (Y < Ed.uLevel_Y_Dimension) && (nErrorCode == 0); Y++) {
         for (X = 0; (X < Ed.uLevel_X_Dimension) && (nErrorCode == 0); X++) {
             nErrorCode = Read16x16Macroblock(Readfile,X,Y,uBlockbuf);
             //Show16x16Macroblock(pRenderer,0,0,uBlockbuf);
-
             md5Init(&MD5Block);
             md5Update(&MD5Block,uBlockbuf,768);
             md5Finalize(&MD5Block);
@@ -1256,14 +1387,64 @@ int LevelConverterFromBitap(void) {
             }
             uLevelElement = GetElementByMD5(szMD5String);
             if (uLevelElement != EMERALD_INVALID) {
+                // Der untere Teil eines Replikators kann nicht direkt unterschieden werden, daher Logik
+                switch (uLevelElement) {
+                    case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                            uLevelElement = EMERALD_REPLICATOR_RED_BOTTOM_RIGHT;
+                            bBottomLeftReplicator = false;
+                        } else {
+                            bBottomLeftReplicator = true;
+                        }
+                        break;
+                    case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                            uLevelElement = EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT;
+                            bBottomLeftReplicator = false;
+                        } else {
+                            bBottomLeftReplicator = true;
+                        }
+                        break;
+                    case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                            uLevelElement = EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT;
+                            bBottomLeftReplicator = false;
+                        } else {
+                            bBottomLeftReplicator = true;
+                        }
+                        break;
+                    case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                            uLevelElement = EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT;
+                            bBottomLeftReplicator = false;
+                        } else {
+                            bBottomLeftReplicator = true;
+                        }
+                        break;
+                }
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = uLevelElement;
             } else {
-                SDL_Log("%s: Warning: hash not found for element at position X:%u  Y:%u",__FUNCTION__,X,Y);
-                Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
+                SDL_Log("%s: Warning: hash (%s) not found for element at position X:%u  Y:%u",__FUNCTION__,szMD5String,X,Y);
+                //WriteFile("hashes.txt",szMD5String,32,true);
+                //WriteFile("hashes.txt","\r\n",2,true);
+
+                //Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
+                Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_FONT_STEEL_QUESTION_MARK;
             }
             //SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
             //SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
         }
+    }
+    if (nErrorCode == 0) {
+        GetActualTimestamp(szTimestamp);    // Format: YYYYMMDD_HHMMSS
+        strcpy(Ed.szLevelTitle,"IMPORT DC3 ");
+        strcat(Ed.szLevelTitle,szTimestamp);
+        strcpy(Ed.szLevelAuthor,"LEVELIMPORTER");
+        Ed.uTimeToPlay = 100;
+        Ed.uEmeraldsToCollect = 50;
+        Ed.uTimeScoreFactor = 40;
+    } else {
+        SAFE_FREE(Ed.pLevel);
     }
     fclose(Readfile);
     return nErrorCode;
@@ -1495,4 +1676,110 @@ uint16_t GetElementByMD5(char *szMd5) {
         } while (bRun);
     }
     return uElement;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CheckImportLevelFiles
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt die Dateien für den DOS- und DC3-Level-Import.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: ImportLevel.x
+------------------------------------------------------------------------------*/
+int CheckImportLevelFiles(void) {
+    int nErrorCode = -1;
+    ImportLevel.uDosFileCount = 0;
+    ImportLevel.uDc3FileCount = 0;
+
+    if (GetLevelFileList(EMERALD_IMPORTDC3_DIRECTORYNAME,"BMP",(LEVELFILESLIST*)&Dc3LevelFileList,&ImportLevel.uDc3FileCount) == 0) {
+        nErrorCode = GetLevelFileList(EMERALD_IMPORTDOS_DIRECTORYNAME,"DAT",(LEVELFILESLIST*)&DosLevelFileList,&ImportLevel.uDosFileCount);
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLevelFileList
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt eine Datei-Liste eines bestimmten Verzeichnisses mit einer
+              anzugebenen Datei-Extension.
+Parameter
+      Eingang: pszDirectoryName, char *, Zeiger auf Verzeichnisname
+               pszFileExtension, char *, Zeiger auf Datei-Extension
+                    (nur 3-stellig und ohne Punkt oder NULL)
+      Ausgang: pLevelFileList, LEVELFILESLIST *, Zeiger auf zu befüllende Fileliste
+               puFileCount, uint32_t *, Zeiger auf Anzahl Files
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount) {
+    DIR *dir;
+    struct dirent *entry;
+    int nErrorCode = -1;
+    uint32_t I;
+    uint32_t U;
+    uint32_t uFilenameLen;
+    bool bNoExtensionFilter;
+    char szFileExtensionFilter[8];        // Beispiel: ".BMP\0"
+    char szFileExtension[8];
+
+    if ( (pszDirectoryName == NULL) || (pLevelFileList == NULL) || (puFileCount == NULL) ) {
+        return nErrorCode;
+    }
+    memset(szFileExtensionFilter,0,sizeof(szFileExtensionFilter));
+    if (pszFileExtension != NULL) {
+        if (strlen(pszFileExtension) == 3) {
+            strcpy(szFileExtensionFilter,".");
+            strcat(szFileExtensionFilter,pszFileExtension);
+            for (U = 0; U < strlen(szFileExtensionFilter); U++) {
+                szFileExtensionFilter[U] = toupper(szFileExtensionFilter[U]);
+            }
+        }
+    }
+    bNoExtensionFilter = (strlen(szFileExtensionFilter) == 0);
+    *puFileCount = 0;
+    if ((dir = opendir(pszDirectoryName)) == NULL) {
+        SDL_Log("%s: can not open current directory, error: %s",__FUNCTION__,strerror(errno));
+        return nErrorCode;
+    } else {
+        nErrorCode = 0;
+        I = 0;
+        while (((entry = readdir(dir)) != NULL) && (I < EMERALD_MAX_IMPORTFILES)) {
+            uFilenameLen = strlen(entry->d_name);
+            if ((uFilenameLen > 4) && (uFilenameLen <= EMERALD_MAX_FILENAME_LEN)) {          // a.bbb    muss es wenigstens sein
+                strcpy(szFileExtension,entry->d_name + uFilenameLen - 4);
+                for (U = 0; U < strlen(szFileExtension); U++) {
+                    szFileExtension[U] = toupper(szFileExtension[U]);
+                }
+                if ( (bNoExtensionFilter) || (strcmp(szFileExtension,szFileExtensionFilter) == 0) ) {
+                    SDL_Log("%s: Filename: %s",__FUNCTION__,entry->d_name);
+                    strcpy(pLevelFileList[I].szFilename,entry->d_name);
+                    strcpy(pLevelFileList[I].szShowFilename,entry->d_name);
+                    for (U = 0; U < uFilenameLen; U++) {
+                        pLevelFileList[I].szShowFilename[U] = toupper(entry->d_name[U]);
+                        if ((pLevelFileList[I].szShowFilename[U] == 'ä') || (pLevelFileList[I].szShowFilename[U] == 'Ä')) {
+                            pLevelFileList[I].szShowFilename[U] = 97;
+                        } else if ((pLevelFileList[I].szShowFilename[U] == 'ö') || (pLevelFileList[I].szShowFilename[U] == 'Ö')) {
+                            pLevelFileList[I].szShowFilename[U] = 98;
+                        } else if ((pLevelFileList[I].szShowFilename[U] == 'ü') || (pLevelFileList[I].szShowFilename[U] == 'Ü')) {
+                            pLevelFileList[I].szShowFilename[U] = 99;
+                        } else if (pLevelFileList[I].szShowFilename[U] == 'ß') {
+                            pLevelFileList[I].szShowFilename[U] = 'S';
+                        }
+                    }
+                    if (strlen(pLevelFileList[I].szShowFilename) > EMERALD_MAX_SHOWFILENAME_LEN) {
+                        pLevelFileList[I].szShowFilename[EMERALD_MAX_SHOWFILENAME_LEN] = 0; // Anzeige-Filename kürzen
+                    }
+                    I++;
+                }
+            }
+        }
+        SDL_Log("%s: found %d files in directory %s",__FUNCTION__,I,pszDirectoryName);
+        *puFileCount = I;
+        closedir(dir);
+    }
+    return nErrorCode;
 }
