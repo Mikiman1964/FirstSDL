@@ -1,3 +1,4 @@
+#include "config.h"
 #include "sound.h"
 #include "EmeraldMine.h"
 #include "mySDL.h"
@@ -5,6 +6,7 @@
 
 GAMESOUND GameSound;
 extern PLAYFIELD Playfield;
+extern CONFIG Config;
 
 extern uint8_t _binary_Sound_Ping_wav_start;extern uint8_t _binary_Sound_Ping_wav_end;
 extern uint8_t _binary_Sound_Mine_wav_start;extern uint8_t _binary_Sound_Mine_wav_end;
@@ -36,6 +38,8 @@ extern uint8_t _binary_Sound_WheelTimeDoor_wav_start;extern uint8_t _binary_Soun
 extern uint8_t _binary_Sound_DoorCloseOpen_wav_start;extern uint8_t _binary_Sound_DoorCloseOpen_wav_end;
 extern uint8_t _binary_Sound_ReplicatorPlop_wav_start;extern uint8_t _binary_Sound_ReplicatorPlop_wav_end;
 extern uint8_t _binary_Sound_DynamiteStart_wav_start;extern uint8_t _binary_Sound_DynamiteStart_wav_end;
+extern uint8_t _binary_Sound_Conveyorbelt_wav_start;extern uint8_t _binary_Sound_Conveyorbelt_wav_end;
+
 
 uint8_t* g_pSfxPointer_wav[] = {
 // Bit
@@ -69,7 +73,8 @@ uint8_t* g_pSfxPointer_wav[] = {
 /*28*/    &_binary_Sound_DoorCloseOpen_wav_start,&_binary_Sound_DoorCloseOpen_wav_end,  // Tür schließen / öffnen
 /*29*/    &_binary_Sound_ReplicatorPlop_wav_start,&_binary_Sound_ReplicatorPlop_wav_end,// Replikator erzeugt neues Objekt
 /*30*/    &_binary_Sound_DynamiteStart_wav_start,&_binary_Sound_DynamiteStart_wav_end,  // Dynamit wird gestartet
-/*31*/    NULL,NULL,                                                                    // Frei 6
+/*31*/    &_binary_Sound_Conveyorbelt_wav_start,&_binary_Sound_Conveyorbelt_wav_end,    // Laufband
+/*32*/    NULL,NULL,                                                                    // Endekennung
 };
 
 Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];
@@ -122,7 +127,19 @@ void PreparePlaySound(uint32_t uSound, uint32_t uCoordinate) {
     uint32_t uElementXpos;
     uint32_t uElementYpos;
     bool     bAlwaysOn;      // Sound ist unabhängig vom sichtbaren Bereich aktiv
+    uint32_t uAddX,uAddY;
 
+    // Bei "ungeraden" Auflösung wird der hörbare Bereich um ein Feld nach unten bzw. rechts erweitert.
+    if ((Config.uResX % FONT_W) != 0) {
+        uAddX = 1;
+    } else {
+        uAddX = 0;
+    }
+    if ((Config.uResY % FONT_H) != 0) {
+        uAddY = 1;
+    } else {
+        uAddY = 0;
+    }
     bAlwaysOn = ((uSound & 0x80000000) != 0);
     uSound = uSound & 0x7FFFFFFF;               // Always-Bit ausblenden
     // Falls Sound bisher noch nicht aktiv ist, muss hier die Koordinate geprüft werden, ob wir uns im sichtbaren Bereich befinden
@@ -135,8 +152,8 @@ void PreparePlaySound(uint32_t uSound, uint32_t uCoordinate) {
             uTopLeftYpos = Playfield.nTopLeftYpos / FONT_H;
             uElementXpos = uCoordinate % Playfield.uLevel_X_Dimension;
             uElementYpos = uCoordinate / Playfield.uLevel_X_Dimension;
-            if ( ((uElementXpos >= uTopLeftXpos) && (uElementXpos < (uTopLeftXpos + Playfield.uVisibleX))) &&
-                 ((uElementYpos >= uTopLeftYpos) && (uElementYpos < (uTopLeftYpos + Playfield.uVisibleY))) ) {
+            if ( ((uElementXpos >= uTopLeftXpos) && (uElementXpos < (uTopLeftXpos + Playfield.uVisibleX + uAddX))) &&
+                 ((uElementYpos >= uTopLeftYpos) && (uElementYpos < (uTopLeftYpos + Playfield.uVisibleY + uAddY))) ) {
                 GameSound.uAllSounds |= uSound;
             }
         }

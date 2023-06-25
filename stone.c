@@ -19,7 +19,7 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlStone(uint32_t I) {
     uint8_t uFree;              // Richtung, in die Stone rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
-    uint16_t uStoneHitElement;   // Element, welches durch Stein getroffen wird
+    uint16_t uHitElement;       // Element, welches getroffen wird
     uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
     // Doppelte Steuerung vermeiden
@@ -65,12 +65,10 @@ void ControlStone(uint32_t I) {
      } else {                            // Unten ist nicht frei
         // Stone bleibt zunächst auf Platz liegen
         uHitCoordinate = I + Playfield.uLevel_X_Dimension;
-        uStoneHitElement = Playfield.pLevel[uHitCoordinate];
+        uHitElement = Playfield.pLevel[uHitCoordinate];
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {  // Stein noch in Bewegung
             Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
-            uHitCoordinate = I + Playfield.uLevel_X_Dimension;
-            uStoneHitElement = Playfield.pLevel[uHitCoordinate];
-            switch (uStoneHitElement) {
+            switch (uHitElement) {
                 case (EMERALD_NUT):
                     SDL_Log("Stone hit nut");
                     PreparePlaySound(SOUND_NUT_CRACK,I);
@@ -83,8 +81,8 @@ void ControlStone(uint32_t I) {
                     Playfield.pLevel[I] = EMERALD_SPACE;
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                     // Stone auf neue Position setzen
-                    Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_STONE;
-                    Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_DOWN | EMERALD_ANIM_SAPPHIRE_SQUEAK;
+                    Playfield.pLevel[uHitCoordinate] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_DOWN | EMERALD_ANIM_SAPPHIRE_SQUEAK;
                     PreparePlaySound(SOUND_SQUEAK,I);
                     return;     // Stone wurde bereits vollständig gesteuert, daher hier beenden
                     break;
@@ -137,6 +135,11 @@ void ControlStone(uint32_t I) {
                     ControlCentralExplosion(uHitCoordinate);
                     PreparePlaySound(SOUND_EXPLOSION,I);
                     break;
+                case (EMERALD_MEGABOMB):
+                    SDL_Log("Stone hit megabomb");
+                    ControlCentralMegaExplosion(uHitCoordinate);
+                    PreparePlaySound(SOUND_EXPLOSION,I);
+                    break;
                 case (EMERALD_BEETLE_UP):
                 case (EMERALD_BEETLE_RIGHT):
                 case (EMERALD_BEETLE_DOWN):
@@ -177,7 +180,7 @@ void ControlStone(uint32_t I) {
                     break;
             }
         } else {
-            if (uStoneHitElement == EMERALD_SWAMP) {
+            if (uHitElement == EMERALD_SWAMP) {
                 SDL_Log("Stone lies on empty swamp");
                 // Stein in versumpften Stein wandeln
                 Playfield.pLevel[I] = EMERALD_STONE_SINK;
@@ -185,7 +188,7 @@ void ControlStone(uint32_t I) {
             }
         }
         Playfield.pStatusAnimation[I] |= EMERALD_ANIM_STAND;
-        if ((Playfield.uRollUnderground[Playfield.pLevel[I + Playfield.uLevel_X_Dimension]] & EMERALD_CHECKROLL_STONE) != 0) {
+        if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_STONE) != 0) {
             uFree = GetFreeRollDirections(I);
             if (uFree == 1) {   // Stone kann links rollen
                 // neuen Platz mit ungültigem Element besetzen
@@ -195,7 +198,6 @@ void ControlStone(uint32_t I) {
                 Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                 // Aktuelles Element auf Animation "links"
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-
             } else if (uFree == 2) {    // Stone kann rechts rollen
                 // neuen Platz mit ungültigem Element besetzen
                 Playfield.pLevel[I + 1] = EMERALD_INVALID;
@@ -215,6 +217,80 @@ void ControlStone(uint32_t I) {
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
                 } else {                    // rechts
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            }
+        } else {    // Ab hier prüfen, ob Stein durch Laufband bewegt werden kann
+            if (uHitElement == EMERALD_CONVEYORBELT_RED) {
+                if  ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            } else if (uHitElement == EMERALD_CONVEYORBELT_GREEN) {
+                if  ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            } else if (uHitElement == EMERALD_CONVEYORBELT_BLUE) {
+                if  ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+                    // Aktuelles Element auf Animation "rechts"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                }
+            } else if (uHitElement == EMERALD_CONVEYORBELT_YELLOW) {
+                if  ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                    // neuen Platz mit ungültigem Element besetzen
+                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
+                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
+                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+                    // Aktuelles Element auf Animation "links"
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann

@@ -24,7 +24,7 @@ void ControlYam(uint32_t I) {
         return;
     }
     uAnimStatus = Playfield.pStatusAnimation[I] & 0x0000FF00;
-    // Zunächst prüfen, ob es um den YAM einen Saphir gibt, den er fressen kann
+    // Zunächst prüfen, ob es um den YAM einen Saphir gibt, den er fressen kann. Es werden keine "blitzenden" Saphire gefressen.
     if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND)) {
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_SAPPHIRE_SHRINK;
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED; // YAM ist beim Fressen blockiert.
@@ -39,10 +39,7 @@ void ControlYam(uint32_t I) {
         PreparePlaySound(SOUND_YAM,I);
     } else if ((Playfield.pLevel[I - 1] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I - 1] == EMERALD_ANIM_STAND)) {
         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_SAPPHIRE_SHRINK;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // YAM ist beim Fressen blockiert.
-        if (IsYamCompleteBlocked(I)) {
-            Playfield.pStatusAnimation[I] |= EMERALD_ANIM_YAM_WAS_BLOCKED;
-        }
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED; // YAM ist beim Fressen blockiert.
         PreparePlaySound(SOUND_YAM,I);
     } else {
         // YAM frisst nicht

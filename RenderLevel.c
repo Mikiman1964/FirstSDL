@@ -12,6 +12,29 @@
 extern PLAYFIELD Playfield;
 extern uint8_t ge_uBeamColors[];
 extern CONFIG Config;
+uint8_t g_uCheeseRandom[MAX_CHEESE_RANDOM_NUMBERS];
+
+
+/*----------------------------------------------------------------------------
+Name:           FillCheeseRandomNumbers
+------------------------------------------------------------------------------
+Beschreibung: Füllt einen Speicherbereich mit Zufallszahlen (0,1,2 oder 3), damit die
+              Funktion RenderLevel ein zufälligeres Käsemuster erzeugen kann.
+              Es reicht, dass diese Funktion einmalig aufgerufen wird.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: g_uCheeseRandom[]
+------------------------------------------------------------------------------*/
+void FillCheeseRandomNumbers(void) {
+    uint32_t I;
+
+    for (I = 0; I < MAX_CHEESE_RANDOM_NUMBERS; I++) {
+        g_uCheeseRandom[I] = randn(0,3);
+    }
+}
+
 
 /*----------------------------------------------------------------------------
 Name:           RenderLevel
@@ -64,6 +87,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     ///////
     uint8_t uVerticalBeamColor;
     uint8_t uHorizontalBeamColor;
+    uint8_t uCheeseRandom;
     uint32_t uResX, uResY;
 
     // Sichtbare Fläche aufrunden statt abrunden
@@ -157,8 +181,88 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     } else if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_DOWN) {
                         nYoffs = nAnimationCount * 2;
                     } else {
-                      SDL_Log("%s: [EMERALD_ALIEN_KILLS_MAN]: Warning: unhandled Status: %x",__FUNCTION__,uSelfStatus);
+                        SDL_Log("%s: [EMERALD_ALIEN_KILLS_MAN]: Warning: unhandled Status: %x",__FUNCTION__,uSelfStatus);
                     }
+                    break;
+                case (EMERALD_CONVEYORBELT_SWITCH_RED):
+                    if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
+                        uTextureIndex = 801;    // links
+                    } else if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) {
+                        uTextureIndex = 802;    // rechts
+                    } else {
+                        uTextureIndex = 800;    // aus
+                    }
+                    break;
+                case (EMERALD_CONVEYORBELT_RED):
+                    uTextureIndex = 799;
+                    if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+                    } else if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+                    }
+                    break;
+                case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
+                    if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) {
+                        uTextureIndex = 805;    // links
+                    } else if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) {
+                        uTextureIndex = 806;    // rechts
+                    } else {
+                        uTextureIndex = 804;    // aus
+                    }
+                    break;
+                case (EMERALD_CONVEYORBELT_GREEN):
+                    uTextureIndex = 803;
+                    if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+                    } else if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+                    }
+                    break;
+                case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
+                    if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) {
+                        uTextureIndex = 809;    // links
+                    } else if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) {
+                        uTextureIndex = 810;    // rechts
+                    } else {
+                        uTextureIndex = 808;    // aus
+                    }
+                    break;
+                case (EMERALD_CONVEYORBELT_BLUE):
+                    uTextureIndex = 807;
+                    if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+                    } else if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+                    }
+                    break;
+                case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
+                    if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) {
+                        uTextureIndex = 813;    // links
+                    } else if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) {
+                        uTextureIndex = 814;    // rechts
+                    } else {
+                        uTextureIndex = 812;    // aus
+                    }
+                    break;
+                case (EMERALD_CONVEYORBELT_YELLOW):
+                    uTextureIndex = 811;
+                    if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+                    } else if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) {
+                        fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+                    }
+                    break;
+                case (EMERALD_LEVELEDITOR_MESSAGE_1_4):
+                    uTextureIndex = 815;
+                    break;
+                case (EMERALD_LEVELEDITOR_MESSAGE_2_4):
+                    uTextureIndex = 816;
+                    break;
+                case (EMERALD_LEVELEDITOR_MESSAGE_3_4):
+                    uTextureIndex = 817;
+                    break;
+                case (EMERALD_LEVELEDITOR_MESSAGE_4_4):
+                    uTextureIndex = 818;
                     break;
                 case (EMERALD_MAN_DIES):
                     if (uSelfStatus == EMERALD_ANIM_MAN_DIES_P1) {
@@ -525,7 +629,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     uTextureIndex = 431;
                     break;
                 case (EMERALD_BEAM_YELLOW_HORIZONTAL):
-        uTextureIndex = 432;
+                    uTextureIndex = 432;
                     break;
                 case (EMERALD_BEAM_CROSS):
                     uTextureIndex = 0;
@@ -793,7 +897,12 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     fScaleH = fScaleW;
                     break;
                 case (EMERALD_GREEN_CHEESE):
-                    uTextureIndex = 343 + I % 3;    // Es gibt 3 (0, 1 und 2) verschiedene Käsestückchen-Grafiken
+                    uCheeseRandom = g_uCheeseRandom[I & (MAX_CHEESE_RANDOM_NUMBERS - 1)];
+                    if (uCheeseRandom < 3) {
+                        uTextureIndex = 343 + uCheeseRandom;
+                    } else {
+                        uTextureIndex = 819;    // Wurde leider erst später hinzugefügt
+                    }
                     break;
                 case (EMERALD_STEEL_FORBIDDEN):
                     uTextureIndex = 334;
@@ -1012,6 +1121,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_MAGIC_WALL):
+                case (EMERALD_MAGIC_WALL_STEEL):
                     if (uSelfStatus == EMERALD_ANIM_SAG_OUT_MAGIC_WALL) {
                         bExtendedElement = true;
                         uNewMagicElement = Playfield.pInvalidElement[I];
@@ -1044,44 +1154,17 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     // Magic Wall muss Element beim Austritt (teilweise) übermalen
                     nYoffs = 0; //- FONT_H;
                     if (Playfield.bMagicWallRunning) {
-                        uTextureIndex = 293 + nAnimationCount / 2;
-                    } else {
-                        uTextureIndex = 293;
-                    }
-                    break;
-                case (EMERALD_MAGIC_WALL_STEEL):
-                    if (uSelfStatus == EMERALD_ANIM_SAG_OUT_MAGIC_WALL) {
-                        bExtendedElement = true;
-                        uNewMagicElement = Playfield.pInvalidElement[I];
-                        // SDL_Log("%s: element %x comes from blue wall",__FUNCTION__,uNewMagicElement);
-                        nYoffs_0 = nAnimationCount * 2;
-                        switch (uNewMagicElement) {
-                            case(EMERALD_EMERALD):      // Stein -> Emerald
-                                uTextureIndex_0 = 226 + nAnimationCount / 2;     // Emerald, fallend
-                                break;
-                            case(EMERALD_SAPPHIRE):     // Emerald -> Saphir
-                                uTextureIndex_0 = 248 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 9; // Saphir fallend
-                                break;
-                            case(EMERALD_STONE):        // Saphir -> Stein
-                                uTextureIndex_0 = 71;
-                                break;
-                            case(EMERALD_BOMB):        // Rubin -> Bombe (noch klein)
-                                uTextureIndex_0 = 271 + nAnimationCount % 8;
-                                break;
-                            case(EMERALD_CRYSTAL):     // Kristall -> Kristall
-                                uTextureIndex_0 = 309;
-                                break;
-                            default:
-                                SDL_Log("%s: warning: new unhandled magic element: %x at %d",__FUNCTION__,uNewMagicElement,I);
-                                break;
+                        if (uLevelElement == EMERALD_MAGIC_WALL) {
+                            uTextureIndex = 293 + nAnimationCount / 2;
+                        } else {    // Steel-Magic-Wall
+                            uTextureIndex = 466 + nAnimationCount / 2;
                         }
-                    }
-                    // Magic Wall muss Element beim Austritt (teilweise) übermalen
-                    nYoffs = 0; //- FONT_H;
-                    if (Playfield.bMagicWallRunning) {
-                        uTextureIndex = 466 + nAnimationCount / 2;
                     } else {
-                        uTextureIndex = 466;
+                        if (uLevelElement == EMERALD_MAGIC_WALL) {
+                            uTextureIndex = 293;
+                        } else {    // Steel-Magic-Wall
+                            uTextureIndex = 466;
+                        }
                     }
                     break;
                 case(EMERALD_STONE_SINK):
@@ -1590,6 +1673,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                          (uSelfStatus == EMERALD_ANIM_DYNAMITE_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_MESSAGE_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_SAPPHIRE_SHRINK) ||
+                         (uSelfStatus == EMERALD_ANIM_GRASS_SHRINK) ||
+                         ((uSelfStatus == EMERALD_ANIM_SAND_INVISIBLE_SHRINK) && (Playfield.bLightOn)) ||
                          (uSelfStatus == EMERALD_ANIM_SAND_SHRINK) ) {
                             bExtendedElement = true;
                             uTextureIndex_0 = GetTextureIndexByShrink(uSelfStatus);
@@ -2280,6 +2365,10 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_WALL_ROUND):
                     uTextureIndex = 317;     // Mauer rund
                     break;
+                case (EMERALD_SANDMINE):
+                    // Hinweis: Die äußeren Klammern sind wichtig !
+                    uTextureIndex = 766 + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_SAND_0) >> 8);    // Sandmine mit richtigem Rand aussuchen
+                    break;
                 case (EMERALD_SAND):
                     if (uSelfStatus == EMERALD_ANIM_SAND_SHRINK) { // Man mit Richtung und Fire
                         uTextureIndex = 156; // kompl. freier Sand
@@ -2292,6 +2381,43 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         // Hinweis: Die äußeren Klammern sind wichtig !
                         uTextureIndex = 156 + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_SAND_0) >> 8);    // Sand mit richtigem Rand aussuchen
                     }
+                    break;
+                case (EMERALD_SAND_INVISIBLE):
+                    if (Playfield.bLightOn) {
+                        if (uSelfStatus == EMERALD_ANIM_SAND_INVISIBLE_SHRINK) { // Man mit Richtung und Fire
+                            uTextureIndex = 783; // kompl. freier Sand
+                            nXoffs = nAnimationCount;
+                            nYoffs = nAnimationCount;
+                            fScaleW = 1 - nAnimationCount * 0.06;
+                            fScaleH = fScaleW;
+                            fAngleOffs = nAnimationCount * 22.5;
+                        } else {
+                            // Hinweis: Die äußeren Klammern sind wichtig !
+                            uTextureIndex = 783 + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_SAND_0) >> 8);    // Sand mit richtigem Rand aussuchen
+                        }
+                    } else {
+                        uTextureIndex = 0;
+                    }
+                    break;
+                case (EMERALD_GRASS):
+                    if (uSelfStatus == EMERALD_ANIM_GRASS_SHRINK) { // Man mit Richtung und Fire
+                        uTextureIndex = 750; // kompl. freies Gras
+                        nXoffs = nAnimationCount;
+                        nYoffs = nAnimationCount;
+                        fScaleW = 1 - nAnimationCount * 0.06;
+                        fScaleH = fScaleW;
+                        fAngleOffs = nAnimationCount * 22.5;
+                    } else {
+                        // Hinweis: Die äußeren Klammern sind wichtig !
+                        uTextureIndex = 750 + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_SAND_0) >> 8);    // Gras mit richtigem Rand aussuchen
+                    }
+                    break;
+                case (EMERALD_GRASS_COMES):
+                    uTextureIndex = 750; // kompl. freies Gras
+                    nXoffs = (FONT_W / 2) - nAnimationCount;
+                    nYoffs = (FONT_H / 2) - nAnimationCount;
+                    fScaleW = nAnimationCount * 0.06;
+                    fScaleH = fScaleW;
                     break;
                 case (EMERALD_SPACE):
                     uTextureIndex = 0;      // Space

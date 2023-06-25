@@ -23,7 +23,7 @@
 
 #include "sdlmixer_SDL_mixer.h"
 #include "sdlmixer_mixer.h"
-#include "sdlmixer_music.h"
+
 
 #define MIX_INTERNAL_EFFECT__
 #include "sdlmixer_effects_internal.h"
@@ -100,9 +100,6 @@ static void *mix_postmix_data = NULL;
 /* rcg07062001 callback to alert when channels are done playing. */
 static void (SDLCALL *channel_done_callback)(int channel) = NULL;
 
-/* Support for user defined music functions */
-static void (SDLCALL *mix_music)(void *udata, Uint8 *stream, int len) = music_mixer;
-static void *music_data = NULL;
 
 /* rcg06042009 report available decoders at runtime. */
 static const char **chunk_decoders = NULL;
@@ -162,113 +159,6 @@ const SDL_version *Mix_Linked_Version(void)
     return(&linked_version);
 }
 
-/*
- * Returns a bitmap of already loaded modules (MIX_INIT_* flags).
- *
- * Note that functions other than Mix_Init() may cause a module to get loaded
- * (hence the looping over the interfaces instead of maintaining a set of flags
- * just in Mix_Init() and Mix_Quit()).
- */
-static int get_loaded_mix_init_flags(void)
-{
-    int i;
-    int loaded_init_flags = 0;
-
-    for (i = 0; i < get_num_music_interfaces(); ++i) {
-        Mix_MusicInterface *interface;
-
-        interface = get_music_interface(i);
-        if (interface->loaded) {
-            switch (interface->type) {
-            case MUS_FLAC:
-                loaded_init_flags |= MIX_INIT_FLAC;
-                break;
-            case MUS_MOD:
-                loaded_init_flags |= MIX_INIT_MOD;
-                break;
-            case MUS_MP3:
-                loaded_init_flags |= MIX_INIT_MP3;
-                break;
-            case MUS_OGG:
-                loaded_init_flags |= MIX_INIT_OGG;
-                break;
-            case MUS_MID:
-                loaded_init_flags |= MIX_INIT_MID;
-                break;
-            case MUS_OPUS:
-                loaded_init_flags |= MIX_INIT_OPUS;
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    return loaded_init_flags;
-}
-
-int Mix_Init(int flags)
-{
-    int result = 0;
-    int already_loaded = get_loaded_mix_init_flags();
-
-    if (flags & MIX_INIT_FLAC) {
-        if (load_music_type(MUS_FLAC)) {
-            open_music_type(MUS_FLAC);
-            result |= MIX_INIT_FLAC;
-        } else {
-            Mix_SetError("FLAC support not available");
-        }
-    }
-    if (flags & MIX_INIT_MOD) {
-        if (load_music_type(MUS_MOD)) {
-            open_music_type(MUS_MOD);
-            result |= MIX_INIT_MOD;
-        } else {
-            Mix_SetError("MOD support not available");
-        }
-    }
-    if (flags & MIX_INIT_MP3) {
-        if (load_music_type(MUS_MP3)) {
-            open_music_type(MUS_MP3);
-            result |= MIX_INIT_MP3;
-        } else {
-            Mix_SetError("MP3 support not available");
-        }
-    }
-    if (flags & MIX_INIT_OGG) {
-        if (load_music_type(MUS_OGG)) {
-            open_music_type(MUS_OGG);
-            result |= MIX_INIT_OGG;
-        } else {
-            Mix_SetError("OGG support not available");
-        }
-    }
-    if (flags & MIX_INIT_OPUS) {
-        if (load_music_type(MUS_OPUS)) {
-            open_music_type(MUS_OPUS);
-            result |= MIX_INIT_OPUS;
-        } else {
-            Mix_SetError("OPUS support not available");
-        }
-    }
-    if (flags & MIX_INIT_MID) {
-        if (load_music_type(MUS_MID)) {
-            open_music_type(MUS_MID);
-            result |= MIX_INIT_MID;
-        } else {
-            Mix_SetError("MIDI support not available");
-        }
-    }
-    result |= already_loaded;
-
-    return result;
-}
-
-void Mix_Quit()
-{
-    unload_music();
-}
 
 static int _Mix_remove_all_effects(int channel, effect_info **e);
 
@@ -333,7 +223,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
     SDL_memset(stream, mixer.silence, (size_t)len);
 
     /* Mix the music (must be done before the channels are added) */
-    mix_music(music_data, stream, len);
+    //mix_music(music_data, stream, len);
 
     master_vol = SDL_AtomicGet(&master_volume);
 
@@ -507,7 +397,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
         mix_channel[i].effects = NULL;
         mix_channel[i].paused = 0;
     }
-    Mix_VolumeMusic(SDL_MIX_MAXVOLUME);
+    //Mix_VolumeMusic(SDL_MIX_MAXVOLUME);
 
     _Mix_InitEffects();
 
@@ -516,7 +406,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
     add_chunk_decoder("VOC");
 
     /* Initialize the music players */
-    open_music(&mixer);
+    //open_music(&mixer);
 
     audio_opened = 1;
     SDL_PauseAudioDevice(audio_device, 0);
@@ -596,147 +486,7 @@ typedef struct _MusicFragment
     struct _MusicFragment *next;
 } MusicFragment;
 
-static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
-{
-    int i;
-    Mix_MusicType music_type;
-    Mix_MusicInterface *interface = NULL;
-    void *music = NULL;
-    Sint64 start;
-    SDL_bool playing;
-    MusicFragment *first = NULL, *last = NULL, *fragment = NULL;
-    int count = 0;
-    int fragment_size;
 
-    music_type = detect_music_type(src);
-    if (!load_music_type(music_type) || !open_music_type(music_type)) {
-        return NULL;
-    }
-
-    *spec = mixer;
-
-    /* Use fragments sized on full audio frame boundaries - this'll do */
-    fragment_size = spec->size;
-
-    start = SDL_RWtell(src);
-    for (i = 0; i < get_num_music_interfaces(); ++i) {
-        interface = get_music_interface(i);
-        if (!interface->opened) {
-            continue;
-        }
-        if (interface->type != music_type) {
-            continue;
-        }
-        if (!interface->CreateFromRW || !interface->GetAudio) {
-            continue;
-        }
-
-        /* These music interfaces are not safe to use while music is playing */
-        if (interface->api == MIX_MUSIC_CMD ||
-             interface->api == MIX_MUSIC_NATIVEMIDI) {
-            continue;
-        }
-
-        music = interface->CreateFromRW(src, freesrc);
-        if (music) {
-            /* The interface owns the data source now */
-            freesrc = SDL_FALSE;
-            break;
-        }
-
-        /* Reset the stream for the next decoder */
-        SDL_RWseek(src, start, RW_SEEK_SET);
-    }
-
-    if (!music) {
-        if (freesrc) {
-            SDL_RWclose(src);
-        }
-        Mix_SetError("Unrecognized audio format");
-        return NULL;
-    }
-
-    Mix_LockAudio();
-
-    if (interface->Play) {
-        interface->Play(music, 1);
-    }
-    playing = SDL_TRUE;
-
-    while (playing) {
-        int left;
-
-        fragment = (MusicFragment *)SDL_malloc(sizeof(*fragment));
-        if (!fragment) {
-            /* Uh oh, out of memory, let's return what we have */
-            break;
-        }
-        fragment->data = (Uint8 *)SDL_malloc(fragment_size);
-        if (!fragment->data) {
-            /* Uh oh, out of memory, let's return what we have */
-            SDL_free(fragment);
-            break;
-        }
-        fragment->next = NULL;
-
-        left = interface->GetAudio(music, fragment->data, fragment_size);
-        if (left > 0) {
-            playing = SDL_FALSE;
-        } else if (interface->IsPlaying) {
-            playing = interface->IsPlaying(music);
-        }
-        fragment->size = (fragment_size - left);
-
-        if (!first) {
-            first = fragment;
-        }
-        if (last) {
-            last->next = fragment;
-        }
-        last = fragment;
-        ++count;
-    }
-
-    if (interface->Stop) {
-        interface->Stop(music);
-    }
-
-    if (music) {
-        interface->Delete(music);
-    }
-
-    Mix_UnlockAudio();
-
-    if (count > 0) {
-        *audio_len = (count - 1) * fragment_size + last->size;
-        *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
-        if (*audio_buf) {
-            Uint8 *dst = *audio_buf;
-            for (fragment = first; fragment; fragment = fragment->next) {
-                SDL_memcpy(dst, fragment->data, fragment->size);
-                dst += fragment->size;
-            }
-        } else {
-            Mix_OutOfMemory();
-            spec = NULL;
-        }
-    } else {
-        Mix_SetError("No audio data");
-        spec = NULL;
-    }
-
-    while (first) {
-        fragment = first;
-        first = first->next;
-        SDL_free(fragment->data);
-        SDL_free(fragment);
-    }
-
-    if (freesrc) {
-        SDL_RWclose(src);
-    }
-    return spec;
-}
 
 /* Load a wave file */
 Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
@@ -787,7 +537,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
         loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
     } else {
-        loaded = Mix_LoadMusic_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+        loaded = NULL;
     }
     if (!loaded) {
         /* The individual loaders have closed src if needed */
@@ -958,28 +708,6 @@ void Mix_SetPostMix(void (SDLCALL *mix_func)
     mix_postmix_data = arg;
     mix_postmix = mix_func;
     Mix_UnlockAudio();
-}
-
-/* Add your own music player or mixer function.
-   If 'mix_func' is NULL, the default music player is re-enabled.
- */
-void Mix_HookMusic(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len),
-                                                                void *arg)
-{
-    Mix_LockAudio();
-    if (mix_func != NULL) {
-        music_data = arg;
-        mix_music = mix_func;
-    } else {
-        music_data = NULL;
-        mix_music = music_mixer;
-    }
-    Mix_UnlockAudio();
-}
-
-void *Mix_GetMusicHookData(void)
-{
-    return(music_data);
 }
 
 void Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel))
@@ -1338,8 +1066,8 @@ void Mix_CloseAudio(void)
                 Mix_UnregisterAllEffects(i);
             }
             Mix_UnregisterAllEffects(MIX_CHANNEL_POST);
-            close_music();
-            Mix_SetMusicCMD(NULL);
+            //close_music();
+            //Mix_SetMusicCMD(NULL);
             Mix_HaltChannel(-1);
             _Mix_DeinitEffects();
             SDL_CloseAudioDevice(audio_device);

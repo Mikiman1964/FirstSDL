@@ -55,8 +55,14 @@ void BornSmileys(void) {
             Smileys[I].fYSpeed = 0;
             Smileys[I].fAngleRotate = 0;
             while ((Smileys[I].fXSpeed == 0) && (Smileys[I].fYSpeed == 0)) {
-                Smileys[I].fXSpeed = randn(-5,5);
-                Smileys[I].fYSpeed = randn(-5,5);
+                Smileys[I].fXSpeed = randn(0,5);
+                if (randn(0,1) == 0) {
+                    Smileys[I].fXSpeed = -Smileys[I].fXSpeed;
+                }
+                Smileys[I].fYSpeed = randn(0,5);
+                if (randn(0,1) == 0) {
+                    Smileys[I].fYSpeed = -Smileys[I].fYSpeed;
+                }
             }
             Smileys[I].fXpos = Config.uResX / 2;
             Smileys[I].fYpos = Config.uResY / 2;
@@ -112,12 +118,7 @@ int MoveSmileys(SDL_Renderer *pRenderer) {
     }
 
     if (SDL_GetTicks() - g_uLastSmileyRotation > g_uNextWaitTime) {
-    //if (SDL_GetTicks() - g_uLastSmileyRotation > 5000) {
-        //g_uNextWaitTime = randn(1000,8000);
-
-
         g_uNextWaitTime = randn(200,5000);
-
         g_bT = !g_bT;   // Für rechts/links-Drall
         if (g_bT) {
             fM = randf(1,4);

@@ -36,7 +36,7 @@
 #define SOUND_DOOR_OPEN_CLOSE   0b00001000000000000000000000000000      // Tür öffnen / schließen
 #define SOUND_REPLICATOR_PLOP   0b00010000000000000000000000000000      // Replikator erzeugt neues Objekt
 #define SOUND_DYNAMITE_START    0b00100000000000000000000000000000      // Dynamit wird gestartet
-#define SOUND_FREE_6            0b01000000000000000000000000000000      // -
+#define SOUND_CONVEYORBELT      0b01000000000000000000000000000000      // Laufband
 
 #define MAX_WAV_CHUNKS          32                                      // Maximale Anzahl von WAV-Chunks
 

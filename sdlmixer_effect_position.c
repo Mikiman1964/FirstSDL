@@ -51,6 +51,9 @@
  * Positional effects...panning, distance attenuation, etc.
  */
 
+
+
+
 typedef struct _Eff_positionargs
 {
     volatile float left_f;
@@ -82,7 +85,6 @@ void _Eff_PositionDeinit(void)
     for (i = 0; i < position_channels; i++) {
         SDL_free(pos_args_array[i]);
     }
-
     position_channels = 0;
 
     SDL_free(pos_args_global);
@@ -95,6 +97,7 @@ void _Eff_PositionDeinit(void)
 /* This just frees up the callback-specific data. */
 static void SDLCALL _Eff_PositionDone(int channel, void *udata)
 {
+
     (void)udata;
 
     if (channel < 0) {
@@ -111,6 +114,7 @@ static void SDLCALL _Eff_PositionDone(int channel, void *udata)
 
 static void SDLCALL _Eff_position_u8(int chan, void *stream, int len, void *udata)
 {
+
     Uint8 *ptr = (Uint8 *) stream;
     const float dist_f = ((position_args *)udata)->distance_f;
     const float left_f = ((position_args *)udata)->left_f;
@@ -153,6 +157,9 @@ static void SDLCALL _Eff_position_u8(int chan, void *stream, int len, void *udat
 
 static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *udata)
 {
+
+
+
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     int i;
@@ -244,6 +251,7 @@ static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *u
 
     (void)chan;
     (void)len;
+
 
     /*
      * if there's only a mono channnel (the only way we wouldn't have
@@ -363,6 +371,8 @@ static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *u
  */
 static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
 {
+
+
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     Uint32 *p;
@@ -414,6 +424,8 @@ static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void
 
 static void SDLCALL _Eff_position_s8(int chan, void *stream, int len, void *udata)
 {
+
+
     Sint8 *ptr = (Sint8 *) stream;
     const float dist_f = ((position_args *)udata)->distance_f;
     const float left_f = ((position_args *)udata)->left_f;
@@ -2133,3 +2145,4 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
 /* end of effects_position.c ... */
 
 /* vi: set ts=4 sw=4 expandtab: */
+

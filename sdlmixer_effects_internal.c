@@ -26,6 +26,8 @@
 
 /* ------ These are used internally only. Don't touch. ------ */
 
+
+
 #include "sdlmixer_SDL_mixer.h"
 
 #define MIX_INTERNAL_EFFECT__
@@ -117,3 +119,4 @@ void *_Eff_build_volume_table_s8(void)
 /* end of effects.c ... */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
