@@ -1,12 +1,10 @@
 /*
 TODO
-* doppeltes Rollen der Elemente vermeiden, wenn diese nicht auf Laufband liegen
+* doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen
 * Explosion
     * Explosionen mit Sumpf testen (erster Test sieht gut aus)
 * Leveleditor
     * Level von Levelgruppe zu Levelgruppe kopierbar machen (über eine Art Zwischenablage)
-    * Import Level: Konverter für alte DOS-Levels fertigstellen
-    * Import-Level: DOS-Import: YAMs und Leveldaten wie Zeiten, Scores usw. mit berücksichtigen
     * Undo für Editor
 */
 #include <SDL2/SDL.h>
@@ -47,6 +45,7 @@ TODO
 #include "saphir.h"
 #include "smileys.h"
 #include "sound.h"
+#include "steel_wall_grow.h"
 #include "stone.h"
 #include "yam.h"
 
@@ -245,7 +244,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         nRet = ShowAuthorAndLevelname(pRenderer,uLevel);
         if (nRet < 0) {
             bLevelRun = false; // Ein Fehler ist aufgetreten
-        } else if (nRet > 0) {
+        } else if (nRet > 0) {  // Abbruch durch ESC
             bPrepareLevelExit = true;
         }
     }
@@ -310,7 +309,9 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 Playfield.bReadyToGo = true;
                 PreparePlaySound(SOUND_REPLICATOR_PLOP,Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension);
             }
-            PlayAllSounds();
+            if (nRet == 0) {   // Falls in ShowAuthorAndLevelname() ESC-Taste gedrückt wurde, Spielsound unterdrücken
+                PlayAllSounds();
+            }
         }
         if (!bPause) {
             ScrollAndCenterLevel(uManDirection);
@@ -560,8 +561,77 @@ uint32_t ControlGame(uint32_t uDirection) {
 
     for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
         uLevelElement = Playfield.pLevel[I];
-        switch (uLevelElement)
-        {
+        switch (uLevelElement) {
+            case (EMERALD_WALL_GROW_LEFT):
+                ControlWallGrowLeft(I);
+                break;
+            case (EMERALD_WALL_GROWING_LEFT):
+                ControlWallGrowingLeft(I);
+                break;
+            case (EMERALD_WALL_GROW_RIGHT):
+                ControlWallGrowRight(I);
+                break;
+            case (EMERALD_WALL_GROWING_RIGHT):
+                ControlWallGrowingRight(I);
+                break;
+            case (EMERALD_WALL_GROW_UP):
+                ControlWallGrowUp(I);
+                break;
+            case (EMERALD_WALL_GROWING_UP):
+                ControlWallGrowingUp(I);
+                break;
+            case (EMERALD_WALL_GROW_DOWN):
+                ControlWallGrowDown(I);
+                break;
+            case (EMERALD_WALL_GROWING_DOWN):
+                ControlWallGrowingDown(I);
+                break;
+            case (EMERALD_WALL_GROW_LEFT_RIGHT):
+                ControlWallGrowLeftRight(I);
+                break;
+            case (EMERALD_WALL_GROW_UP_DOWN):
+                ControlWallGrowUpDown(I);
+                break;
+            case (EMERALD_WALL_GROW_ALL):
+                ControlWallGrowAllDirections(I);
+                break;
+            case (EMERALD_STEEL_GROW_LEFT):
+                ControlSteelGrowLeft(I);
+                break;
+            case (EMERALD_STEEL_GROWING_LEFT):
+                ControlSteelGrowingLeft(I);
+                break;
+            case (EMERALD_STEEL_GROW_RIGHT):
+                ControlSteelGrowRight(I);
+                break;
+            case (EMERALD_STEEL_GROWING_RIGHT):
+                ControlSteelGrowingRight(I);
+                break;
+            case (EMERALD_STEEL_GROW_UP):
+                ControlSteelGrowUp(I);
+                break;
+            case (EMERALD_STEEL_GROWING_UP):
+                ControlSteelGrowingUp(I);
+                break;
+            case (EMERALD_STEEL_GROW_DOWN):
+                ControlSteelGrowDown(I);
+                break;
+            case (EMERALD_STEEL_GROWING_DOWN):
+                ControlSteelGrowingDown(I);
+                break;
+            case (EMERALD_STEEL_GROW_LEFT_RIGHT):
+                ControlSteelGrowLeftRight(I);
+                break;
+            case (EMERALD_STEEL_GROW_UP_DOWN):
+                ControlSteelGrowUpDown(I);
+                break;
+            case (EMERALD_STEEL_GROW_ALL):
+                ControlSteelGrowAllDirections(I);
+                break;
+
+
+
+
             case (EMERALD_YAM_KILLS_MAN):
                 ControlYamKillsMan(I);
                 break;
@@ -1051,6 +1121,22 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_LEFT_BOTTOM] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_BOTTOM] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_MARKER_RIGHT_BOTTOM] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_GROW_RIGHT] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	// Playfield.uRollUnderground[EMERALD_STEEL_GROWING_RIGHT] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_GROW_LEFT] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+	// Playfield.uRollUnderground[EMERALD_STEEL_GROWING_LEFT] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_GROW_UP] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+	// Playfield.uRollUnderground[EMERALD_STEEL_GROWING_UP] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_GROW_DOWN] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    // Playfield.uRollUnderground[EMERALD_STEEL_GROWING_DOWN] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_WALL_GROW_RIGHT] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+	// Playfield.uRollUnderground[EMERALD_WALL_GROWING_RIGHT] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_WALL_GROW_LEFT] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+	// Playfield.uRollUnderground[EMERALD_WALL_GROWING_LEFT] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_WALL_GROW_UP] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+	// Playfield.uRollUnderground[EMERALD_WALL_GROWING_UP] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_WALL_GROW_DOWN] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    // Playfield.uRollUnderground[EMERALD_WALL_GROWING_DOWN] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_FONT_STEEL_EXCLAMATION] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_FONT_STEEL_ARROW_RIGHT] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_FONT_STEEL_ARROW_UP] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
@@ -1403,11 +1489,11 @@ void ControlTimeDoor(uint32_t I) {
     bActDoorOpenState = ((Playfield.pStatusAnimation[I] & 0xFF00) == EMERALD_STATUS_DOOR_OPEN);
     if (Playfield.bTimeDoorOpen != bActDoorOpenState) {
         if (Playfield.bTimeDoorOpen) {
-            SDL_Log("%s: Time door opens",__FUNCTION__);
+            // SDL_Log("%s: Time door opens",__FUNCTION__);
             Playfield.pStatusAnimation[I] = EMERALD_STATUS_DOOR_OPEN | EMERALD_ANIM_DOOR_OPEN;
             PreparePlaySound(SOUND_DOOR_OPEN_CLOSE,I);
         } else {
-            SDL_Log("%s: Time door closes",__FUNCTION__);
+            // SDL_Log("%s: Time door closes",__FUNCTION__);
             Playfield.pStatusAnimation[I] = EMERALD_STATUS_DOOR_CLOSE |EMERALD_ANIM_DOOR_CLOSE;
             PreparePlaySound(SOUND_DOOR_OPEN_CLOSE,I);
         }
@@ -1578,8 +1664,8 @@ int CheckGameDirectorys(void) {
     int nErrorCode = -1;
 
     if (CheckHighScoresDir() == 0) {
-        if (CheckAndCreateDir(EMERALD_IMPORTDOS_DIRECTORYNAME) == 0) {
-            if (CheckAndCreateDir(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
+        if (CheckAndCreateDir(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
+            if (CheckAndCreateDir(EMERALD_LEVELGROUPS_DIRECTORYNAME) == 0) {
                 nErrorCode = CheckImportLevelFiles();
             }
         }

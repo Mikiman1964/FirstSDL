@@ -567,6 +567,21 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_GRASS):
         case (EMERALD_GRASS_COMES):
         case (EMERALD_WALL_CORNERED):
+        case (EMERALD_WALL_GROW_LEFT):
+        case (EMERALD_WALL_GROW_RIGHT):
+        case (EMERALD_WALL_GROW_UP):
+        case (EMERALD_WALL_GROW_DOWN):
+        case (EMERALD_WALL_GROW_LEFT_RIGHT):
+        case (EMERALD_WALL_GROW_UP_DOWN):
+        case (EMERALD_WALL_GROW_ALL):
+        case (EMERALD_WALL_GROWING_LEFT):
+        case (EMERALD_WALL_GROWING_RIGHT):
+        case (EMERALD_WALL_GROWING_UP):
+        case (EMERALD_WALL_GROWING_DOWN):
+        case (EMERALD_DOOR_ONLY_UP_WALL):
+        case (EMERALD_DOOR_ONLY_DOWN_WALL):
+        case (EMERALD_DOOR_ONLY_LEFT_WALL):
+        case (EMERALD_DOOR_ONLY_RIGHT_WALL):
         case (EMERALD_HAMMER):
         case (EMERALD_MAGIC_WALL):
         case (EMERALD_WHEEL):

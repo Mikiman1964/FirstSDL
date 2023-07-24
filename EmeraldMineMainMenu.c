@@ -669,7 +669,7 @@ int EvaluateGame(int *pnNewHighscoreIndex, uint32_t *puLevelPlayed) {
 /*----------------------------------------------------------------------------
 Name:           MenuSelectLevelgroup
 ------------------------------------------------------------------------------
-Beschreibung: Erledigt die Auswahl einer Levelgruppe aus dem Hauptmenü heraus und
+Beschreibung: Erledigt die Auswahl einer Levelgruppe aus dem Hauptmenü und
               blendet die Balken für die Auswahl einer Levelgruppe ein, wenn sich
               der Mauspfeil über den Namen einer Gruppe befindet.
 Parameter
@@ -718,7 +718,7 @@ int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           MenuSelectName
 ------------------------------------------------------------------------------
-Beschreibung: Erledigt die Auswahl eines Namens aus dem Hauptmenü heraus und
+Beschreibung: Erledigt die Auswahl eines Namens aus dem Hauptmenü und
               blendet die Balken für die Auswahl eines Namens an, wenn sich
               der Mauspfeil über einem Namen befindet.
 Parameter
@@ -784,14 +784,10 @@ void InitLists(void) {
     // Level-Titel-Liste initialisieren
     InitLevelTitleList();
 
-    // Filelisten für Level-Import (DC3 und MSDOS) initialisieren
+    // Filelisten für Level-Import (DC3) initialisieren
     memset(MainMenu.uImportFileListDc3,0xFF,sizeof(MainMenu.uImportFileListDc3));
     for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDc3FileCount); I++) {
         MainMenu.uImportFileListDc3[I] = I;
-    }
-    memset(MainMenu.uImportFileListDos,0xFF,sizeof(MainMenu.uImportFileListDos));
-    for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDosFileCount); I++) {
-        MainMenu.uImportFileListDos[I] = I;
     }
 }
 
@@ -1604,7 +1600,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                         }
                         // printf("x:%u  y:%u\n",InputStates.nMouseXpos,InputStates.nMouseYpos);
                         if (!bPrepareExit) {
-                            if (MainMenu.nState == 0) {     // Levelgruppen- und Spielerauswahl nur während Namenseingabe nicht aktiv
+                            if (MainMenu.nState == 0) {     // Levelgruppen- und Spieler-Auswahl nur während Namenseingabe nicht aktiv
                                 nErrorCode = MenuSelectLevelgroup(pRenderer);
                                 if (nErrorCode == 0) {
                                     nErrorCode = MenuSelectName(pRenderer);
@@ -3055,7 +3051,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                uLevel, uint32_t, Levelnummer
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int, 0 = kein Fehler, 5 = Abbruch durch ESC, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {

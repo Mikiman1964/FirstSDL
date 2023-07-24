@@ -22,9 +22,6 @@
 
 #define MAX_STAR_POINTS                     10
 
-#define MIN_Y_RESOLUTION_FOR_LEVELEDITOR    800
-
-
 typedef struct {
     uint32_t uXdim;
     uint32_t uYdim;
@@ -34,7 +31,6 @@ typedef struct {
     uint16_t uLevelTitleList[MAX_LEVELTITLES_IN_LIST];  // Es sind maximal 31 Elemente zu sehen
     uint16_t uLevelTitleListCopy[MAX_LEVELTITLES_IN_LIST];  // Es sind maximal 31 Elemente zu sehen
     uint16_t uImportFileListDc3[EMERALD_MAX_MAXIMPORTFILES_IN_LIST];
-    uint16_t uImportFileListDos[EMERALD_MAX_MAXIMPORTFILES_IN_LIST];
     uint8_t  uFlashBrightness[20];
     char     szTempName[EMERALD_PLAYERNAME_LEN + 1];
     uint32_t uCursorPos;

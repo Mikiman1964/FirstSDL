@@ -1148,8 +1148,10 @@ Seiteneffekte: g_default_levelgroup
 ------------------------------------------------------------------------------*/
 int WriteDefaultLevelgroup(void) {
     int nErrorCode;
+    char szFullFilename[512];
 
-    nErrorCode = WriteFile(EMERALD_DEFAULT_LEVELGROUP_FILENAME,g_default_levelgroup,sizeof(g_default_levelgroup),false);
+    sprintf(szFullFilename,"%s/%s",EMERALD_LEVELGROUPS_DIRECTORYNAME,EMERALD_DEFAULT_LEVELGROUP_FILENAME);
+    nErrorCode = WriteFile(szFullFilename,g_default_levelgroup,sizeof(g_default_levelgroup),false);
     if (nErrorCode != 0) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Levelgroup problem","Could not write default levelgroup!\nPlease check write permissions!",NULL);
     }

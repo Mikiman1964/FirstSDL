@@ -6,7 +6,9 @@
 #include "mySDL.h"
 #include "mystd.h"
 
-#define MAX_PANEL_ELEMENTS                      224 // (8 * 32)
+#define MIN_Y_RESOLUTION_FOR_LEVELEDITOR        960
+
+#define MAX_PANEL_ELEMENTS                      248 // (8 * 31)
 #define EDITOR_MEM_SIZE                         4096
 
 #define MENUSTATE_LEVEL_STD                     0
@@ -180,9 +182,9 @@ void FreeEditorButtons(void);
 int CopyPlayfieldValueToEditor(void);
 int SetLevelBorder(uint16_t *pLevel, bool bClear, bool bAlwaysSteel);
 uint32_t GetLevelnameBeamPosition(void);
-uint32_t GetImportFilesBeamPosition(uint32_t uLevelType);
+uint32_t GetImportFilesBeamPosition(void);
 int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
-int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t uLevelType, uint32_t *puBeamPosition);
+int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
 void InitLevelTitleList(void);
 int HandlePreEditorButtons(int nSelectedLevel);
 void PreparePreEditormenu(void);

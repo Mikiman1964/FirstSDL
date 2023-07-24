@@ -495,14 +495,35 @@
 #define EMERALD_LEVELEDITOR_MESSAGE_2_4         0x01FF            // Leveleditor-Message 2/4, wenn fenster zu klein
 #define EMERALD_LEVELEDITOR_MESSAGE_3_4         0x0200            // Leveleditor-Message 3/4, wenn fenster zu klein
 #define EMERALD_LEVELEDITOR_MESSAGE_4_4         0x0201            // Leveleditor-Message 4/4, wenn fenster zu klein
+#define EMERALD_STEEL_GROW_LEFT                 0x0202            // Stahl, wächst links
+#define EMERALD_STEEL_GROW_RIGHT                0x0203            // Stahl, wächst rechts
+#define EMERALD_STEEL_GROW_UP                   0x0204            // Stahl, wächst hoch
+#define EMERALD_STEEL_GROW_DOWN                 0x0205            // Stahl, wächst runter
+#define EMERALD_STEEL_GROW_LEFT_RIGHT           0x0206            // Stahl, wächst links und rechts
+#define EMERALD_STEEL_GROW_UP_DOWN              0x0207            // Stahl, wächst hoch und runter
+#define EMERALD_STEEL_GROW_ALL                  0x0208            // Stahl, wächst in alle Richtungen
+#define EMERALD_STEEL_GROWING_LEFT              0x0209            // Neuer links wachsender Stahl
+#define EMERALD_STEEL_GROWING_RIGHT             0x020A            // Neuer rechts wachsender Stahl
+#define EMERALD_STEEL_GROWING_UP                0x020B            // Neuer hoch wachsender Stahl
+#define EMERALD_STEEL_GROWING_DOWN              0x020C            // Neuer runter wachsender Stahl
+#define EMERALD_WALL_GROW_LEFT                  0x020D            // Mauer, wächst links
+#define EMERALD_WALL_GROW_RIGHT                 0x020E            // Mauer, wächst rechts
+#define EMERALD_WALL_GROW_UP                    0x020F            // Mauer, wächst hoch
+#define EMERALD_WALL_GROW_DOWN                  0x0210            // Mauer, wächst runter
+#define EMERALD_WALL_GROW_LEFT_RIGHT            0x0211            // Mauer, wächst links und rechts
+#define EMERALD_WALL_GROW_UP_DOWN               0x0212            // Mauer, wächst hoch und runter
+#define EMERALD_WALL_GROW_ALL                   0x0213            // Mauer, wächst in alle Richtungen
+#define EMERALD_WALL_GROWING_LEFT               0x0214            // Neue links wachsende Mauer
+#define EMERALD_WALL_GROWING_RIGHT              0x0215            // Neue rechts wachsende Mauer
+#define EMERALD_WALL_GROWING_UP                 0x0216            // Neue hoch wachsende Mauer
+#define EMERALD_WALL_GROWING_DOWN               0x0217            // Neue runter wachsende Mauer
+#define EMERALD_DOOR_ONLY_UP_WALL               0x0218            // Tür, nur nach oben passierbar, sprengbar
+#define EMERALD_DOOR_ONLY_DOWN_WALL             0x0219            // Tür, nur nach unten passierbar, sprengbar
+#define EMERALD_DOOR_ONLY_LEFT_WALL             0x021A            // Tür, nur nach links passierbar, sprengbar
+#define EMERALD_DOOR_ONLY_RIGHT_WALL            0x021B            // Tür, nur nach rechts passierbar, sprengbar
 
-
-
-
-#define EMERALD_MAX_ELEMENT                     0x0201            // hier immer das letzte Element eintragen
-
+#define EMERALD_MAX_ELEMENT                     0x021B            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
-
 
 #define EMERALD_FONT_BLUE                       0x00              // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
 #define EMERALD_FONT_STEEL_BLUE                 0x01

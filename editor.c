@@ -30,8 +30,6 @@ extern IMPORTLEVEL ImportLevel;
 extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
 extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
-extern LEVELFILESLIST MsDosLevelFileList[EMERALD_MAX_IMPORTFILES];
-
 
 
 uint8_t g_PanelColorPatterns[] = {
@@ -557,7 +555,34 @@ char ge_szElementNames[][64] =
                           "EDITOR MESSAGE 2, INTERNAL ELEMENT", // 0X1FF
                           "EDITOR MESSAGE 3, INTERNAL ELEMENT", // 0X200
                           "EDITOR MESSAGE 4, INTERNAL ELEMENT", // 0X201
+                          "STEEL, GROW LEFT",                   // 0X202
+                          "STEEL, GROW RIGHT",                  // 0X203
+                          "STEEL, GROW UP",                     // 0X204
+                          "STEEL, GROW DOWN",                   // 0X205
+                          "STEEL, GROW LEFT AND RIGHT",         // 0X206
+                          "STEEL, GROW UP AND DOWN",            // 0X207
+                          "STEEL, GROW ALL DIRECTIONS",         // 0X208
+                          "STEEL, GROWING LEFT, INT. ELEMENT",  // 0X209
+                          "STEEL, GROWING RIGHT, INT. ELEMENT", // 0X20A
+                          "STEEL, GROWING UP, INT. ELEMENT",    // 0X20B
+                          "STEEL, GROWING DOWN, INT. ELEMENT",  // 0X20C
+                          "WALL, GROW LEFT",                    // 0X20D
+                          "WALL, GROW RIGHT",                   // 0X20E
+                          "WALL, GROW UP",                      // 0X20F
+                          "WALL, GROW DOWN",                    // 0X210
+                          "WALL, GROW LEFT AND RIGHT",          // 0X211
+                          "WALL, GROW UP AND DOWN",             // 0X212
+                          "WALL, GROW ALL DIRECTIONS",          // 0X213
+                          "WALL, GROWING LEFT, INT. ELEMENT",   // 0X214
+                          "WALL, GROWING RIGHT, INT. ELEMENT",  // 0X215
+                          "WALL, GROWING UP, INT. ELEMENT",     // 0X216
+                          "WALL, GROWING DOWN, INT. ELEMENT",   // 0X217
+                          "DOOR, ONLY UP, WALL",                // 0X218
+                          "DOOR, ONLY DOWN, WALL",              // 0X219
+                          "DOOR, ONLY LEFT, WALL",              // 0X21A
+                          "DOOR, ONLY RIGHT, WALL",             // 0X21B
                          };
+
 
 // Level-Elemente, die aktuell angezeigt werden
 uint16_t g_PanelElements[MAX_PANEL_ELEMENTS + 1] = {
@@ -570,7 +595,8 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_DOOR_GREY_RED,EMERALD_DOOR_GREY_YELLOW,EMERALD_DOOR_GREY_GREEN,EMERALD_DOOR_GREY_BLUE,EMERALD_DOOR_RED_WOOD,EMERALD_DOOR_YELLOW_WOOD,EMERALD_DOOR_GREEN_WOOD,EMERALD_DOOR_BLUE_WOOD,
                             EMERALD_DOOR_WHITE,EMERALD_DOOR_GREY_WHITE,EMERALD_DOOR_WHITE_WOOD,EMERALD_KEY_WHITE,EMERALD_KEY_GENERAL,EMERALD_DOOR_MULTICOLOR,EMERALD_DOOR_EMERALD,EMERALD_DOOR_TIME,
                             EMERALD_DOOR_END_NOT_READY,EMERALD_DOOR_END_READY,EMERALD_DOOR_END_NOT_READY_STEEL,EMERALD_DOOR_END_READY_STEEL,EMERALD_SWITCHDOOR_CLOSED,EMERALD_SWITCHDOOR_OPEN,EMERALD_SWITCH_SWITCHDOOR,EMERALD_WHEEL_TIMEDOOR,
-                            EMERALD_DOOR_ONLY_LEFT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_DOOR_ONLY_RIGHT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_MAGIC_WALL,EMERALD_MAGIC_WALL_STEEL,EMERALD_MAGIC_WALL_SWITCH,EMERALD_LIGHT_SWITCH,
+                            EMERALD_DOOR_ONLY_LEFT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_DOOR_ONLY_RIGHT_STEEL,EMERALD_DOOR_ONLY_UP_STEEL,EMERALD_DOOR_ONLY_LEFT_WALL,EMERALD_DOOR_ONLY_DOWN_WALL,EMERALD_DOOR_ONLY_RIGHT_WALL,EMERALD_DOOR_ONLY_UP_WALL,
+                            EMERALD_MAGIC_WALL,EMERALD_MAGIC_WALL_STEEL,EMERALD_MAGIC_WALL_SWITCH,EMERALD_LIGHT_SWITCH,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_MINE_LEFT,EMERALD_MINE_DOWN,EMERALD_MINE_RIGHT,EMERALD_MINE_UP,EMERALD_BEETLE_LEFT,EMERALD_BEETLE_DOWN,EMERALD_BEETLE_RIGHT,EMERALD_BEETLE_UP,
                             EMERALD_MOLE_LEFT,EMERALD_MOLE_DOWN,EMERALD_MOLE_RIGHT,EMERALD_MOLE_UP,EMERALD_YAM,EMERALD_ALIEN,EMERALD_GREEN_CHEESE,EMERALD_GREEN_DROP,
                             EMERALD_MAN,EMERALD_HAMMER,EMERALD_TIME_COIN,EMERALD_DYNAMITE_OFF,EMERALD_DYNAMITE_ON,EMERALD_WHEEL,EMERALD_GRASS,EMERALD_SAND_INVISIBLE,
@@ -590,10 +616,13 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_STEEL_MARKER_LEFT,EMERALD_SPACE,EMERALD_STEEL_MARKER_RIGHT,EMERALD_STEEL_DEADEND,EMERALD_STEEL_PARKING,EMERALD_STEEL_WHEELCHAIR,EMERALD_STEEL_STOP,EMERALD_STEEL_FORBIDDEN,
                             EMERALD_STEEL_MARKER_LEFT_BOTTOM,EMERALD_STEEL_MARKER_BOTTOM,EMERALD_STEEL_MARKER_RIGHT_BOTTOM,EMERALD_STEEL_ARROW_DOWN,EMERALD_STEEL_ARROW_UP,EMERALD_STEEL_ARROW_LEFT,EMERALD_STEEL_ARROW_RIGHT,EMERALD_STEEL_EXIT,
                             EMERALD_STEEL_BIOHAZARD,EMERALD_STEEL_RADIOACTIVE,EMERALD_STEEL_EXPLOSION,EMERALD_STEEL_ACID,EMERALD_STEEL_PLAYERHEAD,EMERALD_STEEL_HEART,EMERALD_STEEL_YING,EMERALD_SPACE,
+                            EMERALD_WALL_GROW_LEFT,EMERALD_WALL_GROW_RIGHT,EMERALD_WALL_GROW_UP,EMERALD_WALL_GROW_DOWN,EMERALD_WALL_GROW_LEFT_RIGHT,EMERALD_WALL_GROW_UP_DOWN,EMERALD_WALL_GROW_ALL,EMERALD_SPACE,
+                            EMERALD_STEEL_GROW_LEFT,EMERALD_STEEL_GROW_RIGHT,EMERALD_STEEL_GROW_UP,EMERALD_STEEL_GROW_DOWN,EMERALD_STEEL_GROW_LEFT_RIGHT,EMERALD_STEEL_GROW_UP_DOWN,EMERALD_STEEL_GROW_ALL,EMERALD_SPACE,
                             EMERALD_WALL_WITH_EMERALD,EMERALD_WALL_WITH_RUBY,EMERALD_WALL_WITH_SAPPHIRE,EMERALD_WALL_WITH_PERL,EMERALD_WALL_WITH_CRYSTAL,EMERALD_WALL_WITH_STONE,EMERALD_WALL_WITH_NUT,EMERALD_WALL_WITH_WHEEL,
                             EMERALD_WALL_WITH_KEY_RED,EMERALD_WALL_WITH_KEY_GREEN,EMERALD_WALL_WITH_KEY_BLUE,EMERALD_WALL_WITH_KEY_YELLOW,EMERALD_WALL_WITH_KEY_WHITE,EMERALD_WALL_WITH_KEY_GENERAL,EMERALD_WALL_WITH_BOMB,EMERALD_WALL_WITH_MEGABOMB,
                             EMERALD_WALL_WITH_DYNAMITE,EMERALD_WALL_WITH_ENDDOOR,EMERALD_WALL_WITH_ENDDOOR_READY,EMERALD_WALL_WITH_MINE_UP,EMERALD_WALL_WITH_BEETLE_UP,EMERALD_WALL_WITH_YAM,EMERALD_WALL_WITH_ALIEN,EMERALD_WALL_WITH_MOLE_UP,
-                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_INVALID
+                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_INVALID
                             };
 
 uint16_t g_PanelElementsMachines[MAX_PANEL_ELEMENTS + 1] = {
@@ -641,6 +670,7 @@ uint16_t g_PanelElementsText[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_FONT_STEEL_GREEN_F,EMERALD_FONT_STEEL_GREEN_G,EMERALD_FONT_STEEL_GREEN_H,EMERALD_FONT_STEEL_GREEN_I,EMERALD_FONT_STEEL_GREEN_J,EMERALD_FONT_STEEL_GREEN_K,EMERALD_FONT_STEEL_GREEN_L,EMERALD_FONT_STEEL_GREEN_M,
                             EMERALD_FONT_STEEL_GREEN_N,EMERALD_FONT_STEEL_GREEN_O,EMERALD_FONT_STEEL_GREEN_P,EMERALD_FONT_STEEL_GREEN_Q,EMERALD_FONT_STEEL_GREEN_R,EMERALD_FONT_STEEL_GREEN_S,EMERALD_FONT_STEEL_GREEN_T,EMERALD_FONT_STEEL_GREEN_U,
                             EMERALD_FONT_STEEL_GREEN_V,EMERALD_FONT_STEEL_GREEN_W,EMERALD_FONT_STEEL_GREEN_X,EMERALD_FONT_STEEL_GREEN_Y,EMERALD_FONT_STEEL_GREEN_Z,EMERALD_FONT_STEEL_GREEN_AE,EMERALD_FONT_STEEL_GREEN_OE,EMERALD_FONT_STEEL_GREEN_UE,
+                            EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_INVALID
                             };
 
@@ -1399,10 +1429,11 @@ uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos) {
     int nY;
     int nMaxY;
 
-    if ((Ed.uMenuState == MENUSTATE_LEVEL_TEXT) || (Ed.uMenuState == MENUSTATE_YAMS_TEXT)) {
-        nMaxY = 644;    // Y-Werte sind absolut,
+    // SDL_Log("uMenuState: %d     nMouseYpos: %d",Ed.uMenuState,nMouseYpos);
+    if ((Ed.uMenuState == 1) || (Ed.uMenuState == 3)) {     // Zeichensatz bei Standard und Yam
+        nMaxY = 655;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
     } else {
-        nMaxY = 644;    // da vom oberen Rand gerechnet, ist >>zur Zeit<< identisch mit MENUSTATE_LEVEL_TEXT || MENUSTATE_YAMS_TEXT
+        nMaxY = 715;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
     }
     uElement = EMERALD_NONE;
     if ((nMouseXpos >= Config.uResX - 184) && (nMouseXpos <= Config.uResX - 8)) {
@@ -4152,7 +4183,8 @@ int RenumLevelgroup(uint8_t *pszXml) {
                 }
             }
         } else {
-            SDL_Log("%s: bad pointer found",__FUNCTION__);
+            SDL_Log("%s: bad pointer found, p1: %p, p2: %p, p3: %p, puLevelgroupMd5TagStart: %p, puLastTag: %p",
+                    __FUNCTION__,strstr((char*)pszXml,"<levelgroup>"),strstr((char*)pszXml,"<groupname>"),strstr((char*)pszXml,"<create_timestamp>"),puLevelgroupMd5TagStart,puLastTag);
         }
     }
     return nRet;
@@ -4196,13 +4228,13 @@ Name:           GetImportFilesBeamPosition
 Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der Mauspfeil sich über
               der Liste der Import-Dateiliste befindet.
 Parameter
-      Eingang: uLevelType, uint32_t, 0 = DC3, 1 = MSDOS
+      Eingang: -
       Ausgang: -
 Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung,
                sonst 0 bis EMERALD_MAX_MAXIMPORTFILES_IN_LIST - 1 für einen der EMERALD_MAX_MAXIMPORTFILES_IN_LIST Import-Dateinamen
 Seiteneffekte: InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-uint32_t GetImportFilesBeamPosition(uint32_t uLevelType) {
+uint32_t GetImportFilesBeamPosition(void) {
     uint32_t uBeamPosition = 0xFFFFFFFF;
     uint32_t I;
     bool bMouseFound = false;
@@ -4212,15 +4244,8 @@ uint32_t GetImportFilesBeamPosition(uint32_t uLevelType) {
         for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (!bMouseFound); I++) {
             if ((InputStates.nMouseYpos_Relative >= (35 + (I * 20))) && (InputStates.nMouseYpos_Relative < (55 + (I * 20)))) {
                 bMouseFound = true;
-
-                if (uLevelType == 0) {
-                    if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
-                        uBeamPosition = I;
-                    }
-                } else {
-                    if (MainMenu.uImportFileListDos[I] != 0xFFFF) {
-                        uBeamPosition = I;
-                    }
+                if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
+                    uBeamPosition = I;
                 }
             }
         }
@@ -4268,19 +4293,18 @@ Beschreibung: Erledigt die Auswahl einer Datei aus dem Import-Level-Menü
               der Mauspfeil über den Namen einer Datei befindet.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uLevelType, uint32_t, 0 = DC3, 1 = MSDOS
       Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, InputStates.x
 ------------------------------------------------------------------------------*/
-int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t uLevelType, uint32_t *puBeamPosition) {
+int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
     int nErrorCode = -1;
     uint32_t uBeamPosition;
 
     if (puBeamPosition != NULL) {
         nErrorCode = 0;
         *puBeamPosition = 0xFFFFFFFF;
-        uBeamPosition = GetImportFilesBeamPosition(uLevelType);
+        uBeamPosition = GetImportFilesBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
             nErrorCode = DrawBeam(pRenderer,FONT_W,35 + (FONT_LITTLE_347_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_347_H + 6, 0x20,0x20,0xFF,0x60,K_RELATIVE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
@@ -4334,7 +4358,7 @@ Rückgabewert:  int, gedrückter Button
                     6 = Move Level
                     7 = Copy Level
                     8 = Delete Level
-                    9 = Import MSDOS-Level
+                    9 = Markiertes Level in Clipboard
                    10 = Import DC3-Level
                    11 = Levelnamensliste Pfeil hoch
                    12 = Levelnamensliste Pfeil runter
@@ -4374,7 +4398,7 @@ int HandlePreEditorButtons(int nSelectedLevel) {
     SetMenuText(MainMenu.uMenuScreen,"                   ",20,16,EMERALD_FONT_BLUE);
     MainMenu.uMenuScreen[18 * MainMenu.uXdim + 18] = EMERALD_SPACE; // Delete
     SetMenuText(MainMenu.uMenuScreen,"                   ",20,18,EMERALD_FONT_BLUE);
-    MainMenu.uMenuScreen[20 * MainMenu.uXdim + 18] = EMERALD_SPACE; // MS-DOS-Level-Import
+    MainMenu.uMenuScreen[20 * MainMenu.uXdim + 18] = EMERALD_SPACE; // Clipboard
     SetMenuText(MainMenu.uMenuScreen,"                   ",20,20,EMERALD_FONT_BLUE);
     MainMenu.uMenuScreen[22 * MainMenu.uXdim + 18] = EMERALD_SPACE; // DC3-Level-Import
     SetMenuText(MainMenu.uMenuScreen,"                   ",20,22,EMERALD_FONT_BLUE);
@@ -4405,11 +4429,6 @@ int HandlePreEditorButtons(int nSelectedLevel) {
     }
     SetMenuText(MainMenu.uMenuScreen,"                                      ",1,1,EMERALD_FONT_BLUE);
     SetMenuText(MainMenu.uMenuScreen,szText,-1,1,EMERALD_FONT_BLUE);
-    if (ImportLevel.uDosFileCount > 0) {
-        MainMenu.uMenuScreen[20 * MainMenu.uXdim + 18] = EMERALD_STEEL_MSDOS_IMPORT;
-        SetMenuText(MainMenu.uMenuScreen,"IMPORT DOS-LEVEL",20,20,EMERALD_FONT_BLUE);
-        bButtons[9] = true;
-    }
     if (ImportLevel.uDc3FileCount > 0) {
         MainMenu.uMenuScreen[22 * MainMenu.uXdim + 18] = EMERALD_STEEL_DC3_IMPORT;
         SetMenuText(MainMenu.uMenuScreen,"IMPORT DC3-LEVEL",20,22,EMERALD_FONT_BLUE);
@@ -4503,6 +4522,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     bool bWarnDefaultLevelGroup;
     bool bColorToggle;
     uint8_t uFontColor;
+    char szFullDefaultLevelgroupFilename[EMERALD_MAX_FILENAME_LEN * 2];
 
     bColorToggle = false;
     uScrollFastCounter = 0;
@@ -4523,7 +4543,8 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     }
     PreparePreEditormenu();
 
-    bWarnDefaultLevelGroup = (strcmp(SelectedLevelgroup.szFilename,EMERALD_DEFAULT_LEVELGROUP_FILENAME) == 0);
+    sprintf(szFullDefaultLevelgroupFilename,"%s/%s",EMERALD_LEVELGROUPS_DIRECTORYNAME,EMERALD_DEFAULT_LEVELGROUP_FILENAME);
+    bWarnDefaultLevelGroup = (strcmp(SelectedLevelgroup.szFilename,szFullDefaultLevelgroupFilename) == 0);
     do {
         UpdateInputStates();
         //printf("x:%u  y:%u   BeamPos: %d\n",InputStates.nMouseXpos,InputStates.nMouseYpos,nSelectedBeamPosition);
@@ -4660,13 +4681,12 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     break;
-                case (9):
+                case (9):   // TODO: Diesen Zweig später für Clipboard
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
-                    SDL_Log("%s:   import msdos level",__FUNCTION__);
                     break;
                 case (10):
                     nMoveState = 0;
