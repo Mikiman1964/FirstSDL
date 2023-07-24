@@ -5,6 +5,7 @@
 #include "ezxml.h"
 #include "mystd.h"
 
+#define EMERALD_LEVELGROUPS_DIRECTORYNAME       "levelgroups"                   // High-Scores-Directory
 #define EMERALD_CONFIG_FILENAME                 "config.xml"                    // Konfigurationsfile
 #define EMERALD_DEFAULT_LEVELGROUP_FILENAME     "default_levelgroup.xml"        // Diese Levelgruppe ist immer vorhanden
 #define EMERALD_NAMES_FILENAME                  "names.dat"                     // Namen mit Handicaps, Games Played, Games Won und Totalscore für jede Levelgruppe

@@ -3,7 +3,7 @@
 
 #include "loadlevel.h"
 
-#define EMERALD_HIGHSCORES_DIRECTORYNAME            "highscores"                       // High-Scores-Directory
+#define EMERALD_HIGHSCORES_DIRECTORYNAME            "highscores"                        // High-Scores-Directory
 #define EMERALD_HIGHSCORES_FILENAME                 "high_"                             // High-Scores-Filename mit Gruppen-Hash
 #define EMERALD_HIGHSCORES_FILENAME_EXTENSION       ".dat"                              // High-Scores-Extension
 #define EMERALD_HIGHSCORE_LISTLEN                   20                                  // 20 Einträge pro Level

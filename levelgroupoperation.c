@@ -15,7 +15,6 @@ extern ED Ed;
 extern INPUTSTATES InputStates;
 extern MAINMENU MainMenu;
 extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
-extern LEVELFILESLIST MsDosLevelFileList[EMERALD_MAX_IMPORTFILES];
 
 
 /*----------------------------------------------------------------------------
@@ -509,7 +508,7 @@ int LevelgroupOperaton_NewGroup(void) {
     uint8_t *upGroupnameEndTag = NULL;
     char szTimestamp[16];    // Format: YYYYMMDD_HHMMSS
     char szLevelgroupname[EMERALD_GROUPNAME_LEN + 1];
-    char szFilename[128];
+    char szFilename[EMERALD_MAX_FILENAME_LEN];
 
     pszlevel = malloc(strlen((char*)ge_new_levelgroup) + 1);
     if (pszlevel != NULL) {
@@ -517,9 +516,7 @@ int LevelgroupOperaton_NewGroup(void) {
         strcpy(szLevelgroupname,"NEW LG "); // <groupname>NEW LG 20230411_222417</groupname>
         GetActualTimestamp(szTimestamp);
         strcat(szLevelgroupname,szTimestamp);
-        strcpy(szFilename,"LG_");
-        strcat(szFilename,szTimestamp);
-        strcat(szFilename,".xml");
+        sprintf(szFilename,"%s/LG_%s.xml",EMERALD_LEVELGROUPS_DIRECTORYNAME,szTimestamp);
         upGroupnameStartTag = (uint8_t*)strstr((char*)pszlevel,"<groupname>");
         upGroupnameEndTag = (uint8_t*)strstr((char*)pszlevel,"</groupname>");
         if ((upGroupnameStartTag != NULL) && (upGroupnameEndTag != NULL)) {
@@ -974,10 +971,6 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
 }
 
 
-
-
-
-
 /*----------------------------------------------------------------------------
 Name:           LevelgroupOperaton_ImportDC3
 ------------------------------------------------------------------------------
@@ -1036,7 +1029,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
                 PrintLittleFont(pRenderer,40,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_RELATIVE);
             }
         }
-        nErrorCode = ImportMenuSelectFile(pRenderer,EMERALD_LEVELTYPE_DC3,&uBeamPosition);
+        nErrorCode = ImportMenuSelectFile(pRenderer,&uBeamPosition);
         if (uBeamPosition != 0xFFFFFFFF) {
             strcpy(szFullFilename,EMERALD_IMPORTDC3_DIRECTORYNAME);
             strcat(szFullFilename,"/");             // Funktioniert auch unter Windows

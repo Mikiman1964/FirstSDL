@@ -834,6 +834,18 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_DOOR_ONLY_RIGHT_STEEL):
             uTextureIndex = 492;
             break;
+        case (EMERALD_DOOR_ONLY_UP_WALL):
+            uTextureIndex = 964;
+            break;
+        case (EMERALD_DOOR_ONLY_DOWN_WALL):
+            uTextureIndex = 965;
+            break;
+        case (EMERALD_DOOR_ONLY_LEFT_WALL):
+            uTextureIndex = 962;
+            break;
+        case (EMERALD_DOOR_ONLY_RIGHT_WALL):
+            uTextureIndex = 963;
+            break;
         case (EMERALD_STEEL_INVISIBLE):
             uTextureIndex = 484;
             break;
@@ -1492,6 +1504,48 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             break;
         case (EMERALD_LEVELEDITOR_MESSAGE_4_4):
             uTextureIndex = 818;
+            break;
+        case (EMERALD_STEEL_GROW_LEFT):
+            uTextureIndex = 884;
+            break;
+        case (EMERALD_STEEL_GROW_RIGHT):
+            uTextureIndex = 885;
+            break;
+        case (EMERALD_STEEL_GROW_UP):
+            uTextureIndex = 886;
+            break;
+        case (EMERALD_STEEL_GROW_DOWN):
+            uTextureIndex = 887;
+            break;
+        case (EMERALD_STEEL_GROW_LEFT_RIGHT):
+            uTextureIndex = 888;
+            break;
+        case (EMERALD_STEEL_GROW_UP_DOWN):
+            uTextureIndex = 889;
+            break;
+        case (EMERALD_STEEL_GROW_ALL):
+            uTextureIndex = 890;
+            break;
+        case (EMERALD_WALL_GROW_LEFT):
+            uTextureIndex = 955;
+            break;
+        case (EMERALD_WALL_GROW_RIGHT):
+            uTextureIndex = 956;
+            break;
+        case (EMERALD_WALL_GROW_UP):
+            uTextureIndex = 957;
+            break;
+        case (EMERALD_WALL_GROW_DOWN):
+            uTextureIndex = 958;
+            break;
+        case (EMERALD_WALL_GROW_LEFT_RIGHT):
+            uTextureIndex = 959;
+            break;
+        case (EMERALD_WALL_GROW_UP_DOWN):
+            uTextureIndex = 960;
+            break;
+        case (EMERALD_WALL_GROW_ALL):
+            uTextureIndex = 961;
             break;
         default:
             SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());

@@ -7,15 +7,8 @@
 #include "loadlevel.h"
 
 #define EMERALD_LEVELTYPE_DC3                   0
-#define EMERALD_LEVELTYPE_DOS                   1
-
-
 
 #define BITMAP_MINSIZE                          4096
-
-#define LVCV_OUTPUTFILENAME                     "C:\\users\\Mike\\Desktop\\md5.txt"
-
-#define EMERALD_IMPORTDOS_DIRECTORYNAME         "importdos"                     // Import-Directory für DOS-Level
 #define EMERALD_IMPORTDC3_DIRECTORYNAME         "importdc3"                     // Import-Directory für Diamond Caves 3-Bitmap-Level
 
 #define EMERALD_MAX_IMPORTFILES                 200
@@ -29,9 +22,8 @@ typedef struct {
 
 
 
-// Für IMPORT (DOS/DC3) ///////////////
+// Für IMPORT (DC3) ///////////////
 typedef struct {
-    uint32_t uDosFileCount;             // Anzahl der DOS-Levelfiles
     uint32_t uDc3FileCount;             // Anzahl der DC3-Bimap-Levelfiles
 } IMPORTLEVEL;
 
@@ -52,7 +44,6 @@ typedef struct {
 
 // Prototypen
 int LevelConverterFromBitap(char *pszFilename);
-int LevelConverterFromDosGame(char *pszFilename);
 int ReadBmHeader(FILE *pF,BITMAP *pBitmap);
 void DumpMem(uint8_t *pcMem, int nLen);
 void PrintBitmapInfos(BITMAP *pBitmap);

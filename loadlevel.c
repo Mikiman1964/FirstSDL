@@ -2158,28 +2158,32 @@ int GetLevelgroupFiles(void) {
     ezxml_t levelgroupname,levelcount,levelgrouphash,passwordhash,createdate;
     uint8_t uCalculatedLevelgroupMd5Hash[16];       // berechnet
     uint8_t uLevelgroupMd5Hash[16];                 // gelesen
+    char szFullFilename[EMERALD_MAX_FILENAME_LEN * 2];
 
-    //uint32_t I; // raus
-    //char szText[64]; // raus
 
     g_LevelgroupFilesCount = 0;
     nErrorCode = -1;
-    if ((dir = opendir(".")) == NULL) {
+    if ((dir = opendir(EMERALD_LEVELGROUPS_DIRECTORYNAME)) == NULL) {
         SDL_Log("%s: can not open current directory, error: %s",__FUNCTION__,strerror(errno));
         return nErrorCode;
     } else {
         nErrorCode = 0;
         while (((entry = readdir(dir)) != NULL) && (g_LevelgroupFilesCount < EMERALD_MAX_LEVELGROUPFILES) ) {
-            FilenameLen = strlen(entry->d_name);
+            if (strlen(entry->d_name) < EMERALD_MAX_FILENAME_LEN)   {   // Kann gefahrlos Verzeichnisname und Filename addiert werden ?
+                sprintf(szFullFilename,"%s/%s",EMERALD_LEVELGROUPS_DIRECTORYNAME,entry->d_name);
+                FilenameLen = strlen(szFullFilename);
+            } else {
+                FilenameLen = 0;    // Fehler
+            }
             if ((FilenameLen > 4) && (FilenameLen <= EMERALD_MAX_FILENAME_LEN)) {          // a.xml    muss es wenigstens sein
                 // Nur XML-Dateien prüfen
-                if ((memcmp(entry->d_name + FilenameLen - 4,".xml",4) == 0) || (memcmp(entry->d_name + FilenameLen - 4,".XML",4) == 0)) {
-                    pXml = ReadFile(entry->d_name,&uXmlLen);
+                if ((memcmp(szFullFilename + FilenameLen - 4,".xml",4) == 0) || (memcmp(szFullFilename + FilenameLen - 4,".XML",4) == 0)) {
+                    pXml = ReadFile(szFullFilename,&uXmlLen);
                     if (pXml != NULL) {
                         if ((strstr((char*)pXml,"<levelgroup>") != NULL) && (strstr((char*)pXml,"</levelgroup>") != NULL)) {  // levelgroup tags gefunden?
                             if (CalculateLevelGroupMd5Hash(pXml,uCalculatedLevelgroupMd5Hash) == 0) { // muss vor ezxml_parse_str() durchgeführt werden, da Library Original ändert
                                 //GetMd5String2(uCalculatedLevelgroupMd5Hash);
-                                //SDL_Log("LG: %s  --> Hash: %s",entry->d_name,p1);
+                                //SDL_Log("LG: %s  --> Hash: %s",szFullFilename,p1);
                                 xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
                                 if (xml != NULL) {
                                     levelgroupname = ezxml_child(xml,"groupname");
@@ -2192,7 +2196,7 @@ int GetLevelgroupFiles(void) {
                                             // Stimmt der berechnete Hash mit dem Gelesenen?
                                             GetMd5HashFromString(levelgrouphash->txt,uLevelgroupMd5Hash);
                                             if (memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) {
-                                                strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,entry->d_name); // Maximale Länge wurde bereits geprüft
+                                                strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,szFullFilename); // Maximale Länge wurde bereits geprüft
                                                 if ((strlen(levelgroupname->txt) > 0) && (strlen(levelgroupname->txt) <= EMERALD_GROUPNAME_LEN)) {
                                                     strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,levelgroupname->txt);
                                                 } else {
@@ -2212,7 +2216,8 @@ int GetLevelgroupFiles(void) {
                                                 memcpy(LevelgroupFiles[g_LevelgroupFilesCount].uMd5Hash,uCalculatedLevelgroupMd5Hash,16);
                                                 g_LevelgroupFilesCount++;
                                             } else {
-                                                SDL_Log("%s: can not use levelgroup, bad hash",__FUNCTION__);
+                                                GetMd5String2(uCalculatedLevelgroupMd5Hash);
+                                                SDL_Log("%s: can not use levelgroup, bad hash: %s",__FUNCTION__,GetMd5String2(uCalculatedLevelgroupMd5Hash));
                                             }
                                         }
                                     }
@@ -2227,19 +2232,6 @@ int GetLevelgroupFiles(void) {
         }
         closedir(dir);
     }
-/*
-// Ein paar (20) Levegruppen künstlich hinzufügen --> raus
-                                                for (I = 0; I < 20; I++) {
-                                                    sprintf(szText,"LEVELGROUP %03u",I);
-                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,szText);
-                                                    sprintf(szText,"FILENAME_%03u.xml",I);
-                                                    strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,szText);
-                                                    LevelgroupFiles[g_LevelgroupFilesCount].uLevelCount = I + 10;
-                                                    g_LevelgroupFilesCount++;
-                                                }
-
-*/
-
     return nErrorCode;
 }
 

@@ -17,7 +17,6 @@
 BITMAP Bitmap;
 IMPORTLEVEL ImportLevel;
 LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
-LEVELFILESLIST DosLevelFileList[EMERALD_MAX_IMPORTFILES];
 extern ED Ed;
 extern INPUTSTATES InputStates;
 
@@ -497,6 +496,25 @@ char g_szDC3_MD5[][33] =
         "2DC320FB3DE37B5771D6919E836B0FA0",        // EMERALD_CONVEYORBELT_BLUE
         "AC0C922F3C498A50F65A47F4484F0A31",        // EMERALD_CONVEYORBELT_BLUE
         "9AEE6C261AD32DC8861FBE3536C29F9C",        // EMERALD_CONVEYORBELT_BLUE
+        "D0F94D5229966DFF34A538F30366BDF1",        // EMERALD_WALL_GROW_LEFT
+        "E39F9A74EAC503C606BC134C9CCB8704",        // EMERALD_WALL_GROW_RIGHT
+        "B1295568407A27CAF20899AC03E89963",        // EMERALD_WALL_GROW_UP
+        "7038114FDC13539AF7CCF8409965C78E",        // EMERALD_WALL_GROW_DOWN
+        "4740617D7DE98105B6C8D4314AB5B933",        // EMERALD_WALL_GROW_LEFT_RIGHT
+        "EC91F979AAB53DA9736790CBEF4FDEFA",        // EMERALD_WALL_GROW_UP_DOWN
+        "94F13A7F26CF4A8FF33269A31B299F24",        // EMERALD_WALL_GROW_ALL
+        "ED265040D9C25484D2E062AD736F1668",        // EMERALD_STEEL_GROW_LEFT
+        "7307901F05AA4545ED9279E2E47C2F01",        // EMERALD_STEEL_GROW_RIGHT
+        "AE7D694B6D068F4960B2D23C3ADA3205",        // EMERALD_STEEL_GROW_UP
+        "FFC309CA17C8AA638E1291A9B3081BEF",        // EMERALD_STEEL_GROW_DOWN
+        "F84A85BB494D5C6D7B8466C37EA407BB",        // EMERALD_STEEL_GROW_LEFT_RIGHT
+        "9B5A89C4BBD3FC116AA1F57BC7742457",        // EMERALD_STEEL_GROW_UP_DOWN
+        "0474DF8567C881C44E936065F622FE12",        // EMERALD_STEEL_GROW_ALL
+        "BBFC4FED18460B362F34B3B40DCDA052",        // EMERALD_DOOR_ONLY_LEFT_WALL
+        "B1BD141239EB7C9F04A010414AEE6120",        // EMERALD_DOOR_ONLY_RIGHT_WALL
+        "FADA17F1C3501C3BEE1F1C4BC3EACE4E",        // EMERALD_DOOR_ONLY_UP_WALL
+        "9DAC3CC577C8CAA34154ACFB4CE0BD81",        // EMERALD_DOOR_ONLY_DOWN_WALL
+        "22B4403B24C9F521C4B8B2F4730CB02E",        // Player 2 -> wird zu EMERALD_SPACE
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",        // ENDE der MD5-Liste
     };
 
@@ -975,337 +993,30 @@ uint16_t g_DC3_Elements[] = {
         ,EMERALD_CONVEYORBELT_BLUE
         ,EMERALD_CONVEYORBELT_BLUE
         ,EMERALD_CONVEYORBELT_BLUE
+        ,EMERALD_WALL_GROW_LEFT
+        ,EMERALD_WALL_GROW_RIGHT
+        ,EMERALD_WALL_GROW_UP
+        ,EMERALD_WALL_GROW_DOWN
+        ,EMERALD_WALL_GROW_LEFT_RIGHT
+        ,EMERALD_WALL_GROW_UP_DOWN
+        ,EMERALD_WALL_GROW_ALL
+        ,EMERALD_STEEL_GROW_LEFT
+        ,EMERALD_STEEL_GROW_RIGHT
+        ,EMERALD_STEEL_GROW_UP
+        ,EMERALD_STEEL_GROW_DOWN
+        ,EMERALD_STEEL_GROW_LEFT_RIGHT
+        ,EMERALD_STEEL_GROW_UP_DOWN
+        ,EMERALD_STEEL_GROW_ALL
+        ,EMERALD_DOOR_ONLY_LEFT_WALL
+        ,EMERALD_DOOR_ONLY_RIGHT_WALL
+        ,EMERALD_DOOR_ONLY_UP_WALL
+        ,EMERALD_DOOR_ONLY_DOWN_WALL
+        ,EMERALD_SPACE
 };
 
 
 
 
-/*----------------------------------------------------------------------------
-Name:           LevelConverterFromDosGame
-------------------------------------------------------------------------------
-Beschreibung: Konvertiert ein DOS-Level (MIK.EXE) in Leveldaten.
-              Das Ergebnis wird in Ed.x abgelegt.
-              Die Struktur Ed.x muss bereits teilweise initialisiert sein.
-
-              Im Erfolgsfall alloziert die Funktion in Ed.pLevel Speicher für
-              das konvertierte Level.
-Parameter
-      Eingang: pszFilename, char *, Dateiname der Bitmap
-      Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Ed.x
-------------------------------------------------------------------------------*/
-int LevelConverterFromDosGame(char *pszFilename) {
-    uint32_t I;
-    uint32_t uFilesize;
-    uint8_t *pDosLevel = NULL;;
-    int nErrorCode = -1;;
-
-    if (pszFilename == NULL) {
-        return -1;
-    }
-    Ed.uLevel_X_Dimension = 64;     // Ist bei den DOS-Leveln
-    Ed.uLevel_Y_Dimension = 32;     // auf 64 x 32 fixiert.
-    Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
-    Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
-    Ed.pLevel = malloc(Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t));
-    if (Ed.pLevel != NULL) {
-        pDosLevel = ReadFile(pszFilename,&uFilesize);
-        if (pDosLevel != NULL) {
-            for (I = 0; I < Ed.uLevel_X_Dimension * Ed.uTmpLevel_Y_Dimension; I++) {
-                switch (pDosLevel[I]) {
-                    case (0x00):
-                        Ed.pLevel[I] = EMERALD_STONE;
-                        break;
-                    case (0x02):
-                        Ed.pLevel[I] = EMERALD_SAPPHIRE;
-                        break;
-                    case (0x04):
-                        Ed.pLevel[I] = EMERALD_ALIEN;
-                        break;
-                    case (0x08):
-                        Ed.pLevel[I] = EMERALD_MINE_UP;
-                        break;
-                    case (0x09):
-                        Ed.pLevel[I] = EMERALD_MINE_RIGHT;
-                        break;
-                    case (0x0A):
-                        Ed.pLevel[I] = EMERALD_MINE_DOWN;
-                        break;
-                    case (0x0B):
-                        Ed.pLevel[I] = EMERALD_MINE_LEFT;
-                        break;
-                    case (0x10):
-                        Ed.pLevel[I] = EMERALD_BOMB;
-                        break;
-                    case (0x12):
-                        Ed.pLevel[I] = EMERALD_EMERALD;
-                        break;
-                    case (0x14):
-                        Ed.pLevel[I] = EMERALD_BEETLE_UP;
-                        break;
-                    case (0x15):
-                        Ed.pLevel[I] = EMERALD_BEETLE_RIGHT;
-                        break;
-                    case (0x16):
-                        Ed.pLevel[I] = EMERALD_BEETLE_DOWN;
-                        break;
-                    case (0x17):
-                        Ed.pLevel[I] = EMERALD_BEETLE_LEFT;
-                        break;
-                    case (0x25):
-                        Ed.pLevel[I] = EMERALD_NUT;
-                        break;
-                    case (0x29):
-                        Ed.pLevel[I] = EMERALD_YAM;
-                        break;
-                    case (0x2D):
-                        Ed.pLevel[I] = EMERALD_SWAMP_STONE;
-                        break;
-                    case (0x3B):
-                        Ed.pLevel[I] = EMERALD_DYNAMITE_ON;
-                        break;
-                    case (0x3F):
-                        Ed.pLevel[I] = EMERALD_ACIDPOOL_BOTTOM_MID;
-                        break;
-                    case (0x40):
-                        Ed.pLevel[I] = EMERALD_MAN;
-                        break;
-                    case (0x7B):
-                        Ed.pLevel[I] = EMERALD_ACIDPOOL_TOP_MID;
-                        break;
-                    case (0x80):
-                        Ed.pLevel[I] = EMERALD_SPACE;
-                        break;
-                    case (0x81):
-                        Ed.pLevel[I] = EMERALD_WALL_ROUND;
-                        break;
-                    case (0x82):
-                        Ed.pLevel[I] = EMERALD_SAND;
-                        break;
-                    case (0x83):
-                        Ed.pLevel[I] = EMERALD_STEEL;
-                        break;
-                    case (0x84):
-                        Ed.pLevel[I] = EMERALD_WALL_CORNERED;
-                        break;
-                    case (0x85):
-                        Ed.pLevel[I] = EMERALD_KEY_RED;
-                        break;
-                    case (0x86):
-                        Ed.pLevel[I] = EMERALD_KEY_YELLOW;
-                        break;
-                    case (0x87):
-                        Ed.pLevel[I] = EMERALD_KEY_BLUE;
-                        break;
-                    case (0x88):
-                        Ed.pLevel[I] = EMERALD_KEY_GREEN;
-                        break;
-                    case (0x89):
-                        Ed.pLevel[I] = EMERALD_DOOR_RED;
-                        break;
-                    case (0x8A):
-                        Ed.pLevel[I] = EMERALD_DOOR_YELLOW;
-                        break;
-                    case (0x8B):
-                        Ed.pLevel[I] = EMERALD_DOOR_BLUE;
-                        break;
-                    case (0x8C):
-                        Ed.pLevel[I] = EMERALD_DOOR_GREEN;
-                        break;
-                    case (0x8E):
-                        Ed.pLevel[I] = EMERALD_DOOR_GREY_RED;
-                        break;
-                    case (0x8F):
-                        Ed.pLevel[I] = EMERALD_DOOR_GREY_YELLOW;
-                        break;
-                    case (0x90):
-                        Ed.pLevel[I] = EMERALD_DOOR_GREY_BLUE;
-                        break;
-                    case (0x91):
-                        Ed.pLevel[I] = EMERALD_DOOR_GREY_GREEN;
-                        break;
-                    case (0x92):
-                        Ed.pLevel[I] = EMERALD_MAGIC_WALL;
-                        break;
-                    case (0x93):
-                        Ed.pLevel[I] = EMERALD_WHEEL;
-                        break;
-                    case (0x94):
-                        Ed.pLevel[I] = EMERALD_SWAMP;
-                        break;
-                    case (0x95):
-                        Ed.pLevel[I] = EMERALD_ACIDPOOL_TOP_LEFT;
-                        break;
-                    case (0x96):
-                        Ed.pLevel[I] = EMERALD_ACIDPOOL_TOP_RIGHT;
-                        break;
-                    case (0x97):
-                        Ed.pLevel[I] = EMERALD_ACIDPOOL_BOTTOM_LEFT;
-                        break;
-                    case (0x98):
-                        Ed.pLevel[I] = EMERALD_DOOR_END_NOT_READY;
-                        break;
-                    case (0x9A):
-                        Ed.pLevel[I] = EMERALD_GREEN_CHEESE;
-                        break;
-                    case (0x9E):
-                        Ed.pLevel[I] = EMERALD_DOOR_END_READY;
-                        break;
-                    case (0xA1):
-                        Ed.pLevel[I] = EMERALD_ACIDPOOL_BOTTOM_RIGHT;
-                        break;
-                    case (0xA8):
-                        Ed.pLevel[I] = EMERALD_WALL_INVISIBLE;  // vielleicht auch unsichtbarer Stahl?
-                        break;
-                    case (0xC4):
-                        Ed.pLevel[I] = EMERALD_DYNAMITE_OFF;
-                        break;
-                    case (0xD2):
-                        Ed.pLevel[I] = EMERALD_FONT_POINT;
-                        break;
-                    case (0xD3):
-                        Ed.pLevel[I] = EMERALD_FONT_EXCLAMATION;
-                        break;
-                    case (0xD4):
-                        Ed.pLevel[I] = EMERALD_FONT_DOUBLE_POINT;
-                        break;
-                    case (0xD5):
-                        Ed.pLevel[I] = EMERALD_FONT_QUESTION_MARK;
-                        break;
-                    case (0xD6):
-                        Ed.pLevel[I] = EMERALD_FONT_ARROW_RIGHT;
-                        break;
-                    case (0xD7):
-                        Ed.pLevel[I] = EMERALD_FONT_COPYRIGHT;
-                        break;
-                    case (0xD8):
-                        Ed.pLevel[I] = EMERALD_FONT_A;
-                        break;
-                    case (0xD9):
-                        Ed.pLevel[I] = EMERALD_FONT_B;
-                        break;
-                    case (0xDA):
-                        Ed.pLevel[I] = EMERALD_FONT_C;
-                        break;
-                    case (0xDB):
-                        Ed.pLevel[I] = EMERALD_FONT_D;
-                        break;
-                    case (0xDC):
-                        Ed.pLevel[I] = EMERALD_FONT_E;
-                        break;
-                    case (0xDD):
-                        Ed.pLevel[I] = EMERALD_FONT_F;
-                        break;
-                    case (0xDE):
-                        Ed.pLevel[I] = EMERALD_FONT_G;
-                        break;
-                    case (0xDF):
-                        Ed.pLevel[I] = EMERALD_FONT_H;
-                        break;
-                    case (0xE0):
-                        Ed.pLevel[I] = EMERALD_FONT_I;
-                        break;
-                    case (0xE1):
-                        Ed.pLevel[I] = EMERALD_FONT_J;
-                        break;
-                    case (0xE2):
-                        Ed.pLevel[I] = EMERALD_FONT_K;
-                        break;
-                    case (0xE3):
-                        Ed.pLevel[I] = EMERALD_FONT_L;
-                        break;
-                    case (0xE4):
-                        Ed.pLevel[I] = EMERALD_FONT_M;
-                        break;
-                    case (0xE5):
-                        Ed.pLevel[I] = EMERALD_FONT_N;
-                        break;
-                    case (0xE6):
-                        Ed.pLevel[I] = EMERALD_FONT_O;
-                        break;
-                    case (0xE7):
-                        Ed.pLevel[I] = EMERALD_FONT_P;
-                        break;
-                    case (0xE8):
-                        Ed.pLevel[I] = EMERALD_FONT_Q;
-                        break;
-                    case (0xE9):
-                        Ed.pLevel[I] = EMERALD_FONT_R;
-                        break;
-                    case (0xEA):
-                        Ed.pLevel[I] = EMERALD_FONT_S;
-                        break;
-                    case (0xEB):
-                        Ed.pLevel[I] = EMERALD_FONT_T;
-                        break;
-                    case (0xEC):
-                        Ed.pLevel[I] = EMERALD_FONT_U;
-                        break;
-                    case (0xED):
-                        Ed.pLevel[I] = EMERALD_FONT_V;
-                        break;
-                    case (0xEE):
-                        Ed.pLevel[I] = EMERALD_FONT_W;
-                        break;
-                    case (0xEF):
-                        Ed.pLevel[I] = EMERALD_FONT_X;
-                        break;
-                    case (0xF0):
-                        Ed.pLevel[I] = EMERALD_FONT_Y;
-                        break;
-                    case (0xF1):
-                        Ed.pLevel[I] = EMERALD_FONT_Z;
-                        break;
-                    case (0xF2):
-                        Ed.pLevel[I] = EMERALD_FONT_0;
-                        break;
-                    case (0xF3):
-                        Ed.pLevel[I] = EMERALD_FONT_1;
-                        break;
-                    case (0xF4):
-                        Ed.pLevel[I] = EMERALD_FONT_2;
-                        break;
-                    case (0xF5):
-                        Ed.pLevel[I] = EMERALD_FONT_3;
-                        break;
-                    case (0xF6):
-                        Ed.pLevel[I] = EMERALD_FONT_4;
-                        break;
-                    case (0xF7):
-                        Ed.pLevel[I] = EMERALD_FONT_5;
-                        break;
-                    case (0xF8):
-                        Ed.pLevel[I] = EMERALD_FONT_6;
-                        break;
-                    case (0xF9):
-                        Ed.pLevel[I] = EMERALD_FONT_7;
-                        break;
-                    case (0xFA):
-                        Ed.pLevel[I] = EMERALD_FONT_8;
-                        break;
-                    case (0xFB):
-                        Ed.pLevel[I] = EMERALD_FONT_9;
-                        break;
-                    default:
-                        SDL_Log("%s: warning, unhandled element: %02x",__FUNCTION__,pDosLevel[I]);
-                        Ed.pLevel[I] = EMERALD_SPACE;
-                        break;
-                }
-                nErrorCode = 0;
-            }
-        } else {
-            printf("can not read dos level file:%s\n",pszFilename);
-        }
-    } else {
-        printf("can not allocate for level (%u x %u)\n",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension);
-    }
-    SAFE_FREE(pDosLevel);
-    if (nErrorCode != 0) {
-        SAFE_FREE(Ed.pLevel);
-    }
-    return nErrorCode;
-}
 
 
 /*----------------------------------------------------------------------------
@@ -1425,8 +1136,8 @@ int LevelConverterFromBitap(char *pszFilename) {
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = uLevelElement;
             } else {
                 SDL_Log("%s: Warning: hash (%s) not found for element at position X:%u  Y:%u",__FUNCTION__,szMD5String,X,Y);
-                //WriteFile("hashes.txt",szMD5String,32,true);
-                //WriteFile("hashes.txt","\r\n",2,true);
+                 //WriteFile("hashes.txt",szMD5String,32,true);
+                 //WriteFile("hashes.txt","\r\n",2,true);
 
                 //Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_FONT_STEEL_QUESTION_MARK;
@@ -1682,7 +1393,7 @@ uint16_t GetElementByMD5(char *szMd5) {
 /*----------------------------------------------------------------------------
 Name:           CheckImportLevelFiles
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt die Dateien für den DOS- und DC3-Level-Import.
+Beschreibung: Ermittelt die Dateien für den DC3-Level-Import.
 Parameter
       Eingang: -
       Ausgang: -
@@ -1690,14 +1401,8 @@ Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: ImportLevel.x
 ------------------------------------------------------------------------------*/
 int CheckImportLevelFiles(void) {
-    int nErrorCode = -1;
-    ImportLevel.uDosFileCount = 0;
     ImportLevel.uDc3FileCount = 0;
-
-    if (GetLevelFileList(EMERALD_IMPORTDC3_DIRECTORYNAME,"BMP",(LEVELFILESLIST*)&Dc3LevelFileList,&ImportLevel.uDc3FileCount) == 0) {
-        nErrorCode = GetLevelFileList(EMERALD_IMPORTDOS_DIRECTORYNAME,"DAT",(LEVELFILESLIST*)&DosLevelFileList,&ImportLevel.uDosFileCount);
-    }
-    return nErrorCode;
+    return  GetLevelFileList(EMERALD_IMPORTDC3_DIRECTORYNAME,"BMP",(LEVELFILESLIST*)&Dc3LevelFileList,&ImportLevel.uDc3FileCount);
 }
 
 
