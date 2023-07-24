@@ -1723,6 +1723,13 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_WALL_CORNERED):
+        case (EMERALD_WALL_GROW_LEFT):
+        case (EMERALD_WALL_GROW_RIGHT):
+        case (EMERALD_WALL_GROW_UP):
+        case (EMERALD_WALL_GROW_DOWN):
+        case (EMERALD_WALL_GROW_LEFT_RIGHT):
+        case (EMERALD_WALL_GROW_UP_DOWN):
+        case (EMERALD_WALL_GROW_ALL):
         case (EMERALD_WALL_ROUND):
         case (EMERALD_WALL_ROUND_PIKE):
         case (EMERALD_WALL_NOT_ROUND):
@@ -1754,6 +1761,10 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_WALL_WITH_YAM):
         case (EMERALD_WALL_WITH_ALIEN):
         case (EMERALD_WALL_WITH_TIME_COIN):
+        case (EMERALD_DOOR_ONLY_UP_WALL):
+        case (EMERALD_DOOR_ONLY_DOWN_WALL):
+        case (EMERALD_DOOR_ONLY_LEFT_WALL):
+        case (EMERALD_DOOR_ONLY_RIGHT_WALL):
             if ((uAnimation != EMERALD_ANIM_STAND) && (ManKey.bFire) && (Playfield.uHammerCount > 0)) {
                 Playfield.uHammerCount--;
                 ManKey.uFireCount = 0;
@@ -1842,6 +1853,34 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_SPACE;
                 }
                 PreparePlaySound(SOUND_EXPLOSION,uTouchPos);
+            } else {
+                // Einbahnstraßentüren (soft) können durchlaufen und mit Hammer gesprengt werden, daher dieser Extrazweig
+                switch (uElement) {
+                    case (EMERALD_DOOR_ONLY_UP_WALL):
+                        if ((uAnimation == EMERALD_ANIM_UP) && (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                            uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
+                            ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                        }
+                        break;
+                    case (EMERALD_DOOR_ONLY_DOWN_WALL):
+                        if ((uAnimation == EMERALD_ANIM_DOWN) && (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                            uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
+                            ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                        }
+                        break;
+                    case (EMERALD_DOOR_ONLY_LEFT_WALL):
+                        if ((uAnimation == EMERALD_ANIM_LEFT) && (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                            uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
+                            ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                        }
+                        break;
+                    case (EMERALD_DOOR_ONLY_RIGHT_WALL):
+                        if ((uAnimation == EMERALD_ANIM_RIGHT) && (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                            uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
+                            ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                        }
+                        break;
+                }
             }
             break;
         case (EMERALD_ACIDPOOL):

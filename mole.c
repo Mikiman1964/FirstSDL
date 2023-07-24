@@ -86,11 +86,6 @@ void ControlMoleRight(uint32_t I) {
     bool bLeftFree;
     bool bRightFree;
 
-    // Doppelte Steuerung vermeiden
-    if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
-        Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        return;
-    }
     if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {  // Ist nach rechts frei?
         Playfield.pLevel[I + 1] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -156,11 +151,6 @@ void ControlMoleDown(uint32_t I) {
 
     if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
         // MoleDown kann vom Replikator geboren werden, dann hier nichts machen
-        return;
-    }
-    // Doppelte Steuerung vermeiden
-    if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
-        Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
         return;
     }
     if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach unten frei?
