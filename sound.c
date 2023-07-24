@@ -39,7 +39,7 @@ extern uint8_t _binary_Sound_DoorCloseOpen_wav_start;extern uint8_t _binary_Soun
 extern uint8_t _binary_Sound_ReplicatorPlop_wav_start;extern uint8_t _binary_Sound_ReplicatorPlop_wav_end;
 extern uint8_t _binary_Sound_DynamiteStart_wav_start;extern uint8_t _binary_Sound_DynamiteStart_wav_end;
 extern uint8_t _binary_Sound_Conveyorbelt_wav_start;extern uint8_t _binary_Sound_Conveyorbelt_wav_end;
-
+extern uint8_t _binary_Sound_Steel_Wall_grow_wav_start;extern uint8_t _binary_Sound_Steel_Wall_grow_wav_end;
 
 uint8_t* g_pSfxPointer_wav[] = {
 // Bit
@@ -74,7 +74,8 @@ uint8_t* g_pSfxPointer_wav[] = {
 /*29*/    &_binary_Sound_ReplicatorPlop_wav_start,&_binary_Sound_ReplicatorPlop_wav_end,// Replikator erzeugt neues Objekt
 /*30*/    &_binary_Sound_DynamiteStart_wav_start,&_binary_Sound_DynamiteStart_wav_end,  // Dynamit wird gestartet
 /*31*/    &_binary_Sound_Conveyorbelt_wav_start,&_binary_Sound_Conveyorbelt_wav_end,    // Laufband
-/*32*/    NULL,NULL,                                                                    // Endekennung
+/*32*/    &_binary_Sound_Steel_Wall_grow_wav_start,&_binary_Sound_Steel_Wall_grow_wav_end,          // Mauer und Stahl wächst
+/*33*/    NULL,NULL,                                                                    // Endekennung
 };
 
 Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];
@@ -113,7 +114,7 @@ Name:           PreparePlaySound
 ------------------------------------------------------------------------------
 Beschreibung: Bereitet das Apspielen eines Sounds vor.
 Parameter
-      Eingang: uSound, uint32_t, Ein oder mehrere Sounds die abgespielt werden sollen, siehe sound.h
+      Eingang: uSound, uint64_t, Ein oder mehrere Sounds die abgespielt werden sollen, siehe sound.h
                     Beispiel: SOUND_PING | SOUND_MINE   spielt PING und MINE ab
                uCoordinate, uint32_t, lineare Level-Koordinate, wo Sound entstanden ist.
                     Einige Sounds werden nur im sichtbaren Bereich abgespielt
@@ -121,7 +122,7 @@ Parameter
 Rückgabewert:  -
 Seiteneffekte: GameSound.x, Playfield.x
 ------------------------------------------------------------------------------*/
-void PreparePlaySound(uint32_t uSound, uint32_t uCoordinate) {
+void PreparePlaySound(uint64_t uSound, uint32_t uCoordinate) {
     uint32_t uTopLeftXpos;   // obere linke Ecke, X-Position (Level-Koordinate)
     uint32_t uTopLeftYpos;   // obere linke Ecke, Y-Position (Level-Koordinate)
     uint32_t uElementXpos;
@@ -140,8 +141,8 @@ void PreparePlaySound(uint32_t uSound, uint32_t uCoordinate) {
     } else {
         uAddY = 0;
     }
-    bAlwaysOn = ((uSound & 0x80000000) != 0);
-    uSound = uSound & 0x7FFFFFFF;               // Always-Bit ausblenden
+    bAlwaysOn = ((uSound & 0x8000000000000000) != 0);
+    uSound = uSound & 0x7FFFFFFFFFFFFFFF;               // Always-Bit ausblenden
     // Falls Sound bisher noch nicht aktiv ist, muss hier die Koordinate geprüft werden, ob wir uns im sichtbaren Bereich befinden
     if ((GameSound.uAllSounds & uSound) == 0) {
         if (bAlwaysOn) {   // unabhängig vom sichtbaren Bereich aktiv ?
@@ -178,12 +179,12 @@ int PlayAllSounds(void) {
     int nRet;
 
     if (GameSound.uAllSounds == 0) {
-        return 0;       // Sofort raus hier, wenn es nichts abzuspielen gibt
+        return 0;       // Beenden, wenn es nichts abzuspielen gibt
     }
     uMask = 0x01;
     nRet = 0;
     uS = 0;
-    for (uBit = 0; (uBit < 31) && (nRet == 0); uBit++) {
+    for (uBit = 0; (uBit < 63) && (nRet == 0); uBit++) {
         if ((uMask & GameSound.uAllSounds) != 0) {          // Soll der Sound abgespielt werden
             if (Mix_PlayChannel(uS, g_pChunk[uS],0) == -1) {
                 nRet = -1;

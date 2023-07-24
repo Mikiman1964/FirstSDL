@@ -60,7 +60,7 @@ void ControlStone(uint32_t I) {
         SDL_Log("Stone falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_STONE;
-        PreparePlaySound(SOUND_POOL_BLUB,I);
+        PreparePlaySound(SOUND_POOL_BLUB,I + Playfield.uLevel_X_Dimension);
         return;
      } else {                            // Unten ist nicht frei
         // Stone bleibt zunächst auf Platz liegen
@@ -71,7 +71,7 @@ void ControlStone(uint32_t I) {
             switch (uHitElement) {
                 case (EMERALD_NUT):
                     SDL_Log("Stone hit nut");
-                    PreparePlaySound(SOUND_NUT_CRACK,I);
+                    PreparePlaySound(SOUND_NUT_CRACK,uHitCoordinate);
                     Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_NUT_CRACK1;
                     Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreNutCracking;
                     break;
@@ -83,11 +83,11 @@ void ControlStone(uint32_t I) {
                     // Stone auf neue Position setzen
                     Playfield.pLevel[uHitCoordinate] = EMERALD_STONE;
                     Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_DOWN | EMERALD_ANIM_SAPPHIRE_SQUEAK;
-                    PreparePlaySound(SOUND_SQUEAK,I);
+                    PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
                     return;     // Stone wurde bereits vollständig gesteuert, daher hier beenden
                     break;
                 case (EMERALD_SWAMP):
-                    SDL_Log("Stone hit empty swamp");
+                    // SDL_Log("Stone hit empty swamp");
                     // Stein in versumpften Stein wandeln
                     Playfield.pLevel[I] = EMERALD_STONE_SINK;
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SWAMP1;
@@ -99,7 +99,7 @@ void ControlStone(uint32_t I) {
                         SDL_Log("Stone hit running magic wall");
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                         ElementGoesMagicWall(I,EMERALD_EMERALD);
-                        PreparePlaySound(SOUND_SQUEAK,I);
+                        PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
 
                     } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
@@ -108,7 +108,7 @@ void ControlStone(uint32_t I) {
                         Playfield.uTimeMagicWallLeft = Playfield.uTimeMagicWall;
                         Playfield.bMagicWallRunning = true;
                         ElementGoesMagicWall(I,EMERALD_EMERALD);
-                        PreparePlaySound(SOUND_SQUEAK,I);
+                        PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
                     } else {
                         SDL_Log("Stone hit used magic wall");
                         PreparePlaySound(SOUND_STONE_FALL,I);
@@ -152,8 +152,7 @@ void ControlStone(uint32_t I) {
                 case (EMERALD_PERL):
                     SDL_Log("Stone hit perl");
                     Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_PERL_BREAK;
-                    PreparePlaySound(SOUND_STONE_FALL,I);
-                    PreparePlaySound(SOUND_SQUEAK,I);
+                    PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
                     return; // Nichts mehr machen, damit Stein nicht von gebrochener Perle runter rollt
                     break;
                 case (EMERALD_YAM):
@@ -366,23 +365,23 @@ Seiteneffekte: Playfield.x
 void ControlSwampStone(uint32_t I) {
 
     if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Kann Stein in Space durchsacken?
-        SDL_Log("%s: Stone can leave swamp in Space",__FUNCTION__);
+        // SDL_Log("%s: Stone can leave swamp in Space",__FUNCTION__);
         Playfield.pLevel[I] = EMERALD_SWAMP;    // Sumpf nun leer
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_STONE_SAG;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SWAMP) {  // Kann Stein in anderen Sumpf durchsacken?
         if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) {
-            SDL_Log("%s: Stone can leave swamp into another swamp",__FUNCTION__);
+            // SDL_Log("%s: Stone can leave swamp into another swamp",__FUNCTION__);
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP1;
         } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SWAMP1) {
-            SDL_Log("%s: P1 Stone can leave swamp into another swamp",__FUNCTION__);
+            // SDL_Log("%s: P1 Stone can leave swamp into another swamp",__FUNCTION__);
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP2;
         } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SWAMP2) {
-            SDL_Log("%s: P2 Stone can leave swamp into another swamp",__FUNCTION__);
+            // SDL_Log("%s: P2 Stone can leave swamp into another swamp",__FUNCTION__);
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP3;
         } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SWAMP3) {
-            SDL_Log("%s: P3 Stone can leave swamp into another swamp",__FUNCTION__);
+            // SDL_Log("%s: P3 Stone can leave swamp into another swamp",__FUNCTION__);
             // Aktuelles Feld von Sumpf+Stone in Sumpf wandeln
             Playfield.pLevel[I] = EMERALD_SWAMP;
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;

@@ -147,6 +147,48 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
             uSelfStatus = Playfield.pStatusAnimation[I] & 0xFF000000;
             uReplicatorAnimation = Playfield.uFrameCounter % 12;
             switch (uLevelElement) {
+                case (EMERALD_STEEL_GROW_LEFT):
+                case (EMERALD_STEEL_GROW_RIGHT):
+                case (EMERALD_STEEL_GROW_UP):
+                case (EMERALD_STEEL_GROW_DOWN):
+                case (EMERALD_STEEL_GROW_LEFT_RIGHT):
+                case (EMERALD_STEEL_GROW_UP_DOWN):
+                case (EMERALD_STEEL_GROW_ALL):
+                    uTextureIndex = 72;     // Mauer hart
+                    break;
+                case (EMERALD_WALL_GROW_LEFT):
+                case (EMERALD_WALL_GROW_RIGHT):
+                case (EMERALD_WALL_GROW_UP):
+                case (EMERALD_WALL_GROW_DOWN):
+                case (EMERALD_WALL_GROW_LEFT_RIGHT):
+                case (EMERALD_WALL_GROW_UP_DOWN):
+                case (EMERALD_WALL_GROW_ALL):
+                    uTextureIndex = 316;     // Mauer eckig
+                    break;
+                case (EMERALD_STEEL_GROWING_LEFT):
+                    uTextureIndex = 868 + nAnimationCount;
+                    break;
+                case (EMERALD_STEEL_GROWING_RIGHT):
+                    uTextureIndex = 852 + nAnimationCount;
+                    break;
+                case (EMERALD_STEEL_GROWING_UP):
+                    uTextureIndex = 820 + nAnimationCount;
+                    break;
+                case (EMERALD_STEEL_GROWING_DOWN):
+                    uTextureIndex = 836 + nAnimationCount;
+                    break;
+                case (EMERALD_WALL_GROWING_LEFT):
+                    uTextureIndex = 939 + nAnimationCount;
+                    break;
+                case (EMERALD_WALL_GROWING_RIGHT):
+                    uTextureIndex = 923 + nAnimationCount;
+                    break;
+                case (EMERALD_WALL_GROWING_UP):
+                    uTextureIndex = 891 + nAnimationCount;
+                    break;
+                case (EMERALD_WALL_GROWING_DOWN):
+                    uTextureIndex = 907 + nAnimationCount;
+                    break;
                 case (EMERALD_YAM_KILLS_MAN):
                     Y = Playfield.uFrameCounter % 11;       // Y von 0 bis 10
                     if (Y <= 5) {                           // 0,1,2,3,4,5
@@ -440,6 +482,18 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_DOOR_ONLY_RIGHT_STEEL):
                     uTextureIndex = 492;
+                    break;
+                case (EMERALD_DOOR_ONLY_UP_WALL):
+                    uTextureIndex = 964;
+                    break;
+                case (EMERALD_DOOR_ONLY_DOWN_WALL):
+                    uTextureIndex = 965;
+                    break;
+                case (EMERALD_DOOR_ONLY_LEFT_WALL):
+                    uTextureIndex = 962;
+                    break;
+                case (EMERALD_DOOR_ONLY_RIGHT_WALL):
+                    uTextureIndex = 963;
                     break;
                 case (EMERALD_STEEL_INVISIBLE):
                     if (Playfield.bLightOn) {
