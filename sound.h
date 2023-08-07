@@ -3,9 +3,7 @@
 
 #include <SDL2/SDL.h>
 
-#define MAX_SOUND_SAMPLES   32768
-
-// Bit 31 = 1, unabhängig vom sichtbaren Bereich aktiv
+// Bit 63 = 1, unabhängig vom sichtbaren Bereich aktiv
 #define SOUND_PING              0b0000000000000000000000000000000000000000000000000000000000000001      // Diamant oder Saphir fällt auf etwas Hartes
 #define SOUND_MINE              0b0000000000000000000000000000000000000000000000000000000000000010      // Mine
 #define SOUND_BEETLE            0b0000000000000000000000000000000000000000000000000000000000000100      // Käfer
@@ -37,9 +35,11 @@
 #define SOUND_REPLICATOR_PLOP   0b0000000000000000000000000000000000010000000000000000000000000000      // Replikator erzeugt neues Objekt
 #define SOUND_DYNAMITE_START    0b0000000000000000000000000000000000100000000000000000000000000000      // Dynamit wird gestartet
 #define SOUND_CONVEYORBELT      0b0000000000000000000000000000000001000000000000000000000000000000      // Laufband
-#define SOUND_WALL_STEEL_GROWS  0b0000000000000000000000000000000010000000000000000000000000000000      // Mauer und Stahl wächst
+#define SOUND_TELEPORTER        0b0000000000000000000000000000000010000000000000000000000000000000      // Teleporter
+#define SOUND_WALL_STEEL_GROWS  0b0000000000000000000000000000000100000000000000000000000000000000      // Mauer und Stahl wächst
 
-#define MAX_WAV_CHUNKS          64                                      // Maximale Anzahl von WAV-Chunks
+
+#define MAX_WAV_CHUNKS          64          // Maximale Anzahl von WAV-Chunks
 
 typedef struct {
     uint64_t uAllSounds;                    // OR-verknüpfte Sounds, die abgespielt werden sollen

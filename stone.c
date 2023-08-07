@@ -53,6 +53,7 @@ void ControlStone(uint32_t I) {
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_STONE;
+        Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP;
         // Aktuelles Element auf Animation "unten"
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
@@ -186,7 +187,6 @@ void ControlStone(uint32_t I) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SWAMP1;
             }
         }
-        Playfield.pStatusAnimation[I] |= EMERALD_ANIM_STAND;
         if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_STONE) != 0) {
             uFree = GetFreeRollDirections(I);
             if (uFree == 1) {   // Stone kann links rollen
@@ -202,6 +202,7 @@ void ControlStone(uint32_t I) {
                 Playfield.pLevel[I + 1] = EMERALD_INVALID;
                 // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                 Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                 Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                 // Aktuelles Element auf Animation "rechts"
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -220,6 +221,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -240,6 +242,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -258,6 +261,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -276,6 +280,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -294,6 +299,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -391,5 +397,3 @@ void ControlSwampStone(uint32_t I) {
         }
     }
 }
-
-

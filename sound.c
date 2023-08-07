@@ -39,6 +39,7 @@ extern uint8_t _binary_Sound_DoorCloseOpen_wav_start;extern uint8_t _binary_Soun
 extern uint8_t _binary_Sound_ReplicatorPlop_wav_start;extern uint8_t _binary_Sound_ReplicatorPlop_wav_end;
 extern uint8_t _binary_Sound_DynamiteStart_wav_start;extern uint8_t _binary_Sound_DynamiteStart_wav_end;
 extern uint8_t _binary_Sound_Conveyorbelt_wav_start;extern uint8_t _binary_Sound_Conveyorbelt_wav_end;
+extern uint8_t _binary_Sound_Teleporter_wav_start;extern uint8_t _binary_Sound_Teleporter_wav_end;
 extern uint8_t _binary_Sound_Steel_Wall_grow_wav_start;extern uint8_t _binary_Sound_Steel_Wall_grow_wav_end;
 
 uint8_t* g_pSfxPointer_wav[] = {
@@ -74,8 +75,9 @@ uint8_t* g_pSfxPointer_wav[] = {
 /*29*/    &_binary_Sound_ReplicatorPlop_wav_start,&_binary_Sound_ReplicatorPlop_wav_end,// Replikator erzeugt neues Objekt
 /*30*/    &_binary_Sound_DynamiteStart_wav_start,&_binary_Sound_DynamiteStart_wav_end,  // Dynamit wird gestartet
 /*31*/    &_binary_Sound_Conveyorbelt_wav_start,&_binary_Sound_Conveyorbelt_wav_end,    // Laufband
-/*32*/    &_binary_Sound_Steel_Wall_grow_wav_start,&_binary_Sound_Steel_Wall_grow_wav_end,          // Mauer und Stahl wächst
-/*33*/    NULL,NULL,                                                                    // Endekennung
+/*32*/    &_binary_Sound_Teleporter_wav_start,&_binary_Sound_Teleporter_wav_end,        // Teleporter
+/*33*/    &_binary_Sound_Steel_Wall_grow_wav_start,&_binary_Sound_Steel_Wall_grow_wav_end,          // Mauer und Stahl wächst
+/*34*/    NULL,NULL,                                                                    // Endekennung
 };
 
 Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];
@@ -173,9 +175,9 @@ Rückgabewert:  -
 Seiteneffekte: GameSound.x, g_pChunk[]
 ------------------------------------------------------------------------------*/
 int PlayAllSounds(void) {
-    uint32_t uBit;
-    uint32_t uMask;
-    uint32_t uS;
+    uint64_t uBit;
+    uint64_t uMask;
+    uint32_t uS;    // Wave-Chunk und Channel
     int nRet;
 
     if (GameSound.uAllSounds == 0) {
@@ -188,6 +190,7 @@ int PlayAllSounds(void) {
         if ((uMask & GameSound.uAllSounds) != 0) {          // Soll der Sound abgespielt werden
             if (Mix_PlayChannel(uS, g_pChunk[uS],0) == -1) {
                 nRet = -1;
+                SDL_Log("%s: Mix_PlayChannel() failed, channel: %u",__FUNCTION__,uS);
             }
         }
         uMask = uMask << 1;
