@@ -10,6 +10,9 @@
 #define EMERALD_EXPLOSION_NEWCENTRAL_BEETLE             0x0006          // an dieser Stelle entsteht eine neue zentrale Käferexploasion
 
 
+#define NO_MEGA_EXPLOSION                               false
+#define MEGA_EXPLOSION                                  true
+
 
 void ControlExplosionToElement(uint32_t I);
 void ControlCentralExplosion(uint32_t I);                               // eine "normale" 3x3-Explosion steuern
@@ -20,9 +23,7 @@ uint32_t CheckExplosionElement(uint16_t uElement,uint32_t uCoordinate);
 int YamHasReplicatorAcidPool(uint16_t *YamExplosion);
 void CheckYamContents(uint32_t I,uint16_t *YamElements);
 bool IsDangerousEnemyAround(uint32_t I);
-void CleanInvalidFieldsForCentralExplosion(uint32_t I);
-void CleanInvalidFieldsForMegaExplosion(uint32_t I);
-
+void CleanInvalidFieldsForCentralExplosion(int I, bool bMega);
 
 #endif // EXPLOSION_H_INCLUDED
 

@@ -68,6 +68,12 @@ typedef struct {
 
 
 typedef struct {
+    uint8_t *pLevelXml;
+    char szLevelTitle[EMERALD_TITLE_LEN + 1];
+} CLIPBOARD;
+
+
+typedef struct {
     // Editor
     bool            bEditorRun;
     bool            bFoundError;                                // Ein Levelfehler (Man fehlt, unvollständiger Replikator, unvollständiges Säurebecken) wurde gefunden
@@ -166,6 +172,11 @@ typedef struct {
     YAM_COORDS      YamCoords[EMERALD_MAX_YAM_EXPLOSIONS];      // Koordinaten für Kästchen des YAM-Editors
 } ED;
 
+
+void InitClipboard(void);
+int PutLevelToClipboard(int nDestLevelNumber);
+void FreeClipboard(void);
+void ShowClipboard(void);
 int UpdateLevelgroupHash(uint8_t *pszInput, uint8_t *puCalculatedHash);
 int UpdateCreateTimestamp(uint8_t *pszInput);
 uint8_t *GetStartOrEndLevelTag(uint8_t *pszInput, uint8_t *pEndpointer, bool bStart);
@@ -193,7 +204,7 @@ int DrawEditorPanel(SDL_Renderer *pRenderer);
 int FillPanel(SDL_Renderer *pRenderer);
 uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos);
 int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount);
-DYNSTRING *GetLevelXmlFile(void);
+DYNSTRING *GetLevelXmlFromEditor(void);
 int EditorStateLevel(SDL_Renderer *pRenderer);
 int EditorStateYams(SDL_Renderer *pRenderer);
 int EditorStateMachines(SDL_Renderer *pRenderer);

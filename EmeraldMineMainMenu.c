@@ -14,6 +14,7 @@
 #include "mySDL.h"
 #include "mystd.h"
 #include "scroller.h"
+#include "teleporter.h"
 
 MAINMENU MainMenu;
 
@@ -1375,6 +1376,8 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     DATA (DE)COMPRESSOR 'MINIZ' BY RICH GELDREICH AND TENACIOUS SOFTWARE LLC.  XML READER 'EZXML' BY AARON VOISINE.  BASE64 DECODER BY CAMERON HARPER.  \
     GAME GRAPHICS AND SOUNDS TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.                     "};
 
+    InitTeleporter();
+    InitClipboard();
     InitMainMenu();
     uXStart = ge_uXoffs + FONT_W;
     uXEnd = ge_uXoffs + DEFAULT_WINDOW_W - FONT_W;
@@ -1669,6 +1672,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
         }
     }
     SetAllTextureColors(100);
+    FreeClipboard();
     FreeButton(BUTTONLABEL_CREATE_PLAYER);
     FreeButton(BUTTONLABEL_DELETE_PLAYER);
     FreeButton(BUTTONLABEL_LEVELEDITOR);
@@ -2136,7 +2140,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
     if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1100,742,true,false) != 0) {
         return -1;
     }
-    if (SetModMusic(11) != 0) {
+    if (SetModMusic(2) != 0) {
         return -1;
     }
     WaitNoKey();

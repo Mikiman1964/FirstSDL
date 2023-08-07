@@ -475,7 +475,7 @@
 #define EMERALD_STEEL_MOVE_LEVEL                0x01EB            // Stahl Level verschieben
 #define EMERALD_STEEL_ADD_LEVELGROUP            0x01EC            // Stahl erzeuge neue Levelgruppe
 #define EMERALD_STEEL_COPY_LEVEL                0x01ED            // Stahl Level kopieren
-#define EMERALD_STEEL_MSDOS_IMPORT              0x01EE            // Stahl MSDOS-Level-Import
+#define EMERALD_STEEL_CLIPBOARD_LEVEL           0x01EE            // Stahl Clipboard-Level
 #define EMERALD_STEEL_DC3_IMPORT                0x01EF            // Stahl DC3 (Diamond Caves 3)-Level-Import
 #define EMERALD_STEEL_RENAME_LEVELGROUP         0x01F0            // Stahl Levelgruppe umbenennen
 #define EMERALD_STEEL_PASSWORD                  0x01F1            // Stahl Passwort
@@ -521,8 +521,13 @@
 #define EMERALD_DOOR_ONLY_DOWN_WALL             0x0219            // Tür, nur nach unten passierbar, sprengbar
 #define EMERALD_DOOR_ONLY_LEFT_WALL             0x021A            // Tür, nur nach links passierbar, sprengbar
 #define EMERALD_DOOR_ONLY_RIGHT_WALL            0x021B            // Tür, nur nach rechts passierbar, sprengbar
+#define EMERALD_TELEPORTER_RED                  0x021C            // Teleporter, rot
+#define EMERALD_TELEPORTER_YELLOW               0x021D            // Teleporter, gelb
+#define EMERALD_TELEPORTER_GREEN                0x021E            // Teleporter, grün
+#define EMERALD_TELEPORTER_BLUE                 0x021F            // Teleporter, blau
 
-#define EMERALD_MAX_ELEMENT                     0x021B            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
+
+#define EMERALD_MAX_ELEMENT                     0x021F            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 #define EMERALD_FONT_BLUE                       0x00              // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
@@ -578,7 +583,12 @@
 #define EMERALD_ANIM_AVOID_DOUBLE_CONTROL       0x00800000      // Element nicht doppelt steuern (Element wird z.B. I + X gesetzt und durch ControlGame(I) nachgesteuet)
 
 
-
+// Letzte YAM-Richtung
+#define EMERALD_LAST_YAM_DIR_BLOCKED            0               // blockiert
+#define EMERALD_LAST_YAM_DIR_UP                 1               // hoch
+#define EMERALD_LAST_YAM_DIR_RIGHT              2               // rechts
+#define EMERALD_LAST_YAM_DIR_DOWN               3               // runter
+#define EMERALD_LAST_YAM_DIR_LEFT               4               // links
 
 // "Selbststeuernde" Zustände                                   // Diese Zustände müssen vom Element selbst zurückgesetzt werden
 #define EMERALD_NO_ADDITIONAL_ANIMSTATUS        0x00000000      // kein zusätzlicher Status
@@ -648,6 +658,12 @@
 #define EMERALD_ANIM_BEETLE_WILL_EXPLODE        0x40000000      // Käfer wird nächste Kontrollrunde sprengen
 #define EMERALD_ANIM_GRASS_SHRINK               0x41000000      // Gras verschwindet
 #define EMERALD_ANIM_SAND_INVISIBLE_SHRINK      0x42000000      // unsichtbarer Sand verschwindet
+#define EMERALD_ANIM_MAN_BLOCKED_LEFT           0x43000000      // Man will nach links, ist aber blockiert (Türen, Teleporter)
+#define EMERALD_ANIM_MAN_BLOCKED_UP             0x44000000      // Man will nach oben, ist aber blockiert (Türen, Teleporter)
+#define EMERALD_ANIM_MAN_BLOCKED_RIGHT          0x45000000      // Man will nach rechts, ist aber blockiert (Türen, Teleporter)
+#define EMERALD_ANIM_MAN_BLOCKED_DOWN           0x46000000      // Man will nach unten, ist aber blockiert (Türen, Teleporter)
+
+
 
 #define EMERALD_STANDARD_SPEED                  false
 #define EMERALD_DOUBLE_SPEED                    true
@@ -686,9 +702,11 @@ typedef struct {
 typedef struct {
     uint16_t        *pLevel;
     uint32_t        *pStatusAnimation;
+    uint32_t        *pLastStatusAnimation;
     POSTANIMATION   *pPostAnimation;
     uint32_t        uRollUnderground[65536];                    // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
     uint16_t        *pInvalidElement;
+    uint8_t         *pLastYamDirection;
     int             nCentralExplosionCoordinates[8];            // Koordinaten um Zentrum einer 3x3-Explosion
     int             nCentralMegaExplosionCoordinates[20];       // Koordinaten um Zentrum einer Mega-Explosion
     int             nCheckReplicatorForYamExplosionTop[5];      // Für Yam-Explosion mit Replikator (obere Hälfte)
@@ -795,6 +813,14 @@ typedef struct {
     uint32_t        uPlayTimeStart;                             // Zeitpunkt, wann Level gestartet wurde
     uint32_t        uPlayTimeEnd;                               // Zeitpunkt, wann Level beendet wurde
     YAMEXPLOSION    YamExplosions[EMERALD_MAX_YAM_EXPLOSIONS];
+    uint32_t        uTeleporterRedCounter;                      // Anzahl roter Teleporter
+    uint32_t        *puTeleporterRedCoordinates;                // lineare Koordinaten, rote Teleporter
+    uint32_t        uTeleporterYellowCounter;                   // Anzahl gelber Teleporter
+    uint32_t        *puTeleporterYellowCoordinates;             // lineare Koordinaten, gelbe Teleporter
+    uint32_t        uTeleporterGreenCounter;                    // Anzahl grüner Teleporter
+    uint32_t        *puTeleporterGreenCoordinates;              // lineare Koordinaten, grüne Teleporter
+    uint32_t        uTeleporterBlueCounter;                     // Anzahl blauer Teleporter
+    uint32_t        *puTeleporterBlueCoordinates;               // lineare Koordinaten, blaue Teleporter
 } PLAYFIELD;
 
 

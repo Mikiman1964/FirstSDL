@@ -12,6 +12,7 @@
 #include "levelconverter.h"
 #include "levelgroupoperation.h"
 #include "loadlevel.h"
+#include "man.h"
 #include "md5.h"
 #include "miniz.h"
 #include "modplay.h"
@@ -20,6 +21,8 @@
 #include "scroller.h"
 
 ED Ed;
+CLIPBOARD Clipboard;
+extern MANKEY ManKey;
 extern PLAYFIELD Playfield;
 extern INPUTSTATES InputStates;
 extern SDL_DisplayMode ge_DisplayMode;
@@ -581,6 +584,10 @@ char ge_szElementNames[][64] =
                           "DOOR, ONLY DOWN, WALL",              // 0X219
                           "DOOR, ONLY LEFT, WALL",              // 0X21A
                           "DOOR, ONLY RIGHT, WALL",             // 0X21B
+                          "TELEPORTER, RED",                    // 0X21C
+                          "TELEPORTER, YELLOW",                 // 0X21D
+                          "TELEPORTER, GREEN",                  // 0X21E
+                          "TELEPORTER, BLUE",                   // 0X21F
                          };
 
 
@@ -596,7 +603,7 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_DOOR_WHITE,EMERALD_DOOR_GREY_WHITE,EMERALD_DOOR_WHITE_WOOD,EMERALD_KEY_WHITE,EMERALD_KEY_GENERAL,EMERALD_DOOR_MULTICOLOR,EMERALD_DOOR_EMERALD,EMERALD_DOOR_TIME,
                             EMERALD_DOOR_END_NOT_READY,EMERALD_DOOR_END_READY,EMERALD_DOOR_END_NOT_READY_STEEL,EMERALD_DOOR_END_READY_STEEL,EMERALD_SWITCHDOOR_CLOSED,EMERALD_SWITCHDOOR_OPEN,EMERALD_SWITCH_SWITCHDOOR,EMERALD_WHEEL_TIMEDOOR,
                             EMERALD_DOOR_ONLY_LEFT_STEEL,EMERALD_DOOR_ONLY_DOWN_STEEL,EMERALD_DOOR_ONLY_RIGHT_STEEL,EMERALD_DOOR_ONLY_UP_STEEL,EMERALD_DOOR_ONLY_LEFT_WALL,EMERALD_DOOR_ONLY_DOWN_WALL,EMERALD_DOOR_ONLY_RIGHT_WALL,EMERALD_DOOR_ONLY_UP_WALL,
-                            EMERALD_MAGIC_WALL,EMERALD_MAGIC_WALL_STEEL,EMERALD_MAGIC_WALL_SWITCH,EMERALD_LIGHT_SWITCH,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_MAGIC_WALL,EMERALD_MAGIC_WALL_STEEL,EMERALD_MAGIC_WALL_SWITCH,EMERALD_LIGHT_SWITCH,EMERALD_TELEPORTER_RED,EMERALD_TELEPORTER_YELLOW,EMERALD_TELEPORTER_GREEN,EMERALD_TELEPORTER_BLUE,
                             EMERALD_MINE_LEFT,EMERALD_MINE_DOWN,EMERALD_MINE_RIGHT,EMERALD_MINE_UP,EMERALD_BEETLE_LEFT,EMERALD_BEETLE_DOWN,EMERALD_BEETLE_RIGHT,EMERALD_BEETLE_UP,
                             EMERALD_MOLE_LEFT,EMERALD_MOLE_DOWN,EMERALD_MOLE_RIGHT,EMERALD_MOLE_UP,EMERALD_YAM,EMERALD_ALIEN,EMERALD_GREEN_CHEESE,EMERALD_GREEN_DROP,
                             EMERALD_MAN,EMERALD_HAMMER,EMERALD_TIME_COIN,EMERALD_DYNAMITE_OFF,EMERALD_DYNAMITE_ON,EMERALD_WHEEL,EMERALD_GRASS,EMERALD_SAND_INVISIBLE,
@@ -701,8 +708,17 @@ void SetPanelElements(uint32_t uMenuState) {
         case (MENUSTATE_YAMS):
             memcpy(g_PanelElements,g_PanelElementsMain,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
             for (K = 0; K < MAX_PANEL_ELEMENTS; K++) {
-                if (g_PanelElements[K] == EMERALD_MAN) {
-                    g_PanelElements[56] = EMERALD_SPACE; // Im Yam-Editor den Man durch Space ersetzen
+                // Yam-Menü soll einige Elemente nicht anbieten
+                switch (g_PanelElements[K]) {
+                    case (EMERALD_MAN):
+                    /*
+                    case (EMERALD_TELEPORTER_RED):
+                    case (EMERALD_TELEPORTER_YELLOW):
+                    case (EMERALD_TELEPORTER_GREEN):
+                    case (EMERALD_TELEPORTER_BLUE):
+                    */
+                        g_PanelElements[K] = EMERALD_SPACE; // Im Yam-Editor das entsprechende Element durch Space ersetzen
+                        break;
                 }
             }
             break;
@@ -741,7 +757,7 @@ void ClearOldMan(void) {
 
 
 /*----------------------------------------------------------------------------
-Name:           GetLevelXmlFile
+Name:           GetLevelXmlFromEditor
 ------------------------------------------------------------------------------
 Beschreibung: Gibt ein Level in XML zurück, welches sich in der Struktur
               Ed.x befindet. Bei Erfolg muss der XML-Speicher außerhalb
@@ -753,7 +769,7 @@ Parameter
 Rückgabewert:  DYNSTRING *, Zeiger auf XML-Leveldaten, NULL = Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
-DYNSTRING *GetLevelXmlFile(void) {
+DYNSTRING *GetLevelXmlFromEditor(void) {
     char szNum[32];
     char szNum2[32];
     uint32_t uBase64Len;
@@ -3858,7 +3874,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
         }
         ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_EDITOR_SAVE) && (!Ed.bFoundError)) {
-            XML = GetLevelXmlFile();
+            XML = GetLevelXmlFromEditor();
             Ed.bEditorRun = false;
         } else if (IsButtonPressed(BUTTONLABEL_EDITOR_QUIT) && (!Ed.bFoundError)) {
             Ed.bEditorRun = false;
@@ -4418,6 +4434,12 @@ int HandlePreEditorButtons(int nSelectedLevel) {
         MainMenu.uMenuScreen[16 * MainMenu.uXdim + 18] = EMERALD_STEEL_COPY_LEVEL;
         SetMenuText(MainMenu.uMenuScreen,"COPY / NEW LEVEL",20,16,EMERALD_FONT_BLUE);
         bButtons[7] = true;
+
+        MainMenu.uMenuScreen[20 * MainMenu.uXdim + 18] = EMERALD_STEEL_CLIPBOARD_LEVEL;
+        SetMenuText(MainMenu.uMenuScreen,"LEVEL TO CLIPBOARD",20,20,EMERALD_FONT_BLUE);
+        bButtons[9] = true;
+
+
         if (SelectedLevelgroup.uLevelCount > 1) {
             MainMenu.uMenuScreen[14 * MainMenu.uXdim + 18] = EMERALD_STEEL_MOVE_LEVEL;
             SetMenuText(MainMenu.uMenuScreen,"MOVE LEVEL",20,14,EMERALD_FONT_BLUE);
@@ -4483,6 +4505,7 @@ void PreparePreEditormenu(void) {
         MainMenu.uMenuScreen[3 * MainMenu.uXdim + 16] = EMERALD_STEEL_ARROW_UP;
         MainMenu.uMenuScreen[5 * MainMenu.uXdim + 16] = EMERALD_STEEL_ARROW_DOWN;
     }
+    MainMenu.uMenuScreen[23 * MainMenu.uXdim + 4] = EMERALD_STEEL_CLIPBOARD_LEVEL;
 }
 
 
@@ -4497,7 +4520,7 @@ Parameter
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: InputStates.x, SelectedLevelgroup, MainMenu.x, Playfield.x
-               ImportLevel.x
+               ImportLevel.x, ManKey.x, Clipboard.x
 ------------------------------------------------------------------------------*/
 int PreEditorMenu(SDL_Renderer *pRenderer) {
     uint32_t I;
@@ -4542,11 +4565,10 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         return -1;
     }
     PreparePreEditormenu();
-
     sprintf(szFullDefaultLevelgroupFilename,"%s/%s",EMERALD_LEVELGROUPS_DIRECTORYNAME,EMERALD_DEFAULT_LEVELGROUP_FILENAME);
     bWarnDefaultLevelGroup = (strcmp(SelectedLevelgroup.szFilename,szFullDefaultLevelgroupFilename) == 0);
     do {
-        UpdateInputStates();
+        UpdateManKey(); // ruft auch UpdateInputStates(); auf
         //printf("x:%u  y:%u   BeamPos: %d\n",InputStates.nMouseXpos,InputStates.nMouseYpos,nSelectedBeamPosition);
         // Hervorhebung für ausgewähltes Level
         if ((nSelectedBeamPosition >= 0) && (nSelectedBeamPosition < MAX_LEVELTITLES_IN_LIST)) {
@@ -4562,6 +4584,9 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         }
         nLastButton = nButton;
         nButton = HandlePreEditorButtons(nSelectedLevel);
+        if ((nButton == 0) && (ManKey.bFire) && (nSelectedBeamPosition != -1)) {
+            nButton = 4;    // Feuertaste kann ebenfalls Leveltest aufrufen
+        }
         // Für das schnelle Scrollen der Level-Liste
         if ( ((nLastButton == 12) && (nButton == 12)) || ((nLastButton == 11) && (nButton == 11)) ) {
             uScrollFastCounter++;
@@ -4656,7 +4681,11 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     SDL_Log("%s:   copy level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
                     DimmMainMenu(pRenderer,false);
-                    nErrorCode = LevelgroupOperaton_Copy(nSelectedLevel);
+                    if (Clipboard.pLevelXml != NULL) {
+                        nErrorCode = LevelgroupOperaton_CopyClipboard(nSelectedLevel);
+                    } else {
+                        nErrorCode = LevelgroupOperaton_Copy(nSelectedLevel);
+                    }
                     InitLevelTitleList();
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,true);
                     PreparePreEditormenu();
@@ -4681,12 +4710,13 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     break;
-                case (9):   // TODO: Diesen Zweig später für Clipboard
+                case (9):
+                    SDL_Log("%s:   level to clipboard",__FUNCTION__);
+                    nErrorCode = PutLevelToClipboard(nSelectedLevel);
+                    ShowClipboard();
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    nSelectedBeamPosition = -1;
-                    nSelectedLevel = -1;
                     break;
                 case (10):
                     nMoveState = 0;
@@ -4756,6 +4786,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
             nMoveState = 0;
             nMoveSrcLevel = -1;
             nMoveDestLevel = -1;
+            FreeClipboard();
         }
 
         if ((!bPrepareExit) && (nColorDimm < 100)) {
@@ -4779,7 +4810,6 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         }
 
         if (bWarnDefaultLevelGroup) {
-
             if (bColorToggle) {
                 uFontColor = 0;
             } else {
@@ -4788,8 +4818,18 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
             if ((Playfield.uFrameCounter % 10) == 0) {
                 bColorToggle = !bColorToggle;
             }
-            PrintLittleFont(pRenderer,260,745,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_RELATIVE);
+            PrintLittleFont(pRenderer,260,8,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_RELATIVE);
+
         }
+        if (Clipboard.pLevelXml != NULL) {
+            strcpy(szText,Clipboard.szLevelTitle);
+        } else {
+            strcpy(szText,"CLIPBOARD IS EMPTY");
+        }
+        PrintLittleFont(pRenderer,176,745,0,szText,K_RELATIVE);
+        PrintLittleFont(pRenderer,177,746,3,szText,K_RELATIVE);
+
+
         if ((IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES)) ||  ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || InputStates.bQuit)) {
             bPrepareExit = true;
         }
@@ -4845,4 +4885,130 @@ int ScrollLevelTitleList(int nButton) {
         }
     }
     return nScroll;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           InitClipboard
+------------------------------------------------------------------------------
+Beschreibung: Initialisiert die Struktur Clipboard.x.
+              Wird einmalig aus EmeraldMineMainMenu() aufgerufen.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Clipboard.x
+------------------------------------------------------------------------------*/
+void InitClipboard(void) {
+    Clipboard.pLevelXml = NULL;
+    memset(Clipboard.szLevelTitle,0,sizeof(Clipboard.szLevelTitle));
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           PutLevelToClipboard
+------------------------------------------------------------------------------
+Beschreibung: Fügt ein Level aus der aktuell selektierten Lvelgruppe in die Struktur
+              Clipboard.x ein. Falls sich bereits Daten im Clipboard befinden,
+              wird der Clipboard-Speicher vorher freigegeben und neuer Speicher alloziert.
+              Im Erfolgsfall muss der Clipboard-Speicher außerhalb dieser
+              Funktion wieder freigegeben werden.
+Parameter
+      Eingang: nLevelNumber, int, Levelnummer in der selektierten Levelgruppe.
+      Ausgang: -
+Rückgabewert:  int, 0 = OK, sonst Fehler
+Seiteneffekte: Clipboard.x, SelectedLevelgroup.x
+------------------------------------------------------------------------------*/
+int PutLevelToClipboard(int nLevelNumber) {
+    int nErrorCode;
+    uint32_t uXmlLen;
+    uint32_t uTitleLen;
+    uint32_t uLevelLen;
+    ezxml_t xml;
+    ezxml_t node;
+    char *pAttr;
+    uint8_t *pLevelgroupXml = NULL;
+    uint8_t *pLevelXml = NULL;
+
+    nErrorCode = -1;
+    if ((nLevelNumber >= 0) && (nLevelNumber <EMERALD_MAX_LEVELCOUNT)) {
+        if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
+            if ((pLevelXml = GetLevelFromLevelgroup(pLevelgroupXml,nLevelNumber)) != NULL) {
+                // Ab hier stehen die XML-Leveldaten bereit
+                SAFE_FREE(Clipboard.pLevelXml);
+                memset(Clipboard.szLevelTitle,0,sizeof(Clipboard.szLevelTitle));
+                uLevelLen = strlen((char*)pLevelXml);
+                // Neuen Speicher erzeugen und Daten ins Clipboard kopieren
+                Clipboard.pLevelXml = malloc(uLevelLen + 1);
+                if (Clipboard.pLevelXml != NULL) {
+                    Clipboard.pLevelXml[uLevelLen] = 0; // Stellt Stringende sicher
+                    memcpy(Clipboard.pLevelXml,pLevelXml,uLevelLen);
+                    nErrorCode = 0;
+                    // Leveltitel ermitteln
+                    xml = ezxml_parse_str((char*)pLevelXml,uLevelLen);
+                    if (xml != NULL) {
+                        node = ezxml_child(xml,"title");
+                        if (node != NULL) {
+                            pAttr = node->txt;
+                            uTitleLen = (uint32_t)strlen(pAttr);
+                            if (uTitleLen == 0) {
+                                strcpy(Clipboard.szLevelTitle,"UNKNOWN TITLE");
+                            } else if (uTitleLen > EMERALD_TITLE_LEN) {
+                                memcpy(Clipboard.szLevelTitle,pAttr,EMERALD_TITLE_LEN);
+                            } else {
+                                strcpy(Clipboard.szLevelTitle,pAttr);
+                            }
+                        }
+                        ezxml_free(xml);    // Prüft selbst, ob Pointer NULL ist
+                    }
+                }
+            }
+        }
+        SAFE_FREE(pLevelXml);
+        SAFE_FREE(pLevelgroupXml);
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           FreeClipboard
+------------------------------------------------------------------------------
+Beschreibung: Gibt ggf. den Speicher des Clipboards wieder frei.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Clipboard.x
+------------------------------------------------------------------------------*/
+void FreeClipboard(void) {
+    SAFE_FREE(Clipboard.pLevelXml);
+    memset(Clipboard.szLevelTitle,0,sizeof(Clipboard.szLevelTitle));
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ShowClipboard
+------------------------------------------------------------------------------
+Beschreibung: Zeigt den Inhalt des Clipboards. (Debugfunktion)
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Clipboard.x
+------------------------------------------------------------------------------*/
+void ShowClipboard(void) {
+    uint32_t uLen;
+
+    if (Clipboard.pLevelXml != NULL) {
+        uLen = strlen((char*)Clipboard.pLevelXml);
+        SDL_Log("Leveltitle:%s",Clipboard.szLevelTitle);
+        SDL_Log("LevelLen:  %u",uLen);
+        if (uLen > 128) {
+            uLen = 128;
+        }
+        DumpMem(Clipboard.pLevelXml,uLen);
+    } else {
+        SDL_Log("Clipboard is empty!");
+    }
 }

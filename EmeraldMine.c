@@ -4,7 +4,6 @@ TODO
 * Explosion
     * Explosionen mit Sumpf testen (erster Test sieht gut aus)
 * Leveleditor
-    * Level von Levelgruppe zu Levelgruppe kopierbar machen (über eine Art Zwischenablage)
     * Undo für Editor
 */
 #include <SDL2/SDL.h>
@@ -47,6 +46,7 @@ TODO
 #include "sound.h"
 #include "steel_wall_grow.h"
 #include "stone.h"
+#include "teleporter.h"
 #include "yam.h"
 
 
@@ -164,17 +164,15 @@ int Menu(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,468,356,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE",K_RELATIVE);
         PrintLittleFont(pRenderer,468,371,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME",K_RELATIVE);
         PrintLittleFont(pRenderer,468,386,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,401,0,"* '2' FOR MUSIC 2 -> RIPPED, UNKNOWN AUTHOR, 1990",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,401,0,"* '2' FOR MUSIC 2 -> CIRCUS TIME 2 VOYCE/DELIGHT, 1993",K_RELATIVE);
         PrintLittleFont(pRenderer,468,416,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE);
         PrintLittleFont(pRenderer,468,431,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,446,0,"  WHILE PLAYING MUSIC 4 A COMPANY LOGO",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,461,0,"  WILL BE DISPLAYED EVERY 60 SECONDS.",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,476,0,"* '5' FOR MUSIC 5 -> CLASS11.TIME FLIES BY MAKTONE",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,491,0,"* '6' FOR MUSIC 6 -> 2000AD:CRACKTRO:IV BY MAKTONE",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,506,0,"* '7' FOR MUSIC 7 -> 2000AD:CRACKTRO02 BY MAKTONE",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,521,0,"* '8' FOR MUSIC 8 -> BREWERY BY MAKTONE",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,536,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,551,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,446,0,"* '5' FOR MUSIC 5 -> CLASS11.TIME FLIES BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,461,0,"* '6' FOR MUSIC 6 -> 2000AD:CRACKTRO:IV BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,476,0,"* '7' FOR MUSIC 7 -> 2000AD:CRACKTRO02 BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,491,0,"* '8' FOR MUSIC 8 -> BREWERY BY MAKTONE",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,506,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,521,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE);
         PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE);
         nErrorCode = ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
@@ -257,7 +255,6 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     ManKey.uLastFireFrameCount = 0;
     ManKey.uFireCount = 0;
     ManKey.bExit = false;
-
     SDL_ShowCursor(SDL_DISABLE);    // Mauspfeil verstecken
     while (bLevelRun) {
         UpdateManKey();
@@ -287,7 +284,6 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             PrintPlayfieldValues();
         }
         //// DEBUG-Code Ende
-
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_P]) || ((bPause) && (ManKey.bFire))) {
             bPause = !bPause;
             if (!bPause) {
@@ -368,7 +364,10 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SAFE_FREE(Playfield.pLevel);
     SAFE_FREE(Playfield.pInvalidElement);
     SAFE_FREE(Playfield.pStatusAnimation);
+    SAFE_FREE(Playfield.pLastStatusAnimation);
     SAFE_FREE(Playfield.pPostAnimation);
+    SAFE_FREE(Playfield.pLastYamDirection);
+    FreeTeleporterCoordinates();
     for (I = 0; I < EMERALD_MAX_MESSAGES; I++) {
         SAFE_FREE(Playfield.pMessage[I]);
     }
@@ -628,10 +627,6 @@ uint32_t ControlGame(uint32_t uDirection) {
             case (EMERALD_STEEL_GROW_ALL):
                 ControlSteelGrowAllDirections(I);
                 break;
-
-
-
-
             case (EMERALD_YAM_KILLS_MAN):
                 ControlYamKillsMan(I);
                 break;
@@ -1058,15 +1053,29 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_WALL_ROUND_PIKE] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_STEEL_ROUND_PIKE] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_STEEL] = 0xEB;                           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_GROW_LEFT] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_GROW_RIGHT] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_GROW_UP] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_GROW_DOWN] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_GROW_LEFT_RIGHT] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_GROW_UP_DOWN] = 0xEB;              // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_GROW_ALL] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_GROW_LEFT] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_GROW_RIGHT] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_GROW_UP] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_GROW_DOWN] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_GROW_LEFT_RIGHT] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_GROW_UP_DOWN] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_GROW_ALL] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_CORNERED] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_WALL_INVISIBLE] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
     // Bei DC3 rollt nichts vom Schlüssel
-    // Playfield.uRollUnderground[EMERALD_KEY_RED] = 0x1FF;                        // nicht bei DC3
-    // Playfield.uRollUnderground[EMERALD_KEY_YELLOW] = 0x1FF;                     // nicht bei DC3
-    // Playfield.uRollUnderground[EMERALD_KEY_BLUE] = 0x1FF;                       // nicht bei DC3
-    // Playfield.uRollUnderground[EMERALD_KEY_GREEN] = 0x1FF;                      // nicht bei DC3
-	// Playfield.uRollUnderground[EMERALD_KEY_GENERAL] = 0x1FF;                    // nicht bei DC3
-	// Playfield.uRollUnderground[EMERALD_KEY_WHITE] = 0x1FF;                      // nicht bei DC3
+    // Playfield.uRollUnderground[EMERALD_KEY_RED] = 0x1FF;                     // nicht bei DC3
+    // Playfield.uRollUnderground[EMERALD_KEY_YELLOW] = 0x1FF;                  // nicht bei DC3
+    // Playfield.uRollUnderground[EMERALD_KEY_BLUE] = 0x1FF;                    // nicht bei DC3
+    // Playfield.uRollUnderground[EMERALD_KEY_GREEN] = 0x1FF;                   // nicht bei DC3
+	// Playfield.uRollUnderground[EMERALD_KEY_GENERAL] = 0x1FF;                 // nicht bei DC3
+	// Playfield.uRollUnderground[EMERALD_KEY_WHITE] = 0x1FF;                   // nicht bei DC3
     Playfield.uRollUnderground[EMERALD_WHEEL] = 0x1FF;
     Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_LEFT] = 0x1FF;              // nicht bei DC3
     Playfield.uRollUnderground[EMERALD_ACIDPOOL_TOP_RIGHT] = 0x1FF;             // nicht bei DC3
@@ -1582,7 +1591,7 @@ bool IsSteel(uint16_t uElement) {
     (uElement == EMERALD_STEEL_EDIT_LEVEL) ||
     (uElement == EMERALD_STEEL_MOVE_LEVEL) ||
     (uElement == EMERALD_STEEL_COPY_LEVEL) ||
-    (uElement == EMERALD_STEEL_MSDOS_IMPORT) ||
+    (uElement == EMERALD_STEEL_CLIPBOARD_LEVEL) ||
     (uElement == EMERALD_STEEL_DC3_IMPORT) ||
     (uElement == EMERALD_STEEL_ADD_LEVELGROUP) ||
     (uElement == EMERALD_REPLICATOR_RED_TOP_LEFT) ||

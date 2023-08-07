@@ -24,6 +24,7 @@ void ControlAlien(uint32_t I) {
     int  nRandom;
     uint32_t uCatchXpos;
     uint32_t uCatchYpos;
+    uint32_t uManSelfStatus;
 
     if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
         // Alien kann vom Replikator geboren werden, dann hier nichts machen
@@ -52,17 +53,26 @@ void ControlAlien(uint32_t I) {
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_ALIEN;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT | EMERALD_ANIM_ALIEN_MOVED;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I + 1] == EMERALD_MAN) && (Playfield.pStatusAnimation[I + 1] == EMERALD_ANIM_STAND)) {  // Kann (stehender) Man erwischt werden?
-                    SDL_Log("Alien kills man -> right");
-                    Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_RIGHT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-                    Playfield.pLevel[I + 1] = EMERALD_MAN_DIES;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_MAN_DIES_P1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-                    Playfield.bManDead = true;
-                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                } else if (Playfield.pLevel[I + 1] == EMERALD_MAN) {
+                    uManSelfStatus = Playfield.pStatusAnimation[I + 1] & 0xFF000000;
+                    // Kann (stehender/blockierter) Man erwischt werden?
+                    if ((Playfield.pStatusAnimation[I + 1] == EMERALD_ANIM_STAND) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_LEFT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
+                        SDL_Log("Alien kills man -> right");
+                        Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_RIGHT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                        Playfield.pLevel[I + 1] = EMERALD_MAN_DIES;
+                        Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_MAN_DIES_P1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                        Playfield.bManDead = true;
+                        PreparePlaySound(SOUND_MAN_CRIES,I);
+                    }
                 } else {                        // rechts ist nicht frei
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
@@ -77,14 +87,22 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I - 1] == EMERALD_MAN) && (Playfield.pStatusAnimation[I - 1] == EMERALD_ANIM_STAND)) {  // Kann (stehender) Man erwischt werden?
-                    SDL_Log("Alien kills man - > left");
-                    Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_LEFT;
-                    Playfield.pLevel[I - 1] = EMERALD_MAN_DIES;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_MAN_DIES_P1;
-                    Playfield.bManDead = true;
-                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                } else if (Playfield.pLevel[I - 1] == EMERALD_MAN) {
+                    uManSelfStatus = Playfield.pStatusAnimation[I - 1] & 0xFF000000;
+                    // Kann (stehender/blockierter) Man erwischt werden?
+                    if ((Playfield.pStatusAnimation[I - 1] == EMERALD_ANIM_STAND) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_LEFT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
+                        SDL_Log("Alien kills man - > left");
+                        Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_LEFT;
+                        Playfield.pLevel[I - 1] = EMERALD_MAN_DIES;
+                        Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_MAN_DIES_P1;
+                        Playfield.bManDead = true;
+                        PreparePlaySound(SOUND_MAN_CRIES,I);
+                    }
                 } else {                        // links ist nicht frei
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
@@ -100,17 +118,26 @@ void ControlAlien(uint32_t I) {
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_ALIEN;
                     Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP | EMERALD_ANIM_ALIEN_MOVED;
+                    Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN;
                     // Aktuelles Element auf Animation "unten"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND)) { // Kann (stehender) Man erwischt werden?
-                    SDL_Log("Alien kills man - > down");
-                    Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-                    Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
-                    Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_MAN_DIES_P1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-                    Playfield.bManDead = true;
-                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) {
+                    uManSelfStatus = Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] & 0xFF000000;
+                    // Kann (stehender/blockierter) Man erwischt werden?
+                    if ((Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_LEFT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
+                        SDL_Log("Alien kills man - > down");
+                        Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
+                        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_MAN_DIES_P1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                        Playfield.bManDead = true;
+                        PreparePlaySound(SOUND_MAN_CRIES,I);
+                    }
                 } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Alien ins Säurebecken?
                         SDL_Log("Alien falls in pool");
                         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
@@ -131,14 +158,22 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "oben"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND)) {   // Kann (stehender) Man erwischt werden?
-                    SDL_Log("Alien kills man - > up");
-                    Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_UP;
-                    Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
-                    Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_MAN_DIES_P1;
-                    Playfield.bManDead = true;
-                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                } else if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) {
+                    uManSelfStatus = Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] & 0xFF000000;
+                    // Kann (stehender/blockierter) Man erwischt werden?
+                    if ((Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_LEFT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
+                        (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
+                        SDL_Log("Alien kills man - > up      man anim: 0x%08X",Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension]);
+                        Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_UP;
+                        Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
+                        Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_MAN_DIES_P1;
+                        Playfield.bManDead = true;
+                        PreparePlaySound(SOUND_MAN_CRIES,I);
+                    }
                 } else {                        // oben ist nicht frei
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
