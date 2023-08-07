@@ -644,6 +644,7 @@ Parameter
                         0 = Texture 347 - LittleFont_Green.bmp
                         1 = Texture 559 - Font_8_15_Courier_transp
                         2 = Texture 347 - LittleFont_Red.bmp
+                        3 = Texture 70  - LittleFont_Black.bmp
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
@@ -666,7 +667,7 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
     uint32_t uTextureIndex;
     uint32_t uCharCountPerLine;
 
-    if (uFont > 2) {
+    if (uFont > 3) {
         uFont = 1;
     }
     if (uFont == 0) {
@@ -677,10 +678,14 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
         uFontW = FONT_LITTLE_559_W;
         uFontH = FONT_LITTLE_559_H;
         uTextureIndex = 559;
-    } else {
+    } else if (uFont == 2) {
         uFontW = FONT_LITTLE_347_W;
         uFontH = FONT_LITTLE_347_H;
         uTextureIndex = 782;
+    } else {
+        uFontW = FONT_LITTLE_347_W;
+        uFontH = FONT_LITTLE_347_H;
+        uTextureIndex = 70;
     }
     nPrintXpos = nXpos;
     nPrintYpos = nYpos;

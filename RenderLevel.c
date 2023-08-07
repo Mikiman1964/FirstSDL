@@ -147,6 +147,26 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
             uSelfStatus = Playfield.pStatusAnimation[I] & 0xFF000000;
             uReplicatorAnimation = Playfield.uFrameCounter % 12;
             switch (uLevelElement) {
+                case (EMERALD_TELEPORTER_RED):
+                    uTextureIndex_0 = 3;    // Stahl
+                    bExtendedElement = true;
+                    uTextureIndex = 966 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, rot
+                    break;
+                case (EMERALD_TELEPORTER_YELLOW):
+                    uTextureIndex_0 = 3;    // Stahl
+                    bExtendedElement = true;
+                    uTextureIndex = 979 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, gelb
+                    break;
+                case (EMERALD_TELEPORTER_GREEN):
+                    uTextureIndex_0 = 3;    // Stahl
+                    bExtendedElement = true;
+                    uTextureIndex = 992 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grün
+                    break;
+                case (EMERALD_TELEPORTER_BLUE):
+                    uTextureIndex_0 = 3;    // Stahl
+                    bExtendedElement = true;
+                    uTextureIndex = 1005 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, blau
+                    break;
                 case (EMERALD_STEEL_GROW_LEFT):
                 case (EMERALD_STEEL_GROW_RIGHT):
                 case (EMERALD_STEEL_GROW_UP):
@@ -901,7 +921,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_STEEL_COPY_LEVEL):
                     uTextureIndex = 741;
                     break;
-                case (EMERALD_STEEL_MSDOS_IMPORT):
+                case (EMERALD_STEEL_CLIPBOARD_LEVEL):
                     uTextureIndex = 742;
                     break;
                 case (EMERALD_STEEL_DC3_IMPORT):
@@ -1747,6 +1767,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                                 uTextureIndex = 246 + 5 - nAnimationCount / 2;
                             }
                         } else {
+                            if (uSelfStatus == EMERALD_ANIM_MAN_BLOCKED_LEFT) {
+                                nXoffs = 0;
+                            }
                             uTextureIndex = 103 + nAnimationCount % 8;     // Man links
                         }
                     } else if (uAnimStatus == EMERALD_ANIM_RIGHT) {
@@ -1758,15 +1781,27 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                                 uTextureIndex = 246 + 5 - nAnimationCount / 2;
                             }
                         } else {
+                            if (uSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) {
+                                nXoffs = 0;
+                            }
                             uTextureIndex = 103 + nAnimationCount % 8; // Man rechts
                             Flip = SDL_FLIP_HORIZONTAL;
                         }
                     } else if (uAnimStatus == EMERALD_ANIM_UP) {
                         uTextureIndex = 111 + nAnimationCount % 8;     // Man hoch
-                        nYoffs = -nAnimationCount * 2 + FONT_H;        // Man steht bereits auf neuer Position, daher + FONT_H
+                        if (uSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) {
+                            nYoffs = 0;
+                        } else {
+                            nYoffs = -nAnimationCount * 2 + FONT_H;        // Man steht bereits auf neuer Position, daher + FONT_H
+                        }
                     } else if (uAnimStatus == EMERALD_ANIM_DOWN) {
                         uTextureIndex = 119 + nAnimationCount % 8;     // Man runter
-                        nYoffs = nAnimationCount * 2 - FONT_H;         // Man steht bereits auf neuer Position, daher - FONT_H
+
+                        if (uSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN) {
+                            nYoffs = 0;
+                        } else {
+                          nYoffs = nAnimationCount * 2 - FONT_H;         // Man steht bereits auf neuer Position, daher - FONT_H
+                        }
                     } else if (uAnimStatus == EMERALD_ANIM_LEFT_DOUBLESPEED) {
                         uTextureIndex = 103 + nAnimationCount % 8;     // Man links
                         nXoffs = -nAnimationCount * 4 + FONT_W * 2;    // Man steht bereits auf neuer Position, daher + FONT_W * 2 (DoubleSpeed)
