@@ -43,13 +43,8 @@ int main(int argc, char *argv[]) {
     float fSin3;
     int nBallonSize = 0;
     SDL_Rect DestR_Ballon;
-    bool bShowFDLogo = false;
-    float fFDLogoSizeFactor = 0;
-    float fFDLogoAngle = 0;
-    uint32_t uFDLogoLastShown = SDL_GetTicks();
-    SDL_Rect DestR_FDLogo;
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - JULY 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
-MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > RIPPED, BY ?, 1990    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
+    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - AUGUST 2023. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS01, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
     uint8_t szMessage3[] = {"HALLO SASCHIMANN, ICH HABE NOCHMAL EIN BISSCHEN AN DIESEM SCH|NEN DEMO WEITER GEBAUT. ES SOLLTE DURCH DEN COPPER-EFFEKT NUN NOCH HYPNOTISCHER AUF DEN ZUSEHER WIRKEN. ICH WERDE IN N{CHSTER\
@@ -314,30 +309,6 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
                 nBallonSize++;
         }
 
-        if (bShowFDLogo) {
-            uFDLogoLastShown = SDL_GetTicks();
-            //                                              Addition sorgt dafür, dass Logo langsam nach rechts diftet
-            DestR_FDLogo.x = 500 - fFDLogoSizeFactor * 15 + fFDLogoSizeFactor * 6;    // Position muss abhängig von Größe
-            DestR_FDLogo.y = 330 - fFDLogoSizeFactor * 15;    // sein, damit mittig angezeigt wird
-            DestR_FDLogo.w = 69 * fFDLogoSizeFactor; // 695
-            DestR_FDLogo.h = 31 * fFDLogoSizeFactor; // 313;
-            SDL_RenderCopyEx(pRenderer, GetTextureByIndex(70), NULL, &DestR_FDLogo, fFDLogoAngle, NULL, SDL_FLIP_NONE);
-            fFDLogoSizeFactor = fFDLogoSizeFactor + 0.03;
-            if (fFDLogoSizeFactor > 3.0) {
-                fFDLogoAngle = fFDLogoAngle + 0.2;
-            }
-            if (fFDLogoSizeFactor > 44) {
-                bShowFDLogo = false;
-                fFDLogoSizeFactor = 0;
-                fFDLogoAngle = 0;
-            }
-            SDL_Log("FDLogoSizeFactor: %f",fFDLogoSizeFactor);
-        }
-        if ((Audioplayer.nMusicIndex == 3) && (!bShowFDLogo) && (SDL_GetTicks() - uFDLogoLastShown > 60000)) {
-            // Bei Mod 4 (Indexierung ab 0, daher == 3) alle 60 Sekunden FD-Logo neu zeigen
-            bShowFDLogo = true;
-        }
-
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
         if (bPrepareExit) {
@@ -350,9 +321,6 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         // MOD wechseln
         CheckMusicSwitch(InputStates.pKeyboardArray);
         if (Audioplayer.nNextMusicIndex != 0) {
-            if (Audioplayer.nNextMusicIndex == 4) {     // Bei MOD 4 FD-Logo starten
-                bShowFDLogo = true;
-            }
             if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) == 0) {    // Etwas warten, bis Callback-Funktion nicht mehr aufgerufen wird
                 if (SetModMusic(Audioplayer.nNextMusicIndex) != 0) {
                     return -1;

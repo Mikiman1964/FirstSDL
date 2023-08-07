@@ -36,4 +36,5 @@ void ManGoLeft(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);
 void ManGoDown(uint32_t I,uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);
 void ManGoRight(uint32_t,uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);
 void SetManArm(uint32_t I,uint32_t uAnimation);
+void ManGoTeleporter(uint32_t uActCoordinate, uint32_t uDestTeleporterCoordinate, uint32_t uAnimation);
 #endif // MAN_H_INCLUDED

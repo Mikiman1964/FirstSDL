@@ -6,9 +6,11 @@
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
 #include "man.h"
+#include "mySDL.h"
 #include "saphir.h"
 #include "sound.h"
 #include "stone.h"
+#include "teleporter.h"
 
 MANKEY ManKey;
 extern PLAYFIELD Playfield;
@@ -29,9 +31,9 @@ Rückgabewert:  -
 Seiteneffekte: ManKey.x, InputStates.x, PLayfield.x, Config.x
 ------------------------------------------------------------------------------*/
 void UpdateManKey() {
-    UpdateInputStates();
     MAN_DIRECTIONS ManDirections;
 
+    UpdateInputStates();
     if (GetJoystickOrGameControllerStatus(&ManDirections) == 0) {     // Falls Device nicht abgefragt werden kann/soll, dann Keyboard nehmen
         if (ManDirections.bLeft) {
             ManKey.uDirection = MANKEY_LEFT;
@@ -252,6 +254,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
     uint32_t uElement;      // Element, dass Man berührt bzw. anläuft
     uint32_t uRetAnimation;
     uint32_t uTouchStatus;
+    uint32_t uTeleporterCoordinate;
 
     uRetAnimation = EMERALD_ANIM_STAND;
     uElement = Playfield.pLevel[uTouchPos];
@@ -812,6 +815,47 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                         if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                        }
+                        break;
+                }
+            }
+            break;
+        case (EMERALD_TELEPORTER_RED):
+        case (EMERALD_TELEPORTER_YELLOW):
+        case (EMERALD_TELEPORTER_GREEN):
+        case (EMERALD_TELEPORTER_BLUE):
+            if (!ManKey.bFire) {
+                switch (uAnimation) {
+                    case (EMERALD_ANIM_UP):
+                        uTeleporterCoordinate = GetDestinationTeleporterCoordinate(uActPos - Playfield.uLevel_X_Dimension,uAnimation);
+                        if (uTeleporterCoordinate != EMERALD_INVALID_TELEPORTER_COORDINATE) {
+                            ManGoTeleporter(uActPos,uTeleporterCoordinate,uAnimation);
+                        } else {
+                            Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_UP | EMERALD_ANIM_MAN_BLOCKED_UP;
+                        }
+                        break;
+                    case (EMERALD_ANIM_DOWN):
+                        uTeleporterCoordinate = GetDestinationTeleporterCoordinate(uActPos + Playfield.uLevel_X_Dimension,uAnimation);
+                        if (uTeleporterCoordinate != EMERALD_INVALID_TELEPORTER_COORDINATE) {
+                            ManGoTeleporter(uActPos,uTeleporterCoordinate,uAnimation);
+                        } else {
+                            Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_DOWN | EMERALD_ANIM_MAN_BLOCKED_DOWN;
+                        }
+                        break;
+                    case (EMERALD_ANIM_LEFT):
+                        uTeleporterCoordinate = GetDestinationTeleporterCoordinate(uActPos - 1,uAnimation);
+                        if (uTeleporterCoordinate != EMERALD_INVALID_TELEPORTER_COORDINATE) {
+                            ManGoTeleporter(uActPos,uTeleporterCoordinate,uAnimation);
+                        } else {
+                            Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_LEFT | EMERALD_ANIM_MAN_BLOCKED_LEFT;
+                        }
+                        break;
+                    case (EMERALD_ANIM_RIGHT):
+                        uTeleporterCoordinate = GetDestinationTeleporterCoordinate(uActPos + 1,uAnimation);
+                        if (uTeleporterCoordinate != EMERALD_INVALID_TELEPORTER_COORDINATE) {
+                            ManGoTeleporter(uActPos,uTeleporterCoordinate,uAnimation);
+                        } else {
+                            Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_RIGHT | EMERALD_ANIM_MAN_BLOCKED_RIGHT;
                         }
                         break;
                 }
@@ -2193,5 +2237,74 @@ void ControlEnddoorReadySteel(uint32_t I) {
 
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_READY_SHRINK;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ManGoTeleporter
+------------------------------------------------------------------------------
+Beschreibung: Man geht durch einen Teleporter
+Parameter
+      Eingang: uActCoordinate, uint32_t, aktuelle lineare Koordinate des Mans
+               uDestTeleporterCoordinate, uint32_t, lineare Koordinate des Ziel-Teleporters
+               uAnimation, uint32_t, Richtung des Mans durch den Teleporter
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ManGoTeleporter(uint32_t uActCoordinate, uint32_t uDestTeleporterCoordinate, uint32_t uAnimation) {
+    bool bMoved = false;
+    uint32_t uDestManCoordinate;
+
+    switch (uAnimation) {
+        case (EMERALD_ANIM_UP):
+            // ursprüngliche Man-Position mit Space besetzen
+            Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
+            Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
+            uDestManCoordinate = uDestTeleporterCoordinate - Playfield.uLevel_X_Dimension;
+            bMoved = true;
+            break;
+        case (EMERALD_ANIM_DOWN):
+            // ursprüngliche Man-Position mit Space besetzen
+            Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
+            Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
+            uDestManCoordinate = uDestTeleporterCoordinate + Playfield.uLevel_X_Dimension;
+            bMoved = true;
+            break;
+        case (EMERALD_ANIM_LEFT):
+            // ursprüngliche Man-Position mit Space besetzen
+            Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
+            Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
+            uDestManCoordinate = uDestTeleporterCoordinate - 1;
+            bMoved = true;
+            break;
+        case (EMERALD_ANIM_RIGHT):
+            // ursprüngliche Man-Position mit Space besetzen
+            Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
+            Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
+            uDestManCoordinate = uDestTeleporterCoordinate + 1;
+            bMoved = true;
+            break;
+    }
+    if (bMoved) {
+        Playfield.uManXpos = uDestManCoordinate % Playfield.uLevel_X_Dimension;
+        Playfield.uManYpos = uDestManCoordinate / Playfield.uLevel_X_Dimension;
+        // Man auf neue Position setzen
+        Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
+        Playfield.pLevel[uDestManCoordinate] = EMERALD_MAN;
+        Playfield.pStatusAnimation[uDestManCoordinate] = uAnimation;
+        // Neue Position im Level berechnen
+        if (Playfield.uManXpos >= Playfield.uVisibleCenterX) {
+            Playfield.nTopLeftXpos = (Playfield.uManXpos - Playfield.uVisibleCenterX) * FONT_W;
+        } else {
+            Playfield.nTopLeftXpos = 0;
+        }
+        if (Playfield.uManYpos >= Playfield.uVisibleCenterY) {
+            Playfield.nTopLeftYpos = (Playfield.uManYpos - Playfield.uVisibleCenterY) * FONT_H;
+        } else {
+            Playfield.nTopLeftYpos = 0;
+        }
+        PreparePlaySound(SOUND_TELEPORTER,uDestManCoordinate);
     }
 }

@@ -93,6 +93,7 @@ void ControlMineRight(uint32_t I) {
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
             Playfield.pInvalidElement[I + 1] = EMERALD_MINE_RIGHT;
             Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+            Playfield.pLastStatusAnimation[I + 1] = Playfield.pStatusAnimation[I];
             // Aktuelles Element auf Animation "rechts"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
         } else {                            // Rechts ist nicht frei
@@ -106,6 +107,7 @@ void ControlMineRight(uint32_t I) {
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
             Playfield.pInvalidElement[I + 1] = EMERALD_MINE_RIGHT;
             Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+            Playfield.pLastStatusAnimation[I + 1] = Playfield.pStatusAnimation[I];
             // Aktuelles Element auf Animation "rechts"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
         } else {                            // Rechts ist nicht frei
@@ -154,6 +156,7 @@ void ControlMineDown(uint32_t I) {
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
             Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_MINE_DOWN;
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP;
+            Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = Playfield.pStatusAnimation[I];
             // Aktuelles Element auf Animation "unten"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?
@@ -173,6 +176,7 @@ void ControlMineDown(uint32_t I) {
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
             Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_MINE_DOWN;
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP;
+            Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = Playfield.pStatusAnimation[I];
             // Aktuelles Element auf Animation "unten"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?

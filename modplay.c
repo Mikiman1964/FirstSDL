@@ -11,7 +11,6 @@ extern CONFIG Config;
 
 // Externe Pointer und Indexe
 extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;                      // 1. Mod von banana
-extern uint8_t _binary_ripped_mod_start;extern uint8_t _binary_ripped_mod_end;                          // 2. Mod von ?
 extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;                        // 3. class cracktro#15 Mod von maktone,1999
 extern uint8_t _binary_gtrash3f_mod_start;extern uint8_t _binary_gtrash3f_mod_end;                      // 4. global trash 3 V2 von Jesper Kyd, 1991
 extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;                        // 5. class11.mod (class11.time flies) von Maktone
@@ -42,7 +41,7 @@ Seiteneffekte:  g_pMusicPointer
 ------------------------------------------------------------------------------*/
 void InitMusicPointer(void) {
     g_pMusicPointer[0] = &_binary_echoing2_mod_start;g_pMusicPointer[1] = &_binary_echoing2_mod_end;
-    g_pMusicPointer[2] = &_binary_ripped_mod_start;g_pMusicPointer[3] = &_binary_ripped_mod_end;
+    g_pMusicPointer[2] = &_binary_circus_time_2_1993_mod_start;g_pMusicPointer[3] = &_binary_circus_time_2_1993_mod_end;
     g_pMusicPointer[4] = &_binary_class01_mod_start;g_pMusicPointer[5] = &_binary_class01_mod_end;
     g_pMusicPointer[6] = &_binary_gtrash3f_mod_start;g_pMusicPointer[7] = &_binary_gtrash3f_mod_end;
     g_pMusicPointer[8] = &_binary_class11_mod_start;g_pMusicPointer[9] = &_binary_class11_mod_end;
@@ -51,8 +50,7 @@ void InitMusicPointer(void) {
     g_pMusicPointer[14] = &_binary_brewery_mod_start;g_pMusicPointer[15] = &_binary_brewery_mod_end;
     g_pMusicPointer[16] = &_binary_class05_1999_mod_start;g_pMusicPointer[17] = &_binary_class05_1999_mod_end;
     g_pMusicPointer[18] = &_binary_softworld_mod_start;g_pMusicPointer[19] = &_binary_softworld_mod_end;
-    g_pMusicPointer[20] = &_binary_circus_time_2_1993_mod_start;g_pMusicPointer[21] = &_binary_circus_time_2_1993_mod_end;
-    g_pMusicPointer[22] = NULL;g_pMusicPointer[23] = NULL;// Ende
+    g_pMusicPointer[20] = NULL;g_pMusicPointer[21] = NULL;// Ende
 }
 
 /*----------------------------------------------------------------------------

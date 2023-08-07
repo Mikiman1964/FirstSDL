@@ -41,6 +41,7 @@ void ControlMegaBomb(uint32_t I) {
         Playfield.pLevel[uHitCoordinate] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[uHitCoordinate] = EMERALD_MEGABOMB;
+        Playfield.pLastStatusAnimation[uHitCoordinate] = EMERALD_ANIM_DOWN;
         Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP;
         // Aktuelles Element auf Animation "unten"
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
@@ -73,6 +74,7 @@ void ControlMegaBomb(uint32_t I) {
                 Playfield.pLevel[I + 1] = EMERALD_INVALID;
                 // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                 Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
+                Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                 Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                 // Aktuelles Element auf Animation "rechts"
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -91,6 +93,7 @@ void ControlMegaBomb(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -111,6 +114,7 @@ void ControlMegaBomb(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -129,6 +133,7 @@ void ControlMegaBomb(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -147,6 +152,7 @@ void ControlMegaBomb(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
@@ -165,6 +171,7 @@ void ControlMegaBomb(uint32_t I) {
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
                     Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
+                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
                     Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;

@@ -8,7 +8,7 @@
 #include "md5.h"
 #include "modplay.h"
 
-
+extern CLIPBOARD Clipboard;
 extern LEVELGROUP SelectedLevelgroup;
 extern unsigned char ge_new_levelgroup[];
 extern ED Ed;
@@ -281,6 +281,100 @@ int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
     DynStringFree(S);
     DynStringFree(S2);
     SAFE_FREE(pszlevel);
+    SAFE_FREE(puPart1);
+    SAFE_FREE(puPart2);
+    SAFE_FREE(pLevelgroupXml);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           LevelgroupOperaton_CopyClipboard
+------------------------------------------------------------------------------
+Beschreibung: Kopiert einen Level aus dem Clipboard hinter das ausgewählte Level
+              innerhalb einer Levelgruppe.
+Parameter
+      Eingang: uLevelNumber, uint32_t, Levelnummer
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: SelectedLevelgroup.x, Clipboard.x
+------------------------------------------------------------------------------*/
+int LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber) {
+    int nErrorCode = -1;
+    int nNewLevelCount = 0;
+    uint32_t uXmlLen;
+    uint8_t *pLevelgroupXml = NULL;
+    uint8_t *puLastTag;
+    uint8_t *puEndPart1;            // beinhaltet alle Level einschließlich uLevelNumber
+    uint8_t *puPart1 = NULL;
+    uint32_t uPart1Size = 0;
+    // Für Levelcount
+    char *puStartLevelCountTag;
+    char *puEndLevelCountTag;
+    uint8_t *puPart2 = NULL;
+    char szLevelCount[16];
+    char szLevelNumberTag[32];      // "level000"
+    DYNSTRING *S;
+    DYNSTRING *S2;
+    uint8_t uLevelgroupHash[16];
+
+    S = DynStringInit();
+    S2 = DynStringInit();
+    if ((uLevelNumber < SelectedLevelgroup.uLevelCount) && (SelectedLevelgroup.bOK)  && (S != NULL) && (S2 != NULL) && (Clipboard.pLevelXml != NULL)) {
+        if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
+            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer
+                if (UpdateCreateTimestamp(pLevelgroupXml) == 0) {
+                    sprintf(szLevelNumberTag,"</level%03u>\r\n",uLevelNumber);
+                    puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
+                    if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
+                        uPart1Size = puEndPart1 - pLevelgroupXml + strlen(szLevelNumberTag);
+                        puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                        if (puPart1 != NULL) {
+                            memset(puPart1,0,uPart1Size + 1);
+                            memcpy(puPart1,pLevelgroupXml,uPart1Size);
+                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level bis einschließlich Level X im String.
+                            DynStringAdd(S,(char*)Clipboard.pLevelXml); // Clipboard-Level dazu kopieren.
+                            puEndPart1 = puEndPart1 + strlen(szLevelNumberTag);
+                            if (puEndPart1 < puLastTag) {
+                                DynStringAdd(S,(char*)puEndPart1);        // Den Rest der Levelgruppe anhängen
+                                if ((nNewLevelCount = RenumLevelgroup((uint8_t *)S->pszString)) > 0) {
+                                    // Levelgruppe ist fast fertig, jetzt Anpassung von <levelcount>x</levelcount>
+                                    puStartLevelCountTag = strstr(S->pszString,"<levelcount>");
+                                    puEndLevelCountTag = strstr(S->pszString,"</levelcount>\r\n");
+                                    if ((puStartLevelCountTag != NULL) && (puStartLevelCountTag > S->pszString) && (puEndLevelCountTag != NULL)) {
+                                        uPart1Size = puStartLevelCountTag - S->pszString;
+                                        puPart2 = malloc(uPart1Size + 1);
+                                        if (puPart2 != NULL) {
+                                            memset(puPart2,0,uPart1Size + 1);
+                                            memcpy(puPart2,S->pszString,uPart1Size);
+                                            DynStringAdd(S2,(char*)puPart2);
+                                            DynStringAdd(S2,"<levelcount>");
+                                            sprintf(szLevelCount,"%d",nNewLevelCount);
+                                            DynStringAdd(S2,szLevelCount);
+                                            DynStringAdd(S2,puEndLevelCountTag);
+                                            if (UpdateLevelgroupHash((uint8_t*)S2->pszString,uLevelgroupHash) == 0) {
+                                                // Levelgruppe aktualisieren
+                                                if (WriteFile(SelectedLevelgroup.szFilename,(uint8_t*)S2->pszString,S2->nLen,false) == 0) {
+                                                    if (GetLevelgroupFiles() == 0) {    // Wenn das nicht funktioniert, kann nicht weitergemacht werden!
+                                                        if (SelectAlternativeLevelgroup(uLevelgroupHash,false) == 0) {
+                                                            InitLists();
+                                                            nErrorCode = 0;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    DynStringFree(S);
+    DynStringFree(S2);
     SAFE_FREE(puPart1);
     SAFE_FREE(puPart2);
     SAFE_FREE(pLevelgroupXml);
@@ -1042,7 +1136,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
                     Ed.uReplicatorGreenObject = EMERALD_SPACE;
                     Ed.uReplicatorBlueObject = EMERALD_SPACE;
                     Ed.uReplicatorYellowObject = EMERALD_SPACE;
-                    XML = GetLevelXmlFile();
+                    XML = GetLevelXmlFromEditor();
                     if (XML != NULL) {
                         if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
                             if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer

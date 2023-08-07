@@ -14,6 +14,7 @@
 #include "md5.h"
 #include "mySDL.h"
 #include "mystd.h"
+#include "teleporter.h"
 
 
 
@@ -93,12 +94,16 @@ int GetMemoryForPlayfield(void) {
     Playfield.pLevel = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pInvalidElement = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
+    Playfield.pLastStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
     Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
-    if ((Playfield.pLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL) && (Playfield.pInvalidElement != NULL))  {
+    Playfield.pLastYamDirection = (uint8_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
+    if ((Playfield.pLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pLastStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL) && (Playfield.pInvalidElement != NULL) && (Playfield.pLastYamDirection != NULL)) {
         memset(Playfield.pLevel,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
         memset(Playfield.pInvalidElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
         memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
+        memset(Playfield.pLastStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
         memset(Playfield.pPostAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
+        memset(Playfield.pLastYamDirection,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
         nErrorCode = 0;
     } else {
         nErrorCode = -1;
@@ -106,7 +111,9 @@ int GetMemoryForPlayfield(void) {
         SAFE_FREE(Playfield.pLevel);
         SAFE_FREE(Playfield.pInvalidElement);
         SAFE_FREE(Playfield.pStatusAnimation);
+        SAFE_FREE(Playfield.pLastStatusAnimation);
         SAFE_FREE(Playfield.pPostAnimation);
+        SAFE_FREE(Playfield.pLastYamDirection);
     }
     return nErrorCode;
 }
@@ -1184,8 +1191,8 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
                                                                             if (CheckLevelBorder() == 0) {
                                                                                 CloseAllDoors();
                                                                                 SetActiveDynamiteP1();
-                                                                                nErrorCode = 0;
-                                                                                Playfield.bInitOK = true;
+                                                                                nErrorCode = SearchTeleporter();
+                                                                                Playfield.bInitOK = (nErrorCode == 0);
                                                                             }
                                                                         }
                                                                     }
@@ -2057,6 +2064,7 @@ void PrintPlayfieldValues() {
         printf("Man Position:                X(%u) / Y(%u)\r\n",Playfield.uManXpos,Playfield.uManYpos);   // Man-X/Y-Element-Koordinate
         printf("FrameCounter:                %u\r\n",Playfield.uFrameCounter);
         printf("MD5 hash for leveldata:      %s\r\n",Playfield.szMd5String);
+        // PrintTeleporters();
     } else {
         printf("Error in level data, can't show playfield values\r\n");
     }

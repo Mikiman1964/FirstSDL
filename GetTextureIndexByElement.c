@@ -1457,7 +1457,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_STEEL_COPY_LEVEL):
             uTextureIndex = 741;
             break;
-        case (EMERALD_STEEL_MSDOS_IMPORT):
+        case (EMERALD_STEEL_CLIPBOARD_LEVEL):
             uTextureIndex = 742;
             break;
         case (EMERALD_STEEL_DC3_IMPORT):
@@ -1546,6 +1546,18 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             break;
         case (EMERALD_WALL_GROW_ALL):
             uTextureIndex = 961;
+            break;
+        case (EMERALD_TELEPORTER_RED):
+            uTextureIndex = 966 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, rot
+            break;
+        case (EMERALD_TELEPORTER_YELLOW):
+            uTextureIndex = 979 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, gelb
+            break;
+        case (EMERALD_TELEPORTER_GREEN):
+            uTextureIndex = 992 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grün
+            break;
+        case (EMERALD_TELEPORTER_BLUE):
+            uTextureIndex = 1005 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, blau
             break;
         default:
             SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());
