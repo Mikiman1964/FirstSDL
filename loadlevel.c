@@ -1277,6 +1277,12 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.uTimeDoorTimeLeft = 0;
         Playfield.bSwitchDoorState = false;
         Playfield.bSwitchDoorImpluse = false;
+        Playfield.bSwitchRemoteBombLeft = false;
+        Playfield.bSwitchRemoteBombRight = false;
+        Playfield.bSwitchRemoteBombDown = false;
+        Playfield.bSwitchRemoteBombUp = false;
+        Playfield.bSwitchRemoteBombIgnition = false;
+        Playfield.bRemoteBombMoved = false;
         Playfield.uShowMessageNo = 0;
         Playfield.uYamExplosion = 0;          // Aktuelle YAM-Explosion
         Playfield.uDynamitePos = 0xFFFFFFFF;  // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung

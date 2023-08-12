@@ -420,6 +420,30 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 PreparePlaySound(SOUND_SWITCH,uTouchPos);
             }
             break;
+        case (EMERALD_SWITCH_REMOTEBOMB_UP):
+            Playfield.bSwitchRemoteBombUp = true;
+            SetManArm(uActPos,uAnimation);
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_DOWN):
+            Playfield.bSwitchRemoteBombDown = true;
+            SetManArm(uActPos,uAnimation);
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_LEFT):
+            Playfield.bSwitchRemoteBombLeft = true;
+            SetManArm(uActPos,uAnimation);
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_RIGHT):
+            Playfield.bSwitchRemoteBombRight = true;
+            SetManArm(uActPos,uAnimation);
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_IGNITION):
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+                Playfield.bSwitchRemoteBombIgnition = true;
+                ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
+                SetManArm(uActPos,uAnimation);
+                PreparePlaySound(SOUND_SWITCH,uTouchPos);
+            }
+            break;
         case (EMERALD_SWITCH_SWITCHDOOR):
             if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
                 Playfield.bSwitchDoorImpluse = true;

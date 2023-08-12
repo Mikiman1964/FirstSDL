@@ -110,6 +110,7 @@ Parameter
       Eingang: pszName, char*, Zeiger auf Spielernamen
                uLevel, uint32_t, Levelnummer
                uScore, uint32_t, Score
+               bWellDone, bool, true = Level wurde geschafft
       Ausgang: -
 
 Rückgabewert:  int, >= 0 = Alles OK, Neuer Highscore auf Index X
@@ -117,7 +118,7 @@ Rückgabewert:  int, >= 0 = Alles OK, Neuer Highscore auf Index X
                     -2 = Alles OK, kein neuer Highscore
 Seiteneffekte: HighscoreFile.x
 ------------------------------------------------------------------------------*/
-int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore) {
+int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) {
     int nErrorCode;
     uint32_t I;
     uint32_t S;     // Index, wo neuer Score eingetragen werden kann
@@ -144,6 +145,9 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore) {
                 }
                 // Neuen Eintrag vornehmen
                 HighscoreFile.TopTwenty[uLevel].uHighScore[S] = uScore;
+                if (bWellDone) {
+                    HighscoreFile.TopTwenty[uLevel].uHighScore[S] |= 0x80000000;
+                }
                 strcpy(HighscoreFile.TopTwenty[uLevel].szTopTwenty[S],pszName);
             } else {
                 // Es reichte nicht für einen neuen Highscore -> nichts machen

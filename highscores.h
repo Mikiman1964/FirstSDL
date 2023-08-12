@@ -35,6 +35,6 @@ typedef struct {
 int CheckHighScoresDir(void);
 int WriteHighScoreFile(uint8_t *puLevelgroupHash);
 int ReadHighScoreFile(uint8_t *puLevelgroupHash);
-int InsertScore(char *szName, uint32_t uLevel, uint32_t uScore);
+int InsertScore(char *szName, uint32_t uLevel, uint32_t uScore, bool bWellDone);
 int CleanUpHighScoreDir(void);
 #endif // HIGHSCORES_H_INCLUDED

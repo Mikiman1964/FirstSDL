@@ -1559,6 +1559,45 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_TELEPORTER_BLUE):
             uTextureIndex = 1005 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, blau
             break;
+        case (EMERALD_SWITCH_REMOTEBOMB_UP):
+            uTextureIndex = 1019;
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_DOWN):
+            uTextureIndex = 1021;
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_LEFT):
+            uTextureIndex = 1023;
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_RIGHT):
+            uTextureIndex = 1025;
+            break;
+        case (EMERALD_SWITCH_REMOTEBOMB_IGNITION):
+            uTextureIndex = 1027;
+            break;
+        case (EMERALD_REMOTEBOMB):
+            uTextureIndex = 1028;
+            break;
+        case (EMERALD_STEEL_MODERN_LEFT_END):
+            uTextureIndex = 1029;
+            break;
+        case (EMERALD_STEEL_MODERN_LEFT_RIGHT):
+            uTextureIndex = 1030;
+            break;
+        case (EMERALD_STEEL_MODERN_RIGHT_END):
+            uTextureIndex = 1031;
+            break;
+        case (EMERALD_STEEL_MODERN_UP_END):
+            uTextureIndex = 1032;
+            break;
+        case (EMERALD_STEEL_MODERN_UP_DOWN):
+            uTextureIndex = 1033;
+            break;
+        case (EMERALD_STEEL_MODERN_DOWN_END):
+            uTextureIndex = 1034;
+            break;
+        case (EMERALD_STEEL_MODERN_MIDDLE):
+            uTextureIndex = 1035;
+            break;
         default:
             SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());
             uTextureIndex = 0;     // Space
