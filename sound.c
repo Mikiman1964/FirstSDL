@@ -41,6 +41,7 @@ extern uint8_t _binary_Sound_DynamiteStart_wav_start;extern uint8_t _binary_Soun
 extern uint8_t _binary_Sound_Conveyorbelt_wav_start;extern uint8_t _binary_Sound_Conveyorbelt_wav_end;
 extern uint8_t _binary_Sound_Teleporter_wav_start;extern uint8_t _binary_Sound_Teleporter_wav_end;
 extern uint8_t _binary_Sound_Steel_Wall_grow_wav_start;extern uint8_t _binary_Sound_Steel_Wall_grow_wav_end;
+extern uint8_t _binary_Sound_RemoteBomb_wav_start;extern uint8_t _binary_Sound_RemoteBomb_wav_end;
 
 uint8_t* g_pSfxPointer_wav[] = {
 // Bit
@@ -77,7 +78,8 @@ uint8_t* g_pSfxPointer_wav[] = {
 /*31*/    &_binary_Sound_Conveyorbelt_wav_start,&_binary_Sound_Conveyorbelt_wav_end,    // Laufband
 /*32*/    &_binary_Sound_Teleporter_wav_start,&_binary_Sound_Teleporter_wav_end,        // Teleporter
 /*33*/    &_binary_Sound_Steel_Wall_grow_wav_start,&_binary_Sound_Steel_Wall_grow_wav_end,          // Mauer und Stahl wächst
-/*34*/    NULL,NULL,                                                                    // Endekennung
+/*34*/    &_binary_Sound_RemoteBomb_wav_start,&_binary_Sound_RemoteBomb_wav_end,        // ferngesteuerte Bombe
+/*35*/    NULL,NULL,                                                                    // Endekennung
 };
 
 Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];

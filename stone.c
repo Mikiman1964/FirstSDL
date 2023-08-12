@@ -132,6 +132,7 @@ void ControlStone(uint32_t I) {
                     break;
                 case (EMERALD_STANDMINE):
                 case (EMERALD_BOMB):
+                case (EMERALD_REMOTEBOMB):
                     SDL_Log("Stone hit 'normal' explosive");
                     ControlCentralExplosion(uHitCoordinate);
                     PreparePlaySound(SOUND_EXPLOSION,I);

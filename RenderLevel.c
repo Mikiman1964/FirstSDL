@@ -147,6 +147,88 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
             uSelfStatus = Playfield.pStatusAnimation[I] & 0xFF000000;
             uReplicatorAnimation = Playfield.uFrameCounter % 12;
             switch (uLevelElement) {
+                case (EMERALD_STEEL_MODERN_LEFT_END):
+                    uTextureIndex = 1029;
+                    break;
+                case (EMERALD_STEEL_MODERN_LEFT_RIGHT):
+                    uTextureIndex = 1030;
+                    break;
+                case (EMERALD_STEEL_MODERN_RIGHT_END):
+                    uTextureIndex = 1031;
+                    break;
+                case (EMERALD_STEEL_MODERN_UP_END):
+                    uTextureIndex = 1032;
+                    break;
+                case (EMERALD_STEEL_MODERN_UP_DOWN):
+                    uTextureIndex = 1033;
+                    break;
+                case (EMERALD_STEEL_MODERN_DOWN_END):
+                    uTextureIndex = 1034;
+                    break;
+                case (EMERALD_STEEL_MODERN_MIDDLE):
+                    uTextureIndex = 1035;
+                    break;
+                case (EMERALD_REMOTEBOMB):
+                    uTextureIndex = 1028;
+                    if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
+                        nXoffs = 15 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN2) {
+                        nXoffs = 7 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = 0.5 + nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else if (uAnimStatus == EMERALD_ANIM_LEFT) {
+                        nXoffs = -nAnimationCount * 2;
+                        fAngleOffs = -nAnimationCount * 22.5;
+                    } else if (uAnimStatus == EMERALD_ANIM_RIGHT) {
+                        nXoffs = nAnimationCount * 2;
+                        fAngleOffs = nAnimationCount * 22.5;
+                    } else if (uAnimStatus == EMERALD_ANIM_DOWN) {
+                            nYoffs = nAnimationCount * 2;
+                            fAngleOffs = nAnimationCount * 22.5;
+                    } else if (uAnimStatus == EMERALD_ANIM_UP) {
+                            nYoffs = -nAnimationCount * 2;
+                            fAngleOffs = -nAnimationCount * 22.5;
+                    }
+                    break;
+                case (EMERALD_SWITCH_REMOTEBOMB_UP):
+                    if (Playfield.bSwitchRemoteBombUp) {
+                        uTextureIndex = 1018 + (((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) & 1);
+                    } else {
+                        uTextureIndex = 1019;
+                    }
+                    break;
+                case (EMERALD_SWITCH_REMOTEBOMB_DOWN):
+                    if (Playfield.bSwitchRemoteBombDown) {
+                        uTextureIndex = 1020 + (((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) & 1);
+                    } else {
+                        uTextureIndex = 1021;
+                    }
+                    break;
+                case (EMERALD_SWITCH_REMOTEBOMB_LEFT):
+                    if (Playfield.bSwitchRemoteBombLeft) {
+                        uTextureIndex = 1022 + (((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) & 1);
+                    } else {
+                        uTextureIndex = 1023;
+                    }
+                    break;
+                case (EMERALD_SWITCH_REMOTEBOMB_RIGHT):
+                    if (Playfield.bSwitchRemoteBombRight) {
+                        uTextureIndex = 1024 + (((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) & 1);
+                    } else {
+                        uTextureIndex = 1025;
+                    }
+                    break;
+                case (EMERALD_SWITCH_REMOTEBOMB_IGNITION):
+                    if (Playfield.bSwitchRemoteBombIgnition) {
+                        uTextureIndex = 1026 + (((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) & 1);
+                    } else {
+                        uTextureIndex = 1027;
+                    }
+                    break;
                 case (EMERALD_TELEPORTER_RED):
                     uTextureIndex_0 = 3;    // Stahl
                     bExtendedElement = true;
@@ -167,19 +249,43 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     bExtendedElement = true;
                     uTextureIndex = 1005 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, blau
                     break;
+                case (EMERALD_STEEL_GROW_DOWN):
+                    if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
+                        nXoffs = 15 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN2) {
+                        nXoffs = 7 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = 0.5 + nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    }
+                    // kein break
                 case (EMERALD_STEEL_GROW_LEFT):
                 case (EMERALD_STEEL_GROW_RIGHT):
                 case (EMERALD_STEEL_GROW_UP):
-                case (EMERALD_STEEL_GROW_DOWN):
                 case (EMERALD_STEEL_GROW_LEFT_RIGHT):
                 case (EMERALD_STEEL_GROW_UP_DOWN):
                 case (EMERALD_STEEL_GROW_ALL):
                     uTextureIndex = 72;     // Mauer hart
                     break;
+                case (EMERALD_WALL_GROW_DOWN):
+                    if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
+                        nXoffs = 15 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN2) {
+                        nXoffs = 7 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = 0.5 + nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    }
+                    // kein break;
                 case (EMERALD_WALL_GROW_LEFT):
                 case (EMERALD_WALL_GROW_RIGHT):
                 case (EMERALD_WALL_GROW_UP):
-                case (EMERALD_WALL_GROW_DOWN):
                 case (EMERALD_WALL_GROW_LEFT_RIGHT):
                 case (EMERALD_WALL_GROW_UP_DOWN):
                 case (EMERALD_WALL_GROW_ALL):

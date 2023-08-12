@@ -127,6 +127,10 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowDown(uint32_t I) {
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
+        // SteelGrowDown kann vom Replikator geboren werden, dann hier nichts machen
+        return;
+    }
     if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_STEEL_GROWING_DOWN;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
@@ -334,6 +338,10 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowDown(uint32_t I) {
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
+        // WallGrowDown kann vom Replikator geboren werden, dann hier nichts machen
+        return;
+    }
     if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_WALL_GROWING_DOWN;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
