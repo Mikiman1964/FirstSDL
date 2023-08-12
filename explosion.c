@@ -124,6 +124,7 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                     case (EMERALD_ALIEN):
                     case (EMERALD_YAM):
                     case (EMERALD_GREEN_DROP):
+                    case (EMERALD_REMOTEBOMB):
                         switch (Playfield.pStatusAnimation[nCoordinate] & 0x0000FF00) { // Animationsstatus
                             case (EMERALD_ANIM_UP):
                                 if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == EMERALD_INVALID) {
@@ -187,6 +188,30 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                     // Zunächst Re-Kontrolle durchführen. Das invalide Feld wird zunächst belassen, damit das re-kontrollierte Objekt dort ein Hindernis erkennen kann und
                     // sich nicht erneut in die Explosion bewegt.
                     switch (Playfield.pInvalidElement[nCoordinate]) {    // Element
+                        case (EMERALD_REMOTEBOMB):
+                            // Ferngesteuerte Bombe kann von oben (nach unten) oder links (nach rechts) kommen
+                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
+                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
+                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
+                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
+                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
+                                } else {
+                                    SDL_Log("%s[EMERALD_REMOTEBOMB]: warning: Remote bombe not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
+                                }
+                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
+                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
+                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
+                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
+                                } else {
+                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Remote bomb not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
+                                }
+                            } else {
+                                SDL_Log("%s: Remote bomb with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
+                            }
+                            break;
                         case (EMERALD_STONE):
                             // Stein kann von oben (nach unten) oder links (nach rechts) kommen
                             if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
@@ -1124,6 +1149,7 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_ALIEN << 16);
             break;
         case (EMERALD_BOMB):
+        case (EMERALD_REMOTEBOMB):
             uExplosion = EMERALD_EXPLOSION_NEWCENTRAL;
             break;
         case (EMERALD_MEGABOMB):

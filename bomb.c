@@ -184,3 +184,79 @@ void ControlBomb(uint32_t I) {
         }
     }
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlRemoteBomb
+------------------------------------------------------------------------------
+Beschreibung: Steuert eine ferngesteuerte Bombe.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlRemoteBomb(uint32_t I) {
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
+        // Ferngesteuerte Bombe kann vom Replikator geboren werden, dann hier nichts machen
+        return;
+    }
+    if (Playfield.bSwitchRemoteBombIgnition) {
+        Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        ControlCentralExplosion(I);
+        PreparePlaySound(SOUND_EXPLOSION,I);
+    } else if (Playfield.bSwitchRemoteBombUp) {
+        if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
+            // neuen Platz mit ungültigem Element besetzen
+            Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
+            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+            Playfield.pInvalidElement[I - Playfield.uLevel_X_Dimension] = EMERALD_REMOTEBOMB;
+            Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_DOWN;
+            // Aktuelles Element auf Animation "oben"
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+            Playfield.bRemoteBombMoved = true;
+        }
+    } else if (Playfield.bSwitchRemoteBombDown) {
+        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist nach unten frei?
+            // neuen Platz mit ungültigem Element besetzen
+            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
+            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+            Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_REMOTEBOMB;
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP;
+            Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = Playfield.pStatusAnimation[I];
+            // Aktuelles Element auf Animation "unten"
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+            Playfield.bRemoteBombMoved = true;
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt ferngesteuerte Bombe ins Säurebecken?
+            SDL_Log("Remote bomb falls in pool");
+            Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
+            Playfield.pInvalidElement[I] = EMERALD_REMOTEBOMB;
+            PreparePlaySound(SOUND_POOL_BLUB,I + Playfield.uLevel_X_Dimension);
+            return;
+        }
+    } else if (Playfield.bSwitchRemoteBombLeft) {
+        if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {    // Ist nach links frei?
+            // neuen Platz mit ungültigem Element besetzen
+            Playfield.pLevel[I - 1] = EMERALD_INVALID;
+            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+            Playfield.pInvalidElement[I - 1] = EMERALD_REMOTEBOMB;
+            Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
+            // Aktuelles Element auf Animation "links"
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+            Playfield.bRemoteBombMoved = true;
+        }
+    } else if (Playfield.bSwitchRemoteBombRight) {
+        if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {    // Ist nach rechts frei?
+            // neuen Platz mit ungültigem Element besetzen
+            Playfield.pLevel[I + 1] = EMERALD_INVALID;
+            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+            Playfield.pInvalidElement[I + 1] = EMERALD_REMOTEBOMB;
+            Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
+            Playfield.pLastStatusAnimation[I + 1] = Playfield.pStatusAnimation[I];
+            // Aktuelles Element auf Animation "rechts"
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+            Playfield.bRemoteBombMoved = true;
+        }
+    }
+}

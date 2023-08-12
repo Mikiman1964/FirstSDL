@@ -525,9 +525,21 @@
 #define EMERALD_TELEPORTER_YELLOW               0x021D            // Teleporter, gelb
 #define EMERALD_TELEPORTER_GREEN                0x021E            // Teleporter, grün
 #define EMERALD_TELEPORTER_BLUE                 0x021F            // Teleporter, blau
+#define EMERALD_SWITCH_REMOTEBOMB_UP            0x0220            // ferngesteuerte Bombe, Schalter hoch
+#define EMERALD_SWITCH_REMOTEBOMB_DOWN          0x0221            // ferngesteuerte Bombe, Schalter runter
+#define EMERALD_SWITCH_REMOTEBOMB_LEFT          0x0222            // ferngesteuerte Bombe, Schalter links
+#define EMERALD_SWITCH_REMOTEBOMB_RIGHT         0x0223            // ferngesteuerte Bombe, Schalter rechts
+#define EMERALD_SWITCH_REMOTEBOMB_IGNITION      0x0224            // ferngesteuerte Bombe, Schalter Zündung
+#define EMERALD_REMOTEBOMB                      0x0225            // ferngesteuerte Bombe
+#define EMERALD_STEEL_MODERN_LEFT_END           0x0226            // Stahl, modern, linkes Ende
+#define EMERALD_STEEL_MODERN_LEFT_RIGHT         0x0227            // Stahl, modern, links/rechts
+#define EMERALD_STEEL_MODERN_RIGHT_END          0x0228            // Stahl, modern, rechtes Ende
+#define EMERALD_STEEL_MODERN_UP_END             0x0229            // Stahl, modern, oberes Ende
+#define EMERALD_STEEL_MODERN_UP_DOWN            0x022A            // Stahl, modern, oben/unten
+#define EMERALD_STEEL_MODERN_DOWN_END           0x022B            // Stahl, modern, unteres Ende
+#define EMERALD_STEEL_MODERN_MIDDLE             0x022C            // Stahl, modern, Mittelteil
 
-
-#define EMERALD_MAX_ELEMENT                     0x021F            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
+#define EMERALD_MAX_ELEMENT                     0x022C            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 #define EMERALD_FONT_BLUE                       0x00              // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
@@ -734,6 +746,12 @@ typedef struct {
     bool            bTimeDoorOpen;                              // Für Zeit-Tür
     bool            bSwitchDoorState;                           // Für Schaltertür, true = umgeschaltet
     bool            bSwitchDoorImpluse;                         // Für Schaltertür
+    bool            bSwitchRemoteBombLeft;
+    bool            bSwitchRemoteBombRight;
+    bool            bSwitchRemoteBombDown;
+    bool            bSwitchRemoteBombUp;
+    bool            bSwitchRemoteBombIgnition;
+    bool            bRemoteBombMoved;                           // Mindestens 1 ferngesteuerte Bombe wurde bewegt
     bool            bReplicatorRedOn;
     uint16_t        uReplicatorRedObject;
     bool            bReplicatorGreenOn;

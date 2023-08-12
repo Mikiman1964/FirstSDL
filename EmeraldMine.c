@@ -5,7 +5,18 @@ TODO
     * Explosionen mit Sumpf testen (erster Test sieht gut aus)
 * Leveleditor
     * Undo für Editor
+* Default-Level-Group: Level 'Shaft' entfernen/anpassen
 */
+
+/**
+    News:
+    * Teleporter
+    * Remote Bomb
+    * Hiscores: Won games marked
+    * Explosion-Fixes
+    * new level
+**/
+
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <math.h>
@@ -318,7 +329,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             CheckPlayTime();
         } else {
             // Pause abdimmen
-            if (nColorDimm > 10) {
+            if (nColorDimm > 20) {
                 nColorDimm = nColorDimm - 2;
                 SetAllTextureColors(nColorDimm);
             }
@@ -343,7 +354,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             }
         }
         if ((bDimmIn) && (!bPrepareLevelExit)) {
-            nColorDimm = nColorDimm + 1;
+            nColorDimm = nColorDimm + 4;
             if (nColorDimm >= 100) {
                 nColorDimm = 100;
                 bDimmIn = false;;
@@ -396,6 +407,12 @@ uint32_t ControlGame(uint32_t uDirection) {
     uint32_t uCleanStatus;
 
     uManDirection = EMERALD_ANIM_STAND;
+    Playfield.bSwitchRemoteBombLeft = false;
+    Playfield.bSwitchRemoteBombRight = false;
+    Playfield.bSwitchRemoteBombDown = false;
+    Playfield.bSwitchRemoteBombUp = false;
+    Playfield.bSwitchRemoteBombIgnition = false;
+    Playfield.bRemoteBombMoved = false;
     // Ab hier das Level und die Status für alle Elemente aus voriger Steuerung vorbereiten
     for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
         // Dieser Block sorgt bei bewegten Objekten dafür, dass diese
@@ -561,6 +578,9 @@ uint32_t ControlGame(uint32_t uDirection) {
     for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
         uLevelElement = Playfield.pLevel[I];
         switch (uLevelElement) {
+            case (EMERALD_REMOTEBOMB):
+                ControlRemoteBomb(I);
+                break;
             case (EMERALD_WALL_GROW_LEFT):
                 ControlWallGrowLeft(I);
                 break;
@@ -858,6 +878,13 @@ uint32_t ControlGame(uint32_t uDirection) {
         }
     }
     PostControlSwitchDoors();
+    if ((Playfield.bSwitchRemoteBombDown) || (Playfield.bSwitchRemoteBombUp) || (Playfield.bSwitchRemoteBombLeft) || (Playfield.bSwitchRemoteBombRight)) {
+        if (Playfield.bRemoteBombMoved) {
+            PreparePlaySound(SOUND_REMOTE_BOMB,0);
+        } else {
+            PreparePlaySound(SOUND_SWITCH,0);
+        }
+    }
     return uManDirection;
 }
 
@@ -1012,6 +1039,10 @@ uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCou
         case (EMERALD_PERL):
             uTextureIndex = 436 + nAnimationCount % 8;
             break;
+        case (EMERALD_REMOTEBOMB):
+            uTextureIndex = 1028;
+            fAngle = nAnimationCount * 22.5;
+            break;
         default:
             SDL_Log("%s: unknown element: %x",__FUNCTION__,uElement);
             uTextureIndex = 0;     // Space
@@ -1069,6 +1100,20 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_WALL_GROW_ALL] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_CORNERED] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_WALL_INVISIBLE] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_MODERN_LEFT_END] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_MODERN_LEFT_RIGHT] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_MODERN_RIGHT_END] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_MODERN_UP_END] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_MODERN_UP_DOWN] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_MODERN_DOWN_END] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_MODERN_MIDDLE] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+    // Bei DC3 rollt nichts von den Schaltern für ferngesteuerte Bombe
+    Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_UP] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_DOWN] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_LEFT] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_RIGHT] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_IGNITION] = 0xEB;      // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_REMOTEBOMB] = 0x1FF;
     // Bei DC3 rollt nichts vom Schlüssel
     // Playfield.uRollUnderground[EMERALD_KEY_RED] = 0x1FF;                     // nicht bei DC3
     // Playfield.uRollUnderground[EMERALD_KEY_YELLOW] = 0x1FF;                  // nicht bei DC3
@@ -1652,6 +1697,18 @@ bool IsSteel(uint16_t uElement) {
     (uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) ||
     (uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) ||
     (uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) ||
+    (uElement == EMERALD_SWITCH_REMOTEBOMB_UP) ||
+    (uElement == EMERALD_SWITCH_REMOTEBOMB_DOWN) ||
+    (uElement == EMERALD_SWITCH_REMOTEBOMB_LEFT) ||
+    (uElement == EMERALD_SWITCH_REMOTEBOMB_RIGHT) ||
+    (uElement == EMERALD_SWITCH_REMOTEBOMB_IGNITION) ||
+    (uElement == EMERALD_STEEL_MODERN_LEFT_END) ||
+    (uElement == EMERALD_STEEL_MODERN_LEFT_RIGHT) ||
+    (uElement == EMERALD_STEEL_MODERN_RIGHT_END) ||
+    (uElement == EMERALD_STEEL_MODERN_UP_END) ||
+    (uElement == EMERALD_STEEL_MODERN_UP_DOWN) ||
+    (uElement == EMERALD_STEEL_MODERN_DOWN_END) ||
+    (uElement == EMERALD_STEEL_MODERN_MIDDLE) ||
     ((uElement >= EMERALD_FONT_STEEL_GREEN_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_GREEN_UE)) ||
     ((uElement >= EMERALD_FONT_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_STEEL_UE))
     );

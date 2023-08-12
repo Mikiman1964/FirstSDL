@@ -8,7 +8,7 @@
 
 #define MIN_Y_RESOLUTION_FOR_LEVELEDITOR        960
 
-#define MAX_PANEL_ELEMENTS                      248 // (8 * 31)
+#define MAX_PANEL_ELEMENTS                      264     // (8 * 33)
 #define EDITOR_MEM_SIZE                         4096
 
 #define MENUSTATE_LEVEL_STD                     0

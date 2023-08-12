@@ -651,7 +651,7 @@ int EvaluateGame(int *pnNewHighscoreIndex, uint32_t *puLevelPlayed) {
             nErrorCode = WriteNamesFile();
             if (nErrorCode == 0) {
                 if (Playfield.uTotalScore > 0) {
-                    nErrorCode = InsertScore(Actualplayer.szPlayername,uLevelPlayed,Playfield.uTotalScore);
+                    nErrorCode = InsertScore(Actualplayer.szPlayername,uLevelPlayed,Playfield.uTotalScore,Playfield.bWellDone);
                     if (nErrorCode >= 0) {  // Gab es einen neuen Highscore?
                         *pnNewHighscoreIndex = nErrorCode;
                         *puLevelPlayed = uLevelPlayed;
@@ -3125,7 +3125,7 @@ int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
     if ((nErrorCode == 0) && (!bPlayGame)) {
         nErrorCode = 5;
     }
-    WaitNoKey();
+    WaitNoSpecialKey(SDL_SCANCODE_ESCAPE);
     return nErrorCode;
 }
 
@@ -3209,9 +3209,11 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     uint32_t I;
     uint32_t uModVolume;
     uint32_t uRainBowRGB;
+    uint32_t uScore;
     bool bMenuRun;
     bool bPrepareExit;
     bool bPlayGame;
+    bool bWellDone;         // Level wurde geschafft
     int nRed,nGreen,nBlue;
     uint8_t uRand;
 
@@ -3249,13 +3251,19 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
         } else {
             SetMenuText(MainMenu.uMenuScreen,"-",4,I + 3,EMERALD_FONT_BLUE);
         }
-        sprintf(szNum,"%04u",HighscoreFile.TopTwenty[uLevel].uHighScore[I]);
+
+        uScore = HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x7FFFFFFF;    // WellDone-Flag ausmaskieren
+        bWellDone = ((HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x80000000) != 0);
+        sprintf(szNum,"%04u",uScore);
         SetMenuText(MainMenu.uMenuScreen,szNum,35,I + 3,EMERALD_FONT_BLUE);
+        if (bWellDone) {
+            MainMenu.uMenuScreen[(I + 3) * MainMenu.uXdim + 39] = EMERALD_STEEL_PLAYERHEAD;
+        }
     }
     // Markierung eines neuen Highscores durchführen
     if ((nNewHighScoreIndex >= 0) && (nNewHighScoreIndex < EMERALD_HIGHSCORE_LISTLEN)) {
         MainMenu.uMenuScreen[(nNewHighScoreIndex + 3) * MainMenu.uXdim + 3] = EMERALD_WHEEL; // Senkrechte Abtrennung Pos.Nr zu Name
-        MainMenu.uMenuScreen[(nNewHighScoreIndex + 3) * MainMenu.uXdim + 33] = EMERALD_WHEEL; // Senkrechte Abtrennung Pos.Nr zu Name
+        MainMenu.uMenuScreen[(nNewHighScoreIndex + 3) * MainMenu.uXdim + 33] = EMERALD_WHEEL; // Senkrechte Abtrennung Name zu HighScore
     }
     do {
         for (I = 0; I < EMERALD_HIGHSCORE_LISTLEN; I++) {
