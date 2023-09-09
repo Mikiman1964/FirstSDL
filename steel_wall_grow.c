@@ -15,7 +15,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowLeft(uint32_t I) {
-    if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {
+    if (IS_SPACE(I - 1)) {
         Playfield.pLevel[I - 1] = EMERALD_STEEL_GROWING_LEFT;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);
     }
@@ -50,7 +50,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowRight(uint32_t I) {
-    if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {
+    if (IS_SPACE(I + 1)) {
         Playfield.pLevel[I + 1] = EMERALD_STEEL_GROWING_RIGHT;
         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);
@@ -91,7 +91,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowUp(uint32_t I) {
-    if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {
         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_STEEL_GROWING_UP;
         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_UP;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);
@@ -131,7 +131,7 @@ void ControlSteelGrowDown(uint32_t I) {
         // SteelGrowDown kann vom Replikator geboren werden, dann hier nichts machen
         return;
     }
-    if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_STEEL_GROWING_DOWN;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);
@@ -225,7 +225,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowLeft(uint32_t I) {
-    if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {
+    if (IS_SPACE(I - 1)) {
         Playfield.pLevel[I - 1] = EMERALD_WALL_GROWING_LEFT;
         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_LEFT;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);
@@ -261,7 +261,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowRight(uint32_t I) {
-    if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {
+    if (IS_SPACE(I + 1)) {
         Playfield.pLevel[I + 1] = EMERALD_WALL_GROWING_RIGHT;
         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);
@@ -302,7 +302,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowUp(uint32_t I) {
-    if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {
         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_WALL_GROWING_UP;
         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_UP;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);
@@ -342,7 +342,7 @@ void ControlWallGrowDown(uint32_t I) {
         // WallGrowDown kann vom Replikator geboren werden, dann hier nichts machen
         return;
     }
-    if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_WALL_GROWING_DOWN;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
         PreparePlaySound(SOUND_WALL_STEEL_GROWS,I);

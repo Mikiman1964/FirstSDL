@@ -48,7 +48,7 @@ void ControlStone(uint32_t I) {
             ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
         // Stein kann vom Replikator geboren werden, dann hier nichts machen
         return;
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist nach unten frei?
+    } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         // neuen Platz mit ungültigem Element besetzen
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -168,13 +168,16 @@ void ControlStone(uint32_t I) {
                     PreparePlaySound(SOUND_EXPLOSION,I);
                     break;
                 case (EMERALD_MAN):
-                    SDL_Log("Stone kills man");
-                    Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
-                    Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
-                    PreparePlaySound(SOUND_MAN_CRIES,I);
-                    PreparePlaySound(SOUND_STONE_FALL,I);
-                    Playfield.bManDead = true;
-                    return;
+                    if (!Playfield.bManProtected) {
+                        SDL_Log("Stone kills man");
+                        Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
+                        Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
+                        PreparePlaySound(SOUND_MAN_CRIES,I);
+                        PreparePlaySound(SOUND_STONE_FALL,I);
+                        Playfield.bManDead = true;
+                        return;
+                    }
+                    // Extra ohne break;
                 default:
                     // SDL_Log("Stone hit other element");
                     PreparePlaySound(SOUND_STONE_FALL,I);
@@ -230,7 +233,7 @@ void ControlStone(uint32_t I) {
             }
         } else {    // Ab hier prüfen, ob Stein durch Laufband bewegt werden kann
             if (uHitElement == EMERALD_CONVEYORBELT_RED) {
-                if  ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -238,7 +241,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -249,7 +252,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_GREEN) {
-                if  ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -257,7 +260,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -268,7 +271,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_BLUE) {
-                if  ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -276,7 +279,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -287,7 +290,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_YELLOW) {
-                if  ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -295,7 +298,7 @@ void ControlStone(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -370,8 +373,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSwampStone(uint32_t I) {
-
-    if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Kann Stein in Space durchsacken?
+    if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {  // Kann Stein in Space durchsacken?
         // SDL_Log("%s: Stone can leave swamp in Space",__FUNCTION__);
         Playfield.pLevel[I] = EMERALD_SWAMP;    // Sumpf nun leer
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;

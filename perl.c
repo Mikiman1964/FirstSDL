@@ -39,7 +39,7 @@ void ControlPerl(uint32_t I) {
         // Perle kann vom Replikator geboren werden, dann hier nichts machen
         // Perle kann durch Man "geshrinkt" werden, dann hier auch nichts machen
         return;
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist nach unten frei?
+    } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         // neuen Platz mit ungültigem Element besetzen
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -80,12 +80,13 @@ void ControlPerl(uint32_t I) {
                     PreparePlaySound(SOUND_SQUEAK,I);
                 }
             } else {
-                if (uHitElement == EMERALD_MAN) {
+                if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected)) {
                     SDL_Log("Perl kills man");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_PERL_BREAK;
                     Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
                     Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
                     PreparePlaySound(SOUND_MAN_CRIES,I);
+                    PreparePlaySound(SOUND_SQUEAK,I);
                     Playfield.bManDead = true;
                 } else if (uHitElement == EMERALD_STANDMINE) {
                     SDL_Log("Perl hit stand mine");
@@ -99,7 +100,7 @@ void ControlPerl(uint32_t I) {
                 return;
             }
         }
-        if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_PERL) != 0) {
+        if (((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_PERL) != 0) || (Playfield.pPipeLevel[uHitCoordinate] != EMERALD_SPACE)) {
             uFree = GetFreeRollDirections(I);
             if (uFree == 1) {   // Perle kann links rollen
                 // neuen Platz mit ungültigem Element besetzen
@@ -141,7 +142,7 @@ void ControlPerl(uint32_t I) {
             }
         } else {    // Ab hier prüfen, ob Perle durch Laufband bewegt werden kann
             if (uHitElement == EMERALD_CONVEYORBELT_RED) {
-                if  ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -149,7 +150,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -160,7 +161,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_GREEN) {
-                if  ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -168,7 +169,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -179,7 +180,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_BLUE) {
-                if  ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -187,7 +188,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -198,7 +199,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_YELLOW) {
-                if  ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -206,7 +207,7 @@ void ControlPerl(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann

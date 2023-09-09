@@ -37,6 +37,80 @@ void FillCheeseRandomNumbers(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           RenderPipeElement
+------------------------------------------------------------------------------
+Beschreibung: Rendert Pipe-Elemente.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+               uPipeElement, uint16_t, Röhren-Element
+               uX, uint32_t, X-Position im Level
+               uY, uint32_t, Y-Position im Level
+               nXpos, int , Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
+               nYpos, int , Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
+
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+int RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32_t uX, uint32_t uY, int nXpos, int nYpos) {
+    int nErrorCode = -1;
+    uint32_t uTextureIndex = 0;
+    SDL_Rect DestR;                     // Zum Kopieren in den Renderer
+
+    switch (uPipeElement) {
+        case (PIPE_UP_DOWN):
+            uTextureIndex = 1036;
+            break;
+        case (PIPE_LEFT_RIGHT):
+            uTextureIndex = 1037;
+            break;
+        case (PIPE_LEFT_UP):
+            uTextureIndex = 1038;
+            break;
+        case (PIPE_LEFT_DOWN):
+            uTextureIndex = 1039;
+            break;
+        case (PIPE_RIGHT_UP):
+            uTextureIndex = 1040;
+            break;
+        case (PIPE_RIGHT_DOWN):
+            uTextureIndex = 1041;
+            break;
+        case (PIPE_LEFT_UP_DOWN):
+            uTextureIndex = 1042;
+            break;
+        case (PIPE_RIGHT_UP_DOWN):
+            uTextureIndex = 1043;
+            break;
+        case (PIPE_LEFT_RIGHT_UP):
+            uTextureIndex = 1044;
+            break;
+        case (PIPE_LEFT_RIGHT_DOWN):
+            uTextureIndex = 1045;
+            break;
+        case (PIPE_LEFT_RIGHT_UP_DOWN):
+            uTextureIndex = 1046;
+            break;
+        default:
+            SDL_Log("%s: unknown pipe element: 0X%X",__FUNCTION__,uPipeElement);
+            break;
+    }
+    if (uTextureIndex > 0) {
+        // Position innerhalb des Renderers
+        DestR.x = uX * FONT_W - (nXpos % FONT_W) + Playfield.uShiftLevelXpix;
+        DestR.y = uY * FONT_H - (nYpos % FONT_H) + Playfield.uShiftLevelYpix;
+        DestR.w = FONT_W;
+        DestR.h = FONT_H;
+        //nErrorCode =  SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR);
+        if (nErrorCode != 0) {
+            SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           RenderLevel
 ------------------------------------------------------------------------------
 Beschreibung: Kopiert den sichtbaren Teil des Levels in den Renderer
@@ -113,6 +187,17 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     }
     uUpperLeftLevelIndex = (*pnXpos / FONT_W) + (*pnYpos / FONT_H) * Playfield.uLevel_X_Dimension;
     nErrorCode = 0;
+    // Röhren-Elemente ggf. vorher rendern
+    for (uY = 0; (uY <= ((uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
+        for (uX = 0; (uX <= (uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
+            I = uUpperLeftLevelIndex + uY * Playfield.uLevel_X_Dimension + uX;
+            if (I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension)) {
+                if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
+                    nErrorCode = RenderPipeElement(pRenderer,Playfield.pPipeLevel[I],uX,uY,*pnXpos,*pnYpos);
+                }
+            }
+        }
+    }
     // Den sichtbaren Teil des Levels in den Renderer kopieren.
     for (uY = 0; (uY <= ((uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
         for (uX = 0; (uX <= (uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {

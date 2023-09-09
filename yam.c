@@ -103,7 +103,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckYamGoLeft(uint32_t I) {
-    if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {
+    if (IS_SPACE(I - 1)) {
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -119,7 +119,7 @@ void CheckYamGoLeft(uint32_t I) {
             // Aktuelles Element auf Animation "links"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
         }
-    } else if (Playfield.pLevel[I - 1] == EMERALD_MAN) {  // Kann Man erwischt werden?
+    } else if ((Playfield.pLevel[I - 1] == EMERALD_MAN) && (!Playfield.bManProtected)) {  // Kann Man erwischt werden?
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -158,7 +158,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckYamGoRight(uint32_t I) {
-    if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {
+    if (IS_SPACE(I + 1)) {
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -175,7 +175,7 @@ void CheckYamGoRight(uint32_t I) {
             // Aktuelles Element auf Animation "rechts"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
         }
-    } else if (Playfield.pLevel[I + 1] == EMERALD_MAN) {  // Kann Man erwischt werden?
+    } else if ((Playfield.pLevel[I + 1] == EMERALD_MAN) && (!Playfield.bManProtected)) {  // Kann Man erwischt werden?
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -214,7 +214,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckYamGoUp(uint32_t I) {
-    if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -230,7 +230,7 @@ void CheckYamGoUp(uint32_t I) {
             // Aktuelles Element auf Animation "oben"
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
         }
-    } else if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) {  // Kann Man erwischt werden?
+    } else if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {  // Kann Man erwischt werden?
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -269,7 +269,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckYamGoDown(uint32_t I) {
-    if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -292,7 +292,7 @@ void CheckYamGoDown(uint32_t I) {
         Playfield.pInvalidElement[I] = EMERALD_YAM;
         PreparePlaySound(SOUND_POOL_BLUB,I);
         return;
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) {  // Kann Man erwischt werden?
+    } else if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {  // Kann Man erwischt werden?
         // Yam ist jetzt frei: War der Yam letzte Runde blockiert, dann noch mindestens eine Runde warten und Blockadenflag löschen
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
@@ -367,9 +367,9 @@ Rückgabewert:  bool, true = Yam komplett blockiert
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsYamCompleteBlocked(uint32_t I) {
-    return ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_SPACE) && (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_MAN) &&
-           (Playfield.pLevel[I - 1] != EMERALD_SPACE) && (Playfield.pLevel[I - 1] != EMERALD_MAN) &&
-           (Playfield.pLevel[I + 1] != EMERALD_SPACE) && (Playfield.pLevel[I + 1] != EMERALD_MAN) &&
-           (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_MAN) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL_TOP_MID));
+    return ((!IS_SPACE(I - Playfield.uLevel_X_Dimension)) && (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_MAN) &&
+           (!IS_SPACE(I - 1)) && (Playfield.pLevel[I - 1] != EMERALD_MAN) &&
+           (!IS_SPACE(I + 1)) && (Playfield.pLevel[I + 1] != EMERALD_MAN) &&
+           (!IS_SPACE(I + Playfield.uLevel_X_Dimension)) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_MAN) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL_TOP_MID));
 }
 

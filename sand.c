@@ -111,25 +111,25 @@ void ControlGrass(uint32_t I) {
             nDirectionRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten)
             switch (nDirectionRandom) {
                 case (1):           // links prüfen
-                    if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {
+                    if (IS_SPACE(I - 1)) {
                         Playfield.pLevel[I - 1] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
                     }
                     break;
                 case (2):           // oben prüfen
-                    if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                    if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {
                         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                     }
                     break;
                 case (3):           // rechts prüfen
-                    if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {
+                    if (IS_SPACE(I + 1)) {
                         Playfield.pLevel[I + 1] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     }
                     break;
                 case (4):           // unten prüfen
-                    if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                    if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {
                         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     }

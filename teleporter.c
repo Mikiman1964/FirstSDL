@@ -41,7 +41,7 @@ void PrintTeleporters(void) {
 Name:           InitTeleporter
 ------------------------------------------------------------------------------
 Beschreibung: Initialisiert die Werte für die Teleporter in der Struktur Playfield.x.
-              Diese Funktion wird einmalig aus EmeraldMineMainMenu() heraus
+              Diese Funktion wird einmalig aus EmeraldMineMainMenu()
               aufgerufen.
 
 Parameter
@@ -270,25 +270,25 @@ uint32_t GetDestinationTeleporterCoordinate(uint32_t uSourceCoordinate, uint32_t
         switch (uAnimation) {
             case (EMERALD_ANIM_UP):
                 // Ist über Ziel-Teleporter besetzt?
-                if (Playfield.pLevel[uDestinationCoordinate - Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {
+                if (!IS_SPACE(uDestinationCoordinate - Playfield.uLevel_X_Dimension)) {
                     uDestinationCoordinate = EMERALD_INVALID_TELEPORTER_COORDINATE;
                 }
                 break;
             case (EMERALD_ANIM_DOWN):
                 // Ist unter Ziel-Teleporter besetzt?
-                if (Playfield.pLevel[uDestinationCoordinate + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {
+                if (!IS_SPACE(uDestinationCoordinate + Playfield.uLevel_X_Dimension)) {
                     uDestinationCoordinate = EMERALD_INVALID_TELEPORTER_COORDINATE;
                 }
                 break;
             case (EMERALD_ANIM_LEFT):
                 // Ist links neben Ziel-Teleporter besetzt?
-                if (Playfield.pLevel[uDestinationCoordinate - 1] != EMERALD_SPACE) {
+                if (!IS_SPACE(uDestinationCoordinate - 1)) {
                     uDestinationCoordinate = EMERALD_INVALID_TELEPORTER_COORDINATE;
                 }
                 break;
             case (EMERALD_ANIM_RIGHT):
                 // Ist rechts neben Ziel-Teleporter besetzt?
-                if (Playfield.pLevel[uDestinationCoordinate + 1] != EMERALD_SPACE) {
+                if (!IS_SPACE(uDestinationCoordinate + 1)) {
                     uDestinationCoordinate = EMERALD_INVALID_TELEPORTER_COORDINATE;
                 }
                 break;
