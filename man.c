@@ -50,7 +50,7 @@ void UpdateManKey() {
         if (ManDirections.bExit) {
             ManKey.bExit = true;    // wird in RunGame() bestätigt
         }
-        if ((ManDirections.bDynamite) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])) {
+        if (((ManDirections.bDynamite) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])) && (!Playfield.bManProtected)) {
             ManKey.uFireCount++;
             //SDL_Log("FireCount: %u",ManKey.uFireCount);
         } else {
@@ -58,20 +58,20 @@ void UpdateManKey() {
         }
     } else {
         // Keyboard
-        if (InputStates.pKeyboardArray[SDL_SCANCODE_LEFT]) {
+        if (InputStates.pKeyboardArray[Config.uKeyboardScancodeLeft]) {
             ManKey.uDirection = MANKEY_LEFT;
-        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_RIGHT]) {
+        } else if (InputStates.pKeyboardArray[Config.uKeyboardScancodeRight]) {
             ManKey.uDirection = MANKEY_RIGHT;
-        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_UP]) {
+        } else if (InputStates.pKeyboardArray[Config.uKeyboardScancodeUp]) {
             ManKey.uDirection = MANKEY_UP;
-        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_DOWN]) {
+        } else if (InputStates.pKeyboardArray[Config.uKeyboardScancodeDown]) {
             ManKey.uDirection = MANKEY_DOWN;
         } else {
             ManKey.uDirection = MANKEY_NONE;
         }
-        ManKey.bFire = (InputStates.pKeyboardArray[SDL_SCANCODE_LCTRL]);
+        ManKey.bFire = (InputStates.pKeyboardArray[Config.uKeyboardScancodeFire]);
         // Zündung des Dynamits mit Feuertaste oder Space
-        if (  (((ManKey.bFire) && (!Config.bStartDynamiteWithSpace)) || ((InputStates.pKeyboardArray [SDL_SCANCODE_SPACE]) && (Config.bStartDynamiteWithSpace)))  && (Playfield.uDynamitePos == 0xFFFFFFFF) && (ManKey.uDirection == MANKEY_NONE)) {
+        if ( (((ManKey.bFire) && (!Config.bStartDynamiteWithSpace)) || ((InputStates.pKeyboardArray [SDL_SCANCODE_SPACE]) && (Config.bStartDynamiteWithSpace)))  && (Playfield.uDynamitePos == 0xFFFFFFFF) && (ManKey.uDirection == MANKEY_NONE) && (!Playfield.bManProtected) ) {
             ManKey.uFireCount++;
             //SDL_Log("FireCount: %u",ManKey.uFireCount);
         } else {
@@ -99,7 +99,6 @@ Name:           ControlManDies
 Beschreibung: Steuert den sterbenden Man.
 Parameter
       Eingang: I, uint32_t, Index im Level (lineare Man-Koordinate)
-               uDirection, uint32_t, Richtung, in die Man laufen möchte
       Ausgang: -
 Rückgabewert:  Richtung, in die Man gelaufen ist als Animation
 Seiteneffekte: Playfield.x, Mankey.x
@@ -139,7 +138,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     if ((Playfield.bManDead) || (Playfield.bWellDone))  {
         return uRetDirection;
     }
-    if (IsDangerousEnemyAround(I)) {
+    if ((!Playfield.bManProtected) && (IsDangerousEnemyAround(I))) {
         Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
         PreparePlaySound(SOUND_MAN_CRIES,I);
         Playfield.bManDead = true;
@@ -166,9 +165,31 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        PreparePlaySound(SOUND_MAN,I);
-                        ManGoUp(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
-                        uRetDirection = EMERALD_ANIM_UP;
+                        // Befindet sich Man in einer Röhre?
+                        if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
+                            // Kann er diese in die gewünschte Richtung verlassen?
+                            if (!IsPipeWalkable(I,PIPE_FREE_UP)) {
+                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        }
+                        // Versucht Man eine Röhre zu betreten?
+                        if (Playfield.pPipeLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {
+                            if (IsPipeWalkable(I - Playfield.uLevel_X_Dimension,PIPE_FREE_DOWN)) {
+                                ManGoUp(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                                PreparePlaySound(SOUND_PIPE,I);
+                                Playfield.bManProtected = true;
+                                uRetDirection = EMERALD_ANIM_UP;
+                            } else {
+                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        } else {
+                            ManGoUp(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                            PreparePlaySound(SOUND_MAN,I);
+                            Playfield.bManProtected = false;
+                            uRetDirection = EMERALD_ANIM_UP;
+                        }
                     }
                 } else {
                     uRetDirection = ManTouchElement(I,I - Playfield.uLevel_X_Dimension,EMERALD_ANIM_UP);
@@ -181,9 +202,31 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        PreparePlaySound(SOUND_MAN,I);
-                        ManGoRight(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
-                        uRetDirection = EMERALD_ANIM_RIGHT;
+                        // Befindet sich Man in einer Röhre?
+                        if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
+                            // Kann er diese in die gewünschte Richtung verlassen?
+                            if (!IsPipeWalkable(I,PIPE_FREE_RIGHT)) {
+                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        }
+                        // Versucht Man eine Röhre zu betreten?
+                        if (Playfield.pPipeLevel[I + 1] != EMERALD_SPACE) {
+                            if (IsPipeWalkable(I + 1,PIPE_FREE_LEFT)) {
+                                ManGoRight(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                                PreparePlaySound(SOUND_PIPE,I);
+                                Playfield.bManProtected = true;
+                                uRetDirection = EMERALD_ANIM_RIGHT;
+                            } else {
+                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        } else {
+                            ManGoRight(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                            PreparePlaySound(SOUND_MAN,I);
+                            Playfield.bManProtected = false;
+                            uRetDirection = EMERALD_ANIM_RIGHT;
+                        }
                     }
                 } else {
                     uRetDirection = ManTouchElement(I,I + 1,EMERALD_ANIM_RIGHT);
@@ -196,9 +239,31 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        PreparePlaySound(SOUND_MAN,I);
-                        ManGoDown(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
-                        uRetDirection = EMERALD_ANIM_DOWN;
+                        // Befindet sich Man in einer Röhre?
+                        if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
+                            // Kann er diese in die gewünschte Richtung verlassen?
+                            if (!IsPipeWalkable(I,PIPE_FREE_DOWN)) {
+                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        }
+                        // Versucht Man eine Röhre zu betreten?
+                        if (Playfield.pPipeLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {
+                            if (IsPipeWalkable(I + Playfield.uLevel_X_Dimension,PIPE_FREE_UP)) {
+                                ManGoDown(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                                PreparePlaySound(SOUND_PIPE,I);
+                                Playfield.bManProtected = true;
+                                uRetDirection = EMERALD_ANIM_DOWN;
+                            } else {
+                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        } else {
+                            ManGoDown(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                            PreparePlaySound(SOUND_MAN,I);
+                            Playfield.bManProtected = false;
+                            uRetDirection = EMERALD_ANIM_DOWN;
+                        }
                     }
                 } else {
                     uRetDirection = ManTouchElement(I,I + Playfield.uLevel_X_Dimension,EMERALD_ANIM_DOWN);
@@ -211,9 +276,31 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        PreparePlaySound(SOUND_MAN,I);
-                        ManGoLeft(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
-                        uRetDirection = EMERALD_ANIM_LEFT;
+                        // Befindet sich Man in einer Röhre?
+                        if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
+                            // Kann er diese in die gewünschte Richtung verlassen?
+                            if (!IsPipeWalkable(I,PIPE_FREE_LEFT)) {
+                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        }
+                        // Versucht Man eine Röhre zu betreten?
+                        if (Playfield.pPipeLevel[I - 1] != EMERALD_SPACE) {
+                            if (IsPipeWalkable(I - 1,PIPE_FREE_RIGHT)) {
+                                ManGoLeft(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                                PreparePlaySound(SOUND_PIPE,I);
+                                Playfield.bManProtected = true;
+                                uRetDirection = EMERALD_ANIM_LEFT;
+                            } else {
+                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                return uRetDirection;
+                            }
+                        } else {
+                            ManGoLeft(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
+                            PreparePlaySound(SOUND_MAN,I);
+                            Playfield.bManProtected = false;
+                            uRetDirection = EMERALD_ANIM_LEFT;
+                        }
                     }
                 } else {
                     uRetDirection = ManTouchElement(I,I - 1,EMERALD_ANIM_LEFT);
@@ -263,6 +350,32 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         SDL_Log("%s: element '%s' is born!",__FUNCTION__,ge_szElementNames[uElement]);
         return uRetAnimation;
     }
+    // Befindet sich Man in einer Röhre?
+    if (Playfield.pPipeLevel[uActPos] != EMERALD_SPACE) {
+        // Kann er diese in die gewünschte Richtung verlassen bzw. agieren?
+        switch (uAnimation) {
+            case (EMERALD_ANIM_LEFT):
+                if (!IsPipeWalkable(uActPos,PIPE_FREE_LEFT)) {
+                    return uRetAnimation;
+                }
+                break;
+            case (EMERALD_ANIM_RIGHT):
+                if (!IsPipeWalkable(uActPos,PIPE_FREE_RIGHT)) {
+                    return uRetAnimation;
+                }
+                break;
+            case (EMERALD_ANIM_UP):
+                if (!IsPipeWalkable(uActPos,PIPE_FREE_UP)) {
+                    return uRetAnimation;
+                }
+                break;
+            case (EMERALD_ANIM_DOWN):
+                if (!IsPipeWalkable(uActPos,PIPE_FREE_DOWN)) {
+                    return uRetAnimation;
+                }
+                break;
+        }
+    }
     switch (uElement) {
         case (EMERALD_STONE):
         case (EMERALD_NUT):
@@ -271,7 +384,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if (!ManKey.bFire) {
                 if (uAnimation == EMERALD_ANIM_RIGHT) {
                     Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_MAN_PUSH_RIGHT;  // Falls Man gegen einen blockierten Gegenstand schiebt (durchdrehende Beine)
-                    if ( (Playfield.pLevel[uTouchPos + 1] == EMERALD_SPACE) && Playfield.bPushStone && (uTouchStatus != EMERALD_ANIM_DOWN_SELF)) {
+                    if ((IS_SPACE(uTouchPos + 1)) && Playfield.bPushStone && (uTouchStatus != EMERALD_ANIM_DOWN_SELF)) {
                         // ursprüngliche Man-Position mit Space besetzen
                         Playfield.pLevel[uActPos] = EMERALD_SPACE;
                         Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
@@ -288,7 +401,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     }
                 } else if (uAnimation == EMERALD_ANIM_LEFT) {
                     Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_MAN_PUSH_LEFT; // Falls Man gegen einen blockierten Gegenstand schiebt (durchdrehende Beine)
-                    if ((Playfield.pLevel[uTouchPos - 1] == EMERALD_SPACE) && Playfield.bPushStone) {
+                    if ((IS_SPACE(uTouchPos - 1)) && Playfield.bPushStone) {
                         // ursprüngliche Man-Position mit Space besetzen
                         Playfield.pLevel[uActPos] = EMERALD_SPACE;
                         Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
@@ -528,25 +641,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_DOOR_ONLY_UP_STEEL):
-            if ((uAnimation == EMERALD_ANIM_UP) && (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+            if ((uAnimation == EMERALD_ANIM_UP) && (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) && (!ManKey.bFire)) {
                 uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                 ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
             }
             break;
         case (EMERALD_DOOR_ONLY_DOWN_STEEL):
-            if ((uAnimation == EMERALD_ANIM_DOWN) && (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+            if ((uAnimation == EMERALD_ANIM_DOWN) && (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) && (!ManKey.bFire)) {
                 uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                 ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
             }
             break;
         case (EMERALD_DOOR_ONLY_LEFT_STEEL):
-            if ((uAnimation == EMERALD_ANIM_LEFT) && (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+            if ((uAnimation == EMERALD_ANIM_LEFT) && (IS_SPACE(uActPos - 2)) && (!ManKey.bFire)) {
                 uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                 ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
             }
             break;
         case (EMERALD_DOOR_ONLY_RIGHT_STEEL):
-            if ((uAnimation == EMERALD_ANIM_RIGHT) && (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+            if ((uAnimation == EMERALD_ANIM_RIGHT) && (IS_SPACE(uActPos + 2)) && (!ManKey.bFire)) {
                 uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                 ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
             }
@@ -555,25 +668,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if (((Playfield.bHasRedKey) || (Playfield.bHasYellowKey) || (Playfield.bHasGreenKey) || (Playfield.bHasBlueKey)) && (!ManKey.bFire)) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -584,7 +697,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_DOOR_EMERALD):
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
-                    if ((Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                    if ((IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) && (!ManKey.bFire)) {
                         uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                         ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         if (Playfield.uEmeraldsToCollect > 0) {
@@ -593,7 +706,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     }
                     break;
                 case (EMERALD_ANIM_DOWN):
-                    if ((Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                    if ((IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) && (!ManKey.bFire)) {
                         uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                         ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         if (Playfield.uEmeraldsToCollect > 0) {
@@ -602,7 +715,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     }
                     break;
                 case (EMERALD_ANIM_LEFT):
-                    if ((Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                    if ((IS_SPACE(uActPos - 2)) && (!ManKey.bFire)) {
                         uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                         ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         if (Playfield.uEmeraldsToCollect > 0) {
@@ -611,7 +724,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     }
                     break;
                 case (EMERALD_ANIM_RIGHT):
-                    if ((Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                    if ((IS_SPACE(uActPos + 2)) && (!ManKey.bFire)) {
                         uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                         ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         if (Playfield.uEmeraldsToCollect > 0) {
@@ -625,25 +738,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if ((Playfield.bTimeDoorOpen) && (!ManKey.bFire)) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -655,25 +768,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if (!ManKey.bFire) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -690,25 +803,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 }
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -722,25 +835,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if ((Playfield.bHasRedKey) && (!ManKey.bFire)) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -754,25 +867,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if ((Playfield.bHasGreenKey) && (!ManKey.bFire)) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -786,25 +899,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if ((Playfield.bHasBlueKey) && (!ManKey.bFire)) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -818,25 +931,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if ((Playfield.bHasYellowKey) && (!ManKey.bFire)) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        if (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        if (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        if (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        if (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) {
+                        if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -1925,25 +2038,25 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 // Einbahnstraßentüren (soft) können durchlaufen und mit Hammer gesprengt werden, daher dieser Extrazweig
                 switch (uElement) {
                     case (EMERALD_DOOR_ONLY_UP_WALL):
-                        if ((uAnimation == EMERALD_ANIM_UP) && (Playfield.pLevel[uActPos - 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                        if ((uAnimation == EMERALD_ANIM_UP) && (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) && (!ManKey.bFire)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_DOOR_ONLY_DOWN_WALL):
-                        if ((uAnimation == EMERALD_ANIM_DOWN) && (Playfield.pLevel[uActPos + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                        if ((uAnimation == EMERALD_ANIM_DOWN) && (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) && (!ManKey.bFire)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_DOOR_ONLY_LEFT_WALL):
-                        if ((uAnimation == EMERALD_ANIM_LEFT) && (Playfield.pLevel[uActPos - 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                        if ((uAnimation == EMERALD_ANIM_LEFT) && (IS_SPACE(uActPos - 2)) && (!ManKey.bFire)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
                         break;
                     case (EMERALD_DOOR_ONLY_RIGHT_WALL):
-                        if ((uAnimation == EMERALD_ANIM_RIGHT) && (Playfield.pLevel[uActPos + 2] == EMERALD_SPACE) && (!ManKey.bFire)) {
+                        if ((uAnimation == EMERALD_ANIM_RIGHT) && (IS_SPACE(uActPos + 2)) && (!ManKey.bFire)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
                         }
@@ -1992,6 +2105,9 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         default:
             SDL_Log("%s:  unhandled element %u",__FUNCTION__,uElement);
             break;
+    }
+    if (uRetAnimation != EMERALD_ANIM_STAND) {
+        Playfield.bManProtected = false;
     }
     return uRetAnimation;
 }
@@ -2331,4 +2447,77 @@ void ManGoTeleporter(uint32_t uActCoordinate, uint32_t uDestTeleporterCoordinate
         }
         PreparePlaySound(SOUND_TELEPORTER,uDestManCoordinate);
     }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           IsPipeWalkable
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob ein Röhren-Element zu einer bestimmten Seite frei/begehbar ist.
+Parameter
+      Eingang: I, uint32_t, lineare Koordinate des Röhren-Elements
+               uDSide, uint32_t, Seite, die geprüft werden soll
+      Ausgang: -
+Rückgabewert:  bool, true = frei/begehbar, sonst nicht
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+bool IsPipeWalkable(uint32_t I, uint32_t uSide) {
+    bool bFree = false;
+    uint16_t uPipeElement;
+
+    uPipeElement = Playfield.pPipeLevel[I];
+    switch (uSide) {
+        case (PIPE_FREE_LEFT):
+            switch (uPipeElement) {
+                case (PIPE_LEFT_RIGHT):
+                case (PIPE_LEFT_UP):
+                case (PIPE_LEFT_DOWN):
+                case (PIPE_LEFT_UP_DOWN):
+                case (PIPE_LEFT_RIGHT_UP):
+                case (PIPE_LEFT_RIGHT_DOWN):
+                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                    bFree = true;
+                    break;
+            }
+            break;
+        case (PIPE_FREE_RIGHT):
+            switch (uPipeElement) {
+            case (PIPE_LEFT_RIGHT):
+                case (PIPE_RIGHT_UP):
+                case (PIPE_RIGHT_DOWN):
+                case (PIPE_RIGHT_UP_DOWN):
+                case (PIPE_LEFT_RIGHT_UP):
+                case (PIPE_LEFT_RIGHT_DOWN):
+                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                bFree =  true;
+                break;
+            }
+            break;
+        case (PIPE_FREE_UP):
+            switch (uPipeElement) {
+                case (PIPE_UP_DOWN):
+                case (PIPE_LEFT_UP):
+                case (PIPE_RIGHT_UP):
+                case (PIPE_LEFT_UP_DOWN):
+                case (PIPE_RIGHT_UP_DOWN):
+                case (PIPE_LEFT_RIGHT_UP):
+                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                    bFree = true;
+            }
+            break;
+        case (PIPE_FREE_DOWN):
+            switch (uPipeElement) {
+                case (PIPE_UP_DOWN):
+                case (PIPE_LEFT_DOWN):
+                case (PIPE_RIGHT_DOWN):
+                case (PIPE_LEFT_UP_DOWN):
+                case (PIPE_RIGHT_UP_DOWN):
+                case (PIPE_LEFT_RIGHT_DOWN):
+                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                    bFree = true;
+                    break;
+            }
+            break;
+    }
+    return bFree;
 }

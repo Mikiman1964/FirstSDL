@@ -80,7 +80,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ElementGoesMagicWall(uint32_t I, uint32_t uDestElement) {
-    if (Playfield.pLevel[I + 2 * Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    if (IS_SPACE(I + 2 * Playfield.uLevel_X_Dimension)) {
         // neuen Platz mit ungültigem Element besetzen
         Playfield.pLevel[I + 2 * Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann

@@ -35,7 +35,7 @@ void ControlGreenDrop(uint32_t I) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_GREEN_DROP_2;
         //Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP | EMERALD_GREEN_DROP;
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {
+    } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_GREEN_DROP_1;
         // neuen Platz mit ungültigem Element besetzen
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
@@ -51,7 +51,7 @@ void ControlGreenDrop(uint32_t I) {
         return;
     } else {
         // Unter Tropfen ist nicht frei
-        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) {
+        if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {
             SDL_Log("Green drop kills man");
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
@@ -103,25 +103,25 @@ void ControlGreenCheese(uint32_t I) {
             nDirectionRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten
             switch (nDirectionRandom) {
                 case (1):           // links prüfen
-                    if ( (Playfield.pLevel[I - 1] == EMERALD_SPACE) || (Playfield.pLevel[I - 1] == EMERALD_SAND) || (Playfield.pLevel[I - 1] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I - 1] == EMERALD_SWAMP) ) {
+                    if ( (IS_SPACE(I - 1)) || (Playfield.pLevel[I - 1] == EMERALD_SAND) || (Playfield.pLevel[I - 1] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I - 1] == EMERALD_SWAMP) ) {
                         Playfield.pLevel[I - 1] = EMERALD_GREEN_DROP_COMES;
                         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
                     }
                     break;
                 case (2):           // oben prüfen
-                    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SAND) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SWAMP) ) {
+                    if ( (IS_SPACE(I - Playfield.uLevel_X_Dimension)) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SAND) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SWAMP) ) {
                         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_GREEN_DROP_COMES;
                         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                     }
                     break;
                 case (3):           // rechts prüfen
-                    if ( (Playfield.pLevel[I + 1] == EMERALD_SPACE) || (Playfield.pLevel[I + 1] == EMERALD_SAND) || (Playfield.pLevel[I + 1] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I + 1] == EMERALD_SWAMP) ) {
+                    if ( (IS_SPACE(I + 1)) || (Playfield.pLevel[I + 1] == EMERALD_SAND) || (Playfield.pLevel[I + 1] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I + 1] == EMERALD_SWAMP) ) {
                         Playfield.pLevel[I + 1] = EMERALD_GREEN_DROP_COMES;
                         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     }
                     break;
                 case (4):           // unten prüfen
-                    if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAND) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SWAMP)) {
+                    if ( (IS_SPACE(I + Playfield.uLevel_X_Dimension)) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAND) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAND_INVISIBLE) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SWAMP)) {
                         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_GREEN_DROP_COMES;
                         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     }

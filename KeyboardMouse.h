@@ -26,4 +26,7 @@ uint32_t GetKey(void);
 uint32_t FilterBigFontKey(uint32_t uKey);
 void WaitNoSpecialKey(SDL_Scancode ScanCode);
 void WaitNoKey(void);
+
+int GetScancodeIndex();
+int GetSdlScanCodeNameIndex(uint32_t uSDL_ScanCode);
 #endif // KEYBOARDMOUSE_H_INCLUDED

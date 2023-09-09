@@ -30,7 +30,7 @@ void ControlMineUp(uint32_t I) {
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
-        if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
+        if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -43,8 +43,8 @@ void ControlMineUp(uint32_t I) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_RIGHT;
         }
     }
-    else if (Playfield.pLevel[I - 1] != EMERALD_SPACE) { // // Hat Mine links Führung?
-        if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
+    else if (!IS_SPACE(I - 1)) { // Hat Mine links Führung?
+        if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -87,7 +87,7 @@ void ControlMineRight(uint32_t I) {
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
-        if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {    // Ist rechts frei?
+        if (IS_SPACE(I + 1)) {    // Ist rechts frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I + 1] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -100,8 +100,8 @@ void ControlMineRight(uint32_t I) {
             // Mine bleibt zunächst auf "rechts" muss sich aber bei Blockade nach unten drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_DOWN;
         }
-    } else if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {  // Hat Mine links Führung?
-        if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {    // Ist nach rechts frei?
+    } else if (!IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Hat Mine links Führung?
+        if (IS_SPACE(I + 1)) {    // Ist nach rechts frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I + 1] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -147,10 +147,9 @@ void ControlMineDown(uint32_t I) {
         return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
-
         // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
         Playfield.pStatusAnimation[I] = 0;
-        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist nach unten frei?
+        if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -169,8 +168,8 @@ void ControlMineDown(uint32_t I) {
             // Mine bleibt zunächst auf "unten" muss sich aber bei Blockade nach links drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
         }
-    } else if (Playfield.pLevel[I + 1] != EMERALD_SPACE) {   // Links von Mine irgendwas?
-        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist nach unten frei?
+    } else if (!IS_SPACE(I + 1)) {   // Links von Mine irgendwas?
+        if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -220,7 +219,7 @@ void ControlMineLeft(uint32_t I) {
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
-        if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {    // Ist nach links frei?
+        if (IS_SPACE(I - 1)) {    // Ist nach links frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - 1] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -232,10 +231,8 @@ void ControlMineLeft(uint32_t I) {
             // Mine bleibt zunächst auf "links" muss sich aber bei Blockade nach oben drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_UP;
         }
-    } else if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) &&
-                (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL) ) {   // Links von Mine irgendwas? AcidPool ist wie Space.
-        if (Playfield.pLevel[I - 1] == EMERALD_SPACE)    // Ist nach links frei?
-        {
+    } else if ( (!IS_SPACE(I + Playfield.uLevel_X_Dimension)) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL) ) {   // Links von Mine irgendwas? AcidPool ist wie Space.
+        if (IS_SPACE(I - 1)) {   // Ist nach links frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - 1] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -279,7 +276,7 @@ void ControlStandMine(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           IsStandMineExplode
 ------------------------------------------------------------------------------
-Beschreibung: Prüft für eine Standmine, ob sich "Monster" oder der Man in der Nähe der Mine befinden.
+Beschreibung: Prüft für eine Standmine, ob sich "Monster" in der Nähe befinden.
 Parameter
       Eingang: uElement, uint16_t, Element
       Ausgang: -

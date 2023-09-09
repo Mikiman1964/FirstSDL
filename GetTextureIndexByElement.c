@@ -1598,6 +1598,39 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_STEEL_MODERN_MIDDLE):
             uTextureIndex = 1035;
             break;
+        case (PIPE_UP_DOWN):
+            uTextureIndex = 1036;
+            break;
+        case (PIPE_LEFT_RIGHT):
+            uTextureIndex = 1037;
+            break;
+        case (PIPE_LEFT_UP):
+            uTextureIndex = 1038;
+            break;
+        case (PIPE_LEFT_DOWN):
+            uTextureIndex = 1039;
+            break;
+        case (PIPE_RIGHT_UP):
+            uTextureIndex = 1040;
+            break;
+        case (PIPE_RIGHT_DOWN):
+            uTextureIndex = 1041;
+            break;
+        case (PIPE_LEFT_UP_DOWN):
+            uTextureIndex = 1042;
+            break;
+        case (PIPE_RIGHT_UP_DOWN):
+            uTextureIndex = 1043;
+            break;
+        case (PIPE_LEFT_RIGHT_UP):
+            uTextureIndex = 1044;
+            break;
+        case (PIPE_LEFT_RIGHT_DOWN):
+            uTextureIndex = 1045;
+            break;
+        case (PIPE_LEFT_RIGHT_UP_DOWN):
+            uTextureIndex = 1046;
+            break;
         default:
             SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());
             uTextureIndex = 0;     // Space

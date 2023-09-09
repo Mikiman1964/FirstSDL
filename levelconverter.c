@@ -532,6 +532,17 @@ char g_szDC3_MD5[][33] =
         "5888AB94B502169BEA63B5E86EAC16B5",        // EMERALD_STEEL_MODERN_UP_DOWN
         "4138840C36AD62BDF17F8A8DA8AC4040",        // EMERALD_STEEL_MODERN_DOWN_END
         "B6FB3789129D83DD82A86933EC17A4A5",        // EMERALD_STEEL_MODERN_MIDDLE
+        "0EC5F6AD6EABF329D1281E817A99DA2E",        // PIPE_UP_DOWN
+        "552FAAA3922F7B29A2E811F992152071",        // PIPE_LEFT_RIGHT
+        "CFA5EBB5389620185FD8829A0BBEEB50",        // PIPE_LEFT_UP
+        "012FA7B336E6FA974063AE7E1359EAE2",        // PIPE_LEFT_DOWN
+        "A9E4B5B091330A613595A0FCCE1D44EB",        // PIPE_RIGHT_UP
+        "ADCDFFA78C4A5888BC1F5B755A0DBAAC",        // PIPE_RIGHT_DOWN
+        "110140ADC5C7D8B7E1D94B9F4A9FAFB1",        // PIPE_LEFT_UP_DOWN
+        "9A274F44560A55858AF2A5805BB6CD4E",        // PIPE_RIGHT_UP_DOWN
+        "5202F6C017A93A1EBD07907B3C29AB0F",        // PIPE_LEFT_RIGHT_UP
+        "EA6614D3E287ABC0E969F05125CAA7A8",        // PIPE_LEFT_RIGHT_DOWN
+        "D6B5EA86D47E9A0C129DDE4ED0AA8828",        // PIPE_LEFT_RIGHT_UP_DOWN
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",        // ENDE der MD5-Liste
     };
 
@@ -1046,10 +1057,18 @@ uint16_t g_DC3_Elements[] = {
         ,EMERALD_STEEL_MODERN_UP_DOWN
         ,EMERALD_STEEL_MODERN_DOWN_END
         ,EMERALD_STEEL_MODERN_MIDDLE
+        ,PIPE_UP_DOWN
+        ,PIPE_LEFT_RIGHT
+        ,PIPE_LEFT_UP
+        ,PIPE_LEFT_DOWN
+        ,PIPE_RIGHT_UP
+        ,PIPE_RIGHT_DOWN
+        ,PIPE_LEFT_UP_DOWN
+        ,PIPE_RIGHT_UP_DOWN
+        ,PIPE_LEFT_RIGHT_UP
+        ,PIPE_LEFT_RIGHT_DOWN
+        ,PIPE_LEFT_RIGHT_UP_DOWN
 };
-
-
-
 
 
 
@@ -1170,8 +1189,8 @@ int LevelConverterFromBitap(char *pszFilename) {
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = uLevelElement;
             } else {
                 SDL_Log("%s: Warning: hash (%s) not found for element at position X:%u  Y:%u",__FUNCTION__,szMD5String,X,Y);
-                //WriteFile("hashes.txt",szMD5String,32,true);
-                //WriteFile("hashes.txt","\r\n",2,true);
+                // WriteFile("hashes.txt",szMD5String,32,true);
+                // WriteFile("hashes.txt","\r\n",2,true);
 
                 //Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_FONT_STEEL_QUESTION_MARK;

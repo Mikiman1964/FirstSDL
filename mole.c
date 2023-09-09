@@ -23,7 +23,7 @@ void ControlMoleUp(uint32_t I) {
     bool bLeftFree;
     bool bRightFree;
 
-    if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
+    if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I - Playfield.uLevel_X_Dimension] = EMERALD_MOLE_UP;
@@ -37,8 +37,8 @@ void ControlMoleUp(uint32_t I) {
         PreparePlaySound(SOUND_CHEESE,I);
     } else {                        // Oben ist nicht frei
         // Mole bleibt zunächst auf "oben" muss sich aber bei Blockade entscheiden nach rechts oder links zu gehen
-        bLeftFree = (Playfield.pLevel[I - 1] == EMERALD_SPACE);
-        bRightFree = (Playfield.pLevel[I + 1] == EMERALD_SPACE);
+        bLeftFree = (IS_SPACE(I - 1));
+        bRightFree = (IS_SPACE(I + 1));
         if (bLeftFree && bRightFree) {
             // Ist links und rechts frei ?
             nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
@@ -86,7 +86,7 @@ void ControlMoleRight(uint32_t I) {
     bool bLeftFree;
     bool bRightFree;
 
-    if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {  // Ist nach rechts frei?
+    if (IS_SPACE(I + 1)) {  // Ist nach rechts frei?
         Playfield.pLevel[I + 1] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I + 1] = EMERALD_MOLE_RIGHT;
@@ -101,8 +101,8 @@ void ControlMoleRight(uint32_t I) {
         PreparePlaySound(SOUND_CHEESE,I);
     } else {                        // Rechts ist nicht frei
         // Mole bleibt zunächst auf "rechts" muss sich aber bei Blockade entscheiden nach links oder rechts zu gehen
-        bLeftFree = (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE);
-        bRightFree = (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE);
+        bLeftFree = (IS_SPACE(I - Playfield.uLevel_X_Dimension));
+        bRightFree = (IS_SPACE(I + Playfield.uLevel_X_Dimension));
         if (bLeftFree && bRightFree) {
             // Ist oben und unten frei ?
             nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
@@ -154,7 +154,7 @@ void ControlMoleDown(uint32_t I) {
         // MoleDown kann vom Replikator geboren werden, dann hier nichts machen
         return;
     }
-    if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach unten frei?
+    if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {  // Ist nach unten frei?
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_MOLE_DOWN;
@@ -175,8 +175,8 @@ void ControlMoleDown(uint32_t I) {
         return;
     } else {                        // Unten ist nicht frei
         // Mole bleibt zunächst auf "unten" muss sich aber bei Blockade entscheiden nach rechts oder links zu gehen
-        bRightFree = (Playfield.pLevel[I - 1] == EMERALD_SPACE);
-        bLeftFree = (Playfield.pLevel[I + 1] == EMERALD_SPACE);
+        bRightFree = (IS_SPACE(I - 1));
+        bLeftFree = (IS_SPACE(I + 1));
         if (bLeftFree && bRightFree) {
             // Ist links und rechts frei ?
             nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1
@@ -224,7 +224,7 @@ void ControlMoleLeft(uint32_t I) {
     bool bLeftFree;
     bool bRightFree;
 
-    if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {  // Ist nach links frei?
+    if (IS_SPACE(I - 1)) {  // Ist nach links frei?
         Playfield.pLevel[I - 1] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I - 1] = EMERALD_MOLE_LEFT;
@@ -238,8 +238,8 @@ void ControlMoleLeft(uint32_t I) {
         PreparePlaySound(SOUND_CHEESE,I);
     } else {                        // Links ist nicht frei
         // Mole bleibt zunächst auf "links" muss sich aber bei Blockade entscheiden nach unten oder oben zu gehen
-        bRightFree = (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE);
-        bLeftFree = (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE);
+        bRightFree = (IS_SPACE(I - Playfield.uLevel_X_Dimension));
+        bLeftFree = (IS_SPACE(I + Playfield.uLevel_X_Dimension));
         if (bRightFree && bLeftFree) {
             // Ist oben und unten frei ?
             nRandom = randn(0,1);         // Ergibt Zufallszahl 0 oder 1

@@ -92,12 +92,13 @@ int GetMemoryForPlayfield(void) {
     int nErrorCode;
 
     Playfield.pLevel = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
+    Playfield.pPipeLevel = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pInvalidElement = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
     Playfield.pLastStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
     Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
     Playfield.pLastYamDirection = (uint8_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
-    if ((Playfield.pLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pLastStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL) && (Playfield.pInvalidElement != NULL) && (Playfield.pLastYamDirection != NULL)) {
+    if ((Playfield.pLevel != NULL) && (Playfield.pPipeLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pLastStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL) && (Playfield.pInvalidElement != NULL) && (Playfield.pLastYamDirection != NULL)) {
         memset(Playfield.pLevel,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
         memset(Playfield.pInvalidElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
         memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
@@ -109,6 +110,7 @@ int GetMemoryForPlayfield(void) {
         nErrorCode = -1;
         SDL_Log("%s: can not allocate memory for playfield.",__FUNCTION__);
         SAFE_FREE(Playfield.pLevel);
+        SAFE_FREE(Playfield.pPipeLevel);
         SAFE_FREE(Playfield.pInvalidElement);
         SAFE_FREE(Playfield.pStatusAnimation);
         SAFE_FREE(Playfield.pLastStatusAnimation);
@@ -1294,6 +1296,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.uPlayTimeStart = 0;
         Playfield.uPlayTimeEnd = 0;
         Playfield.bReadyToGo = false;
+        Playfield.bManProtected = false;
     }
     return nErrorCode;
 }
@@ -1398,6 +1401,45 @@ void InitYamExplosions(YAMEXPLOSION *pYamExplosions) {
     for (I = 0; I < EMERALD_MAX_YAM_EXPLOSIONS; I++) {
         for (E = 0; E < 9; E++) {
             pYamExplosions[I].uElement[E] = EMERALD_SPACE;
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SetPipeLevel
+------------------------------------------------------------------------------
+Beschreibung: Entnimmt die Röhren-Elemente aus Playfield.pLevel und setzt diese
+              in Playfield.pPipeLevel.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void SetPipeLevel(void) {
+    uint32_t I;
+    uint16_t uElement;
+
+    for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
+        uElement = Playfield.pLevel[I];
+        switch (uElement) {
+            case (PIPE_UP_DOWN):
+            case (PIPE_LEFT_RIGHT):
+            case (PIPE_LEFT_UP):
+            case (PIPE_LEFT_DOWN):
+            case (PIPE_RIGHT_UP):
+            case (PIPE_RIGHT_DOWN):
+            case (PIPE_LEFT_UP_DOWN):
+            case (PIPE_RIGHT_UP_DOWN):
+            case (PIPE_LEFT_RIGHT_UP):
+            case (PIPE_LEFT_RIGHT_DOWN):
+            case (PIPE_LEFT_RIGHT_UP_DOWN):
+                Playfield.pPipeLevel[I] = uElement;
+                Playfield.pLevel[I] = EMERALD_SPACE;
+                break;
+            default:
+                Playfield.pPipeLevel[I] = EMERALD_SPACE;
         }
     }
 }
@@ -2174,7 +2216,6 @@ int GetLevelgroupFiles(void) {
     uint8_t uLevelgroupMd5Hash[16];                 // gelesen
     char szFullFilename[EMERALD_MAX_FILENAME_LEN * 2];
 
-
     g_LevelgroupFilesCount = 0;
     nErrorCode = -1;
     if ((dir = opendir(EMERALD_LEVELGROUPS_DIRECTORYNAME)) == NULL) {
@@ -2246,7 +2287,69 @@ int GetLevelgroupFiles(void) {
         }
         closedir(dir);
     }
+    if ((nErrorCode == 0) && (g_LevelgroupFilesCount > 1)) {
+        SortLevelGroupsByGroupName();
+    }
     return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SortLevelGroupsByGroupName
+------------------------------------------------------------------------------
+Beschreibung: Sortiert die Levelgruppen nach Levelgruppennamen.
+
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
+------------------------------------------------------------------------------*/
+void SortLevelGroupsByGroupName(void) {
+    // Temporäre Elemente für Tauschvorgang - Start
+    char szFilename[EMERALD_MAX_FILENAME_LEN + 1];
+    char szLevelgroupname[EMERALD_GROUPNAME_LEN + 1];
+    char szPasswordHash[32 + 1];
+    char szCreateTimestamp[15 + 1];                                             // 20230331_133530
+    uint8_t uMd5Hash[16];
+    uint32_t uLevelCount;                                                       // Anzahl Level in der Levelgruppe
+    // Temporäre Elemente für Tauschvorgang - Ende
+    uint32_t I;
+    bool bChanged;
+
+    if (g_LevelgroupFilesCount > 1) {
+        do {
+            bChanged = false;
+            for (I = 0; (I < g_LevelgroupFilesCount - 1); I++) {
+                // strcmp(s1,s2) : > 0 wenn s1 > s2
+                if (strcmp(LevelgroupFiles[I].szLevelgroupname,LevelgroupFiles[I + 1].szLevelgroupname) > 0) {
+                    bChanged = true;
+                    // Elemente von Index I zwischenspeichern
+                    strcpy(szFilename,LevelgroupFiles[I].szFilename);
+                    strcpy(szLevelgroupname,LevelgroupFiles[I].szLevelgroupname);
+                    strcpy(szPasswordHash,LevelgroupFiles[I].szPasswordHash);
+                    strcpy(szCreateTimestamp,LevelgroupFiles[I].szCreateTimestamp);
+                    memcpy(uMd5Hash,LevelgroupFiles[I].uMd5Hash,16);
+                    uLevelCount = LevelgroupFiles[I].uLevelCount;
+                    // Elemente von I + 1 auf I übertragen
+                    strcpy(LevelgroupFiles[I].szFilename,LevelgroupFiles[I + 1].szFilename);
+                    strcpy(LevelgroupFiles[I].szLevelgroupname,LevelgroupFiles[I + 1].szLevelgroupname);
+                    strcpy(LevelgroupFiles[I].szPasswordHash,LevelgroupFiles[I + 1].szPasswordHash);
+                    strcpy(LevelgroupFiles[I].szCreateTimestamp,LevelgroupFiles[I + 1].szCreateTimestamp);
+                    memcpy(LevelgroupFiles[I].uMd5Hash,LevelgroupFiles[I + 1].uMd5Hash,16);
+                    LevelgroupFiles[I].uLevelCount = LevelgroupFiles[I + 1].uLevelCount;
+                    // Zwischengespeicherte Elemente auf I + 1 übertragen
+                    strcpy(LevelgroupFiles[I + 1].szFilename,szFilename);
+                    strcpy(LevelgroupFiles[I + 1].szLevelgroupname,szLevelgroupname);
+                    strcpy(LevelgroupFiles[I + 1].szPasswordHash,szPasswordHash);
+                    strcpy(LevelgroupFiles[I + 1].szCreateTimestamp,szCreateTimestamp);
+                    memcpy(LevelgroupFiles[I + 1].uMd5Hash,uMd5Hash,16);
+                    LevelgroupFiles[I + 1].uLevelCount = uLevelCount;
+                }
+            }
+        } while (bChanged);
+    }
 }
 
 

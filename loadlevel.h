@@ -64,9 +64,6 @@ typedef struct {
 } ACTUALPLAYER;
 
 
-
-
-
 typedef struct {
     char szFilename[EMERALD_MAX_FILENAME_LEN + 1];
     char szLevelgroupname[EMERALD_GROUPNAME_LEN + 1];
@@ -105,6 +102,7 @@ int GetMemoryForPlayfield(void);
 int InitialisePlayfield(uint32_t uLevelNumber);
 void InitYamExplosions(YAMEXPLOSION *pYamExplosions);
 int GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t *puManXpos, uint32_t *puManYpos);
+void SetPipeLevel(void);
 int CheckLevelBorder(void);
 int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim);
 int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim);
@@ -115,6 +113,7 @@ void SetCentralMegaExplosionCoordinates(void);
 void InitLevelgroups(void);
 int WriteDefaultLevelgroup(void); // Funktion befindet sich in default_levelgroup.c
 int GetLevelgroupFiles(void);
+void SortLevelGroupsByGroupName(void);
 int CalculateLevelGroupMd5Hash(uint8_t *puLevelgroupXml,uint8_t *puMd5Hash);
 uint32_t GetLevelgroupIndexByHash(uint8_t *puLevelgroupMd5Hash);
 int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores);

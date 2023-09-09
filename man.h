@@ -8,6 +8,12 @@
 #define     MANKEY_UP                      0x00000003
 #define     MANKEY_DOWN                    0x00000004
 
+#define     PIPE_FREE_LEFT                 0x00
+#define     PIPE_FREE_RIGHT                0x01
+#define     PIPE_FREE_UP                   0x02
+#define     PIPE_FREE_DOWN                 0x03
+
+
 
 typedef struct {
     uint32_t uDirection;
@@ -37,4 +43,5 @@ void ManGoDown(uint32_t I,uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);
 void ManGoRight(uint32_t,uint32_t uAdditionalAnimStatus, bool bDoubleSpeed);
 void SetManArm(uint32_t I,uint32_t uAnimation);
 void ManGoTeleporter(uint32_t uActCoordinate, uint32_t uDestTeleporterCoordinate, uint32_t uAnimation);
+bool IsPipeWalkable(uint32_t I, uint32_t uSide);
 #endif // MAN_H_INCLUDED

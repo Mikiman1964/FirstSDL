@@ -317,8 +317,12 @@ uint32_t HandleBeam(uint32_t I, uint16_t uOwnElement,uint32_t uOwnColor) {
     uLevelElement = Playfield.pLevel[I];
     switch (uLevelElement) {
         case (EMERALD_SPACE):
-            Playfield.pLevel[I] = uOwnElement;
-            uRet = 1;
+            if (IS_SPACE(I)) {
+                Playfield.pLevel[I] = uOwnElement;
+                uRet = 1;
+            } else {
+                uRet = 0;
+            }
             break;
         case (EMERALD_BEAM_RED_VERTICAL):
             Playfield.pLevel[I] = EMERALD_BEAM_CROSS;
