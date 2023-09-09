@@ -71,5 +71,6 @@ int ShowControllersAndJoysticks(SDL_Renderer *pRenderer);
 int ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int nXpos, int nYpos, int nWidth, int nHeight, int nDimm);
 void PrepareSettingsMenu(void);
 int GetSettingsMenuButton(void);
+int GetSettingsMenuKeyboardButton(void);
 int GetSettingsMenuAxisButton(void);
 #endif // EMERALDMINEMAINMENUE_H_INCLUDED

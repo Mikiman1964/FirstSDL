@@ -42,16 +42,22 @@ void ControlExplosionToElement(uint32_t I) {
     } else if (Playfield.pLevel[I] == EMERALD_EXPLOSION_TO_ELEMENT_2) {
         uNewElement = Playfield.pStatusAnimation[I] & 0xFFFF;
         if ((uNewElement > EMERALD_NONE) && (uNewElement <= EMERALD_MAX_ELEMENT)) {
-            Playfield.pLevel[I] = uNewElement;
-            if (uNewElement == EMERALD_DYNAMITE_ON) {
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P1;
-            } else if (uNewElement == EMERALD_YAM) {
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED;  // Wenn neuer Yam entsteht, diesen erstmal blocken
-            } else if ((uNewElement == EMERALD_TELEPORTER_RED) || (uNewElement == EMERALD_TELEPORTER_YELLOW) || (uNewElement == EMERALD_TELEPORTER_GREEN) || (uNewElement == EMERALD_TELEPORTER_BLUE)) {
-                AddTeleporterCoordinate(uNewElement,I);
+            if (IsPipeElement(uNewElement)) {
+                Playfield.pPipeLevel[I] = uNewElement;
+                Playfield.pLevel[I] = EMERALD_SPACE;
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
             } else {
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                Playfield.pLevel[I] = uNewElement;
+                if (uNewElement == EMERALD_DYNAMITE_ON) {
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P1;
+                } else if (uNewElement == EMERALD_YAM) {
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED;  // Wenn neuer Yam entsteht, diesen erstmal blocken
+                } else if ((uNewElement == EMERALD_TELEPORTER_RED) || (uNewElement == EMERALD_TELEPORTER_YELLOW) || (uNewElement == EMERALD_TELEPORTER_GREEN) || (uNewElement == EMERALD_TELEPORTER_BLUE)) {
+                    AddTeleporterCoordinate(uNewElement,I);
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                } else {
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                }
             }
         } else {
             SDL_Log("%s: Error: try to set bad element (0x%04x) at position %u",__FUNCTION__,uNewElement,I);
@@ -819,7 +825,7 @@ void ControlCentralYamExplosion(uint32_t I) {
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                     Playfield.pStatusAnimation[uCoordinate] = YamElements[Y];
                     break;
-                case (EMERALD_EXPLOSION_ELEMENT):   // Yam sprengt Elemente aus Mauer frei statt Emeralds zu erzeugen
+                case (EMERALD_EXPLOSION_ELEMENT):   // Yam sprengt Elemente aus Mauer frei statt eigene Elemente zu erzeugen
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                     Playfield.pStatusAnimation[uCoordinate] = uCheckExplosion >> 16;
                     break;
@@ -907,7 +913,6 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_KEY_GREEN):
         case (EMERALD_KEY_WHITE):
         case (EMERALD_KEY_GENERAL):
-        case (EMERALD_SPACE):
         case (EMERALD_WALL_ROUND):
         case (EMERALD_SAND):
         case (EMERALD_SAND_INVISIBLE):
@@ -1067,8 +1072,19 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
                 Playfield.uWheelRunningYpos = 0;
             }
             break;
+        case (EMERALD_SPACE):
+            if (IS_SPACE(uCoordinate)) {
+                uExplosion = EMERALD_EXPLOSION_EMPTY;
+            } else {
+                uExplosion = EMERALD_EXPLOSION_NONE;
+            }
+            break;
         case (EMERALD_MAN):
-            uExplosion = EMERALD_EXPLOSION_EMPTY_MAN;
+            if (Playfield.bManProtected) {
+                uExplosion = EMERALD_EXPLOSION_NONE;
+            } else {
+                uExplosion = EMERALD_EXPLOSION_EMPTY_MAN;
+            }
             break;
         case (EMERALD_WALL_WITH_TIME_COIN):
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_TIME_COIN << 16);
@@ -1358,4 +1374,39 @@ bool IsDangerousEnemyAround(uint32_t I) {
                     (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||    // oben
                     (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP)       // unten
                     );
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           IsPipeElement
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob ein Element eine Röhre ist.
+Parameter
+      Eingang: uElement, uint16_t, Element, das geprüft werden soll.
+      Ausgang: -
+Rückgabewert:  bool, true = Element ist eine Röhre
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+bool IsPipeElement(uint16_t uElement) {
+    bool bIsPipe;
+
+    switch (uElement) {
+        case (PIPE_UP_DOWN):
+        case (PIPE_LEFT_RIGHT):
+        case (PIPE_LEFT_UP):
+        case (PIPE_LEFT_DOWN):
+        case (PIPE_RIGHT_UP):
+        case (PIPE_RIGHT_DOWN):
+        case (PIPE_LEFT_UP_DOWN):
+        case (PIPE_RIGHT_UP_DOWN):
+        case (PIPE_LEFT_RIGHT_UP):
+        case (PIPE_LEFT_RIGHT_DOWN):
+        case (PIPE_LEFT_RIGHT_UP_DOWN):
+            bIsPipe = true;
+            break;
+        default:
+            bIsPipe = false;
+            break;
+    }
+    return bIsPipe;
 }

@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+#define IS_SPACE(x)  ((Playfield.pLevel[x] == EMERALD_SPACE) && (Playfield.pPipeLevel[x] == EMERALD_SPACE))
+
 #define MIN_LEVEL_W                             4       // Minumum 4 Elemente in der Breite
 #define MIN_LEVEL_H                             3       // Minumum 3 Elemente in der Höhe
 #define MAX_LEVEL_W                             1000    // Maximum Elemente in der Breite
@@ -11,12 +13,12 @@
 
 #define PANEL_H                                 32      // Spiel-Anzeige (Time, Score usw.)
 
-#define EMERALD_VERSION                         "01.00" // Version
+#define EMERALD_VERSION                         "01.06" // Version
 
 #define EMERALD_VERSION_LEN                     5       // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                       32      // Maximale Titellänge
 #define EMERALD_AUTHOR_LEN                      32      // Maximale Autorlänge
-#define EMERALD_MD5_STRING_LEN                  32      // Maximale Autorlänge
+#define EMERALD_MD5_STRING_LEN                  32      // MD5-Stringlänge
 #define EMERALD_MAX_YAM_EXPLOSIONS              100     // Maximale Anzahl an verschiedenen YAM-Explosionen
 
 // Level-Elemente
@@ -538,8 +540,19 @@
 #define EMERALD_STEEL_MODERN_UP_DOWN            0x022A            // Stahl, modern, oben/unten
 #define EMERALD_STEEL_MODERN_DOWN_END           0x022B            // Stahl, modern, unteres Ende
 #define EMERALD_STEEL_MODERN_MIDDLE             0x022C            // Stahl, modern, Mittelteil
+#define PIPE_UP_DOWN                            0x022D            // Röhre, oben+unten
+#define PIPE_LEFT_RIGHT                         0x022E            // Röhre, links+rechts
+#define PIPE_LEFT_UP                            0x022F            // Röhre, links+oben
+#define PIPE_LEFT_DOWN                          0x0230            // Röhre, links+unten
+#define PIPE_RIGHT_UP                           0x0231            // Röhre, rechts+oben
+#define PIPE_RIGHT_DOWN                         0x0232            // Röhre, rechts+unten
+#define PIPE_LEFT_UP_DOWN                       0x0233            // Röhre, links+oben+unten
+#define PIPE_RIGHT_UP_DOWN                      0x0234            // Röhre, rechts+oben+unten
+#define PIPE_LEFT_RIGHT_UP                      0x0235            // Röhre, links+rechts+oben
+#define PIPE_LEFT_RIGHT_DOWN                    0x0236            // Röhre, links+rechts+unten
+#define PIPE_LEFT_RIGHT_UP_DOWN                 0x0237            // Röhre, links+rechts+oben+unten
 
-#define EMERALD_MAX_ELEMENT                     0x022C            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
+#define EMERALD_MAX_ELEMENT                     0x0237            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 #define EMERALD_FONT_BLUE                       0x00              // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
@@ -713,6 +726,7 @@ typedef struct {
 
 typedef struct {
     uint16_t        *pLevel;
+    uint16_t        *pPipeLevel;
     uint32_t        *pStatusAnimation;
     uint32_t        *pLastStatusAnimation;
     POSTANIMATION   *pPostAnimation;
@@ -739,6 +753,7 @@ typedef struct {
     bool            bPushStone;                                 // wenn true, kann Man sofort (Stone, Nut, Bomb) schieben
     bool            bManDead;
     bool            bWellDone;                                  // Level wurde geschafft
+    bool            bManProtected;                              // Man ist in Röhre geschützt
     bool            bLightBarrierRedOn;
     bool            bLightBarrierGreenOn;
     bool            bLightBarrierBlueOn;

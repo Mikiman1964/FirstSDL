@@ -17,7 +17,8 @@
 #include "teleporter.h"
 
 MAINMENU MainMenu;
-
+extern char g_ScanCodeNames[][64];
+extern uint32_t g_uScanCodes[];
 extern SDL_Window *ge_pWindow;
 extern INPUTSTATES InputStates;
 extern MANKEY ManKey;
@@ -1859,12 +1860,15 @@ Parameter
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x, Config.x,
                GameController.x, Joystick.x, *ge_pWindow, ShowableDisplayModes.x
-               ge_uXoffs, ge_uYoffs, ge_DisplayMode
+               ge_uXoffs, ge_uYoffs, ge_DisplayMode, g_uScanCodes[], g_ScanCodeNames[]
 ------------------------------------------------------------------------------*/
 int SettingsMenu(SDL_Renderer *pRenderer) {
     SDL_Rect RecAxisButton;
+    SDL_Rect KeyboardButton;
     int nDisplays;
     int nErrorCode = 0;
+    int nKeyboardButton = 0;        // Für Richtungsauswahl bzw. Firebutton
+    int nKeybindingState = 0;
     int nButton = 0;
     int nLastButton = 0;
     int nAxisButton = 0;
@@ -1874,15 +1878,19 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
     int nYpos;
     int nRec1PixelCount;
     int nRec2PixelCount;
+    int nScanCodeIndex;
     uint32_t uModVolume = 0;
     uint32_t I, II;
     uint32_t uRainbowColor;
     uint32_t uLastDetectionTime;    // letzter Zeitpunkt der Joystick-/Gamecontroller-Erkennung
+    uint8_t uBlinkColor;
     bool bExit = false;
     bool bPrepareExit = false;
     bool bShowRec1;                 // Rahmen 1 (Gamecontroller/Joystick) anzeigen, sonst Rahmen 2 (Keyboard)
     bool bActive;
     char szText[256];
+    char szSubString[32];
+
     // Farbpunkte für Rahmen 1
     RGBCOLOR RgbColorsRec1[2 * COLOR_REC_1_W + 2 * (COLOR_REC_1_H - 2)];    // 700
     // Farbpunkte für Rahmen 2
@@ -2150,7 +2158,6 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
         UpdateInputStates();
         /////////////////////  Stern-Start
         fColorDimmP = (float)nColorDimm / 100;
-
         NewCenterX = 400 * cos(fAngle);
         NewCenterY = 150 * sin(fAngle);
         // SDL_RenderDrawPoint(pRenderer,NewCenterX + CenterX,NewCenterY + CenterY);
@@ -2397,6 +2404,114 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             Checkbox_GC_Btn_Exit_X.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_Y.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_None.bUse = CHK_UNUSE;
+            PrintLittleFont(pRenderer,600,100,0,"KEYBINDING",K_RELATIVE);
+            PrintLittleFont(pRenderer,630,123,0,"LEFT:",K_RELATIVE);
+            nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeLeft);
+            if (nScanCodeIndex != -1) {
+                PrintLittleFont(pRenderer,700,123,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+            } else {
+                PrintLittleFont(pRenderer,700,123,0,"UNKNOWN",K_RELATIVE);
+            }
+            PrintLittleFont(pRenderer,630,146,0,"RIGHT:",K_RELATIVE);
+            nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeRight);
+            if (nScanCodeIndex != -1) {
+                PrintLittleFont(pRenderer,700,146,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+            } else {
+                PrintLittleFont(pRenderer,700,146,0,"UNKNOWN",K_RELATIVE);
+            }
+            PrintLittleFont(pRenderer,630,169,0,"UP:",K_RELATIVE);
+            nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeUp);
+            if (nScanCodeIndex != -1) {
+                PrintLittleFont(pRenderer,700,169,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+            } else {
+                PrintLittleFont(pRenderer,700,169,0,"UNKNOWN",K_RELATIVE);
+            }
+            PrintLittleFont(pRenderer,630,192,0,"DOWN:",K_RELATIVE);
+            nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeDown);
+            if (nScanCodeIndex != -1) {
+                PrintLittleFont(pRenderer,700,192,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+            } else {
+                PrintLittleFont(pRenderer,700,192,0,"UNKNOWN",K_RELATIVE);
+            }
+            PrintLittleFont(pRenderer,630,215,0,"FIRE:",K_RELATIVE);
+            nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeFire);
+            if (nScanCodeIndex != -1) {
+                PrintLittleFont(pRenderer,700,215,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+            } else {
+                PrintLittleFont(pRenderer,700,215,0,"UNKNOWN",K_RELATIVE);
+            }
+            // Buttons für Tastenbelegung zeichnen
+            KeyboardButton.w = 18;
+            KeyboardButton.h = 18;
+            KeyboardButton.x = ge_uXoffs + 601;
+            KeyboardButton.y = ge_uYoffs + 121;
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            KeyboardButton.y = ge_uYoffs + 144;
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            KeyboardButton.y = ge_uYoffs + 167;
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            KeyboardButton.y = ge_uYoffs + 190;
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            KeyboardButton.y = ge_uYoffs + 213;
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nKeyboardButton = GetSettingsMenuKeyboardButton();
+            switch (nKeyboardButton) {
+                case (1):
+                    nKeybindingState = nKeyboardButton;
+                    strcpy(szSubString,"'LEFT'");
+                    break;
+                case (2):
+                    nKeybindingState = nKeyboardButton;
+                    strcpy(szSubString,"'RIGHT'");
+                    break;
+                case (3):
+                    nKeybindingState = nKeyboardButton;
+                    strcpy(szSubString,"'UP'");
+                    break;
+                case (4):
+                    nKeybindingState = nKeyboardButton;
+                    strcpy(szSubString,"'DOWN'");
+                    break;
+                case (5):
+                    nKeybindingState = nKeyboardButton;
+                    strcpy(szSubString,"'FIRE'");
+                    break;
+                case (6):
+                    nKeybindingState = 0;
+                    break;
+            }
+            if (nKeybindingState > 0) {
+                if ((Playfield.uFrameCounter >> 3) % 2 == 0) {
+                    uBlinkColor = 0;
+                } else {
+                    uBlinkColor = 2;
+                }
+                PrintLittleFont(pRenderer,600,250,uBlinkColor,"PRESS A KEY FOR ",K_RELATIVE);
+                PrintLittleFont(pRenderer,760,250,uBlinkColor,szSubString,K_RELATIVE);
+                nScanCodeIndex = GetScancodeIndex(); // ScanCode einer gedrückten Taste ermitteln
+                if (nScanCodeIndex != -1) {
+                    SDL_Log("ScanCode: %s",g_ScanCodeNames[nScanCodeIndex]);
+                    switch (nKeybindingState) {
+                        case (1):   // links
+                            Config.uKeyboardScancodeLeft = g_uScanCodes[nScanCodeIndex];
+                            break;
+                        case (2):   // rechts
+                            Config.uKeyboardScancodeRight = g_uScanCodes[nScanCodeIndex];
+                            break;
+                        case (3):   // oben
+                            Config.uKeyboardScancodeUp = g_uScanCodes[nScanCodeIndex];
+                            break;
+                        case (4):   // unten
+                            Config.uKeyboardScancodeDown = g_uScanCodes[nScanCodeIndex];
+                            break;
+                        case (5):   // fire
+                            Config.uKeyboardScancodeFire = g_uScanCodes[nScanCodeIndex];
+                            break;
+                    }
+                    nKeybindingState = 0;
+                    nErrorCode = WriteConfigFile();
+                }
+            }
         }
         if (Checkbox_StartDynamiteKeyboard.bChanged) {
             if (Checkbox_StartDynamiteKeyboard.bActive) {
@@ -3014,6 +3129,45 @@ int GetSettingsMenuButton(void) {
             nButton = 5;    // Joystick 1
         } else if (((InputStates.nMouseXpos_Relative >= 288) && (InputStates.nMouseXpos_Relative < 512)) && ((InputStates.nMouseYpos_Relative >= 416) && (InputStates.nMouseYpos_Relative < 544))) {
             nButton = 6;    // Joystick 2
+        }
+    }
+    return nButton;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetSettingsMenuKeyboardButton
+------------------------------------------------------------------------------
+Beschreibung: Prüft, welcher Bereich Button für die Tastenbelegung  im Settings-Menü gedrückt ist.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = kein Button gedrückt
+                    1 = left
+                    2 = right
+                    3 = up
+                    4 = down
+                    5 = fire
+                    6 = Andere Stelle im Menü
+Seiteneffekte: InputStates.x
+------------------------------------------------------------------------------*/
+int GetSettingsMenuKeyboardButton(void) {
+    int nButton = 0;
+
+    if (InputStates.bLeftMouseButton) {
+        nButton = 6;
+        if ((InputStates.nMouseXpos_Relative >= 601) && (InputStates.nMouseXpos_Relative < 619)) {
+            if ((InputStates.nMouseYpos_Relative >= 121) && (InputStates.nMouseYpos_Relative <= 138)) {
+                nButton = 1;    // LEFT
+            } else if ((InputStates.nMouseYpos_Relative >= 143) && (InputStates.nMouseYpos_Relative <= 160)) {
+                nButton = 2;    // RIGHT
+            } else if ((InputStates.nMouseYpos_Relative >= 166) && (InputStates.nMouseYpos_Relative <= 183)) {
+                nButton = 3;    // UP
+            } else if ((InputStates.nMouseYpos_Relative >= 189) && (InputStates.nMouseYpos_Relative <= 206)) {
+                nButton = 4;    // DOWN
+            } else if ((InputStates.nMouseYpos_Relative >= 212) && (InputStates.nMouseYpos_Relative <= 229)) {
+                nButton = 5;    // FIRE
+            }
         }
     }
     return nButton;

@@ -114,6 +114,11 @@ int WriteDefaultConfigFile(void) {
     Config.cJoystickFireButton  = 'A';              // 'A', 'B', 'X' oder 'Y'               'A' = linker runder Nutton
     Config.cJoystickStartDynamiteButton = 'X';      // 'A', 'B', 'X' oder 'Y'               'X' = linker dreieckiger Button
     Config.cJoystickExitButton = 'Y';               // 'A', 'B', 'X', 'Y' oder 'N' = NONE   'Y' = rechter dreieckiger Button
+    Config.uKeyboardScancodeLeft = SDL_SCANCODE_LEFT;
+    Config.uKeyboardScancodeRight = SDL_SCANCODE_RIGHT;
+    Config.uKeyboardScancodeUp = SDL_SCANCODE_UP;
+    Config.uKeyboardScancodeDown = SDL_SCANCODE_DOWN;
+    Config.uKeyboardScancodeFire = SDL_SCANCODE_LCTRL;
     return WriteConfigFile();
 }
 
@@ -262,6 +267,19 @@ int WriteConfigFile(void) {
     sprintf(szString,"    <button_exit>%c</button_exit>\n",Config.cJoystickExitButton);
     strcat(szXML,szString);
     strcat(szXML,"  </joystick_settings>\n");
+    strcat(szXML,"  <keyboard_settings>\n");
+    strcat(szXML,"    <!--keyboard values are SDL scancodes-->\n");
+    sprintf(szString,"    <left>%u</left>\n",Config.uKeyboardScancodeLeft);
+    strcat(szXML,szString);
+    sprintf(szString,"    <right>%u</right>\n",Config.uKeyboardScancodeRight);
+    strcat(szXML,szString);
+    sprintf(szString,"    <up>%u</up>\n",Config.uKeyboardScancodeUp);
+    strcat(szXML,szString);
+    sprintf(szString,"    <down>%u</down>\n",Config.uKeyboardScancodeDown);
+    strcat(szXML,szString);
+    sprintf(szString,"    <fire>%u</fire>\n",Config.uKeyboardScancodeFire);
+    strcat(szXML,szString);
+    strcat(szXML,"  </keyboard_settings>\n");
     strcat(szXML,"</input_device>\n");
     strcat(szXML,"</configuration>\n");
     return WriteFile(EMERALD_CONFIG_FILENAME,(uint8_t *)szXML,(uint32_t)strlen(szXML),false);
@@ -292,6 +310,12 @@ int ReadConfigFile(void) {
     memset(&Config,0,sizeof(Config));       // löscht auch letzten Spieler
     memset(&Actualplayer,0,sizeof(Actualplayer));
     pXml = ReadFile(EMERALD_CONFIG_FILENAME,&uXmlLen);     // Levelgruppen-Datei einlesen
+    // Default für Keyboard, falls Config nicht vollständig gelesen werden kann
+    Config.uKeyboardScancodeLeft = SDL_SCANCODE_LEFT;
+    Config.uKeyboardScancodeRight = SDL_SCANCODE_RIGHT;
+    Config.uKeyboardScancodeUp = SDL_SCANCODE_UP;
+    Config.uKeyboardScancodeDown = SDL_SCANCODE_DOWN;
+    Config.uKeyboardScancodeFire = SDL_SCANCODE_LCTRL;
     if (pXml != NULL) {
         // Prüfen, ob Schreibrechte bestehen und versuchen gelesene Datei zurück zu schreiben
         if (WriteFile(EMERALD_CONFIG_FILENAME,pXml,uXmlLen,false) == 0) {
@@ -401,6 +425,7 @@ int ReadConfigFile(void) {
                                                                                                                                     if (button != NULL) {
                                                                                                                                         Config.cJoystickExitButton = button->txt[0];
                                                                                                                                         nErrorCode = 0;
+                                                                                                                                        ReadKeyboardConfig(inputdevice);
                                                                                                                                     }
                                                                                                                                 }
                                                                                                                             }
@@ -447,6 +472,64 @@ int ReadConfigFile(void) {
         nErrorCode = WriteConfigFile(); // ggf. angepasste Auflösung schreiben
     } else if (nErrorCode == -1) {
         nErrorCode = WriteDefaultConfigFile();
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ReadConfigFile
+------------------------------------------------------------------------------
+Beschreibung: Liest die Keyboard-Konfigurationsdaten aus der config.xml aus und
+              befüllt die Struktur Config.x.
+              Funktion wird nur aus ReadConfigFile() aufgerufen. Da diese
+              Einstellung nachgepfelgt wurde, schlägt diese Funktion bei
+              älteren Konfigurationsdateien fehl. In diesem Fall werden default-Werte
+              verwendet.
+
+Parameter
+      Eingang: inputdevice, ezxml_t, Knoten auf inputdevice in der der XML
+      Ausgang: -
+Rückgabewert:  0 = Alles OK, sonst Fehler
+Seiteneffekte: Config.x
+------------------------------------------------------------------------------*/
+int ReadKeyboardConfig(ezxml_t inputdevice) {
+    int nErrorCode = -1;
+    ezxml_t keyboardsettings,direction;
+
+    if (inputdevice != NULL) {
+        keyboardsettings = ezxml_child(inputdevice,"keyboard_settings");
+        if (keyboardsettings != NULL) {
+            direction = ezxml_child(keyboardsettings,"left");
+            if (direction != NULL) {
+                Config.uKeyboardScancodeLeft = strtol(direction->txt,NULL,10);
+                direction = ezxml_child(keyboardsettings,"right");
+                if (direction != NULL) {
+                    Config.uKeyboardScancodeRight = strtol(direction->txt,NULL,10);
+                    direction = ezxml_child(keyboardsettings,"up");
+                    if (direction != NULL) {
+                        Config.uKeyboardScancodeUp = strtol(direction->txt,NULL,10);
+                        direction = ezxml_child(keyboardsettings,"down");
+                        if (direction != NULL) {
+                            Config.uKeyboardScancodeDown = strtol(direction->txt,NULL,10);
+                            direction = ezxml_child(keyboardsettings,"fire");
+                            if (direction != NULL) {
+                                Config.uKeyboardScancodeFire = strtol(direction->txt,NULL,10);
+                                nErrorCode = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (nErrorCode != 0) {
+        // Default für Keyboard, falls Config nicht vollständig gelesen werden konnte
+        Config.uKeyboardScancodeLeft = SDL_SCANCODE_LEFT;
+        Config.uKeyboardScancodeRight = SDL_SCANCODE_RIGHT;
+        Config.uKeyboardScancodeUp = SDL_SCANCODE_UP;
+        Config.uKeyboardScancodeDown = SDL_SCANCODE_DOWN;
+        Config.uKeyboardScancodeFire = SDL_SCANCODE_LCTRL;
     }
     return nErrorCode;
 }

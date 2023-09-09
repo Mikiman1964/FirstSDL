@@ -38,7 +38,7 @@ void ControlBomb(uint32_t I) {
             ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2)  ) {
         // Bombe kann vom Replikator geboren werden, dann hier nichts machen
         return;
-    } else if (uHitElement == EMERALD_SPACE) {   // Ist nach unten frei?
+    } else if (IS_SPACE(uHitCoordinate)) {   // Ist nach unten frei?
         // neuen Platz mit ungültigem Element besetzen
         Playfield.pLevel[uHitCoordinate] = EMERALD_INVALID;
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -70,7 +70,6 @@ void ControlBomb(uint32_t I) {
                 Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                 // Aktuelles Element auf Animation "links"
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-
             } else if (uFree == 2) {    // Bombe kann rechts rollen
                 // neuen Platz mit ungültigem Element besetzen
                 Playfield.pLevel[I + 1] = EMERALD_INVALID;
@@ -103,7 +102,7 @@ void ControlBomb(uint32_t I) {
             }
         } else {    // Ab hier prüfen, ob Bombe durch Laufband bewegt werden kann
             if (uHitElement == EMERALD_CONVEYORBELT_RED) {
-                if  ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -111,7 +110,7 @@ void ControlBomb(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -122,7 +121,7 @@ void ControlBomb(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_GREEN) {
-                if  ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -130,7 +129,7 @@ void ControlBomb(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -141,7 +140,7 @@ void ControlBomb(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_BLUE) {
-                if  ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -149,7 +148,7 @@ void ControlBomb(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -160,7 +159,7 @@ void ControlBomb(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                 }
             } else if (uHitElement == EMERALD_CONVEYORBELT_YELLOW) {
-                if  ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (Playfield.pLevel[I - 1] == EMERALD_SPACE)) {
+                if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -168,7 +167,7 @@ void ControlBomb(uint32_t I) {
                     Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (Playfield.pLevel[I + 1] == EMERALD_SPACE)) {
+                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -207,7 +206,7 @@ void ControlRemoteBomb(uint32_t I) {
         ControlCentralExplosion(I);
         PreparePlaySound(SOUND_EXPLOSION,I);
     } else if (Playfield.bSwitchRemoteBombUp) {
-        if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
+        if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) { // Ist nach oben frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -218,7 +217,7 @@ void ControlRemoteBomb(uint32_t I) {
             Playfield.bRemoteBombMoved = true;
         }
     } else if (Playfield.bSwitchRemoteBombDown) {
-        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {   // Ist nach unten frei?
+        if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) { // Ist nach unten frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -236,7 +235,7 @@ void ControlRemoteBomb(uint32_t I) {
             return;
         }
     } else if (Playfield.bSwitchRemoteBombLeft) {
-        if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {    // Ist nach links frei?
+        if (IS_SPACE(I - 1)) {    // Ist nach links frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - 1] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -247,7 +246,7 @@ void ControlRemoteBomb(uint32_t I) {
             Playfield.bRemoteBombMoved = true;
         }
     } else if (Playfield.bSwitchRemoteBombRight) {
-        if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {    // Ist nach rechts frei?
+        if (IS_SPACE(I + 1)) {    // Ist nach rechts frei?
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I + 1] = EMERALD_INVALID;
             // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann

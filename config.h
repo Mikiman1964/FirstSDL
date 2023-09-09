@@ -31,6 +31,11 @@ typedef struct {
     char        cJoystickExitButton;                                            // 'A', 'B', 'X' oder 'Y'
     uint32_t    uDisplay;                                                       // Ab 0 gezählt (eingestellt)
     uint32_t    uDisplayUse;                                                    // Ab 0 gezählt (Dieses wird vervendet)
+    uint32_t    uKeyboardScancodeLeft;                                          // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_LEFT
+    uint32_t    uKeyboardScancodeRight;                                         // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_RIGHT
+    uint32_t    uKeyboardScancodeUp;                                            // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_UP
+    uint32_t    uKeyboardScancodeDown;                                          // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_DOWN
+    uint32_t    uKeyboardScancodeFire;                                          // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_LCTRL
 } CONFIG;
 
 
@@ -38,5 +43,6 @@ void ShowConfigFile(void);
 int WriteDefaultConfigFile(void);
 int WriteConfigFile(void);
 int ReadConfigFile(void);
+int ReadKeyboardConfig(ezxml_t inputdevice);
 
 #endif // CONFIG_H_INCLUDED

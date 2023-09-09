@@ -5,17 +5,8 @@ TODO
     * Explosionen mit Sumpf testen (erster Test sieht gut aus)
 * Leveleditor
     * Undo für Editor
-* Default-Level-Group: Level 'Shaft' entfernen/anpassen
 */
 
-/**
-    News:
-    * Teleporter
-    * Remote Bomb
-    * Hiscores: Won games marked
-    * Explosion-Fixes
-    * new level
-**/
 
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -176,7 +167,7 @@ int Menu(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,468,371,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME",K_RELATIVE);
         PrintLittleFont(pRenderer,468,386,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE);
         PrintLittleFont(pRenderer,468,401,0,"* '2' FOR MUSIC 2 -> CIRCUS TIME 2 VOYCE/DELIGHT, 1993",K_RELATIVE);
-        PrintLittleFont(pRenderer,468,416,0,"* '3' FOR MUSIC 3 -> CLASS01 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE);
+        PrintLittleFont(pRenderer,468,416,0,"* '3' FOR MUSIC 3 -> CLASS15 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE);
         PrintLittleFont(pRenderer,468,431,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE);
         PrintLittleFont(pRenderer,468,446,0,"* '5' FOR MUSIC 5 -> CLASS11.TIME FLIES BY MAKTONE",K_RELATIVE);
         PrintLittleFont(pRenderer,468,461,0,"* '6' FOR MUSIC 6 -> 2000AD:CRACKTRO:IV BY MAKTONE",K_RELATIVE);
@@ -250,6 +241,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SDL_RenderPresent(pRenderer);
     bPrepareLevelExit = false;
     if (bLevelRun) {
+        SetPipeLevel();
         nRet = ShowAuthorAndLevelname(pRenderer,uLevel);
         if (nRet < 0) {
             bLevelRun = false; // Ein Fehler ist aufgetreten
@@ -321,6 +313,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             }
         }
         if (!bPause) {
+            // SDL_Log("Y: %u",Playfield.uManYpos);
             ScrollAndCenterLevel(uManDirection);
             CheckRunningWheel();
             CheckRunningMagicWall();
@@ -373,6 +366,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     Playfield.uPlayTimeEnd = SDL_GetTicks();
     SetAllTextureColors(100);           // Farben beim Verlassen wieder auf volle Helligekit
     SAFE_FREE(Playfield.pLevel);
+    SAFE_FREE(Playfield.pPipeLevel);
     SAFE_FREE(Playfield.pInvalidElement);
     SAFE_FREE(Playfield.pStatusAnimation);
     SAFE_FREE(Playfield.pLastStatusAnimation);
@@ -569,8 +563,8 @@ uint32_t ControlGame(uint32_t uDirection) {
     ControlPreElements();   // ggf. Spaces für Elemente einsetzen, die sich auflösen, Molen-Sand in normalen Sand wandeln
     // Man als Zweites steuern !
     uManDirection = ControlMan(Playfield.uManYpos * Playfield.uLevel_X_Dimension + Playfield.uManXpos,uDirection);
+    //SDL_Log("Man protected: %d",Playfield.bManProtected);
     ControlLightBarriers();
-
     if (Playfield.uDynamitePos != 0xFFFFFFFF) {
         ControlManWithDynamiteOn(Playfield.uDynamitePos);
     }
@@ -1393,13 +1387,11 @@ uint8_t GetFreeRollDirections(uint32_t I) {
     uint8_t uFreeDirs = 0;
 
     // Kann Element links rollen?
-    if ( (Playfield.pLevel[I - 1] == EMERALD_SPACE) &&
-         ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension - 1] == EMERALD_SPACE) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension - 1] == EMERALD_ACIDPOOL)) ) {
+    if (IS_SPACE(I - 1) && (IS_SPACE(I + Playfield.uLevel_X_Dimension - 1) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension - 1] == EMERALD_ACIDPOOL)) ) {
         uFreeDirs = uFreeDirs | 0x01;
     }
     // Kann Element rechts rollen?
-    if ( (Playfield.pLevel[I + 1] == EMERALD_SPACE) &&
-        ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension + 1] == EMERALD_SPACE) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension + 1] == EMERALD_ACIDPOOL)) ) {
+    if (IS_SPACE(I + 1) && (IS_SPACE(I + Playfield.uLevel_X_Dimension + 1) || (Playfield.pLevel[I + Playfield.uLevel_X_Dimension + 1] == EMERALD_ACIDPOOL)) ) {
         uFreeDirs = uFreeDirs | 0x02;
     }
     return uFreeDirs;
@@ -1498,7 +1490,7 @@ void ControlPreElements(void) {
     uint32_t I;
 
     for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
-        if (Playfield.pLevel[I] == EMERALD_SPACE) {
+        if (IS_SPACE(I)) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;     // setzt ggf. EMERALD_ANIM_BLOCK_MAN zurück
         } else if ( (Playfield.pLevel[I] == EMERALD_GREEN_CHEESE_GOES) ||
              ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) ||   // Für Elemente, die im Magic Wall eintauchen

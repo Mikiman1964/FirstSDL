@@ -24,7 +24,7 @@ int YamHasReplicatorAcidPool(uint16_t *YamExplosion);
 void CheckYamContents(uint32_t I,uint16_t *YamElements);
 bool IsDangerousEnemyAround(uint32_t I);
 void CleanInvalidFieldsForCentralExplosion(int I, bool bMega);
-
+bool IsPipeElement(uint16_t uElement);
 #endif // EXPLOSION_H_INCLUDED
 
 

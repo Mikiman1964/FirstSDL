@@ -47,7 +47,7 @@ void ControlAlien(uint32_t I) {
         if (nRandom == 1) {         // X testen
             if (uCatchXpos > uXpos) {  // Ist Man-X-Koordinate > als eigene X-Koordinate ?
                 // Versuche nach rechts zu laufen
-                if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {  // Ist nach rechts frei?
+                if (IS_SPACE(I + 1)) {  // Ist nach rechts frei?
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -57,7 +57,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if (Playfield.pLevel[I + 1] == EMERALD_MAN) {
+                } else if ((Playfield.pLevel[I + 1] == EMERALD_MAN) && (!Playfield.bManProtected)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I + 1] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I + 1] == EMERALD_ANIM_STAND) ||
@@ -78,7 +78,7 @@ void ControlAlien(uint32_t I) {
                 }
             } else if (uCatchXpos < uXpos) {
                 // Versuche nach links zu laufen
-                if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {  // Ist nach links frei?
+                if (IS_SPACE(I - 1)) {  // Ist nach links frei?
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - 1] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -87,7 +87,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if (Playfield.pLevel[I - 1] == EMERALD_MAN) {
+                } else if ((Playfield.pLevel[I - 1] == EMERALD_MAN) && (!Playfield.bManProtected)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I - 1] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I - 1] == EMERALD_ANIM_STAND) ||
@@ -112,7 +112,7 @@ void ControlAlien(uint32_t I) {
         } else if (nRandom == 2) {  // Y testen
             if (uCatchYpos > uYpos) {  // Ist Man-Y-Koordinate > als eigene Y-Koordinate ?
                 // Versuche nach unten zu laufen
-                if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach unten frei?
+                if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {  // Ist nach unten frei?
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -122,7 +122,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "unten"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) {
+                } else if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) ||
@@ -149,7 +149,7 @@ void ControlAlien(uint32_t I) {
                 }
             } else if (uCatchYpos < uYpos) {
                 // Versuche nach oben zu laufen
-                if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
+                if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
                     // neuen Platz mit ungültigem Element besetzen
                     Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
                     // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -158,7 +158,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "oben"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) {
+                } else if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) ||

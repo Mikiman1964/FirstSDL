@@ -161,10 +161,10 @@ char ge_szElementNames[][64] =
                           "DOOR, WOOD, WHITE",                  // 0X72
                           "KEY, GENERAL",                       // 0X73
                           "MEGABOMB",                           // 0X74
-                          "WALL, SOFT, CORNERED, WITH EMERALD", // 0X75
-                          "WALL, SOFT, CORNERED, WITH RUBY",    // 0X76
-                          "WALL, SOFT, CORNERED, WITH SAPPHIRE",// 0X77
-                          "WALL, SOFT, CORNERED, WITH PERL",    // 0X78
+                          "WALL, CORNERED, WITH EMERALD",       // 0X75
+                          "WALL, CORNERED, WITH RUBY",          // 0X76
+                          "WALL, CORNERED, WITH SAPPHIRE",      // 0X77
+                          "WALL, CORNERED, WITH PERL",          // 0X78
                           "ACID POOL DESTROY, INTERNAL ELEMENT",// 0X79
                           "ACID POOL, TOP LEFT",                // 0X7A
                           "ACID POOL, TOP MIDDLE",              // 0X7B
@@ -173,10 +173,10 @@ char ge_szElementNames[][64] =
                           "ACID POOL, BOTTOM MIDDLE",           // 0X7E
                           "ACID POOL, BOTTOM RIGHT",            // 0X7F
                           "SPACE",                              // 0X80
-                          "WALL, SOFT, ROUND",                  // 0X81
+                          "WALL, ROUND",                        // 0X81
                           "SAND",                               // 0X82
                           "STEEL",                              // 0X83
-                          "WALL, SOFT, CORNERED",               // 0X84
+                          "WALL, CORNERED",                     // 0X84
                           "KEY, RED",                           // 0X85
                           "KEY, YELLOW",                        // 0X86
                           "KEY, BLUE",                          // 0X87
@@ -202,7 +202,7 @@ char ge_szElementNames[][64] =
                           "GREEN CHEESE",                       // 0X9B
                           "EXPL.TO.ELEMENT, INTERNAL ELEMENT",  // 0X9C
                           "EXPL.TO ELEMENT, INTERNAL ELEMENT",  // 0X9D
-                          "WALL, SOFT, ROUND, WITH PIKE",       // 0X9E
+                          "WALL, ROUND, WITH PIKE",             // 0X9E
                           "ENDDOOR, READY",                     // 0X9F
                           "STEEL, ROUND, WITH PIKE",            // 0XA0
                           "STEEL, ROUND",                       // 0XA1
@@ -217,7 +217,7 @@ char ge_szElementNames[][64] =
                           "STEEL, EXPLOSION",                   // 0XAA
                           "STEEL, ACID",                        // 0XAB
                           "STEEL, NOT ROUND",                   // 0XAC
-                          "WALL, SOFT, NOT ROUND",              // 0XAD
+                          "WALL, NOT ROUND",                    // 0XAD
                           "STEEL, MARKER LEFT/UP",              // 0XAE
                           "STEEL, MARKER UP",                   // 0XAF
                           "STEEL, MARKER RIGHT/UP",             // 0XB0
@@ -601,7 +601,21 @@ char ge_szElementNames[][64] =
                           "STEEL, MODERN, UP/DOWN",             // 0X22A
                           "STEEL, MODERN, DOWN, END",           // 0X22B
                           "STEEL, MODERN, MIDDLE",              // 0X22C
+                          "PIPE, UP + DOWN",                    // 0X22D
+                          "PIPE, LEFT + RIGHT",                 // 0X22E
+                          "PIPE, LEFT + UP",                    // 0X22F
+                          "PIPE, LEFT + DOWN",                  // 0X230
+                          "PIPE, RIGHT + UP",                   // 0X231
+                          "PIPE, RIGHT + DOWN",                 // 0X232
+                          "PIPE, LEFT + UP + DOWN",             // 0X233
+                          "PIPE, RIGHT + UP + DOWN",            // 0X234
+                          "PIPE, LEFT + RIGHT + UP",            // 0X235
+                          "PIPE, LEFT + RIGHT + DOWN",          // 0X236
+                          "PIPE, LEFT + RIGHT + UP + DOWN",     // 0X237
                           };
+
+
+
 
 
 // Level-Elemente, die aktuell angezeigt werden
@@ -640,6 +654,8 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_STEEL_GROW_LEFT,EMERALD_STEEL_GROW_DOWN,EMERALD_STEEL_GROW_RIGHT,EMERALD_STEEL_GROW_UP,EMERALD_STEEL_GROW_LEFT_RIGHT,EMERALD_STEEL_GROW_UP_DOWN,EMERALD_STEEL_GROW_ALL,EMERALD_SPACE,
                             EMERALD_STEEL_MODERN_LEFT_END,EMERALD_STEEL_MODERN_LEFT_RIGHT,EMERALD_STEEL_MODERN_RIGHT_END,EMERALD_STEEL_MODERN_UP_END,EMERALD_STEEL_MODERN_UP_DOWN,EMERALD_STEEL_MODERN_DOWN_END,EMERALD_STEEL_MODERN_MIDDLE,EMERALD_SPACE,
                             EMERALD_SWITCH_REMOTEBOMB_LEFT,EMERALD_SWITCH_REMOTEBOMB_DOWN,EMERALD_SWITCH_REMOTEBOMB_RIGHT,EMERALD_SWITCH_REMOTEBOMB_UP,EMERALD_SWITCH_REMOTEBOMB_IGNITION,EMERALD_REMOTEBOMB,EMERALD_SPACE,EMERALD_SPACE,
+                            PIPE_UP_DOWN,PIPE_LEFT_RIGHT,PIPE_LEFT_UP,PIPE_LEFT_DOWN,PIPE_RIGHT_UP,PIPE_RIGHT_DOWN,PIPE_LEFT_UP_DOWN,PIPE_RIGHT_UP_DOWN,
+                            PIPE_LEFT_RIGHT_UP,PIPE_LEFT_RIGHT_DOWN,PIPE_LEFT_RIGHT_UP_DOWN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_WALL_WITH_EMERALD,EMERALD_WALL_WITH_RUBY,EMERALD_WALL_WITH_SAPPHIRE,EMERALD_WALL_WITH_PERL,EMERALD_WALL_WITH_CRYSTAL,EMERALD_WALL_WITH_STONE,EMERALD_WALL_WITH_NUT,EMERALD_WALL_WITH_WHEEL,
                             EMERALD_WALL_WITH_KEY_RED,EMERALD_WALL_WITH_KEY_GREEN,EMERALD_WALL_WITH_KEY_BLUE,EMERALD_WALL_WITH_KEY_YELLOW,EMERALD_WALL_WITH_KEY_WHITE,EMERALD_WALL_WITH_KEY_GENERAL,EMERALD_WALL_WITH_BOMB,EMERALD_WALL_WITH_MEGABOMB,
                             EMERALD_WALL_WITH_DYNAMITE,EMERALD_WALL_WITH_ENDDOOR,EMERALD_WALL_WITH_ENDDOOR_READY,EMERALD_WALL_WITH_MINE_UP,EMERALD_WALL_WITH_BEETLE_UP,EMERALD_WALL_WITH_YAM,EMERALD_WALL_WITH_ALIEN,EMERALD_WALL_WITH_MOLE_UP,
@@ -1245,7 +1261,7 @@ int CopyPlayfieldValueToEditor(void) {
         Ed.uConveybeltYellowDirection = Playfield.uConveybeltYellowDirection;
         strcpy(Ed.szLevelTitle,Playfield.szLevelTitle);
         strcpy(Ed.szLevelAuthor,Playfield.szLevelAuthor);
-        strcpy(Ed.szVersion,Playfield.szVersion);
+        strcpy(Ed.szVersion,EMERALD_VERSION);
         for (I = 0; I <EMERALD_MAX_MESSAGES; I++) {
             Ed.pMessage[I] = Playfield.pMessage[I];
         }
@@ -1465,7 +1481,7 @@ uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos) {
     if ((Ed.uMenuState == 1) || (Ed.uMenuState == 3)) {     // Zeichensatz bei Standard und Yam
         nMaxY = 655;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
     } else {
-        nMaxY = 760;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
+        nMaxY = 806;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
     }
     uElement = EMERALD_NONE;
     if ((nMouseXpos >= Config.uResX - 184) && (nMouseXpos <= Config.uResX - 8)) {
@@ -1720,14 +1736,14 @@ int EditorStateLevel(SDL_Renderer *pRenderer) {
             Ed.nXpos = Ed.nXpos - Ed.uScrollPixelX;
         }
     }
-    if ((InputStates.pKeyboardArray[SDL_SCANCODE_UP]) || (InputStates.nMouseWheelY < 0))  {
+    if ((InputStates.pKeyboardArray[SDL_SCANCODE_UP]) || (InputStates.nMouseWheelY > 0))  {
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_LSHIFT]) || (InputStates.pKeyboardArray[SDL_SCANCODE_RSHIFT])) {
             Ed.nYpos = Ed.nYpos - Ed.uScrollPixelFastY;
         } else {
             Ed.nYpos = Ed.nYpos - Ed.uScrollPixelY;
         }
     }
-    if ((InputStates.pKeyboardArray[SDL_SCANCODE_DOWN]) || (InputStates.nMouseWheelY > 0))  {
+    if ((InputStates.pKeyboardArray[SDL_SCANCODE_DOWN]) || (InputStates.nMouseWheelY < 0))  {
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_LSHIFT]) || (InputStates.pKeyboardArray[SDL_SCANCODE_RSHIFT])) {
             Ed.nYpos = Ed.nYpos + Ed.uScrollPixelFastY;
         } else {
@@ -4007,8 +4023,8 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonActivity(BUTTONLABEL_EDITOR_MACHINES,true);
             SetButtonActivity(BUTTONLABEL_TIME_AND_SCORES,true);
             SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
+            SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 94 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs);
             SetButtonActivity(BUTTONLABEL_EDITOR_STD,false);
-            SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 94,Config.uResY - 100);
         } else if (IsButtonPressed(BUTTONLABEL_EDITOR_OPTION_3)) {
             Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
             Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
@@ -4025,8 +4041,8 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonActivity(BUTTONLABEL_EDITOR_MACHINES,true);
             SetButtonActivity(BUTTONLABEL_TIME_AND_SCORES,true);
             SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
+            SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 94 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs);
             SetButtonActivity(BUTTONLABEL_EDITOR_STD,false);
-            SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 94,Config.uResY - 100);
         }
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
