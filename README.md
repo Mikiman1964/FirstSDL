@@ -8,6 +8,7 @@ Compile under linux
 2) Decompress the tar.gz file, open a terminal and "cd" into directory "SDL-release-2.28.4"
 3) Type "./configure" to configure the package for your system
 4) Type "sudo make install" to compile & install SDL2
+
 -> Compile FirstSDL2
 1) After decompressing the FirstSDL2-zip file "cd" into directory "FirstSDL2"
 2) Type "make clean" to remove old files
