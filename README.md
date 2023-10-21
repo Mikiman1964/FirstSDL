@@ -1,10 +1,5 @@
-# FirstSDL
-POC for Emerald Mine with SDL2
-
-
-Welcome to my FirstSDL2 procect
+Welcome to my FirstSDL2 project
 ===============================
-
 
 Compile under linux
 ===================
