@@ -57,7 +57,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "rechts"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I + 1] == EMERALD_MAN) && (!Playfield.bManProtected)) {
+                } else if ((Playfield.pLevel[I + 1] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I + 1] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I + 1] == EMERALD_ANIM_STAND) ||
@@ -87,7 +87,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "links"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I - 1] == EMERALD_MAN) && (!Playfield.bManProtected)) {
+                } else if ((Playfield.pLevel[I - 1] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I - 1] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I - 1] == EMERALD_ANIM_STAND) ||
@@ -122,7 +122,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "unten"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {
+                } else if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) ||
@@ -158,7 +158,7 @@ void ControlAlien(uint32_t I) {
                     // Aktuelles Element auf Animation "oben"
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
                     PreparePlaySound(SOUND_ALIEN,I);
-                } else if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {
+                } else if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] & 0xFF000000;
                     // Kann (stehender/blockierter) Man erwischt werden?
                     if ((Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) ||

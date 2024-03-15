@@ -76,7 +76,7 @@ void ControlCrystal(uint32_t I) {
                     SDL_Log("Crystal hit used magic wall");
                     PreparePlaySound(SOUND_PING,I);
                 }
-            } else if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected)) {
+            } else if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                 SDL_Log("Crystal kills man");
                 Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
                 Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;

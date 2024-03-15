@@ -13,7 +13,7 @@
 
 #define PANEL_H                                 32      // Spiel-Anzeige (Time, Score usw.)
 
-#define EMERALD_VERSION                         "01.06" // Version
+#define EMERALD_VERSION                         "01.07" // Version
 
 #define EMERALD_VERSION_LEN                     5       // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                       32      // Maximale Titellänge
@@ -540,19 +540,29 @@
 #define EMERALD_STEEL_MODERN_UP_DOWN            0x022A            // Stahl, modern, oben/unten
 #define EMERALD_STEEL_MODERN_DOWN_END           0x022B            // Stahl, modern, unteres Ende
 #define EMERALD_STEEL_MODERN_MIDDLE             0x022C            // Stahl, modern, Mittelteil
-#define PIPE_UP_DOWN                            0x022D            // Röhre, oben+unten
-#define PIPE_LEFT_RIGHT                         0x022E            // Röhre, links+rechts
-#define PIPE_LEFT_UP                            0x022F            // Röhre, links+oben
-#define PIPE_LEFT_DOWN                          0x0230            // Röhre, links+unten
-#define PIPE_RIGHT_UP                           0x0231            // Röhre, rechts+oben
-#define PIPE_RIGHT_DOWN                         0x0232            // Röhre, rechts+unten
-#define PIPE_LEFT_UP_DOWN                       0x0233            // Röhre, links+oben+unten
-#define PIPE_RIGHT_UP_DOWN                      0x0234            // Röhre, rechts+oben+unten
-#define PIPE_LEFT_RIGHT_UP                      0x0235            // Röhre, links+rechts+oben
-#define PIPE_LEFT_RIGHT_DOWN                    0x0236            // Röhre, links+rechts+unten
-#define PIPE_LEFT_RIGHT_UP_DOWN                 0x0237            // Röhre, links+rechts+oben+unten
+#define EMERALD_PIPE_UP_DOWN                    0x022D            // Röhre, oben+unten
+#define EMERALD_PIPE_LEFT_RIGHT                 0x022E            // Röhre, links+rechts
+#define EMERALD_PIPE_LEFT_UP                    0x022F            // Röhre, links+oben
+#define EMERALD_PIPE_LEFT_DOWN                  0x0230            // Röhre, links+unten
+#define EMERALD_PIPE_RIGHT_UP                   0x0231            // Röhre, rechts+oben
+#define EMERALD_PIPE_RIGHT_DOWN                 0x0232            // Röhre, rechts+unten
+#define EMERALD_PIPE_LEFT_UP_DOWN               0x0233            // Röhre, links+oben+unten
+#define EMERALD_PIPE_RIGHT_UP_DOWN              0x0234            // Röhre, rechts+oben+unten
+#define EMERALD_PIPE_LEFT_RIGHT_UP              0x0235            // Röhre, links+rechts+oben
+#define EMERALD_PIPE_LEFT_RIGHT_DOWN            0x0236            // Röhre, links+rechts+unten
+#define EMERALD_PIPE_LEFT_RIGHT_UP_DOWN         0x0237            // Röhre, links+rechts+oben+unten
+#define EMERALD_SHIELD_COIN                     0x0238            // Schildmünze
+#define EMERALD_YELLOW_CHEESE_GOES              0x0239            // Gelber Käse löst sich auf, int. Element
+#define EMERALD_YELLOW_DROP_COMES               0x023A            // Gelber Tropfen, der zu Käse werden kann, int. Element
+#define EMERALD_YELLOW_DROP                     0x023B            // Gelber Tropfen, der zu Käse werden kann
+#define EMERALD_YELLOW_CHEESE                   0x023C            // Gelber Käse, der sich über Tropfen ausbreiten kann
+#define EMERALD_WALL_WITH_YELLOW_CHEESE         0x023D            // Mauer mit gelbem Käse
+#define EMERALD_WALL_WITH_SHIELD_COIN           0x023E            // Mauer mit Schildmünze
+#define EMERALD_SLIME                           0x023F            // Schleim
+#define EMERALD_WALL_WITH_SLIME                 0x0240            // Mauer mit Schleim
 
-#define EMERALD_MAX_ELEMENT                     0x0237            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
+
+#define EMERALD_MAX_ELEMENT                     0x0240            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 #define EMERALD_FONT_BLUE                       0x00              // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
@@ -687,8 +697,9 @@
 #define EMERALD_ANIM_MAN_BLOCKED_UP             0x44000000      // Man will nach oben, ist aber blockiert (Türen, Teleporter)
 #define EMERALD_ANIM_MAN_BLOCKED_RIGHT          0x45000000      // Man will nach rechts, ist aber blockiert (Türen, Teleporter)
 #define EMERALD_ANIM_MAN_BLOCKED_DOWN           0x46000000      // Man will nach unten, ist aber blockiert (Türen, Teleporter)
-
-
+#define EMERALD_ANIM_SHIELD_COIN_SHRINK         0x47000000      // Schildmünze wird kleiner
+#define EMERALD_ANIM_YELLOW_DROP_1              0x48000000      // gelber Tropfen, Phase 1
+#define EMERALD_ANIM_YELLOW_DROP_2              0x49000000      // gelber Tropfen, Phase 2
 
 #define EMERALD_STANDARD_SPEED                  false
 #define EMERALD_DOUBLE_SPEED                    true
@@ -801,11 +812,14 @@ typedef struct {
     uint32_t        uScoreStoningMine;
     uint32_t        uScoreStoningAlien;
     uint32_t        uScoreStoningYam;
+    uint32_t        uScoreStoningSlime;
     uint32_t        uScoreTimeCoin;
+    uint32_t        uScoreShieldCoin;
     uint32_t        uScoreMessage;
     uint32_t        uEmeraldsToCollect;
     uint32_t        uTimeScoreFactor;
-    uint32_t        uCheeseSpreadSpeed;
+    uint32_t        uGreenCheeseSpreadSpeed;
+    uint32_t        uYellowCheeseSpreadSpeed;
     uint32_t        uGrassSpreadSpeed;
     uint32_t        uTimeToPlay;
     uint32_t        uAdditonalTimeCoinTime;                     // zusätzliche Zeit durch Zeitmünze
@@ -813,6 +827,8 @@ typedef struct {
     uint32_t        uTimeWheelRotationLeft;                     // Verbleibende Zeit für Wheel-Rotation
     uint32_t        uTimeDoorTime;
     uint32_t        uTimeDoorTimeLeft;
+    uint32_t        uShieldCoinTime;
+    uint32_t        uShieldCoinTimeLeft;                        // Verbleibende Zeit für Schild
     uint32_t        uWheelRunningXpos;                          // nur gültig, wenn bWheelRunning = true
     uint32_t        uWheelRunningYpos;                          // nur gültig, wenn bWheelRunning = true
     uint32_t        uTimeMagicWall;

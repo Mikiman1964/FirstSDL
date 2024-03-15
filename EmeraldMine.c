@@ -1,8 +1,7 @@
 /*
 TODO
+* Slime
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen
-* Explosion
-    * Explosionen mit Sumpf testen (erster Test sieht gut aus)
 * Leveleditor
     * Undo für Editor
 */
@@ -50,7 +49,7 @@ TODO
 #include "stone.h"
 #include "teleporter.h"
 #include "yam.h"
-
+#include "yellowdrop.h"
 
 PLAYFIELD Playfield;
 extern GAMESOUND GameSound;
@@ -118,7 +117,7 @@ int Menu(SDL_Renderer *pRenderer) {
         // "PROGRAMMED IN 2023"
         144,672,EMERALD_FONT_P,176,672,EMERALD_FONT_R,208,672,EMERALD_FONT_O,240,672,EMERALD_FONT_G,272,672,EMERALD_FONT_R,304,672,EMERALD_FONT_A,336,672,EMERALD_FONT_M,368,672,EMERALD_FONT_M,
         400,672,EMERALD_FONT_E,432,672,EMERALD_FONT_D,496,672,EMERALD_FONT_I,528,672,EMERALD_FONT_N,592,672,EMERALD_FONT_2,624,672,EMERALD_FONT_0,656,672,EMERALD_FONT_2,688,672,EMERALD_FONT_2,
-        720,672,EMERALD_FONT_MINUS,752,672,EMERALD_FONT_2,784,672,EMERALD_FONT_0,816,672,EMERALD_FONT_2,848,672,EMERALD_FONT_3
+        720,672,EMERALD_FONT_MINUS,752,672,EMERALD_FONT_2,784,672,EMERALD_FONT_0,816,672,EMERALD_FONT_2,848,672,EMERALD_FONT_4
     };
 
     InitSmileys();
@@ -269,7 +268,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             if (uQuitTime == 0xFFFFFFFF) {
                 uQuitTime = SDL_GetTicks();
             }
-            if ((uQuitTime != 0xFFFFFFFF) && ((SDL_GetTicks() - uQuitTime) > 2000) && ((ManKey.bFire) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])))   {
+            if ((uQuitTime != 0xFFFFFFFF) && ((SDL_GetTicks() - uQuitTime) > 1000) && ((ManKey.bFire) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])))   {
                 bPrepareLevelExit = true;
             }
         }
@@ -537,6 +536,7 @@ uint32_t ControlGame(uint32_t uDirection) {
                 ((uCleanStatus == EMERALD_ANIM_PERL_SHRINK) && (Playfield.pLevel[I] == EMERALD_PERL)) ||
                 ((uCleanStatus == EMERALD_ANIM_CRYSTAL_SHRINK) && (Playfield.pLevel[I] == EMERALD_CRYSTAL)) ||
                 ((uCleanStatus == EMERALD_ANIM_TIME_COIN_SHRINK) && (Playfield.pLevel[I] == EMERALD_TIME_COIN)) ||
+                ((uCleanStatus == EMERALD_ANIM_SHIELD_COIN_SHRINK) && (Playfield.pLevel[I] == EMERALD_SHIELD_COIN)) ||
                 ((uCleanStatus == EMERALD_ANIM_HAMMER_SHRINK) && (Playfield.pLevel[I] == EMERALD_HAMMER)) ||
                 ((uCleanStatus == EMERALD_ANIM_DYNAMITE_SHRINK) && (Playfield.pLevel[I] == EMERALD_DYNAMITE_OFF)) ||
                 ((uCleanStatus == EMERALD_ANIM_MESSAGE_SHRINK) && (Playfield.pLevel[I] >= EMERALD_MESSAGE_1) && (Playfield.pLevel[I] <= EMERALD_MESSAGE_8)) ||
@@ -680,7 +680,7 @@ uint32_t ControlGame(uint32_t uDirection) {
                 }
                 break;
             case (EMERALD_GREEN_CHEESE_GOES):
-                // wird oben im Vorwege bereits behandelt und kommt hier nicht mehr vor, da bereits in Space gewandelt
+                // wird oben im Vorwege (ControlPreElements()) bereits behandelt und kommt hier nicht mehr vor, da bereits in Space gewandelt
                 break;
             case (EMERALD_SAND_MOLE):
                 // ControlMoleSand(I);
@@ -689,13 +689,22 @@ uint32_t ControlGame(uint32_t uDirection) {
                 ControlStandMine(I);
                 break;
             case (EMERALD_GREEN_DROP_COMES):
-                ControlSpreadCheese(I);
+                ControlSpreadGreenCheese(I);
+                break;
+            case (EMERALD_YELLOW_DROP_COMES):
+                ControlSpreadYellowCheese(I);
                 break;
             case (EMERALD_GREEN_CHEESE):
                 ControlGreenCheese(I);
                 break;
+            case (EMERALD_YELLOW_CHEESE):
+                ControlYellowCheese(I);
+                break;
             case (EMERALD_GREEN_DROP):
                 ControlGreenDrop(I);
+                break;
+            case (EMERALD_YELLOW_DROP):
+                ControlYellowDrop(I);
                 break;
             case (EMERALD_YAM):
                 ControlYam(I);
@@ -879,6 +888,12 @@ uint32_t ControlGame(uint32_t uDirection) {
             PreparePlaySound(SOUND_SWITCH,0);
         }
     }
+    if (Playfield.uShieldCoinTimeLeft > 0) {
+        if (Playfield.uShieldCoinTimeLeft == 1) {
+            PreparePlaySound(SOUND_SHIELD_END,0);
+        }
+        Playfield.uShieldCoinTimeLeft--;
+    }
     return uManDirection;
 }
 
@@ -962,6 +977,9 @@ uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCou
     switch (uElement) {
         case (EMERALD_GREEN_DROP):
             uTextureIndex = 346;
+            break;
+        case (EMERALD_YELLOW_DROP):
+            uTextureIndex = 1057;
             break;
         case (EMERALD_EMERALD):
             uTextureIndex = 226 + nAnimationCount / 2;     // Emerald, liegend
@@ -1318,11 +1336,13 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_WALL_WITH_MINE_UP] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_MOLE_UP] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_GREEN_CHEESE] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_YELLOW_CHEESE] = 0xEB;          // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_BEETLE_UP] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_YAM] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_ALIEN] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_CRYSTAL] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_WALL_WITH_TIME_COIN] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_WALL_WITH_SHIELD_COIN] = 0xEB;             // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_REPLICATOR_RED_TOP_LEFT] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_REPLICATOR_RED_TOP_RIGHT] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_REPLICATOR_GREEN_TOP_LEFT] = 0xEB;       // Nur Steine und Bomben rollen hier nicht herunter
@@ -1370,6 +1390,7 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_LEFT] = 0x1FF;       // Alles rollt von Lichtschranken
 	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_RIGHT] = 0x1FF;      // Alles rollt von Lichtschranken
 	Playfield.uRollUnderground[EMERALD_TIME_COIN] = 0x1FF;                      // Alles rollt von Münzen
+	Playfield.uRollUnderground[EMERALD_SHIELD_COIN] = 0x1FF;                     // Alles rollt von Münzen
 }
 
 
@@ -1459,6 +1480,9 @@ uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation) {
         case (EMERALD_ANIM_TIME_COIN_SHRINK):
             uTextureIndex = 310;
             break;
+        case (EMERALD_ANIM_SHIELD_COIN_SHRINK):
+            uTextureIndex = 1047;
+            break;
         case (EMERALD_ANIM_HAMMER_SHRINK):
             uTextureIndex = 318;
             break;
@@ -1492,7 +1516,7 @@ void ControlPreElements(void) {
     for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
         if (IS_SPACE(I)) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;     // setzt ggf. EMERALD_ANIM_BLOCK_MAN zurück
-        } else if ( (Playfield.pLevel[I] == EMERALD_GREEN_CHEESE_GOES) ||
+        } else if ( (Playfield.pLevel[I] == EMERALD_GREEN_CHEESE_GOES) || (Playfield.pLevel[I] == EMERALD_YELLOW_CHEESE_GOES) ||
              ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) ||   // Für Elemente, die im Magic Wall eintauchen
              (Playfield.pStatusAnimation[I] == EMERALD_ANIM_PERL_BREAK) ) {                         // Zerbrechende Perle
            Playfield.pLevel[I] = EMERALD_SPACE;           // Enstehenden Tropfen in Tropfen wandeln.

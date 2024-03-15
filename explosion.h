@@ -16,15 +16,17 @@
 
 void ControlExplosionToElement(uint32_t I);
 void ControlCentralExplosion(uint32_t I);                               // eine "normale" 3x3-Explosion steuern
+void ControlCircleExplosion(uint32_t I);                                // Wie ControlCentralExplosion(), aber ohne Mittelpunkt
 void ControlCentralMegaExplosion(int nI);                               // eine Mega-Explosion steuern
 void ControlCentralBeetleExplosion(uint32_t I);                         // Käferexplosion 3x3
 void ControlCentralYamExplosion(uint32_t I);                            // Yamexplosion 3x3
 uint32_t CheckExplosionElement(uint16_t uElement,uint32_t uCoordinate);
 int YamHasReplicatorAcidPool(uint16_t *YamExplosion);
 void CheckYamContents(uint32_t I,uint16_t *YamElements);
-bool IsDangerousEnemyAround(uint32_t I);
+bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElement);
 void CleanInvalidFieldsForCentralExplosion(int I, bool bMega);
 bool IsPipeElement(uint16_t uElement);
+bool IsAcidOrReplicatorElement(uint16_t uElement);
 #endif // EXPLOSION_H_INCLUDED
 
 

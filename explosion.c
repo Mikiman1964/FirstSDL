@@ -16,6 +16,7 @@
 #include "stone.h"
 #include "teleporter.h"
 #include "yam.h"
+#include "yellowdrop.h"
 
 extern PLAYFIELD Playfield;
 
@@ -130,6 +131,7 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                     case (EMERALD_ALIEN):
                     case (EMERALD_YAM):
                     case (EMERALD_GREEN_DROP):
+                    case (EMERALD_YELLOW_DROP):
                     case (EMERALD_REMOTEBOMB):
                         switch (Playfield.pStatusAnimation[nCoordinate] & 0x0000FF00) { // Animationsstatus
                             case (EMERALD_ANIM_UP):
@@ -168,6 +170,12 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                                 //
                                 if ( (Playfield.pLevel[nCoordinate] == EMERALD_GREEN_DROP) && (Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID) &&
                                      ((Playfield.pStatusAnimation[nCoordinate] ==  EMERALD_ANIM_GREEN_DROP_1) ||(Playfield.pStatusAnimation[nCoordinate] == EMERALD_ANIM_GREEN_DROP_2)) ) {
+                                    Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                                    Playfield.pInvalidElement[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
+                                    Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;   // Bewegtes Objekt zum Stillstand bringen
+                                } else if ( (Playfield.pLevel[nCoordinate] == EMERALD_YELLOW_DROP) && (Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID) &&
+                                     ((Playfield.pStatusAnimation[nCoordinate] ==  EMERALD_ANIM_YELLOW_DROP_1) ||(Playfield.pStatusAnimation[nCoordinate] == EMERALD_ANIM_YELLOW_DROP_2)) ) {
                                     Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
                                     Playfield.pInvalidElement[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                                     Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
@@ -582,6 +590,18 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                                 SDL_Log("%s: warning: green drop not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
                             }
                             break;
+                        case (EMERALD_YELLOW_DROP):
+                            // Kann nur von oben kommen
+                            if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
+                                Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
+                                ControlYellowDrop(nCoordinate - Playfield.uLevel_X_Dimension);
+                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
+                            } else {
+                                SDL_Log("%s: warning: yellow drop not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
+                            }
+                            break;
                         default:
                             SDL_Log("%s: warning, element 0x%X can not controlled",__FUNCTION__,Playfield.pInvalidElement[nCoordinate]);
                             break;
@@ -645,6 +665,57 @@ void ControlCentralExplosion(uint32_t I) {
                     Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     break;
             }
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlCircleExplosion
+------------------------------------------------------------------------------
+Beschreibung: Wie ControlCentralExplosion(), aber ohne Mittelpunkt
+Parameter
+      Eingang: I, uint32_t, Index im Level (zentraler Punkt)
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlCircleExplosion(uint32_t I) {
+    uint32_t K;
+    uint32_t uCoordinate;
+    uint32_t uCheckExplosion;
+
+    CleanInvalidFieldsForCentralExplosion(I,NO_MEGA_EXPLOSION);
+    for (K = 0; K < 8; K++) {
+        uCoordinate = I + Playfield.nCentralExplosionCoordinates[K];
+        uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate],uCoordinate);
+        switch (uCheckExplosion & 0xFFFF) {
+            case (EMERALD_EXPLOSION_EMPTY):
+                Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                Playfield.pStatusAnimation[uCoordinate] = EMERALD_SPACE;
+                break;
+            case (EMERALD_EXPLOSION_EMPTY_MAN):
+                Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                Playfield.pStatusAnimation[uCoordinate] = EMERALD_EMERALD;
+                Playfield.bManDead = true;
+                PreparePlaySound(SOUND_MAN_CRIES,I);
+                break;
+            case (EMERALD_EXPLOSION_ELEMENT):
+                Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
+                Playfield.pStatusAnimation[uCoordinate] = uCheckExplosion >> 16;
+                break;
+            case (EMERALD_EXPLOSION_NEWCENTRAL):
+                Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION;
+                Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                break;
+            case (EMERALD_EXPLOSION_NEWCENTRAL_MEGA):
+                Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION_MEGA;
+                Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                break;
+            case (EMERALD_EXPLOSION_NEWCENTRAL_BEETLE):
+                Playfield.pLevel[uCoordinate] = EMERALD_CENTRAL_EXPLOSION_BEETLE;
+                Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+                break;
         }
     }
 }
@@ -868,10 +939,11 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
     uint32_t  uExplosion;
+    uint16_t  uNewElement;
 
     switch (uElement) {
-        case (EMERALD_EXPLOSION_TO_ELEMENT_1):  // Nachfolgende Sprengungen
-        case (EMERALD_EXPLOSION_TO_ELEMENT_2):  // überschreiben ältere Sprengfelder
+        case (EMERALD_EXPLOSION_TO_ELEMENT_1):  // Nachfolgende Sprengungen überschreiben ältere Sprengfelder.
+        case (EMERALD_EXPLOSION_TO_ELEMENT_2):  // Achtung folgende Ausnahmen: Säurebad und Replikator werden weiter unten extra behandelt.
         case (EMERALD_NONE):
         case (EMERALD_STONE):
         case (EMERALD_SAPPHIRE):
@@ -887,11 +959,14 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_EMERALD):
         case (EMERALD_RUBY):
         case (EMERALD_TIME_COIN):
+        case (EMERALD_SHIELD_COIN):
         case (EMERALD_NUT):
         case (EMERALD_ALIEN):
         case (EMERALD_YAM):
+        case (EMERALD_SLIME):
         case (EMERALD_SAND_MOLE):
         case (EMERALD_GREEN_CHEESE_GOES):
+        case (EMERALD_YELLOW_CHEESE_GOES):
         case (EMERALD_DYNAMITE_OFF):
         case (EMERALD_DYNAMITE_ON):
         case (EMERALD_DOOR_RED_WOOD):
@@ -946,6 +1021,9 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_GREEN_DROP_COMES):
         case (EMERALD_GREEN_DROP):
         case (EMERALD_GREEN_CHEESE):
+        case (EMERALD_YELLOW_DROP_COMES):
+        case (EMERALD_YELLOW_DROP):
+        case (EMERALD_YELLOW_CHEESE):
         case (EMERALD_WALL_ROUND_PIKE):
         case (EMERALD_DOOR_END_READY):
         case (EMERALD_WALL_NOT_ROUND):
@@ -1070,6 +1148,12 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
                 Playfield.pStatusAnimation[uCoordinate] = EMERALD_ANIM_STAND;
                 Playfield.uWheelRunningXpos = 0;
                 Playfield.uWheelRunningYpos = 0;
+            } else if ((uElement == EMERALD_EXPLOSION_TO_ELEMENT_1) || (uElement == EMERALD_EXPLOSION_TO_ELEMENT_2)) {
+                // Hier muss geprüft werden, das eine überschreibende Explosion keine Säurebäder und Replikatoren zerstört.
+                uNewElement = Playfield.pStatusAnimation[uCoordinate] & 0xFFFF; // Das ist ein Explosionsfeld, an dem ein Stück Säurebad/Replikator entsteht
+                if (IsAcidOrReplicatorElement(uNewElement)) {
+                    uExplosion = EMERALD_EXPLOSION_NONE;    // Säurebad und Replikator belassen
+                }
             }
             break;
         case (EMERALD_SPACE):
@@ -1080,7 +1164,7 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
             }
             break;
         case (EMERALD_MAN):
-            if (Playfield.bManProtected) {
+            if ((Playfield.bManProtected) || (Playfield.uShieldCoinTimeLeft > 0)) {
                 uExplosion = EMERALD_EXPLOSION_NONE;
             } else {
                 uExplosion = EMERALD_EXPLOSION_EMPTY_MAN;
@@ -1088,6 +1172,9 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
             break;
         case (EMERALD_WALL_WITH_TIME_COIN):
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_TIME_COIN << 16);
+            break;
+        case (EMERALD_WALL_WITH_SHIELD_COIN):
+            uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_SHIELD_COIN << 16);
             break;
         case (EMERALD_WALL_WITH_EMERALD):
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_EMERALD << 16);
@@ -1153,13 +1240,19 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_MOLE_UP << 16);
             break;
         case (EMERALD_WALL_WITH_GREEN_CHEESE):
-            uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_GREEN_CHEESE << 16);
+            uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_GREEN_DROP << 16);
+            break;
+        case (EMERALD_WALL_WITH_YELLOW_CHEESE):
+            uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_YELLOW_DROP << 16);
             break;
         case (EMERALD_WALL_WITH_BEETLE_UP):
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_BEETLE_UP << 16);
             break;
         case (EMERALD_WALL_WITH_YAM):
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_YAM << 16);
+            break;
+        case (EMERALD_WALL_WITH_SLIME):
+            uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_SLIME << 16);
             break;
         case (EMERALD_WALL_WITH_ALIEN):
             uExplosion = EMERALD_EXPLOSION_ELEMENT | (EMERALD_ALIEN << 16);
@@ -1330,50 +1423,115 @@ Beschreibung: Prüft, ob sich eine "gefährlicher" Feind (Standmine, Käfer oder Mi
               um Position I befindet. Die Funktion wird nur in ControlMan() aufgerufen.
 Parameter
       Eingang: I, uint32_t, Index im Level, Position, an der geprüft werden soll
-      Ausgang: -
+      Ausgang: puDangerPos, uint32_t *, Zeiger auf Position des gefärlichen Elements, darf NULL sein
+               puElement, uint16_t *, Zeiger auf Gefährlcihkeitstyp, darf NULL sein
+                        EMERALD_BEETLE_LEFT
+                        EMERALD_MINE_LEFT (auch für EMERALD_STANDMINE)
 Rückgabewert:  bool, true = "gefährlicher" Feind  hat Kontakt mit Position I
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-bool IsDangerousEnemyAround(uint32_t I) {
-    return        ( (Playfield.pLevel[I - 1] == EMERALD_STANDMINE) ||    // links
-                    (Playfield.pLevel[I + 1] == EMERALD_STANDMINE) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) || // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) || // unten
-                    // Käfer
-                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_DOWN) ||    // rechts
-                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_DOWN) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) || // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) || // unten
-                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_LEFT) ||    // links
-                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_LEFT) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) || // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) || // unten
-                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_RIGHT) ||    // links
-                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_RIGHT) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) || // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) || // unten
-                    (Playfield.pLevel[I - 1] == EMERALD_BEETLE_UP) ||    // links
-                    (Playfield.pLevel[I + 1] == EMERALD_BEETLE_UP) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||    // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||    // unten
-                    // Mine
-                    (Playfield.pLevel[I - 1] == EMERALD_MINE_DOWN) ||    // rechts
-                    (Playfield.pLevel[I + 1] == EMERALD_MINE_DOWN) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) || // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) || // unten
-                    (Playfield.pLevel[I - 1] == EMERALD_MINE_LEFT) ||    // links
-                    (Playfield.pLevel[I + 1] == EMERALD_MINE_LEFT) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) || // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) || // unten
-                    (Playfield.pLevel[I - 1] == EMERALD_MINE_RIGHT) ||    // links
-                    (Playfield.pLevel[I + 1] == EMERALD_MINE_RIGHT) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) || // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) || // unten
-                    (Playfield.pLevel[I - 1] == EMERALD_MINE_UP) ||    // links
-                    (Playfield.pLevel[I + 1] == EMERALD_MINE_UP) ||    // rechts
-                    (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||    // oben
-                    (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP)       // unten
-                    );
+bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElement) {
+    if ( (Playfield.pLevel[I - 1] == EMERALD_STANDMINE) ||
+         (Playfield.pLevel[I - 1] == EMERALD_MINE_DOWN) ||
+         (Playfield.pLevel[I - 1] == EMERALD_MINE_UP) ||
+         (Playfield.pLevel[I - 1] == EMERALD_MINE_LEFT) ||
+         (Playfield.pLevel[I - 1] == EMERALD_MINE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I - 1;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_MINE_LEFT;
+            }
+            return true;
+    }
+    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) ||
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) ||
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) ||
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I - Playfield.uLevel_X_Dimension;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_MINE_LEFT;
+            }
+            return true;
+    }
+    if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) ||
+         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) ||
+         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||
+         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) ||
+         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I + Playfield.uLevel_X_Dimension;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_MINE_LEFT;
+            }
+            return true;
+    }
+    if ( (Playfield.pLevel[I + 1] == EMERALD_STANDMINE) ||
+         (Playfield.pLevel[I + 1] == EMERALD_MINE_DOWN) ||
+         (Playfield.pLevel[I + 1] == EMERALD_MINE_UP) ||
+         (Playfield.pLevel[I + 1] == EMERALD_MINE_LEFT) ||
+         (Playfield.pLevel[I + 1] == EMERALD_MINE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I + 1;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_MINE_LEFT;
+            }
+            return true;
+    }
+    if ( (Playfield.pLevel[I - 1] == EMERALD_BEETLE_DOWN) ||
+         (Playfield.pLevel[I - 1] == EMERALD_BEETLE_UP) ||
+         (Playfield.pLevel[I - 1] == EMERALD_BEETLE_LEFT) ||
+         (Playfield.pLevel[I - 1] == EMERALD_BEETLE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I - 1;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_BEETLE_LEFT;
+            }
+            return true;
+    }
+    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) ||
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) ||
+         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I - Playfield.uLevel_X_Dimension;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_BEETLE_LEFT;
+            }
+            return true;
+    }
+    if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) ||
+         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||
+         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) ||
+         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I + Playfield.uLevel_X_Dimension;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_BEETLE_LEFT;
+            }
+            return true;
+    }
+    if ( (Playfield.pLevel[I + 1] == EMERALD_BEETLE_DOWN) ||
+         (Playfield.pLevel[I + 1] == EMERALD_BEETLE_UP) ||
+         (Playfield.pLevel[I + 1] == EMERALD_BEETLE_LEFT) ||
+         (Playfield.pLevel[I + 1] == EMERALD_BEETLE_RIGHT) ) {
+            if (puDangerPos != NULL) {
+                *puDangerPos = I + 1;
+            }
+            if (puElement != NULL) {
+                *puElement = EMERALD_BEETLE_LEFT;
+            }
+            return true;
+    }
+    return false;
 }
 
 
@@ -1391,17 +1549,17 @@ bool IsPipeElement(uint16_t uElement) {
     bool bIsPipe;
 
     switch (uElement) {
-        case (PIPE_UP_DOWN):
-        case (PIPE_LEFT_RIGHT):
-        case (PIPE_LEFT_UP):
-        case (PIPE_LEFT_DOWN):
-        case (PIPE_RIGHT_UP):
-        case (PIPE_RIGHT_DOWN):
-        case (PIPE_LEFT_UP_DOWN):
-        case (PIPE_RIGHT_UP_DOWN):
-        case (PIPE_LEFT_RIGHT_UP):
-        case (PIPE_LEFT_RIGHT_DOWN):
-        case (PIPE_LEFT_RIGHT_UP_DOWN):
+        case (EMERALD_PIPE_UP_DOWN):
+        case (EMERALD_PIPE_LEFT_RIGHT):
+        case (EMERALD_PIPE_LEFT_UP):
+        case (EMERALD_PIPE_LEFT_DOWN):
+        case (EMERALD_PIPE_RIGHT_UP):
+        case (EMERALD_PIPE_RIGHT_DOWN):
+        case (EMERALD_PIPE_LEFT_UP_DOWN):
+        case (EMERALD_PIPE_RIGHT_UP_DOWN):
+        case (EMERALD_PIPE_LEFT_RIGHT_UP):
+        case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
+        case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
             bIsPipe = true;
             break;
         default:
@@ -1410,3 +1568,58 @@ bool IsPipeElement(uint16_t uElement) {
     }
     return bIsPipe;
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           IsPipeElement
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob ein Element zu einem Säurebad oder Replikator gehört.
+Parameter
+      Eingang: uElement, uint16_t, Element, das geprüft werden soll.
+      Ausgang: -
+Rückgabewert:  bool, true = Element gehört zu Säurebad oder Replikator
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+bool IsAcidOrReplicatorElement(uint16_t uElement) {
+    bool bElementIsAcidOrReplicator;
+
+    switch (uElement) {
+        case (EMERALD_ACIDPOOL_TOP_LEFT):
+        case (EMERALD_ACIDPOOL_TOP_MID):
+        case (EMERALD_ACIDPOOL_TOP_RIGHT):
+        case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
+        case (EMERALD_ACIDPOOL_BOTTOM_MID):
+        case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_RED_TOP_LEFT):
+        case (EMERALD_REPLICATOR_RED_TOP_MID):
+        case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_RED_SWITCH):
+        case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
+        case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
+        case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_YELLOW_SWITCH):
+        case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
+        case (EMERALD_REPLICATOR_GREEN_TOP_MID):
+        case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_GREEN_SWITCH):
+        case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
+        case (EMERALD_REPLICATOR_BLUE_TOP_MID):
+        case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_BLUE_SWITCH):
+            bElementIsAcidOrReplicator = true;
+            break;
+        default:
+            bElementIsAcidOrReplicator = false;
+            break;
+    }
+    return bElementIsAcidOrReplicator;
+}
+

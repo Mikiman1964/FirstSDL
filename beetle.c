@@ -3,6 +3,7 @@
 #include "explosion.h"
 #include "greendrop.h"
 #include "sound.h"
+#include "yellowdrop.h"
 
 extern PLAYFIELD Playfield;
 
@@ -22,8 +23,8 @@ void ControlBeetleUp(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
-    // Hat Käfer Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Käfer Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_UP_TO_LEFT;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
@@ -78,8 +79,8 @@ void ControlBeetleRight(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
-    // Hat Käfer Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Käfer Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_RIGHT_TO_UP;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
@@ -142,8 +143,8 @@ void ControlBeetleDown(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
-    // Hat Käfer Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Käfer Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_DOWN_TO_RIGHT;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
@@ -212,8 +213,8 @@ void ControlBeetleLeft(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
-    // Hat Käfer Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Käfer Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_LEFT_TO_DOWN;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }

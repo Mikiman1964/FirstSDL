@@ -152,17 +152,21 @@ typedef struct {
     uint32_t        uScoreStoningMine;
     uint32_t        uScoreStoningAlien;
     uint32_t        uScoreStoningYam;
+    uint32_t        uScoreStoningSlime;
     uint32_t        uScoreTimeCoin;
+    uint32_t        uScoreShieldCoin;
     uint32_t        uScoreMessage;
     uint32_t        uEmeraldsToCollect;
     uint32_t        uTimeScoreFactor;
-    uint32_t        uCheeseSpreadSpeed;
+    uint32_t        uGreenCheeseSpreadSpeed;
+    uint32_t        uYellowCheeseSpreadSpeed;
     uint32_t        uGrassSpreadSpeed;
     uint32_t        uTimeToPlay;
     uint32_t        uAdditonalTimeCoinTime;                     // zusätzliche Zeit durch Zeitmünze
     uint32_t        uTimeWheelRotation;
     uint32_t        uTimeDoorTime;
     uint32_t        uTimeMagicWall;
+    uint32_t        uShieldCoinTime;
     uint32_t        uTimeLight;
     uint32_t        uDynamiteCount;                             // Anzahl Dynamits, die der Man hat
     uint32_t        uHammerCount;                               // Anzahl Hammer, die der Man hat
