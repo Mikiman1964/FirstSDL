@@ -732,6 +732,9 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_WALL_WITH_TIME_COIN):
             uTextureIndex = 735;
             break;
+        case (EMERALD_WALL_WITH_SHIELD_COIN):
+            uTextureIndex = 1058;
+            break;
         case (EMERALD_WALL_WITH_BOMB):
             uTextureIndex = 540;
             break;
@@ -765,6 +768,9 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_WALL_WITH_YAM):
             uTextureIndex = 550;
             break;
+        case (EMERALD_WALL_WITH_SLIME):
+            uTextureIndex = 1060;
+            break;
         case (EMERALD_WALL_WITH_ALIEN):
             uTextureIndex = 551;
             break;
@@ -773,6 +779,9 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             break;
         case (EMERALD_WALL_WITH_GREEN_CHEESE):
             uTextureIndex = 553;
+            break;
+        case (EMERALD_WALL_WITH_YELLOW_CHEESE):
+            uTextureIndex = 1059;
             break;
         case (EMERALD_WALL_WITH_EMERALD):
             uTextureIndex = 529;
@@ -1093,8 +1102,14 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_GREEN_DROP):
             uTextureIndex = 346;
             break;
+        case (EMERALD_YELLOW_DROP):
+            uTextureIndex = 1057;
+            break;
         case (EMERALD_GREEN_CHEESE):
             uTextureIndex = 343;
+            break;
+        case (EMERALD_YELLOW_CHEESE):
+            uTextureIndex = 1053;
             break;
         case (EMERALD_STEEL_FORBIDDEN):
             uTextureIndex = 334;
@@ -1152,6 +1167,9 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             break;
         case (EMERALD_TIME_COIN):
             uTextureIndex = 310 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Zeitmünze, drehend
+            break;
+        case (EMERALD_SHIELD_COIN):
+            uTextureIndex = 1047 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Schildmünze, drehend
             break;
         case (EMERALD_HAMMER):
             uTextureIndex = 318;                            // Hammer
@@ -1235,6 +1253,9 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_BEETLE_LEFT):
             *pfAngle = 0;
             uTextureIndex = 75 + nAnimationCount % 8;     // Käfer links
+            break;
+        case (EMERALD_SLIME):
+            uTextureIndex = 1061;   // Schleim
             break;
         case (EMERALD_SPACE):
             uTextureIndex = 0;      // Space
@@ -1598,37 +1619,37 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_STEEL_MODERN_MIDDLE):
             uTextureIndex = 1035;
             break;
-        case (PIPE_UP_DOWN):
+        case (EMERALD_PIPE_UP_DOWN):
             uTextureIndex = 1036;
             break;
-        case (PIPE_LEFT_RIGHT):
+        case (EMERALD_PIPE_LEFT_RIGHT):
             uTextureIndex = 1037;
             break;
-        case (PIPE_LEFT_UP):
+        case (EMERALD_PIPE_LEFT_UP):
             uTextureIndex = 1038;
             break;
-        case (PIPE_LEFT_DOWN):
+        case (EMERALD_PIPE_LEFT_DOWN):
             uTextureIndex = 1039;
             break;
-        case (PIPE_RIGHT_UP):
+        case (EMERALD_PIPE_RIGHT_UP):
             uTextureIndex = 1040;
             break;
-        case (PIPE_RIGHT_DOWN):
+        case (EMERALD_PIPE_RIGHT_DOWN):
             uTextureIndex = 1041;
             break;
-        case (PIPE_LEFT_UP_DOWN):
+        case (EMERALD_PIPE_LEFT_UP_DOWN):
             uTextureIndex = 1042;
             break;
-        case (PIPE_RIGHT_UP_DOWN):
+        case (EMERALD_PIPE_RIGHT_UP_DOWN):
             uTextureIndex = 1043;
             break;
-        case (PIPE_LEFT_RIGHT_UP):
+        case (EMERALD_PIPE_LEFT_RIGHT_UP):
             uTextureIndex = 1044;
             break;
-        case (PIPE_LEFT_RIGHT_DOWN):
+        case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
             uTextureIndex = 1045;
             break;
-        case (PIPE_LEFT_RIGHT_UP_DOWN):
+        case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
             uTextureIndex = 1046;
             break;
         default:

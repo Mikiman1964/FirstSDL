@@ -35,6 +35,11 @@ void ControlMoleUp(uint32_t I) {
         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_GREEN_CHEESE_GOES;
         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
         PreparePlaySound(SOUND_CHEESE,I);
+    } else if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_YELLOW_CHEESE) {  // Gibt es oben gelben Käse ?
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt oben und läuft auf der Stelle
+        Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_YELLOW_CHEESE_GOES;
+        Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+        PreparePlaySound(SOUND_CHEESE,I);
     } else {                        // Oben ist nicht frei
         // Mole bleibt zunächst auf "oben" muss sich aber bei Blockade entscheiden nach rechts oder links zu gehen
         bLeftFree = (IS_SPACE(I - 1));
@@ -97,6 +102,11 @@ void ControlMoleRight(uint32_t I) {
     } else if (Playfield.pLevel[I + 1] == EMERALD_GREEN_CHEESE) {  // Gibt es rechts grünen Käse ?
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt rechts und läuft auf der Stelle
         Playfield.pLevel[I + 1] = EMERALD_GREEN_CHEESE_GOES;
+        Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND;
+        PreparePlaySound(SOUND_CHEESE,I);
+    } else if (Playfield.pLevel[I + 1] == EMERALD_YELLOW_CHEESE) {  // Gibt es rechts gelben Käse ?
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt rechts und läuft auf der Stelle
+        Playfield.pLevel[I + 1] = EMERALD_YELLOW_CHEESE_GOES;
         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND;
         PreparePlaySound(SOUND_CHEESE,I);
     } else {                        // Rechts ist nicht frei
@@ -167,6 +177,11 @@ void ControlMoleDown(uint32_t I) {
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_GREEN_CHEESE_GOES;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
         PreparePlaySound(SOUND_CHEESE,I);
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_YELLOW_CHEESE) {  // Gibt es unten gelben Käse ?
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt unten und läuft auf der Stelle
+        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_YELLOW_CHEESE_GOES;
+        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+        PreparePlaySound(SOUND_CHEESE,I);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mole ins Säurebecken?
         SDL_Log("Mole falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
@@ -234,6 +249,11 @@ void ControlMoleLeft(uint32_t I) {
     } else if (Playfield.pLevel[I - 1] == EMERALD_GREEN_CHEESE) {  // Gibt es links grünen Käse ?
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt links und läuft auf der Stelle
         Playfield.pLevel[I - 1] = EMERALD_GREEN_CHEESE_GOES;
+        Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
+        PreparePlaySound(SOUND_CHEESE,I);
+    } else if (Playfield.pLevel[I - 1] == EMERALD_YELLOW_CHEESE) {  // Gibt es links gelben Käse ?
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt links und läuft auf der Stelle
+        Playfield.pLevel[I - 1] = EMERALD_YELLOW_CHEESE_GOES;
         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
         PreparePlaySound(SOUND_CHEESE,I);
     } else {                        // Links ist nicht frei

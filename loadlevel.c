@@ -298,6 +298,27 @@ int GetLevelScoresFromXml(ezxml_t xml) {
                                                                         nNum = strtol(pAttr,NULL,10);
                                                                         Playfield.uScoreTimeCoin = (uint32_t)nNum;
                                                                         nErrorCode = 0;
+                                                                        // Der folgende Scores (Schildmünze und Schleim) wurden später eingeführt. Damit alte Levels
+                                                                        // kompatibel bleiben, wird der ShieldCoin-Score ohne Fehlerrückgabe ausgelesen. Ist ein
+                                                                        // Auslesen nicht möglich, wird der Score auf 0 gesetzt.
+                                                                        node = ezxml_child(scores,"shieldcoin");
+                                                                        if (node != NULL) {
+                                                                            pAttr = node->txt;
+                                                                            nNum = strtol(pAttr,NULL,10);
+                                                                            Playfield.uScoreShieldCoin = (uint32_t)nNum;
+                                                                        } else {
+                                                                            SDL_Log("%s: 'scores->shieldcoin' not found -> set score to 0",__FUNCTION__);
+                                                                            Playfield.uScoreShieldCoin = 0;
+                                                                        }
+                                                                        node = ezxml_child(scores,"stoning_slime");
+                                                                        if (node != NULL) {
+                                                                            pAttr = node->txt;
+                                                                            nNum = strtol(pAttr,NULL,10);
+                                                                            Playfield.uScoreStoningSlime = (uint32_t)nNum;
+                                                                        } else {
+                                                                            SDL_Log("%s: 'scores->stoning_slime' not found -> set score to 0",__FUNCTION__);
+                                                                            Playfield.uScoreStoningSlime = 0;
+                                                                        }
                                                                     } else {
                                                                         SDL_Log("%s: error in xml file, 'scores->timecoin' not found",__FUNCTION__);
                                                                     }
@@ -392,13 +413,25 @@ int GetOtherLevelValuesFromXml(ezxml_t xml) {
                     if (node != NULL) {
                         pAttr = node->txt;
                         nNum = strtol(pAttr,NULL,10);
-                        Playfield.uCheeseSpreadSpeed = (uint32_t)nNum;
+                        Playfield.uGreenCheeseSpreadSpeed = (uint32_t)nNum;
                         node = ezxml_child(values,"speed_grass_spread");
                         if (node != NULL) {
                             pAttr = node->txt;
                             nNum = strtol(pAttr,NULL,10);
                             Playfield.uGrassSpreadSpeed = (uint32_t)nNum;
                             nErrorCode = 0;
+                            // Der folgende Spread-Wertfür den gelben Käse wurde später eingeführt. Damit alte Levels
+                            // kompatibel bleiben, wird der Spread-Wert ohne Fehlerrückgabe ausgelesen. Ist ein Auslesen nicht
+                            // möglich, wird der Wert auf 0 gesetzt.
+                            node = ezxml_child(values,"speed_yellow_cheese_spread");
+                            if (node != NULL) {
+                                pAttr = node->txt;
+                                nNum = strtol(pAttr,NULL,10);
+                                Playfield.uYellowCheeseSpreadSpeed = (uint32_t)nNum;
+                            } else {
+                                SDL_Log("%s: 'values->speed_yellow_cheese_spread' not found -> set value to 0",__FUNCTION__);
+                                Playfield.uYellowCheeseSpreadSpeed = 0;
+                            }
                         } else {
                             SDL_Log("%s: error in xml file, 'values->speed_grass_spread' not found",__FUNCTION__);
                         }
@@ -474,6 +507,18 @@ int GetLevelTimesFromXml(ezxml_t xml) {
                                     nNum = strtol(pAttr,NULL,10);
                                     Playfield.uAdditonalTimeCoinTime = (uint32_t)nNum * ge_DisplayMode.refresh_rate;
                                     nErrorCode = 0;
+                                    // Der folgende Zeitwert für die Schildmünze wurde später eingeführt. Damit alte Levels kompatibel bleiben,
+                                    // wird der ShieldCoin-Zeitwert ohne Fehlerrückgabe ausgelesen. Ist ein Auslesen nicht
+                                    // möglich, wird der Wert auf 0 gesetzt.
+                                    node = ezxml_child(times,"shieldcoin");
+                                    if (node != NULL) {
+                                        pAttr = node->txt;
+                                        nNum = strtol(pAttr,NULL,10);
+                                        Playfield.uShieldCoinTime = (uint32_t)nNum;
+                                    } else {
+                                        SDL_Log("%s: 'times->shieldcoin' not found -> set time to 0",__FUNCTION__);
+                                        Playfield.uShieldCoinTime = 0;
+                                    }
                                 } else {
                                     SDL_Log("%s: error in xml file, 'times->timecoin' not found",__FUNCTION__);
                                 }
@@ -1290,13 +1335,14 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.uDynamitePos = 0xFFFFFFFF;  // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung
         Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND; // Status/Animation für manuell gezündetes Dynamit
         InitRollUnderground();
-        PrintPlayfieldValues();
         SetCentralExplosionCoordinates();
         SetCentralMegaExplosionCoordinates();
         Playfield.uPlayTimeStart = 0;
         Playfield.uPlayTimeEnd = 0;
         Playfield.bReadyToGo = false;
         Playfield.bManProtected = false;
+        Playfield.uShieldCoinTimeLeft = 0;
+        PrintPlayfieldValues();
     }
     return nErrorCode;
 }
@@ -1424,17 +1470,17 @@ void SetPipeLevel(void) {
     for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
         uElement = Playfield.pLevel[I];
         switch (uElement) {
-            case (PIPE_UP_DOWN):
-            case (PIPE_LEFT_RIGHT):
-            case (PIPE_LEFT_UP):
-            case (PIPE_LEFT_DOWN):
-            case (PIPE_RIGHT_UP):
-            case (PIPE_RIGHT_DOWN):
-            case (PIPE_LEFT_UP_DOWN):
-            case (PIPE_RIGHT_UP_DOWN):
-            case (PIPE_LEFT_RIGHT_UP):
-            case (PIPE_LEFT_RIGHT_DOWN):
-            case (PIPE_LEFT_RIGHT_UP_DOWN):
+            case (EMERALD_PIPE_UP_DOWN):
+            case (EMERALD_PIPE_LEFT_RIGHT):
+            case (EMERALD_PIPE_LEFT_UP):
+            case (EMERALD_PIPE_LEFT_DOWN):
+            case (EMERALD_PIPE_RIGHT_UP):
+            case (EMERALD_PIPE_RIGHT_DOWN):
+            case (EMERALD_PIPE_LEFT_UP_DOWN):
+            case (EMERALD_PIPE_RIGHT_UP_DOWN):
+            case (EMERALD_PIPE_LEFT_RIGHT_UP):
+            case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
+            case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
                 Playfield.pPipeLevel[I] = uElement;
                 Playfield.pLevel[I] = EMERALD_SPACE;
                 break;
@@ -2076,15 +2122,19 @@ void PrintPlayfieldValues() {
         printf("Score stoning mine:          %u\r\n",Playfield.uScoreStoningMine);
         printf("Score stoning alien:         %u\r\n",Playfield.uScoreStoningAlien);
         printf("Score stoning yam:           %u\r\n",Playfield.uScoreStoningYam);
+        printf("Score stoning slime:         %u\r\n",Playfield.uScoreStoningSlime);
         printf("Score time coin:             %u\r\n",Playfield.uScoreTimeCoin);
+        printf("Score shield coin:           %u\r\n",Playfield.uScoreShieldCoin);
         printf("Additional time for coin:    %u\r\n",Playfield.uAdditonalTimeCoinTime);
+        printf("Shield coin time [fields]:   %u\r\n",Playfield.uShieldCoinTime);
         printf("Emerald to collect:          %u\r\n",Playfield.uEmeraldsToCollect);
         printf("Dynamite Count:              %u\r\n",Playfield.uDynamiteCount);
         printf("Hammer Count:                %u\r\n",Playfield.uHammerCount);
         printf("White key Count:             %u\r\n",Playfield.uWhiteKeyCount);
         printf("Time Score Factor:           %u\r\n",Playfield.uTimeScoreFactor);
-        printf("Cheese spread speed:         %u\r\n",Playfield.uCheeseSpreadSpeed);
-        printf("Grass spread speed:          %u\r\n",Playfield.uCheeseSpreadSpeed);
+        printf("Cheese spread speed:         %u\r\n",Playfield.uGreenCheeseSpreadSpeed);
+        printf("Yellow Cheese spread speed:  %u\r\n",Playfield.uYellowCheeseSpreadSpeed);
+        printf("Grass spread speed:          %u\r\n",Playfield.uGrassSpreadSpeed);
         printf("Time to play:                %u\r\n",Playfield.uTimeToPlay);
         printf("Time Wheel Rotation:         %u\r\n",Playfield.uTimeWheelRotation);
         printf("Time Wheel Rotation Left:    %u\r\n",Playfield.uTimeWheelRotationLeft);

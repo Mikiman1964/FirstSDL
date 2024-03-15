@@ -10,8 +10,7 @@ extern PLAYFIELD Playfield;
 /*----------------------------------------------------------------------------
 Name:           ControlGreenDrop
 ------------------------------------------------------------------------------
-Beschreibung: Steuert eine grünen Tropfen. Dieser fällt mit halber Geschwindigkeit
-              nach unten.
+Beschreibung: Steuert einen grünen Tropfen. Dieser fällt mit halber Geschwindigkeit.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
@@ -51,7 +50,7 @@ void ControlGreenDrop(uint32_t I) {
         return;
     } else {
         // Unter Tropfen ist nicht frei
-        if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected)) {
+        if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
             SDL_Log("Green drop kills man");
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
@@ -78,7 +77,6 @@ Name:           ControlGreenCheese
 ------------------------------------------------------------------------------
 Beschreibung: Steuert den grünen Käse. Die Ausbreitungsgeschwindigkeit ist
               im Leveleditor einstellbar.
-              nach unten.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
@@ -91,10 +89,10 @@ void ControlGreenCheese(uint32_t I) {
     int nDirectionRandom;
 
     nRandom = randn(1,9990);       // Ergibt Zufallszahl zwischen 1-9990
-    if (Playfield.uCheeseSpreadSpeed >= nRandom) {
-        if (Playfield.uCheeseSpreadSpeed > 9000) {
+    if (Playfield.uGreenCheeseSpreadSpeed >= nRandom) {
+        if (Playfield.uGreenCheeseSpreadSpeed > 9000) {
             nLoops = 3;
-        } else if (Playfield.uCheeseSpreadSpeed > 8000) {
+        } else if (Playfield.uGreenCheeseSpreadSpeed > 8000) {
             nLoops = 2;
         } else {
             nLoops = 1;
@@ -136,7 +134,7 @@ void ControlGreenCheese(uint32_t I) {
 
 
 /*----------------------------------------------------------------------------
-Name:           ControlSpreadCheese
+Name:           ControlSpreadGreenCheese
 ------------------------------------------------------------------------------
 Beschreibung: Ein enstehender Tropfen wird gesteuert und somit zum Tropfen.
 Parameter
@@ -145,7 +143,7 @@ Parameter
 Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-void ControlSpreadCheese(uint32_t I) {
+void ControlSpreadGreenCheese(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;

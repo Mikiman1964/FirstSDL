@@ -3,6 +3,7 @@
 #include "greendrop.h"
 #include "mine.h"
 #include "sound.h"
+#include "yellowdrop.h"
 
 extern PLAYFIELD Playfield;
 
@@ -22,8 +23,8 @@ void ControlMineUp(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_UP_TO_RIGHT;
         return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
@@ -79,8 +80,8 @@ void ControlMineRight(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_RIGHT_TO_DOWN;
         return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
@@ -141,8 +142,8 @@ void ControlMineDown(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
         return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
@@ -211,8 +212,8 @@ void ControlMineLeft(uint32_t I) {
         PreparePlaySound(SOUND_EXPLOSION,I);
         return; // Für die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem Käse ?
-    if (IsGreenCheeseAround(I)) {
+    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_LEFT_TO_UP;
         return; // Für die Mine ist das Spiel nächste Runde zu Ende
     }
@@ -367,13 +368,14 @@ void ControlManWithDynamiteOn(uint32_t I) {
             Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND;
             Playfield.uDynamitePos = 0xFFFFFFFF;
             if ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) == I) {   // Ist Man auf selbst gezündeten Dynamit stehen geblieben?
-                Playfield.bManDead = true;
-                Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
-                PreparePlaySound(SOUND_MAN_CRIES,I);
+                if (Playfield.uShieldCoinTimeLeft == 0) {
+                    Playfield.bManDead = true;
+                    Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
+                    PreparePlaySound(SOUND_MAN_CRIES,I);
+                } else { // Man bleibt am Leben und sprengt einen Kreis um sich herum.
+                    ControlCircleExplosion(I);
+                }
             }
-            // Folgender Aufruf hatte zum Ergebnis, dass z.B. eine darüberliegende Standmine in derselben Steuerungsphase mit explodiert.
-            // Darunter liegende Standmine explodiert erst in der nächsten Phase. (Richtig)
-            // ControlCentralExplosion(I);
             PreparePlaySound(SOUND_EXPLOSION,I);
             break;
         default:

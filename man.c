@@ -130,6 +130,8 @@ Seiteneffekte: Playfield.x, ManKey.x, Config.x
 ------------------------------------------------------------------------------*/
 uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     uint32_t uRetDirection;
+    uint32_t uDangerousPos;
+    uint16_t uDangerousElement;
 
     uRetDirection = EMERALD_ANIM_STAND;
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
@@ -138,13 +140,20 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     if ((Playfield.bManDead) || (Playfield.bWellDone))  {
         return uRetDirection;
     }
-    if ((!Playfield.bManProtected) && (IsDangerousEnemyAround(I))) {
-        Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
-        PreparePlaySound(SOUND_MAN_CRIES,I);
-        Playfield.bManDead = true;
-        return uRetDirection;
+    if ((!Playfield.bManProtected) && (IsDangerousEnemyAround(I,&uDangerousPos,&uDangerousElement))) {
+        if (Playfield.uShieldCoinTimeLeft == 0) {
+            Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
+            PreparePlaySound(SOUND_MAN_CRIES,I);
+            Playfield.bManDead = true;
+            return uRetDirection;
+        } else {    // Man hat noch Schutzschild aktiv
+            if (uDangerousElement == EMERALD_MINE_LEFT) {   // Mine oder Standmine
+                Playfield.pLevel[uDangerousPos] = EMERALD_CENTRAL_EXPLOSION;
+            } else {
+                Playfield.pLevel[uDangerousPos] = EMERALD_CENTRAL_EXPLOSION_BEETLE;
+            }
+        }
     }
-
     if ((ManKey.uFireCount > (4 * 16)) && (Playfield.uDynamiteCount > 0)) { // Bei 6 zündet das Dynamit
         Playfield.uDynamiteCount--;
         ManKey.uFireCount = 0;
@@ -154,7 +163,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
         return uRetDirection;
     }
 
-    if (Playfield.uTimeToPlay > 0) {
+    if ((Playfield.uTimeToPlay > 0) || (Playfield.uShieldCoinTimeLeft > 0)) {
         Playfield.bPushStone = !Playfield.bPushStone;
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         switch (uDirection) {
@@ -1086,6 +1095,50 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     break;
             }
             break;
+        case (EMERALD_SHIELD_COIN):
+            Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreShieldCoin;
+            ManKey.uFireCount = 0;
+            Playfield.uShieldCoinTimeLeft = Playfield.uShieldCoinTime + 1;
+            PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
+            switch (uAnimation) {
+                case (EMERALD_ANIM_UP):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SHIELD_COIN_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoUp(uActPos,EMERALD_ANIM_SHIELD_COIN_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_DOWN):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SHIELD_COIN_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoDown(uActPos,EMERALD_ANIM_SHIELD_COIN_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_LEFT):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SHIELD_COIN_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoLeft(uActPos,EMERALD_ANIM_SHIELD_COIN_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+                case (EMERALD_ANIM_RIGHT):
+                    if (ManKey.bFire) {
+                        Playfield.pStatusAnimation[uTouchPos] |= EMERALD_ANIM_SHIELD_COIN_SHRINK;
+                        SetManArm(uActPos,uAnimation);
+                    } else {
+                        ManGoRight(uActPos,EMERALD_ANIM_SHIELD_COIN_SHRINK,EMERALD_STANDARD_SPEED);
+                        uRetAnimation = uAnimation;
+                    }
+                    break;
+            }
+            break;
         case (EMERALD_HAMMER):
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreHammer;
             ManKey.uFireCount = 0;
@@ -1938,10 +1991,13 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_WALL_WITH_MINE_UP):
         case (EMERALD_WALL_WITH_MOLE_UP):
         case (EMERALD_WALL_WITH_GREEN_CHEESE):
+        case (EMERALD_WALL_WITH_YELLOW_CHEESE):
         case (EMERALD_WALL_WITH_BEETLE_UP):
         case (EMERALD_WALL_WITH_YAM):
+        case (EMERALD_WALL_WITH_SLIME):
         case (EMERALD_WALL_WITH_ALIEN):
         case (EMERALD_WALL_WITH_TIME_COIN):
+        case (EMERALD_WALL_WITH_SHIELD_COIN):
         case (EMERALD_DOOR_ONLY_UP_WALL):
         case (EMERALD_DOOR_ONLY_DOWN_WALL):
         case (EMERALD_DOOR_ONLY_LEFT_WALL):
@@ -1954,6 +2010,9 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 switch (uElement) {
                     case (EMERALD_WALL_WITH_TIME_COIN):
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_TIME_COIN;
+                        break;
+                    case (EMERALD_WALL_WITH_SHIELD_COIN):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_SHIELD_COIN;
                         break;
                     case (EMERALD_WALL_WITH_KEY_RED):
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_KEY_RED;
@@ -2021,11 +2080,17 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     case (EMERALD_WALL_WITH_GREEN_CHEESE):
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_GREEN_DROP;
                         break;
+                    case (EMERALD_WALL_WITH_YELLOW_CHEESE):
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_YELLOW_DROP;
+                        break;
                     case (EMERALD_WALL_WITH_BEETLE_UP):
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_BEETLE_UP;
                         break;
                     case (EMERALD_WALL_WITH_YAM):
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_YAM;
+                        break;
+                    case (EMERALD_WALL_WITH_SLIME):
+                       Playfield.pStatusAnimation[uTouchPos] = EMERALD_SLIME;
                         break;
                     case (EMERALD_WALL_WITH_ALIEN):
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_ALIEN;
@@ -2469,51 +2534,51 @@ bool IsPipeWalkable(uint32_t I, uint32_t uSide) {
     switch (uSide) {
         case (PIPE_FREE_LEFT):
             switch (uPipeElement) {
-                case (PIPE_LEFT_RIGHT):
-                case (PIPE_LEFT_UP):
-                case (PIPE_LEFT_DOWN):
-                case (PIPE_LEFT_UP_DOWN):
-                case (PIPE_LEFT_RIGHT_UP):
-                case (PIPE_LEFT_RIGHT_DOWN):
-                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT):
+                case (EMERALD_PIPE_LEFT_UP):
+                case (EMERALD_PIPE_LEFT_DOWN):
+                case (EMERALD_PIPE_LEFT_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT_UP):
+                case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
                     bFree = true;
                     break;
             }
             break;
         case (PIPE_FREE_RIGHT):
             switch (uPipeElement) {
-            case (PIPE_LEFT_RIGHT):
-                case (PIPE_RIGHT_UP):
-                case (PIPE_RIGHT_DOWN):
-                case (PIPE_RIGHT_UP_DOWN):
-                case (PIPE_LEFT_RIGHT_UP):
-                case (PIPE_LEFT_RIGHT_DOWN):
-                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT):
+                case (EMERALD_PIPE_RIGHT_UP):
+                case (EMERALD_PIPE_RIGHT_DOWN):
+                case (EMERALD_PIPE_RIGHT_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT_UP):
+                case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
                 bFree =  true;
                 break;
             }
             break;
         case (PIPE_FREE_UP):
             switch (uPipeElement) {
-                case (PIPE_UP_DOWN):
-                case (PIPE_LEFT_UP):
-                case (PIPE_RIGHT_UP):
-                case (PIPE_LEFT_UP_DOWN):
-                case (PIPE_RIGHT_UP_DOWN):
-                case (PIPE_LEFT_RIGHT_UP):
-                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                case (EMERALD_PIPE_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_UP):
+                case (EMERALD_PIPE_RIGHT_UP):
+                case (EMERALD_PIPE_LEFT_UP_DOWN):
+                case (EMERALD_PIPE_RIGHT_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT_UP):
+                case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
                     bFree = true;
             }
             break;
         case (PIPE_FREE_DOWN):
             switch (uPipeElement) {
-                case (PIPE_UP_DOWN):
-                case (PIPE_LEFT_DOWN):
-                case (PIPE_RIGHT_DOWN):
-                case (PIPE_LEFT_UP_DOWN):
-                case (PIPE_RIGHT_UP_DOWN):
-                case (PIPE_LEFT_RIGHT_DOWN):
-                case (PIPE_LEFT_RIGHT_UP_DOWN):
+                case (EMERALD_PIPE_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_DOWN):
+                case (EMERALD_PIPE_RIGHT_DOWN):
+                case (EMERALD_PIPE_LEFT_UP_DOWN):
+                case (EMERALD_PIPE_RIGHT_UP_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
+                case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
                     bFree = true;
                     break;
             }

@@ -65,8 +65,14 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
                 if (pWindow == NULL) {
                     SDL_Log("%s: SDL_CreateWindow() failed: %s",__FUNCTION__,SDL_GetError());
                 }
+            } else {
+                SDL_Log("%s: GetUsableDisplayModes() failed",__FUNCTION__);
             }
+        } else {
+            SDL_Log("%s: GetDesktopDisplayMode() failed",__FUNCTION__);
         }
+    } else {
+        SDL_Log("%s: SDL_Init() failed: %s",__FUNCTION__,SDL_GetError());
     }
     return pWindow;
 }
@@ -226,7 +232,18 @@ int GetUsableDisplayModes(uint32_t uDisplay) {
         SDL_Log("%04d X %04d",UsableDisplayModes.nW[I],UsableDisplayModes.nH[I]);
     }
     */
-    return GetShowableDisplayModes();
+    if (UsableDisplayModes.nDisplayModeCount > 0) {
+        return GetShowableDisplayModes();
+    } else {
+		// nDisplayModeCount ist hier mindestens 1
+		// SDL2 hat bei bestimmten Umgebungen Probleme die DisplayModes zu bestimmen (bei HDMI-Anschluss?)
+		// In diesem Fall Minimal-Konfiguration anbieten
+		UsableDisplayModes.nW[0] = DEFAULT_WINDOW_W;
+        UsableDisplayModes.nH[0] = DEFAULT_WINDOW_H;
+        UsableDisplayModes.nModeIndex[0] = 0;
+        UsableDisplayModes.nDisplayModeCount = 1;
+		return GetShowableDisplayModes();
+    }
 }
 
 

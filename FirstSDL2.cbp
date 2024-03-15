@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="FirstSDL2" />
+		<Option makefile="makefile" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="EmeraldMine/;SDL_mixer/" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/FirstSDL2" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Debug" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/FirstSDL2" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Release" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../SDL2-2.28.5/x86_64-w64-mingw32/include" />
+			<Add directory="../SDL2-2.28.5/x86_64-w64-mingw32/include/SDL2" />
+		</Compiler>
+		<Linker>
+			<Add option="Gfx/*.o" />
+			<Add option="Sfx/*.o" />
+			<Add library="SDL2main" />
+			<Add library="SDL2" />
+			<Add directory="../SDL2-2.28.5/x86_64-w64-mingw32/lib" />
+		</Linker>
+		<Unit filename="EmeraldMine.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="EmeraldMine.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="EmeraldMineMainMenu.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="EmeraldMineMainMenu.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="FillLevelArea.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="FillLevelArea.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="GetTextureIndexByElement.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="GetTextureIndexByElement.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="KeyboardMouse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="KeyboardMouse.h" />
+		<Unit filename="RenderLevel.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="RenderLevel.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="alien.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="alien.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="asteroids.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="asteroids.h" />
+		<Unit filename="beetle.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="beetle.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="bomb.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="bomb.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="buttons_checkboxes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="buttons_checkboxes.h" />
+		<Unit filename="config.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="config.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="copper.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="copper.h" />
+		<Unit filename="crystal.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="crystal.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="default_levelgroup.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="editor.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="editor.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="emerald.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="emerald.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="explosion.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="explosion.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="externalpointer.h" />
+		<Unit filename="ezxml.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ezxml.h" />
+		<Unit filename="gamecontroller.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="gamecontroller.h" />
+		<Unit filename="greendrop.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="greendrop.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="highscores.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="highscores.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="levelconverter.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="levelconverter.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="levelgroupoperation.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="levelgroupoperation.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="lightbarrier.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="lightbarrier.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="loadlevel.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="loadlevel.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="magicwall.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="magicwall.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="man.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="man.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="md5.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="md5.h" />
+		<Unit filename="megabomb.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="megabomb.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="mine.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="mine.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="miniz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="miniz.h" />
+		<Unit filename="modplay.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="modplay.h" />
+		<Unit filename="mole.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="mole.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="mySDL.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mySDL.h" />
+		<Unit filename="mystd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mystd.h" />
+		<Unit filename="nut.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="nut.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="panel.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="panel.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="perl.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="perl.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="replicator.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="replicator.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="ruby.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="ruby.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="sand.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="sand.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="saphir.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="saphir.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="scroller.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="scroller.h" />
+		<Unit filename="sdlmixer_SDL_mixer.h">
+			<Option virtualFolder="SDL_mixer/" />
+		</Unit>
+		<Unit filename="sdlmixer_effect_position.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="SDL_mixer/" />
+		</Unit>
+		<Unit filename="sdlmixer_effects_internal.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="SDL_mixer/" />
+		</Unit>
+		<Unit filename="sdlmixer_effects_internal.h">
+			<Option virtualFolder="SDL_mixer/" />
+		</Unit>
+		<Unit filename="sdlmixer_mixer.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="SDL_mixer/" />
+		</Unit>
+		<Unit filename="sdlmixer_mixer.h">
+			<Option virtualFolder="SDL_mixer/" />
+		</Unit>
+		<Unit filename="smileys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="smileys.h" />
+		<Unit filename="sound.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="sound.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="steel_wall_grow.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="steel_wall_grow.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="stone.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="stone.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="teleporter.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="teleporter.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="yam.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="yam.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="yellowdrop.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="yellowdrop.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
