@@ -73,7 +73,7 @@ void ControlNut(uint32_t I) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_NUT_CRACK2;
                 Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreNutCracking;
                 return;
-            } else if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected)) {
+            } else if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                 SDL_Log("Nut kills man");
                 Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
                 Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;

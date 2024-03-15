@@ -110,6 +110,7 @@ int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
     float fScaleW;
     float fScaleH;
     float fRotation;
+    uint16_t uTextureIndex;
 
     nErrorCode = -1;
     if (pScroller->uScrolledPixel == 0) {
@@ -145,8 +146,13 @@ int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
             fScaleH = fScaleW;
             fRotation = 0;
         }
+        if (pScroller->puBuffer[I] == 0xFE) {   // Smiley
+            uTextureIndex = 718;
+        } else {
+            uTextureIndex = pScroller->puBuffer[I];
+        }
         nErrorCode = CopyTexture(pRenderer,
-                                 pScroller->puBuffer[I],        // TextureIndex
+                                 uTextureIndex,        // TextureIndex
                                  pScroller->uXStart + I * FONT_W - pScroller->uScrolledPixel,        // X-pos
                                  pScroller->nYpos + sin(pScroller->pfAngles[I]) * pScroller->fYamplitude,   // Y-pos
                                  FONT_W,                                        // Texture Width
@@ -190,6 +196,10 @@ uint8_t ConvertASCII(uint8_t uASCIICode) {
         uConvCode = 66;
     } else if (uASCIICode == 125) {                            // ASCII 125 "}" in Ü wandeln
         uConvCode = 67;
+
+     } else if (uASCIICode == 254) {                            // ASCII 125 "}" in Ü wandeln
+        uConvCode = 254;
+
     } else {                                                   // Space, wenn keine Konvertierung möglich
         uConvCode = 0;
         SDL_Log("%s unknown character found, ASCII-Value = %d",__FUNCTION__,uASCIICode);

@@ -57,37 +57,37 @@ int RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32_t u
     SDL_Rect DestR;                     // Zum Kopieren in den Renderer
 
     switch (uPipeElement) {
-        case (PIPE_UP_DOWN):
+        case (EMERALD_PIPE_UP_DOWN):
             uTextureIndex = 1036;
             break;
-        case (PIPE_LEFT_RIGHT):
+        case (EMERALD_PIPE_LEFT_RIGHT):
             uTextureIndex = 1037;
             break;
-        case (PIPE_LEFT_UP):
+        case (EMERALD_PIPE_LEFT_UP):
             uTextureIndex = 1038;
             break;
-        case (PIPE_LEFT_DOWN):
+        case (EMERALD_PIPE_LEFT_DOWN):
             uTextureIndex = 1039;
             break;
-        case (PIPE_RIGHT_UP):
+        case (EMERALD_PIPE_RIGHT_UP):
             uTextureIndex = 1040;
             break;
-        case (PIPE_RIGHT_DOWN):
+        case (EMERALD_PIPE_RIGHT_DOWN):
             uTextureIndex = 1041;
             break;
-        case (PIPE_LEFT_UP_DOWN):
+        case (EMERALD_PIPE_LEFT_UP_DOWN):
             uTextureIndex = 1042;
             break;
-        case (PIPE_RIGHT_UP_DOWN):
+        case (EMERALD_PIPE_RIGHT_UP_DOWN):
             uTextureIndex = 1043;
             break;
-        case (PIPE_LEFT_RIGHT_UP):
+        case (EMERALD_PIPE_LEFT_RIGHT_UP):
             uTextureIndex = 1044;
             break;
-        case (PIPE_LEFT_RIGHT_DOWN):
+        case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
             uTextureIndex = 1045;
             break;
-        case (PIPE_LEFT_RIGHT_UP_DOWN):
+        case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
             uTextureIndex = 1046;
             break;
         default:
@@ -546,6 +546,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_WALL_WITH_TIME_COIN):
                     uTextureIndex = 735;
                     break;
+                case (EMERALD_WALL_WITH_SHIELD_COIN):
+                    uTextureIndex = 1058;
+                    break;
                 case (EMERALD_WALL_WITH_CRYSTAL):
                     uTextureIndex = 533;
                     break;
@@ -600,6 +603,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_WALL_WITH_YAM):
                     uTextureIndex = 550;
                     break;
+                case (EMERALD_WALL_WITH_SLIME):
+                    uTextureIndex = 1060;
+                    break;
                 case (EMERALD_WALL_WITH_ALIEN):
                     uTextureIndex = 551;
                     break;
@@ -608,6 +614,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_WALL_WITH_GREEN_CHEESE):
                     uTextureIndex = 553;
+                    break;
+                case (EMERALD_WALL_WITH_YELLOW_CHEESE):
+                    uTextureIndex = 1059;
                     break;
                 case (EMERALD_WALL_WITH_EMERALD):
                     uTextureIndex = 529;
@@ -732,6 +741,13 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_GREEN_CHEESE_GOES):
                     uTextureIndex = 343 + I % 3;
+                    nXoffs = nAnimationCount;
+                    nYoffs = nAnimationCount;
+                    fScaleW = 1 - nAnimationCount * 0.06;
+                    fScaleH = fScaleW;
+                    break;
+                case (EMERALD_YELLOW_CHEESE_GOES):
+                    uTextureIndex = 1053 + I % 3;
                     nXoffs = nAnimationCount;
                     nYoffs = nAnimationCount;
                     fScaleW = 1 - nAnimationCount * 0.06;
@@ -1023,6 +1039,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         }
                     }
                     break;
+                case (EMERALD_SLIME):
+                    uTextureIndex = 1061;
+                    break;
                 case (EMERALD_MESSAGE_1):
                 case (EMERALD_MESSAGE_2):
                 case (EMERALD_MESSAGE_3):
@@ -1131,6 +1150,13 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     fScaleW = nAnimationCount * 0.06;
                     fScaleH = fScaleW;
                     break;
+                case (EMERALD_YELLOW_DROP_COMES):
+                    uTextureIndex = 1057;
+                    nXoffs = 16 - nAnimationCount;
+                    nYoffs = nXoffs;
+                    fScaleW = nAnimationCount * 0.06;
+                    fScaleH = fScaleW;
+                    break;
                 case (EMERALD_GREEN_DROP):
                     uTextureIndex = 346;
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
@@ -1161,6 +1187,36 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     fScaleH = fScaleW;
                     break;
+                case (EMERALD_YELLOW_DROP):
+                    uTextureIndex = 1057;
+                    if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
+                        nXoffs = 15 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN2) {
+                        nXoffs = 7 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = 0.5 + nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else {
+                        if (nAnimationCount <= 7) { // 0 ... 7
+                            fScaleW = 1 - nAnimationCount * 0.02;   // 1 ..... 0.86
+                            nXoffs = nAnimationCount / 2;           // max. 7 / 2 = 3 Pixel zur Mitte
+                        } else {                    // 8 ... 15
+                            fScaleW = 0.85 + (nAnimationCount - 8) * 0.02;
+                            nXoffs = 3 + 4 - nAnimationCount / 2;
+                        }
+                        if (uSelfStatus == EMERALD_ANIM_YELLOW_DROP_1) {
+                            nYoffs = nAnimationCount;
+                        } else if (uSelfStatus == EMERALD_ANIM_YELLOW_DROP_2) {
+                            nYoffs = (FONT_H / 2) + nAnimationCount;
+                        } else {
+                            SDL_Log("%s: yellow drop, something wrong!  uSelfStatus = %x",__FUNCTION__,uSelfStatus);
+                        }
+                    }
+                    fScaleH = fScaleW;
+                    break;
                 case (EMERALD_GREEN_CHEESE):
                     uCheeseRandom = g_uCheeseRandom[I & (MAX_CHEESE_RANDOM_NUMBERS - 1)];
                     if (uCheeseRandom < 3) {
@@ -1168,6 +1224,10 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     } else {
                         uTextureIndex = 819;    // Wurde leider erst später hinzugefügt
                     }
+                    break;
+                case (EMERALD_YELLOW_CHEESE):
+                    uCheeseRandom = g_uCheeseRandom[I & (MAX_CHEESE_RANDOM_NUMBERS - 1)];
+                    uTextureIndex = 1053 + uCheeseRandom;
                     break;
                 case (EMERALD_STEEL_FORBIDDEN):
                     uTextureIndex = 334;
@@ -1934,6 +1994,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                          (uSelfStatus == EMERALD_ANIM_PERL_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_CRYSTAL_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_TIME_COIN_SHRINK) ||
+                         (uSelfStatus == EMERALD_ANIM_SHIELD_COIN_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_HAMMER_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_DYNAMITE_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_MESSAGE_SHRINK) ||
@@ -2549,6 +2610,26 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fScaleW = 0.5 + nAnimationCount * 0.031;
                         fScaleH = fScaleW;
                     } else if (uSelfStatus == EMERALD_ANIM_TIME_COIN_SHRINK) { // Man mit Richtung und Fire
+                        nXoffs = nAnimationCount;
+                        nYoffs = nAnimationCount;
+                        fScaleW = 1 - nAnimationCount * 0.06;
+                        fScaleH = fScaleW;
+                        fAngleOffs = nAnimationCount * 10;
+                    }
+                    break;
+                case (EMERALD_SHIELD_COIN):
+                    uTextureIndex = 1047 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Schildmünze, drehend
+                    if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
+                        nXoffs = 15 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN2) {
+                        nXoffs = 7 - nAnimationCount / 2;
+                        nYoffs = nXoffs;
+                        fScaleW = 0.5 + nAnimationCount * 0.031;
+                        fScaleH = fScaleW;
+                    } else if (uSelfStatus == EMERALD_ANIM_SHIELD_COIN_SHRINK) { // Man mit Richtung und Fire
                         nXoffs = nAnimationCount;
                         nYoffs = nAnimationCount;
                         fScaleW = 1 - nAnimationCount * 0.06;

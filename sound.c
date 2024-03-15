@@ -43,7 +43,7 @@ extern uint8_t _binary_Sound_Teleporter_wav_start;extern uint8_t _binary_Sound_T
 extern uint8_t _binary_Sound_Steel_Wall_grow_wav_start;extern uint8_t _binary_Sound_Steel_Wall_grow_wav_end;
 extern uint8_t _binary_Sound_RemoteBomb_wav_start;extern uint8_t _binary_Sound_RemoteBomb_wav_end;
 extern uint8_t _binary_Sound_Pipe_wav_start;extern uint8_t _binary_Sound_Pipe_wav_end;
-
+extern uint8_t _binary_Sound_ShieldEnd_wav_start;extern uint8_t _binary_Sound_ShieldEnd_wav_end;
 
 uint8_t* g_pSfxPointer_wav[] = {
 // Bit
@@ -82,7 +82,8 @@ uint8_t* g_pSfxPointer_wav[] = {
 /*33*/    &_binary_Sound_Steel_Wall_grow_wav_start,&_binary_Sound_Steel_Wall_grow_wav_end,          // Mauer und Stahl wächst
 /*34*/    &_binary_Sound_RemoteBomb_wav_start,&_binary_Sound_RemoteBomb_wav_end,        // ferngesteuerte Bombe
 /*35*/    &_binary_Sound_Pipe_wav_start,&_binary_Sound_Pipe_wav_end,                    // Man läuft in Röhre
-/*36*/    NULL,NULL,                                                                    // Endekennung
+/*36*/    &_binary_Sound_ShieldEnd_wav_start,&_binary_Sound_ShieldEnd_wav_end,          // Schutzschild geht zu Ende
+/*37*/    NULL,NULL,                                                                    // Endekennung
 };
 
 Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];

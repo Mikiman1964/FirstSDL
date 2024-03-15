@@ -80,7 +80,7 @@ void ControlPerl(uint32_t I) {
                     PreparePlaySound(SOUND_SQUEAK,I);
                 }
             } else {
-                if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected)) {
+                if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     SDL_Log("Perl kills man");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_PERL_BREAK;
                     Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;

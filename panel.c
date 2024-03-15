@@ -86,16 +86,18 @@ int ShowPanel(SDL_Renderer *pRenderer) {
     if (nErrorCode == 0) {
         nErrorCode = -1;
         if (WritePanelText(pRenderer,"TIME:",8, Config.uResY - FONT_H + 8, 16, false) == 0) {
-            sprintf(szNumber,"%d",uRemainingSeconds);
+            sprintf(szNumber,"%u",uRemainingSeconds);
             if (WritePanelText(pRenderer,szNumber,8 + 80, Config.uResY - FONT_H + 8 , 16, true) == 0) {
                 if (WritePanelText(pRenderer,"SCORE:",8 + 176, Config.uResY - FONT_H + 8, 16, false) == 0) {
-                    sprintf(szNumber,"%d",Playfield.uTotalScore);
+                    sprintf(szNumber,"%u",Playfield.uTotalScore);
                     if (WritePanelText(pRenderer,szNumber,8 + 272, Config.uResY - FONT_H + 8 , 16, true) == 0) {
                         if (WritePanelText(pRenderer,"EMERALDS:",8 + 368, Config.uResY - FONT_H + 8, 16, false) == 0) {
-                            sprintf(szNumber,"%d",Playfield.uEmeraldsToCollect);
+                            sprintf(szNumber,"%u",Playfield.uEmeraldsToCollect);
                             if (WritePanelText(pRenderer,szNumber,8 + 512, Config.uResY - FONT_H + 8 , 16, true) == 0) {
                                 if (WritePanelDynamitHammerKeys(pRenderer) == 0) {
-                                    nErrorCode = 0;
+                                    if (WriteShieldValue(pRenderer) == 0) {
+                                        nErrorCode = 0;
+                                    }
                                 }
                             }
                         }
@@ -103,6 +105,46 @@ int ShowPanel(SDL_Renderer *pRenderer) {
                 }
             }
         }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           WriteShieldValue
+------------------------------------------------------------------------------
+Beschreibung: Zeichnet für die Schildmünze den verbleibenden Schutz.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Ausgang: -
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: Playfield.x, Config.x
+------------------------------------------------------------------------------*/
+int WriteShieldValue(SDL_Renderer *pRenderer) {
+    SDL_Rect DestR;             // Zum Kopieren in den Renderer
+    int nErrorCode;
+    char szShieldString[16];    // ":xxxx", 6 Bytes inkl. \0
+    uint32_t uShieldValue;      // verbleibender Schutz
+
+    nErrorCode = -1;
+    uShieldValue = Playfield.uShieldCoinTimeLeft;
+    // Anzeige muss 4-stellig bleiben
+    if (uShieldValue > 9999) {
+        uShieldValue = 9999;
+    }
+    DestR.x = 1044;
+    DestR.y = Config.uResY - FONT_H + 8;
+    DestR.w = FONT_H / 2;
+    DestR.h = FONT_H / 2;
+    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(1047),NULL,&DestR) == 0) {
+        sprintf(szShieldString,":%u",uShieldValue);
+        if (WritePanelText(pRenderer,szShieldString,1060, Config.uResY - FONT_H + 8 , 16, true) == 0) {
+            nErrorCode = 0;
+        } else {
+            SDL_Log("%s: WritePanelText(ShieldCoin) failed",__FUNCTION__);
+        }
+    } else {
+      SDL_Log("%s: SDL_RenderCopy(ShieldCoin) failed: %s",__FUNCTION__,SDL_GetError());
     }
     return nErrorCode;
 }
@@ -146,11 +188,11 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
     DestR.w = FONT_H / 2;
     DestR.h = FONT_H / 2;
     if (SDL_RenderCopy(pRenderer,GetTextureByIndex(286),NULL,&DestR) == 0) {
-        sprintf(szDynamitString,":%d",uDynamiteCount);
+        sprintf(szDynamitString,":%u",uDynamiteCount);
         if (WritePanelText(pRenderer,szDynamitString,630, Config.uResY - FONT_H + 8 , 16, true) == 0) {
-            sprintf(szDynamitString,":%d",uHammerCount);
+            sprintf(szDynamitString,":%u",uHammerCount);
             if (WritePanelText(pRenderer,szDynamitString,952, Config.uResY - FONT_H + 8 , 16, true) == 0) {
-                sprintf(szDynamitString,":%d",uWhiteKeyCount);
+                sprintf(szDynamitString,":%u",uWhiteKeyCount);
                 if (WritePanelText(pRenderer,szDynamitString,840, Config.uResY - FONT_H + 8 , 16, true) == 0) {
                     DestR.x = 932;
                     DestR.y = Config.uResY - FONT_H + 8;
