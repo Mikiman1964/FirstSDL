@@ -78,13 +78,18 @@ void ControlStone(uint32_t I) {
                     break;
                 case (EMERALD_SAPPHIRE):
                     SDL_Log("Stone hit sapphire");
-                    // ursprüngliche Stone-Position mit Space besetzen
-                    Playfield.pLevel[I] = EMERALD_SPACE;
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
-                    // Stone auf neue Position setzen
-                    Playfield.pLevel[uHitCoordinate] = EMERALD_STONE;
-                    Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_DOWN | EMERALD_ANIM_SAPPHIRE_SQUEAK;
-                    PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
+                    if (Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_SAPPHIRE_SHRINK) { // Könnte auch gerade von Man aufgenommen worden sein
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                        PreparePlaySound(SOUND_STONE_FALL,I);
+                    } else {
+                        // ursprüngliche Stone-Position mit Space besetzen
+                        Playfield.pLevel[I] = EMERALD_SPACE;
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                        // Stone auf neue Position setzen
+                        Playfield.pLevel[uHitCoordinate] = EMERALD_STONE;
+                        Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_DOWN | EMERALD_ANIM_SAPPHIRE_SQUEAK;
+                        PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
+                    }
                     return;     // Stone wurde bereits vollständig gesteuert, daher hier beenden
                     break;
                 case (EMERALD_SWAMP):
@@ -153,8 +158,13 @@ void ControlStone(uint32_t I) {
                     break;
                 case (EMERALD_PERL):
                     SDL_Log("Stone hit perl");
-                    Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_PERL_BREAK;
-                    PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
+                    if (Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_PERL_SHRINK) { // Könnte auch gerade von Man aufgenommen worden sein
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                        PreparePlaySound(SOUND_STONE_FALL,I);
+                    } else {
+                        Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_PERL_BREAK;
+                        PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
+                    }
                     return; // Nichts mehr machen, damit Stein nicht von gebrochener Perle runter rollt
                     break;
                 case (EMERALD_YAM):

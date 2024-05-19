@@ -27,23 +27,23 @@ void ControlYam(uint32_t I) {
     // Zunächst prüfen, ob es um den YAM einen Saphir gibt, den er fressen kann. Es werden keine "blitzenden" Saphire gefressen.
     if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND)) {
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_SAPPHIRE_SHRINK;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED; // YAM ist beim Fressen blockiert.
-        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN; // YAM ist beim Fressen blockiert.
+        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_DOWN;
         PreparePlaySound(SOUND_YAM,I);
     } else if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND)) {
         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_SAPPHIRE_SHRINK;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED; // YAM ist beim Fressen blockiert.
-        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN; // YAM ist beim Fressen blockiert.
+        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_UP;
         PreparePlaySound(SOUND_YAM,I);
     } else if ((Playfield.pLevel[I + 1] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I + 1] == EMERALD_ANIM_STAND)) {
         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_SAPPHIRE_SHRINK;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED; // YAM ist beim Fressen blockiert.
-        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN; // YAM ist beim Fressen blockiert.
+        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_RIGHT;
         PreparePlaySound(SOUND_YAM,I);
     } else if ((Playfield.pLevel[I - 1] == EMERALD_SAPPHIRE) && (Playfield.pStatusAnimation[I - 1] == EMERALD_ANIM_STAND)) {
         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_SAPPHIRE_SHRINK;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED; // YAM ist beim Fressen blockiert.
-        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN; // YAM ist beim Fressen blockiert.
+        Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_LEFT;
         PreparePlaySound(SOUND_YAM,I);
     } else {
         // YAM frisst nicht
@@ -109,6 +109,10 @@ void CheckYamGoLeft(uint32_t I) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
             Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
             PreparePlaySound(SOUND_YAM,I);
+        } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN) {
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
+            Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_LEFT;
+            PreparePlaySound(SOUND_YAM,I);
         } else {
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - 1] = EMERALD_INVALID;
@@ -163,6 +167,10 @@ void CheckYamGoRight(uint32_t I) {
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
             Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
+            PreparePlaySound(SOUND_YAM,I);
+        } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN) {
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
+            Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_RIGHT;
             PreparePlaySound(SOUND_YAM,I);
         } else {
             // neuen Platz mit ungültigem Element besetzen
@@ -220,6 +228,10 @@ void CheckYamGoUp(uint32_t I) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
             Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
             PreparePlaySound(SOUND_YAM,I);
+        } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN) {
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
+            Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_UP;
+            PreparePlaySound(SOUND_YAM,I);
         } else {
             // neuen Platz mit ungültigem Element besetzen
             Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
@@ -274,6 +286,10 @@ void CheckYamGoDown(uint32_t I) {
         if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
             Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
+            PreparePlaySound(SOUND_YAM,I);
+        } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN) {
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND; // löscht auch Blockadenflag
+            Playfield.pLastYamDirection[I] = EMERALD_LAST_YAM_DIR_DOWN;
             PreparePlaySound(SOUND_YAM,I);
         } else {
             // neuen Platz mit ungültigem Element besetzen

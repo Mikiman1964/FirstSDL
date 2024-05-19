@@ -40,11 +40,6 @@ void ControlNut(uint32_t I) {
     } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_NUT_CRACK1) {
         // bei Knack-Phase 1 nur auf Phase 2 umschalten
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_NUT_CRACK2;
-    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_NUT_CRACK2) {
-        Playfield.pLevel[I] = EMERALD_EMERALD;
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
-        ControlEmerald(I);
-        return;
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         // neuen Platz mit ungültigem Element besetzen
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
