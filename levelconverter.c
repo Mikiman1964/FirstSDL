@@ -1216,7 +1216,7 @@ int LevelConverterFromBitap(char *pszFilename) {
         GetActualTimestamp(szTimestamp);    // Format: YYYYMMDD_HHMMSS
         strcpy(Ed.szLevelTitle,"IMPORT DC3 ");
         strcat(Ed.szLevelTitle,szTimestamp);
-        strcpy(Ed.szLevelAuthor,"LEVELIMPORTER");
+        GetLevelAuthorFromFile(Ed.szLevelAuthor);
         Ed.uTimeToPlay = 100;
         Ed.uEmeraldsToCollect = 50;
         Ed.uTimeScoreFactor = 40;
@@ -1224,6 +1224,54 @@ int LevelConverterFromBitap(char *pszFilename) {
         SAFE_FREE(Ed.pLevel);
     }
     fclose(Readfile);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLevelAuthorFromFile
+------------------------------------------------------------------------------
+Beschreibung: Holt den Levelautor aus einer Datei. Falls diese Datei nicht existiert
+              oder keinen Namen enthält, so wird der Autor mit "LEVELIMPORTER" belegt.
+
+Parameter
+      Eingang/Ausgang: szLevelAuthor, char *, Zeiger auf Speicher mit mindestens
+                EMERALD_AUTHOR_LEN + 1
+Rückgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung möglich
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int GetLevelAuthorFromFile(char *pszLevelAuthor) {
+    int nErrorCode;
+    char szFullfileName[128];
+    char *pszData;
+    uint32_t uFileLen;
+    uint32_t uLen;
+    uint32_t I;
+
+    nErrorCode = -1;
+    pszData = NULL;
+    if (pszLevelAuthor != NULL) {
+        sprintf(szFullfileName,"%s/%s",EMERALD_IMPORTDC3_DIRECTORYNAME,IMPORTDC3_NAME_FILENAME);
+        pszData = (char *)ReadFile(szFullfileName,&uFileLen);
+        if (pszData != NULL) {
+            uLen = strlen(pszData);
+            if ((uLen > 0) && (uLen <= EMERALD_AUTHOR_LEN)) {
+                for (I = 0; I < uLen; I++) {
+                    if ((pszData[I] == 0x0D) || (pszData[I] == 0x0A)) {
+                        pszData[I] = 0x20;
+                    } else {
+                        pszData[I] = toupper(pszData[I]);
+                    }
+                }
+                nErrorCode = 0;
+                strcpy(pszLevelAuthor,pszData);
+            }
+        }
+        if (nErrorCode == -1) {
+            strcpy(pszLevelAuthor,"LEVELIMPORTER");
+        }
+    }
+    SAFE_FREE(pszData);
     return nErrorCode;
 }
 

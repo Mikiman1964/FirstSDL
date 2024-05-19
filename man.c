@@ -163,7 +163,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
         return uRetDirection;
     }
 
-    if ((Playfield.uTimeToPlay > 0) || (Playfield.uShieldCoinTimeLeft > 0)) {
+    if ((Playfield.uTimeToPlay > 0) || (Playfield.bUnlimtedTime) || (Playfield.uShieldCoinTimeLeft > 0)) {
         Playfield.bPushStone = !Playfield.bPushStone;
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         switch (uDirection) {
@@ -1054,7 +1054,9 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_TIME_COIN):
             Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreTimeCoin;
             ManKey.uFireCount = 0;
-            Playfield.uTimeToPlay = Playfield.uTimeToPlay + Playfield.uAdditonalTimeCoinTime;
+            if (!Playfield.bUnlimtedTime) {
+                Playfield.uTimeToPlay = Playfield.uTimeToPlay + Playfield.uAdditonalTimeCoinTime;
+            }
             PreparePlaySound(SOUND_MAN_TAKE,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):

@@ -10,6 +10,7 @@
 
 #define BITMAP_MINSIZE                          4096
 #define EMERALD_IMPORTDC3_DIRECTORYNAME         "importdc3"                     // Import-Directory für Diamond Caves 3-Bitmap-Level
+#define IMPORTDC3_NAME_FILENAME                 "levelauthor.txt"               // Datei enthält Levelautor
 
 #define EMERALD_MAX_IMPORTFILES                 200
 #define EMERALD_MAX_SHOWFILENAME_LEN            120                             // Maximal 120 Zeichen des Filenamens (szShowFilename) anzeigen
@@ -49,6 +50,7 @@ void DumpMem(uint8_t *pcMem, int nLen);
 void PrintBitmapInfos(BITMAP *pBitmap);
 void PrintLevelInfos(ED *pEd);
 int Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf);
+int GetLevelAuthorFromFile(char *pszLevelAuthor);
 int Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf);
 uint16_t GetElementByMD5(char *szMd5);
 

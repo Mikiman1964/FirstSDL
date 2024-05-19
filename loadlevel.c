@@ -1342,6 +1342,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.bReadyToGo = false;
         Playfield.bManProtected = false;
         Playfield.uShieldCoinTimeLeft = 0;
+        Playfield.bUnlimtedTime = (Playfield.uTimeToPlay == 0);
         PrintPlayfieldValues();
     }
     return nErrorCode;

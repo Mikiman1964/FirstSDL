@@ -11,6 +11,7 @@ extern CONFIG Config;
 
 // Externe Pointer und Indexe
 extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;                      // 1. Mod von banana
+extern uint8_t _binary_circus_time_2_1993_mod_start;extern uint8_t _binary_circus_time_2_1993_mod_end;  // 2. circus time 2 von voyce/delight
 extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;                        // 3. class cracktro#15 Mod von maktone,1999
 extern uint8_t _binary_gtrash3f_mod_start;extern uint8_t _binary_gtrash3f_mod_end;                      // 4. global trash 3 V2 von Jesper Kyd, 1991
 extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;                        // 5. class11.mod (class11.time flies) von Maktone
@@ -19,7 +20,7 @@ extern uint8_t _binary_2kad02_mod_start;extern uint8_t _binary_2kad02_mod_end;  
 extern uint8_t _binary_brewery_mod_start;extern uint8_t _binary_brewery_mod_end;                        // 8. brewery.mod (the brewery)  von Maktone
 extern uint8_t _binary_class05_1999_mod_start;extern uint8_t _binary_class05_1999_mod_end;              // 9. class05 von Maktone
 extern uint8_t _binary_softworld_mod_start;extern uint8_t _binary_softworld_mod_end;                    // 10. softworld von Maktone
-extern uint8_t _binary_circus_time_2_1993_mod_start;extern uint8_t _binary_circus_time_2_1993_mod_end;  // 11. circus time 2 von voyce/delight
+
 
 
 

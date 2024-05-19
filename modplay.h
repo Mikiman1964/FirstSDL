@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 #define SAMPLERATE 44100
-#define AUDIO_BUFFERSIZE 4096
+#define AUDIO_BUFFERSIZE 4096               // Puffer reciht für (4096 / 44100) * 1000 = ca. 90 ms
 
-#define MAX_MUSICINDEX   11       // Anzahl der verfügbaren Musikstücke
+#define MAX_MUSICINDEX   10                 // Anzahl der verfügbaren Musikstücke
 
 typedef struct {
     SDL_AudioDeviceID audio_device;
