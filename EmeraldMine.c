@@ -4,6 +4,15 @@ TODO
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen
 * Leveleditor
     * Undo für Editor
+    * Texturen für grüne Fonts und Stahl-Fonts sortieren
+    * Sandmine grafisch überarbeiten
+
+* V1.08:    Geknackte Nüsse können nun sofort aufgesammelt werden.
+*           Yams gehen in die Richtung, wo letzter Saphire gefressen wurde
+            Genommene Saphire und Perlen werden nicht mehr gequetscht, wenn diese gerade aufgenommen werden -> Stein wird kurz blockiert
+            Mausrad-Unterstützung bei Levelgruppen-/Spieler-/Level-Auswahl
+            viele neue Levelgruppen und Highscores
+            Unbegrenzte Spielzeit bei TimeToPlay == 0000
 */
 
 
@@ -1504,6 +1513,7 @@ Name:           ControlPreElements
 Beschreibung: Erzeugt ggf. Spaces für Elemente, die sich auflösen.
               Molen-Sand wird in normalen Sand gewandelt.
               Schaltet Schalttüren ggf. um.
+              Geknackte Nüsse in Emerald wandeln
 Parameter
       Eingang: -
       Ausgang: -
@@ -1536,6 +1546,9 @@ void ControlPreElements(void) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         } else if ((Playfield.pLevel[I] == EMERALD_EXPLOSION_TO_ELEMENT_1) || (Playfield.pLevel[I] == EMERALD_EXPLOSION_TO_ELEMENT_2)) {
             ControlExplosionToElement(I);
+        } else if ((Playfield.pLevel[I] == EMERALD_NUT) && ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_NUT_CRACK2)) {
+            Playfield.pLevel[I] = EMERALD_EMERALD;
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         }
     }
 }

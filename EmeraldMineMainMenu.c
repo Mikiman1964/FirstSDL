@@ -163,18 +163,29 @@ Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
 int GetPlayerListButton(void) {
     int nButton;
+    bool bMouseInNamesArea;
 
+    bMouseInNamesArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 1088) && (InputStates.nMouseYpos_Relative >= 448) && (InputStates.nMouseYpos_Relative < 576));
     nButton = 0;
-    if ((InputStates.bLeftMouseButton) && (Names.uNameCount > MAX_NAMES_IN_LIST)) {
-        if  ((InputStates.nMouseXpos_Relative >= 1088) && (InputStates.nMouseXpos_Relative < (1088 + FONT_W))) {
-            // Button Levelgruppen Pfeil hoch
-            if ( (InputStates.nMouseYpos_Relative >= 448) && (InputStates.nMouseYpos_Relative < (448 + FONT_H))) {
-                nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
-            } else if ( (InputStates.nMouseYpos_Relative >= 544) && (InputStates.nMouseYpos_Relative < (544 + FONT_H))) {
-            // Button Levelgruppen Pfeil runter
+    if (Names.uNameCount > MAX_NAMES_IN_LIST) {
+        if (InputStates.bLeftMouseButton) {
+            if  ((InputStates.nMouseXpos_Relative >= 1088) && (InputStates.nMouseXpos_Relative < (1088 + FONT_W))) {
+                // Button Levelgruppen Pfeil hoch
+                if ( (InputStates.nMouseYpos_Relative >= 448) && (InputStates.nMouseYpos_Relative < (448 + FONT_H))) {
+                    nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
+                } else if ( (InputStates.nMouseYpos_Relative >= 544) && (InputStates.nMouseYpos_Relative < (544 + FONT_H))) {
+                // Button Levelgruppen Pfeil runter
+                    nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
+                }
+            }
+        } else if (bMouseInNamesArea) {
+            if (InputStates.nMouseWheelY < 0) {
                 nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
+            } else if (InputStates.nMouseWheelY > 0) {
+                nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
             }
         }
+
     }
     return nButton;
 }
@@ -192,7 +203,9 @@ Seiteneffekte: InputStates.x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 int GetLevelgroupListButton(void) {
     int nButton;
+    bool bMouseInLevelgroup;
 
+    bMouseInLevelgroup = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 896) && (InputStates.nMouseYpos_Relative >= 608) && (InputStates.nMouseYpos_Relative < 736));
     nButton = 0;
     if (g_LevelgroupFilesCount > MAX_LEVELGROUPS_IN_LIST) {
         if (InputStates.bLeftMouseButton) {
@@ -202,6 +215,12 @@ int GetLevelgroupListButton(void) {
                 } else if ( (InputStates.nMouseYpos_Relative >= 704) && (InputStates.nMouseYpos_Relative < (704 + FONT_H))) { // Button Levelgruppen Pfeil runter?
                     nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
                 }
+            }
+        } else if (bMouseInLevelgroup) {
+            if (InputStates.nMouseWheelY < 0) {
+                nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
+            } else if (InputStates.nMouseWheelY > 0) {
+                nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
             }
         }
     }
@@ -689,10 +708,6 @@ int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
     if (uBeamPosition != 0xFFFFFFFF) {
         nErrorCode = DrawBeam(pRenderer,FONT_W,608 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 2 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_RELATIVE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
-
-
-
-
             if (SelectAlternativeLevelgroup(LevelgroupFiles[MainMenu.uLevelgroupList[uBeamPosition]].uMd5Hash,true) == 0) {
             //if (SelectAlternativeLevelgroup(LevelgroupFiles[uBeamPosition].uMd5Hash,true) == 0) {
                 SDL_Log("Select %s, OK",SelectedLevelgroup.szLevelgroupname);

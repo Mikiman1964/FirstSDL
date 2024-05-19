@@ -13,7 +13,7 @@
 
 #define PANEL_H                                 32      // Spiel-Anzeige (Time, Score usw.)
 
-#define EMERALD_VERSION                         "01.07" // Version
+#define EMERALD_VERSION                         "01.08" // Version
 
 #define EMERALD_VERSION_LEN                     5       // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                       32      // Maximale Titellänge
@@ -700,6 +700,8 @@
 #define EMERALD_ANIM_SHIELD_COIN_SHRINK         0x47000000      // Schildmünze wird kleiner
 #define EMERALD_ANIM_YELLOW_DROP_1              0x48000000      // gelber Tropfen, Phase 1
 #define EMERALD_ANIM_YELLOW_DROP_2              0x49000000      // gelber Tropfen, Phase 2
+#define EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN      0x4A000000      // Yam war in der letzten Control-Phase blockiert, da er gefressen hat
+
 
 #define EMERALD_STANDARD_SPEED                  false
 #define EMERALD_DOUBLE_SPEED                    true
@@ -750,6 +752,7 @@ typedef struct {
     int             nCheckReplicatorForYamExplosionButtom[5];   // Für Yam-Explosion mit Replikator (untere Hälfte)
     int             nCheckAcidPoolForYamExplosionTop[6];        // Für Yam-Explosion mit Säurebecken (obere Hälfte)
     int             nCheckAcidPoolForYamExplosionButtom[6];     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
+    bool            bUnlimtedTime;                              // keine Zeitbegrenzung
     bool            bInitOK;
     bool            bReadyToGo;                                 // Man hat genug Diamanten eingesammelt
     bool            bHasRedKey;

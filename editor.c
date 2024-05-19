@@ -1356,9 +1356,7 @@ Rückgabewert:  -
 Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 void CalcEditorViewArea(void) {
-
     uint32_t uX;
-
 
     // Sichtbaren Bereich berechnen
     if (Ed.bHalfSize) {
@@ -2923,8 +2921,8 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         // SDL_Log("LineLen: %d  textlen: %d   LastKey: %u",GetLineLen(Ed.MessageEditor.szMessageEditorMem,Ed.MessageEditor.uCursorPos),Ed.MessageEditor.uMessageLen,g_uLastKey);
         // SDL_Log("CurPos: %03d     strlen: %03d     real_strlen: %03d",Ed.MessageEditor.uCursorPos,Ed.MessageEditor.uMessageLen,strlen(Ed.MessageEditor.szMessageEditorMem));
     } else {
-        sprintf(szText,"X: %d   Y: %d",InputStates.nMouseXpos_Absolute,InputStates.nMouseYpos_Absolute);
-        PrintLittleFont(pRenderer,1100,940,0,szText,K_ABSOLUTE); // Maus-Koordinate anzeigen
+        //sprintf(szText,"X: %d   Y: %d",InputStates.nMouseXpos_Absolute,InputStates.nMouseYpos_Absolute);
+        //PrintLittleFont(pRenderer,1100,940,0,szText,K_ABSOLUTE); // Maus-Koordinate anzeigen
         // Level-Dimension prüfen und ggf. anpassen
         if (Ed.uTmpLevel_X_Dimension > MAX_LEVEL_W) {
             Ed.uTmpLevel_X_Dimension = MAX_LEVEL_W;
@@ -4544,7 +4542,10 @@ int HandlePreEditorButtons(int nSelectedLevel) {
     char szText[64];
     bool bButtons[11];   // Es sind 10 Buttons, Index 0 wird nicht verwendet:   Buttons sichtbar (true) / unsichtbar (false)
     bool bButtonFound;
+    bool bMouseInLevelArea;
 
+    bButtonFound = false;
+    bMouseInLevelArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 512) && (InputStates.nMouseYpos_Relative >= 96) && (InputStates.nMouseYpos_Relative < 736));
     memset(bButtons,false,sizeof(bButtons));
     // Die folgenden Buttons werden unabhängig eines ausgewählten levels angezeigt
     MainMenu.uMenuScreen[4 * MainMenu.uXdim + 18] = EMERALD_STEEL_ADD_LEVELGROUP;
@@ -4596,7 +4597,6 @@ int HandlePreEditorButtons(int nSelectedLevel) {
         SetMenuText(MainMenu.uMenuScreen,"LEVEL TO CLIPBOARD",20,20,EMERALD_FONT_BLUE);
         bButtons[9] = true;
 
-
         if (SelectedLevelgroup.uLevelCount > 1) {
             MainMenu.uMenuScreen[14 * MainMenu.uXdim + 18] = EMERALD_STEEL_MOVE_LEVEL;
             SetMenuText(MainMenu.uMenuScreen,"MOVE LEVEL",20,14,EMERALD_FONT_BLUE);
@@ -4628,12 +4628,19 @@ int HandlePreEditorButtons(int nSelectedLevel) {
         if ((!bButtonFound) && (SelectedLevelgroup.uLevelCount > MAX_LEVELTITLES_IN_LIST)) {
             if ((InputStates.nMouseXpos_Relative >= 512) && (InputStates.nMouseXpos_Relative < (512 + FONT_W))) {
                 if ((InputStates.nMouseYpos_Relative >= 96) && (InputStates.nMouseYpos_Relative < (96 + FONT_H))) {
-                    nButton = 11;
+                    nButton = 11;   // Pfeil hoch
                 } else if ((InputStates.nMouseYpos_Relative >= 160) && (InputStates.nMouseYpos_Relative < (160 + FONT_H))) {
-                    nButton = 12;
+                    nButton = 12;   // Pfeil runter
                 }
             }
         }
+    } else if ((!bButtonFound) && (InputStates.nMouseWheelY != 0) && (bMouseInLevelArea)) {
+        if (InputStates.nMouseWheelY < 0) {
+            nButton = 12;   // Pfeil runter
+        } else {
+            nButton = 11;   // Pfeil hoch
+        }
+
     }
     return nButton;
 }
