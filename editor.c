@@ -2589,7 +2589,7 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
                                         704,320,EMERALD_SPACE,
                                         768,320,EMERALD_SPACE,
                                         };
-
+    nErrorCode = 0;
     // Aktuelle Schatztruhen-Elemente und Warnungen in die Platzhalter eintragen
     for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
         uPositionsAndElements[(30 + I) * 3 + 2] = Ed.uTreasureChestElement[I];
