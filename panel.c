@@ -1,6 +1,9 @@
+#include "gfx/textures.h"
 #include <stdio.h>
 #include "config.h"
+#include "EmeraldMineMainMenu.h"
 #include "EmeraldMine.h"
+#include "GetTextureIndexByElement.h"
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
 #include "man.h"
@@ -69,7 +72,7 @@ int ShowPanel(SDL_Renderer *pRenderer) {
     DestR.y = Config.uResY - FONT_H;
     DestR.w = Config.uResX;
     DestR.h = PANEL_H;
-    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(83),NULL,&DestR) != 0) {
+    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_PANEL_1024),NULL,&DestR) != 0) {
         SDL_Log("%s: SDL_RenderCopy() failed: %s",__FUNCTION__,SDL_GetError());
         return - 1;
     }
@@ -85,19 +88,19 @@ int ShowPanel(SDL_Renderer *pRenderer) {
     }
     if (nErrorCode == 0) {
         nErrorCode = -1;
-        if (WritePanelText(pRenderer,"TIME:",8, Config.uResY - FONT_H + 8, 16, false) == 0) {
+        if (WritePanelText(pRenderer,"TIME:",8, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
             if (Playfield.bUnlimtedTime) {
                 strcpy(szNumber,"----");
             } else {
                 sprintf(szNumber,"%u",uRemainingSeconds);
             }
-            if (WritePanelText(pRenderer,szNumber,8 + 80, Config.uResY - FONT_H + 8 , 16, true) == 0) {
-                if (WritePanelText(pRenderer,"SCORE:",8 + 176, Config.uResY - FONT_H + 8, 16, false) == 0) {
+            if (WritePanelText(pRenderer,szNumber,8 + 80, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
+                if (WritePanelText(pRenderer,"SCORE:",8 + 176, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
                     sprintf(szNumber,"%u",Playfield.uTotalScore);
-                    if (WritePanelText(pRenderer,szNumber,8 + 272, Config.uResY - FONT_H + 8 , 16, true) == 0) {
-                        if (WritePanelText(pRenderer,"EMERALDS:",8 + 368, Config.uResY - FONT_H + 8, 16, false) == 0) {
+                    if (WritePanelText(pRenderer,szNumber,8 + 272, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
+                        if (WritePanelText(pRenderer,"EMERALDS:",8 + 368, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
                             sprintf(szNumber,"%u",Playfield.uEmeraldsToCollect);
-                            if (WritePanelText(pRenderer,szNumber,8 + 512, Config.uResY - FONT_H + 8 , 16, true) == 0) {
+                            if (WritePanelText(pRenderer,szNumber,8 + 512, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
                                 if (WritePanelDynamitHammerKeys(pRenderer) == 0) {
                                     if (WriteShieldValue(pRenderer) == 0) {
                                         nErrorCode = 0;
@@ -140,9 +143,9 @@ int WriteShieldValue(SDL_Renderer *pRenderer) {
     DestR.y = Config.uResY - FONT_H + 8;
     DestR.w = FONT_H / 2;
     DestR.h = FONT_H / 2;
-    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(1047),NULL,&DestR) == 0) {
+    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_COIN_SHIELD_1),NULL,&DestR) == 0) {
         sprintf(szShieldString,":%u",uShieldValue);
-        if (WritePanelText(pRenderer,szShieldString,1192, Config.uResY - FONT_H + 8 , 16, true) == 0) {
+        if (WritePanelText(pRenderer,szShieldString,1192, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
             nErrorCode = 0;
         } else {
             SDL_Log("%s: WritePanelText(ShieldCoin) failed",__FUNCTION__);
@@ -191,23 +194,23 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
     DestR.y = Config.uResY - FONT_H + 8;
     DestR.w = FONT_H / 2;
     DestR.h = FONT_H / 2;
-    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(286),NULL,&DestR) == 0) {
+    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_DYNAMITE_OFF),NULL,&DestR) == 0) {
         sprintf(szDynamitString,":%u",uDynamiteCount);
-        if (WritePanelText(pRenderer,szDynamitString,630, Config.uResY - FONT_H + 8 , 16, true) == 0) {
+        if (WritePanelText(pRenderer,szDynamitString,630, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
             sprintf(szDynamitString,":%u",uHammerCount);
-            if (WritePanelText(pRenderer,szDynamitString,1084, Config.uResY - FONT_H + 8 , 16, true) == 0) {
+            if (WritePanelText(pRenderer,szDynamitString,1084, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
                 sprintf(szDynamitString,":%u",uWhiteKeyCount);
-                if (WritePanelText(pRenderer,szDynamitString,972, Config.uResY - FONT_H + 8 , 16, true) == 0) {
+                if (WritePanelText(pRenderer,szDynamitString,972, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
                     DestR.x = 1064;
                     DestR.y = Config.uResY - FONT_H + 8;
                     DestR.w = FONT_W / 2;
                     DestR.h = FONT_H / 2;
-                    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(318),NULL,&DestR) == 0) { // Hammer
+                    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_HAMMER),NULL,&DestR) == 0) { // Hammer
                         DestR.x = 952;
                         DestR.y = Config.uResY - FONT_H + 8;
                         DestR.w = FONT_W / 2;
                         DestR.h = FONT_H / 2;
-                        if (SDL_RenderCopy(pRenderer,GetTextureByIndex(519),NULL,&DestR) == 0) { // Weißer Schlüssel
+                        if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_WHITE),NULL,&DestR) == 0) { // Weißer Schlüssel
                             nErrorCode = 0;
                         }
                     } else {
@@ -230,7 +233,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(98),NULL,&DestR); // roter Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_RED),NULL,&DestR); // roter Schlüssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(red Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -240,7 +243,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(101),NULL,&DestR); // gelber Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_YELLOW),NULL,&DestR); // gelber Schlüssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(yellow Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -250,7 +253,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(99),NULL,&DestR); // grüner Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GREEN),NULL,&DestR); // grüner Schlüssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(green Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -260,7 +263,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(100),NULL,&DestR); // blauer Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_BLUE),NULL,&DestR); // blauer Schlüssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(blue Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -270,7 +273,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H;
         DestR.w = FONT_W;
         DestR.h = FONT_H;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(520),NULL,&DestR); // General-Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GENERAL),NULL,&DestR); // General-Schlüssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(general Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -290,11 +293,17 @@ Parameter
                nXpos, int, X-Position in Pixeln
                nYpos, int, Y-Position in Pixeln
                nFontSize, int, Skalierung für Font (Standard = 32, für Panel = 16)
+               uFont, uint32_t, möglich ist Folgendes:
+                    EMERALD_FONT_BLUE
+                    EMERALD_FONT_STEEL_BLUE
+                    EMERALD_FONT_GREEN
+                    EMERALD_FONT_STEEL_GREEN
+
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int WritePanelText(SDL_Renderer *pRenderer, const char *szText, int nXpos, int nYpos, int nFontSize, bool bGreenNumbers) {
+int WritePanelText(SDL_Renderer *pRenderer, const char *szText, int nXpos, int nYpos, int nFontSize,uint32_t uFont) {
     int nErrorCode;
     int nI;
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
@@ -310,22 +319,7 @@ int WritePanelText(SDL_Renderer *pRenderer, const char *szText, int nXpos, int n
         DestR.y = nYpos;
         DestR.w = nFontSize;
         DestR.h = nFontSize;
-        // TODO: Texturen für Grüne Fonts und Stahl-Fonts sind ungünstig sortiert
-        if ((szText[nI] >= '0') && (szText[nI] <= '9') && bGreenNumbers) {
-            // nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(84 - 0x30 + szText[nI]),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
-            nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(84 - 0x30 + szText[nI]),NULL,&DestR);
-            if (nErrorCode != 0) {
-                SDL_Log("%s[green font]: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
-                nErrorCode = -1;
-            }
-        } else {
-            // nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(szText[nI] - 32),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
-            nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(szText[nI] - 32),NULL,&DestR);
-            if (nErrorCode != 0) {
-                SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
-                nErrorCode = -1;
-            }
-        }
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(GetTextureIndexByElement(GetFontElementByChar(szText[nI],uFont),0,NULL)),NULL,&DestR);
         nI++;
         nXpos = nXpos + nFontSize;
     }

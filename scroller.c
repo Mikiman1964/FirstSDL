@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include "config.h"
+#include "EmeraldMineMainMenu.h"
+#include "GetTextureIndexByElement.h"
 #include "loadlevel.h"
 #include <math.h>
 #include "mySDL.h"
@@ -55,7 +57,7 @@ int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXSta
             pScroller->pszScrolltext = pszScrolltext;
             for (I = 0; I < pScroller->uScrollerBufferLen; I++) {
                 pScroller->pfAngles[I] = 0;         // Alle Winkel auf 0°
-                pScroller->puBuffer[I] = ConvertASCII(0x20);       // Alle Pufferzeichen auf Space
+                pScroller->puBuffer[I] = 0x20;      // Alle Pufferzeichen auf Space
             }
             pScroller->fXfreq = fXfreq;
             pScroller->fYfreq = fYfreq;
@@ -119,7 +121,6 @@ int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
             pScroller->uScrolltextPointer = 0;
             newchar = pScroller->pszScrolltext[0];
         }
-        newchar = ConvertASCII(newchar);
         pScroller->uScrolltextPointer++;
         // Scroll-Puffer mit entsprechenden Winkeln nach links kopieren und neues Zeichen ganz rechts einfügen
         for (I = 0; I < pScroller->uScrollerBufferLen - 1; I++) {
@@ -146,11 +147,7 @@ int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
             fScaleH = fScaleW;
             fRotation = 0;
         }
-        if (pScroller->puBuffer[I] == 0xFE) {   // Smiley
-            uTextureIndex = 718;
-        } else {
-            uTextureIndex = pScroller->puBuffer[I];
-        }
+        uTextureIndex = GetTextureIndexByElement(GetFontElementByChar(pScroller->puBuffer[I],EMERALD_FONT_BLUE),0,NULL);
         nErrorCode = CopyTexture(pRenderer,
                                  uTextureIndex,        // TextureIndex
                                  pScroller->uXStart + I * FONT_W - pScroller->uScrolledPixel,        // X-pos
@@ -169,40 +166,4 @@ int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
          pScroller->uScrolledPixel = 0;
     }
     return nErrorCode;
-}
-
-
-/*----------------------------------------------------------------------------
-Name:           ConvertASCII
-------------------------------------------------------------------------------
-Beschreibung: Konvertiert für die Auswahl eines Font-Zeichens den gegebenen ASCII-Code
-                in die eigene Texture-Kodierung
-Parameter
-      Eingang: uASCIICode, uint8_t, ASCII-Zeichen, das konvertiert werden soll
-      Ausgang: -
-Rückgabewert:  uint8_t, konvertierter Code
-Seiteneffekte: -
-------------------------------------------------------------------------------*/
-uint8_t ConvertASCII(uint8_t uASCIICode) {
-    uint8_t uConvCode;
-
-    if ((uASCIICode >= 32) && (uASCIICode <= 96)) {
-        uConvCode = uASCIICode - 32;
-    } else if ((uASCIICode >= 97) && (uASCIICode <= 122)) {   // Kleinbuchstaben wandeln
-        uConvCode = uASCIICode - 64;
-    } else if (uASCIICode == 123) {                            // ASCII 123 "{" in Ä wandeln
-        uConvCode = 65;
-    } else if (uASCIICode == 124) {                            // ASCII 124 "|" in Ö wandeln
-        uConvCode = 66;
-    } else if (uASCIICode == 125) {                            // ASCII 125 "}" in Ü wandeln
-        uConvCode = 67;
-
-     } else if (uASCIICode == 254) {                            // ASCII 125 "}" in Ü wandeln
-        uConvCode = 254;
-
-    } else {                                                   // Space, wenn keine Konvertierung möglich
-        uConvCode = 0;
-        SDL_Log("%s unknown character found, ASCII-Value = %d",__FUNCTION__,uASCIICode);
-    }
-    return uConvCode;
 }

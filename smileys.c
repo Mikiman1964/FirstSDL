@@ -1,3 +1,4 @@
+#include "gfx/textures.h"
 #include "config.h"
 #include "loadlevel.h"
 #include "mySDL.h"
@@ -99,7 +100,7 @@ int MoveSmileys(SDL_Renderer *pRenderer) {
             DestR.y = Smileys[I].fYpos;
             DestR.w = 64 * Smileys[I].fSize;
             DestR.h = DestR.w;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(718),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_SMILEY_128),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }

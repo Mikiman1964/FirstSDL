@@ -31,7 +31,6 @@ typedef struct
 
 int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont);
 int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller);
-uint8_t ConvertASCII(uint8_t uASCIICode);
 void FreeScroller(SCROLLER *pScroller);
 
 #endif // SCROLLER_H_INCLUDED

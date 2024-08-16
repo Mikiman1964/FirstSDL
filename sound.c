@@ -8,82 +8,86 @@ GAMESOUND GameSound;
 extern PLAYFIELD Playfield;
 extern CONFIG Config;
 
-extern uint8_t _binary_Sound_Ping_wav_start;extern uint8_t _binary_Sound_Ping_wav_end;
-extern uint8_t _binary_Sound_Mine_wav_start;extern uint8_t _binary_Sound_Mine_wav_end;
-extern uint8_t _binary_Sound_Beetle_wav_start;extern uint8_t _binary_Sound_Beetle_wav_end;
-extern uint8_t _binary_Sound_Wheel_wav_start;extern uint8_t _binary_Sound_Wheel_wav_end;
-extern uint8_t _binary_Sound_Alien_wav_start;extern uint8_t _binary_Sound_Alien_wav_end;
-extern uint8_t _binary_Sound_MagicWall_wav_start;extern uint8_t _binary_Sound_MagicWall_wav_end;
-extern uint8_t _binary_Sound_ManSpace_wav_start;extern uint8_t _binary_Sound_ManSpace_wav_end;
-extern uint8_t _binary_Sound_Door_wav_start;extern uint8_t _binary_Sound_Door_wav_end;
-extern uint8_t _binary_Sound_Nut_wav_start;extern uint8_t _binary_Sound_Nut_wav_end;
-extern uint8_t _binary_Sound_Nut_Knack_wav_start;extern uint8_t _binary_Sound_Nut_Knack_wav_end;
-extern uint8_t _binary_Sound_Replicator_wav_start;extern uint8_t _binary_Sound_Replicator_wav_end;
-extern uint8_t _binary_Sound_ManPush_wav_start;extern uint8_t _binary_Sound_ManPush_wav_end;
-extern uint8_t _binary_Sound_Yam_wav_start;extern uint8_t _binary_Sound_Yam_wav_end;
-extern uint8_t _binary_Sound_Stone_wav_start;extern uint8_t _binary_Sound_Stone_wav_end;
-extern uint8_t _binary_Sound_Explosion_wav_start;extern uint8_t _binary_Sound_Explosion_wav_end;
-extern uint8_t _binary_Sound_DynamiteTick_wav_start;extern uint8_t _binary_Sound_DynamiteTick_wav_end;
-extern uint8_t _binary_Sound_PoolBlub_wav_start;extern uint8_t _binary_Sound_PoolBlub_wav_end;
-extern uint8_t _binary_Sound_ManTake_wav_start;extern uint8_t _binary_Sound_ManTake_wav_end;
-extern uint8_t _binary_Sound_ManDig_wav_start;extern uint8_t _binary_Sound_ManDig_wav_end;
-extern uint8_t _binary_Sound_Enddoor_wav_start;extern uint8_t _binary_Sound_Enddoor_wav_end;
-extern uint8_t _binary_Sound_ManCries_wav_start;extern uint8_t _binary_Sound_ManCries_wav_end;
-extern uint8_t _binary_Sound_Cheese_wav_start;extern uint8_t _binary_Sound_Cheese_wav_end;
-extern uint8_t _binary_Sound_Gong_wav_start;extern uint8_t _binary_Sound_Gong_wav_end;
-extern uint8_t _binary_Sound_Quetschen_wav_start;extern uint8_t _binary_Sound_Quetschen_wav_end;
-extern uint8_t _binary_Sound_Switch_wav_start;extern uint8_t _binary_Sound_Switch_wav_end;
-extern uint8_t _binary_Sound_Mole_wav_start;extern uint8_t _binary_Sound_Mole_wav_end;
-extern uint8_t _binary_Sound_WheelTimeDoor_wav_start;extern uint8_t _binary_Sound_WheelTimeDoor_wav_end;
-extern uint8_t _binary_Sound_DoorCloseOpen_wav_start;extern uint8_t _binary_Sound_DoorCloseOpen_wav_end;
-extern uint8_t _binary_Sound_ReplicatorPlop_wav_start;extern uint8_t _binary_Sound_ReplicatorPlop_wav_end;
-extern uint8_t _binary_Sound_DynamiteStart_wav_start;extern uint8_t _binary_Sound_DynamiteStart_wav_end;
-extern uint8_t _binary_Sound_Conveyorbelt_wav_start;extern uint8_t _binary_Sound_Conveyorbelt_wav_end;
-extern uint8_t _binary_Sound_Teleporter_wav_start;extern uint8_t _binary_Sound_Teleporter_wav_end;
-extern uint8_t _binary_Sound_Steel_Wall_grow_wav_start;extern uint8_t _binary_Sound_Steel_Wall_grow_wav_end;
-extern uint8_t _binary_Sound_RemoteBomb_wav_start;extern uint8_t _binary_Sound_RemoteBomb_wav_end;
-extern uint8_t _binary_Sound_Pipe_wav_start;extern uint8_t _binary_Sound_Pipe_wav_end;
-extern uint8_t _binary_Sound_ShieldEnd_wav_start;extern uint8_t _binary_Sound_ShieldEnd_wav_end;
+extern uint8_t _binary_sound_ping_wav_start;extern uint8_t _binary_sound_ping_wav_end;
+extern uint8_t _binary_sound_mine_wav_start;extern uint8_t _binary_sound_mine_wav_end;
+extern uint8_t _binary_sound_beetle_wav_start;extern uint8_t _binary_sound_beetle_wav_end;
+extern uint8_t _binary_sound_wheel_wav_start;extern uint8_t _binary_sound_wheel_wav_end;
+extern uint8_t _binary_sound_alien_wav_start;extern uint8_t _binary_sound_alien_wav_end;
+extern uint8_t _binary_sound_magic_wall_wav_start;extern uint8_t _binary_sound_magic_wall_wav_end;
+extern uint8_t _binary_sound_man_space_wav_start;extern uint8_t _binary_sound_man_space_wav_end;
+extern uint8_t _binary_sound_door_wav_start;extern uint8_t _binary_sound_door_wav_end;
+extern uint8_t _binary_sound_nut_wav_start;extern uint8_t _binary_sound_nut_wav_end;
+extern uint8_t _binary_sound_nut_crack_wav_start;extern uint8_t _binary_sound_nut_crack_wav_end;
+extern uint8_t _binary_sound_replicator_wav_start;extern uint8_t _binary_sound_replicator_wav_end;
+extern uint8_t _binary_sound_man_push_wav_start;extern uint8_t _binary_sound_man_push_wav_end;
+extern uint8_t _binary_sound_yam_wav_start;extern uint8_t _binary_sound_yam_wav_end;
+extern uint8_t _binary_sound_stone_wav_start;extern uint8_t _binary_sound_stone_wav_end;
+extern uint8_t _binary_sound_explosion_wav_start;extern uint8_t _binary_sound_explosion_wav_end;
+extern uint8_t _binary_sound_dynamite_tick_wav_start;extern uint8_t _binary_sound_dynamite_tick_wav_end;
+extern uint8_t _binary_sound_pool_blub_wav_start;extern uint8_t _binary_sound_pool_blub_wav_end;
+extern uint8_t _binary_sound_man_take_wav_start;extern uint8_t _binary_sound_man_take_wav_end;
+extern uint8_t _binary_sound_man_dig_wav_start;extern uint8_t _binary_sound_man_dig_wav_end;
+extern uint8_t _binary_sound_door_exit_wav_start;extern uint8_t _binary_sound_door_exit_wav_end;
+extern uint8_t _binary_sound_man_cry_wav_start;extern uint8_t _binary_sound_man_cry_wav_end;
+extern uint8_t _binary_sound_cheese_wav_start;extern uint8_t _binary_sound_cheese_wav_end;
+extern uint8_t _binary_sound_gong_wav_start;extern uint8_t _binary_sound_gong_wav_end;
+extern uint8_t _binary_sound_squeeze_wav_start;extern uint8_t _binary_sound_squeeze_wav_end;
+extern uint8_t _binary_sound_switch_wav_start;extern uint8_t _binary_sound_switch_wav_end;
+extern uint8_t _binary_sound_mole_wav_start;extern uint8_t _binary_sound_mole_wav_end;
+extern uint8_t _binary_sound_wheel_door_time_wav_start;extern uint8_t _binary_sound_wheel_door_time_wav_end;
+extern uint8_t _binary_sound_door_close_open_wav_start;extern uint8_t _binary_sound_door_close_open_wav_end;
+extern uint8_t _binary_sound_replicator_plop_wav_start;extern uint8_t _binary_sound_replicator_plop_wav_end;
+extern uint8_t _binary_sound_dynamite_start_wav_start;extern uint8_t _binary_sound_dynamite_start_wav_end;
+extern uint8_t _binary_sound_conveyorbelt_wav_start;extern uint8_t _binary_sound_conveyorbelt_wav_end;
+extern uint8_t _binary_sound_teleporter_wav_start;extern uint8_t _binary_sound_teleporter_wav_end;
+extern uint8_t _binary_sound_steel_wall_grow_wav_start;extern uint8_t _binary_sound_steel_wall_grow_wav_end;
+extern uint8_t _binary_sound_bomb_remote_wav_start;extern uint8_t _binary_sound_bomb_remote_wav_end;
+extern uint8_t _binary_sound_pipe_wav_start;extern uint8_t _binary_sound_pipe_wav_end;
+extern uint8_t _binary_sound_shield_end_wav_start;extern uint8_t _binary_sound_shield_end_wav_end;
+extern uint8_t _binary_sound_slime_slurp_wav_start;extern uint8_t _binary_sound_slime_slurp_wav_end;
+extern uint8_t _binary_sound_slime_move_wav_start;extern uint8_t _binary_sound_slime_move_wav_end;
 
 uint8_t* g_pSfxPointer_wav[] = {
 // Bit
-/*01*/    &_binary_Sound_Ping_wav_start,&_binary_Sound_Ping_wav_end,                    // Ping, Emerald oder Saphir fallen auf etwas Hartes
-/*02*/    &_binary_Sound_Mine_wav_start,&_binary_Sound_Mine_wav_end,                    // Mine
-/*03*/    &_binary_Sound_Beetle_wav_start,&_binary_Sound_Beetle_wav_end,                // Käfer
-/*04*/    &_binary_Sound_Wheel_wav_start,&_binary_Sound_Wheel_wav_end,                  // Rad
-/*05*/    &_binary_Sound_Alien_wav_start,&_binary_Sound_Alien_wav_end,                  // Alien
-/*06*/    &_binary_Sound_MagicWall_wav_start,&_binary_Sound_MagicWall_wav_end,          // Magic Wall
-/*07*/    &_binary_Sound_ManSpace_wav_start,&_binary_Sound_ManSpace_wav_end,            // Man geht in Space
-/*08*/    &_binary_Sound_Door_wav_start,&_binary_Sound_Door_wav_end,                    // Man geht durch Tür
-/*09*/    &_binary_Sound_Nut_wav_start,&_binary_Sound_Nut_wav_end,                      // Nuss fällt auf Etwas
-/*10*/    &_binary_Sound_Nut_Knack_wav_start,&_binary_Sound_Nut_Knack_wav_end,          // Nuss wird geknackt
-/*11*/    &_binary_Sound_Replicator_wav_start,&_binary_Sound_Replicator_wav_end,        // Replikator läuft
-/*12*/    &_binary_Sound_ManPush_wav_start,&_binary_Sound_ManPush_wav_end,              // Man schiebt Etwas
-/*13*/    &_binary_Sound_Yam_wav_start,&_binary_Sound_Yam_wav_end,                      // Yam
-/*14*/    &_binary_Sound_Stone_wav_start,&_binary_Sound_Stone_wav_end,                  // Stein fällt auf Etwas
-/*15*/    &_binary_Sound_Explosion_wav_start,&_binary_Sound_Explosion_wav_end,          // Explosion
-/*16*/    &_binary_Sound_DynamiteTick_wav_start,&_binary_Sound_DynamiteTick_wav_end,    // Dynamit aktiv
-/*17*/    &_binary_Sound_PoolBlub_wav_start,&_binary_Sound_PoolBlub_wav_end,            // Etwas ist ins Säurebecken gefallen
-/*18*/    &_binary_Sound_ManTake_wav_start,&_binary_Sound_ManTake_wav_end,              // Man nimmt etwas auf
-/*19*/    &_binary_Sound_ManDig_wav_start,&_binary_Sound_ManDig_wav_end,                // Man gräbt Sand
-/*20*/    &_binary_Sound_Enddoor_wav_start,&_binary_Sound_Enddoor_wav_end,              // Man geht in die Endtür
-/*21*/    &_binary_Sound_ManCries_wav_start,&_binary_Sound_ManCries_wav_end,            // Man schreit
-/*22*/    &_binary_Sound_Cheese_wav_start,&_binary_Sound_Cheese_wav_end,                // Käse breitet sich aus
-/*23*/    &_binary_Sound_Gong_wav_start,&_binary_Sound_Gong_wav_end,                    // Zeit ist bald um
-/*24*/    &_binary_Sound_Quetschen_wav_start,&_binary_Sound_Quetschen_wav_end,          // Saphir gequetscht / Objekt durch blaue Wand
-/*25*/    &_binary_Sound_Switch_wav_start,&_binary_Sound_Switch_wav_end,                // Ein Schalter wird betätigt
-/*26*/    &_binary_Sound_Mole_wav_start,&_binary_Sound_Mole_wav_end,                    // Maulwurf
-/*27*/    &_binary_Sound_WheelTimeDoor_wav_start,&_binary_Sound_WheelTimeDoor_wav_end,  // Rad für Zeit-Tür
-/*28*/    &_binary_Sound_DoorCloseOpen_wav_start,&_binary_Sound_DoorCloseOpen_wav_end,  // Tür schließen / öffnen
-/*29*/    &_binary_Sound_ReplicatorPlop_wav_start,&_binary_Sound_ReplicatorPlop_wav_end,// Replikator erzeugt neues Objekt
-/*30*/    &_binary_Sound_DynamiteStart_wav_start,&_binary_Sound_DynamiteStart_wav_end,  // Dynamit wird gestartet
-/*31*/    &_binary_Sound_Conveyorbelt_wav_start,&_binary_Sound_Conveyorbelt_wav_end,    // Laufband
-/*32*/    &_binary_Sound_Teleporter_wav_start,&_binary_Sound_Teleporter_wav_end,        // Teleporter
-/*33*/    &_binary_Sound_Steel_Wall_grow_wav_start,&_binary_Sound_Steel_Wall_grow_wav_end,          // Mauer und Stahl wächst
-/*34*/    &_binary_Sound_RemoteBomb_wav_start,&_binary_Sound_RemoteBomb_wav_end,        // ferngesteuerte Bombe
-/*35*/    &_binary_Sound_Pipe_wav_start,&_binary_Sound_Pipe_wav_end,                    // Man läuft in Röhre
-/*36*/    &_binary_Sound_ShieldEnd_wav_start,&_binary_Sound_ShieldEnd_wav_end,          // Schutzschild geht zu Ende
-/*37*/    NULL,NULL,                                                                    // Endekennung
+/*01*/    &_binary_sound_ping_wav_start,&_binary_sound_ping_wav_end,                        // Ping, Emerald oder Saphir fallen auf etwas Hartes
+/*02*/    &_binary_sound_mine_wav_start,&_binary_sound_mine_wav_end,                        // Mine
+/*03*/    &_binary_sound_beetle_wav_start,&_binary_sound_beetle_wav_end,                    // Käfer
+/*04*/    &_binary_sound_wheel_wav_start,&_binary_sound_wheel_wav_end,                      // Rad
+/*05*/    &_binary_sound_alien_wav_start,&_binary_sound_alien_wav_end,                      // Alien
+/*06*/    &_binary_sound_magic_wall_wav_start,&_binary_sound_magic_wall_wav_end,            // Magic Wall
+/*07*/    &_binary_sound_man_space_wav_start,&_binary_sound_man_space_wav_end,              // Man geht in Space
+/*08*/    &_binary_sound_door_wav_start,&_binary_sound_door_wav_end,                        // Man geht durch Tür
+/*09*/    &_binary_sound_nut_wav_start,&_binary_sound_nut_wav_end,                          // Nuss fällt auf Etwas
+/*10*/    &_binary_sound_nut_crack_wav_start,&_binary_sound_nut_crack_wav_end,              // Nuss wird geknackt
+/*11*/    &_binary_sound_replicator_wav_start,&_binary_sound_replicator_wav_end,            // Replikator läuft
+/*12*/    &_binary_sound_man_push_wav_start,&_binary_sound_man_push_wav_end,                // Man schiebt Etwas
+/*13*/    &_binary_sound_yam_wav_start,&_binary_sound_yam_wav_end,                          // Yam
+/*14*/    &_binary_sound_stone_wav_start,&_binary_sound_stone_wav_end,                      // Stein fällt auf Etwas
+/*15*/    &_binary_sound_explosion_wav_start,&_binary_sound_explosion_wav_end,              // Explosion
+/*16*/    &_binary_sound_dynamite_tick_wav_start,&_binary_sound_dynamite_tick_wav_end,      // Dynamit aktiv
+/*17*/    &_binary_sound_pool_blub_wav_start,&_binary_sound_pool_blub_wav_end,              // Etwas ist ins Säurebecken gefallen
+/*18*/    &_binary_sound_man_take_wav_start,&_binary_sound_man_take_wav_end,                // Man nimmt etwas auf
+/*19*/    &_binary_sound_man_dig_wav_start,&_binary_sound_man_dig_wav_end,                  // Man gräbt Sand
+/*20*/    &_binary_sound_door_exit_wav_start,&_binary_sound_door_exit_wav_end,              // Man geht in die Endtür
+/*21*/    &_binary_sound_man_cry_wav_start,&_binary_sound_man_cry_wav_end,                  // Man schreit
+/*22*/    &_binary_sound_cheese_wav_start,&_binary_sound_cheese_wav_end,                    // Käse breitet sich aus
+/*23*/    &_binary_sound_gong_wav_start,&_binary_sound_gong_wav_end,                        // Zeit ist bald um
+/*24*/    &_binary_sound_squeeze_wav_start,&_binary_sound_squeeze_wav_end,                  // Saphir gequetscht / Objekt durch blaue Wand
+/*25*/    &_binary_sound_switch_wav_start,&_binary_sound_switch_wav_end,                    // Ein Schalter wird betätigt
+/*26*/    &_binary_sound_mole_wav_start,&_binary_sound_mole_wav_end,                        // Maulwurf
+/*27*/    &_binary_sound_wheel_door_time_wav_start,&_binary_sound_wheel_door_time_wav_end,  // Rad für Zeit-Tür
+/*28*/    &_binary_sound_door_close_open_wav_start,&_binary_sound_door_close_open_wav_end,  // Tür schließen / öffnen
+/*29*/    &_binary_sound_replicator_plop_wav_start,&_binary_sound_replicator_plop_wav_end,  // Replikator erzeugt neues Objekt
+/*30*/    &_binary_sound_dynamite_start_wav_start,&_binary_sound_dynamite_start_wav_end,    // Dynamit wird gestartet
+/*31*/    &_binary_sound_conveyorbelt_wav_start,&_binary_sound_conveyorbelt_wav_end,        // Laufband
+/*32*/    &_binary_sound_teleporter_wav_start,&_binary_sound_teleporter_wav_end,            // Teleporter
+/*33*/    &_binary_sound_steel_wall_grow_wav_start,&_binary_sound_steel_wall_grow_wav_end,  // Mauer und Stahl wächst
+/*34*/    &_binary_sound_bomb_remote_wav_start,&_binary_sound_bomb_remote_wav_end,          // ferngesteuerte Bombe
+/*35*/    &_binary_sound_pipe_wav_start,&_binary_sound_pipe_wav_end,                        // Man läuft in Röhre
+/*36*/    &_binary_sound_shield_end_wav_start,&_binary_sound_shield_end_wav_end,            // Schutzschild geht zu Ende
+/*37*/    &_binary_sound_slime_slurp_wav_start,&_binary_sound_slime_slurp_wav_end,          // Schleim frisst etwas
+/*38*/    &_binary_sound_slime_move_wav_start,&_binary_sound_slime_move_wav_end,            // Schleim bewegt sich
+/*39*/    NULL,NULL,                                                                        // Endekennung
 };
 
 Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];

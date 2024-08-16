@@ -2,6 +2,7 @@
 #include "explosion.h"
 #include "magicwall.h"
 #include "man.h"
+#include "slime.h"
 #include "sound.h"
 #include "stone.h"
 
@@ -44,19 +45,11 @@ void ControlStone(uint32_t I) {
           ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SAPPHIRE_SQUEAK) ) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     }
-    if (    ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) ||
-            ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
+    if ( ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) || ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2) ) {
         // Stein kann vom Replikator geboren werden, dann hier nichts machen
         return;
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
-        // neuen Platz mit ungültigem Element besetzen
-        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-        Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_STONE;
-        Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN;
-        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP;
-        // Aktuelles Element auf Animation "unten"
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+        SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_STONE);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Stein ins Säurebecken?
         SDL_Log("Stone falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
@@ -70,6 +63,33 @@ void ControlStone(uint32_t I) {
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {  // Stein noch in Bewegung
             Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
             switch (uHitElement) {
+                case (EMERALD_SLIME):
+                    SDL_Log("Stone hit slime -> direkt");
+                    // Es kann sein, dass der getroffene Schleim bereits ein invalides Feld besetzt hat. Falls ja, dieses in Space wandeln
+                    if ((Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_SLIME_GO_LEFT_1) && (Playfield.pLevel[uHitCoordinate - 1] == EMERALD_INVALID)) {
+                        Playfield.pLevel[uHitCoordinate - 1] = EMERALD_SPACE;
+                        Playfield.pStatusAnimation[uHitCoordinate - 1] = EMERALD_ANIM_STAND;
+                    } else if ((Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_SLIME_GO_RIGHT_1) && (Playfield.pLevel[uHitCoordinate + 1] == EMERALD_INVALID)) {
+                        Playfield.pLevel[uHitCoordinate + 1] = EMERALD_SPACE;
+                        Playfield.pStatusAnimation[uHitCoordinate + 1] = EMERALD_ANIM_STAND;
+                    } else if ((Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_SLIME_GO_DOWN_1) && (Playfield.pLevel[uHitCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID)) {
+                        Playfield.pLevel[uHitCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                        Playfield.pStatusAnimation[uHitCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+                    } else if ((Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_SLIME_GO_UP_1) && (Playfield.pLevel[uHitCoordinate - Playfield.uLevel_X_Dimension] == EMERALD_INVALID)) {
+                        Playfield.pLevel[uHitCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                        Playfield.pStatusAnimation[uHitCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+                    }
+                    ControlSlimeExplosion(uHitCoordinate);
+                    break;
+                case (EMERALD_INVALID):
+                    if (Playfield.pInvalidElement[uHitCoordinate] == EMERALD_SLIME) {
+                        SDL_Log("Stone hit slime -> invalid element");
+                        ControlSlimeExplosion(uHitCoordinate);
+                    } else {
+                        SDL_Log("Stone hit unhandled invalid element: -> 0x%04x",Playfield.pInvalidElement[uHitCoordinate]);
+                        PreparePlaySound(SOUND_STONE_FALL,I);
+                    }
+                    break;
                 case (EMERALD_NUT):
                     SDL_Log("Stone hit nut");
                     PreparePlaySound(SOUND_NUT_CRACK,uHitCoordinate);
@@ -92,11 +112,18 @@ void ControlStone(uint32_t I) {
                     }
                     return;     // Stone wurde bereits vollständig gesteuert, daher hier beenden
                     break;
-                case (EMERALD_SWAMP):
-                    // SDL_Log("Stone hit empty swamp");
+                case (EMERALD_QUICKSAND):
+                    // SDL_Log("Stone hit empty quicksand");
                     // Stein in versumpften Stein wandeln
                     Playfield.pLevel[I] = EMERALD_STONE_SINK;
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SWAMP1;
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_QUICKSAND1;
+                    PreparePlaySound(SOUND_STONE_FALL,I);
+                    break;
+                case (EMERALD_QUICKSAND_SLOW):
+                    // SDL_Log("Stone hit empty slow quicksand");
+                    // Stein in versumpften Stein wandeln
+                    Playfield.pLevel[I] = EMERALD_STONE_SINK_SLOW;
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND1;
                     PreparePlaySound(SOUND_STONE_FALL,I);
                     break;
                 case (EMERALD_MAGIC_WALL):
@@ -106,7 +133,6 @@ void ControlStone(uint32_t I) {
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                         ElementGoesMagicWall(I,EMERALD_EMERALD);
                         PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
-
                     } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                         SDL_Log("Stone start magic wall");
@@ -123,7 +149,7 @@ void ControlStone(uint32_t I) {
                 case (EMERALD_ALIEN):
                     SDL_Log("Stone hit alien");
                     Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreStoningAlien;
-                    ControlCentralExplosion(uHitCoordinate);
+                    ControlCentralExplosion(uHitCoordinate,EMERALD_SPACE);
                     PreparePlaySound(SOUND_EXPLOSION,I);
                     break;
                 case (EMERALD_MINE_UP):
@@ -132,14 +158,14 @@ void ControlStone(uint32_t I) {
                 case (EMERALD_MINE_LEFT):
                     SDL_Log("Stone hit mine");
                     Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreStoningMine;
-                    ControlCentralExplosion(uHitCoordinate);
+                    ControlCentralExplosion(uHitCoordinate,EMERALD_SPACE);
                     PreparePlaySound(SOUND_EXPLOSION,I);
                     break;
-                case (EMERALD_STANDMINE):
+                case (EMERALD_MINE_CONTACT):
                 case (EMERALD_BOMB):
                 case (EMERALD_REMOTEBOMB):
                     SDL_Log("Stone hit 'normal' explosive");
-                    ControlCentralExplosion(uHitCoordinate);
+                    ControlCentralExplosion(uHitCoordinate,EMERALD_SPACE);
                     PreparePlaySound(SOUND_EXPLOSION,I);
                     break;
                 case (EMERALD_MEGABOMB):
@@ -194,131 +220,45 @@ void ControlStone(uint32_t I) {
                     break;
             }
         } else {
-            if (uHitElement == EMERALD_SWAMP) {
-                SDL_Log("Stone lies on empty swamp");
+            if (uHitElement == EMERALD_QUICKSAND) {
+                SDL_Log("Stone lies on empty quicksand");
                 // Stein in versumpften Stein wandeln
                 Playfield.pLevel[I] = EMERALD_STONE_SINK;
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SWAMP1;
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_QUICKSAND1;
+            } else if (uHitElement == EMERALD_QUICKSAND_SLOW) {
+                SDL_Log("Stone lies on empty slow quicksand");
+                // Stein in versumpften Stein wandeln
+                Playfield.pLevel[I] = EMERALD_STONE_SINK_SLOW;
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND1;
             }
         }
         if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_STONE) != 0) {
             uFree = GetFreeRollDirections(I);
             if (uFree == 1) {   // Stone kann links rollen
-                // neuen Platz mit ungültigem Element besetzen
-                Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
-                Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                // Aktuelles Element auf Animation "links"
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_STONE);
             } else if (uFree == 2) {    // Stone kann rechts rollen
-                // neuen Platz mit ungültigem Element besetzen
-                Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
-                Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                // Aktuelles Element auf Animation "rechts"
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_STONE);
             } else if (uFree == 3) {    // Stpne kann in beide Richtungen rollen
                 // Hier entscheiden, ob links oder rechts gerollt wird
                 if ((rand() & 0x01) == 0) {   // links
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                    SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_STONE);
                 } else {                    // rechts
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                    SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_STONE);
                 }
             }
-        } else {    // Ab hier prüfen, ob Stein durch Laufband bewegt werden kann
-            if (uHitElement == EMERALD_CONVEYORBELT_RED) {
-                if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            } else if (uHitElement == EMERALD_CONVEYORBELT_GREEN) {
-                if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            } else if (uHitElement == EMERALD_CONVEYORBELT_BLUE) {
-                if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            } else if (uHitElement == EMERALD_CONVEYORBELT_YELLOW) {
-                if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_STONE;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_STONE;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            }
+        // Ab hier prüfen, ob Stein durch Laufband bewegt werden kann
+        } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT)))) {
+            SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_STONE);
+        } else if ((IS_SPACE(I + 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT)))) {
+            SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_STONE);
+        } else {
+            // SDL_Log("Stone sleeps, Hitelement = %x",uHitElement);
         }
     }
 }
@@ -327,7 +267,7 @@ void ControlStone(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlStoneSink
 ------------------------------------------------------------------------------
-Beschreibung: Steuert einen versinkenden Stein in den Sumpf.
+Beschreibung: Steuert einen versinkenden Stein in den Treibsand.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
@@ -335,12 +275,12 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlStoneSink(uint32_t I) {
-    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SWAMP1) {
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SWAMP2;  // Von Phase 1 in 2
-    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SWAMP2) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_QUICKSAND1) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_QUICKSAND2;  // Von Phase 1 in 2
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_QUICKSAND2) {
         Playfield.pLevel[I] = EMERALD_SPACE;      // Stein ist versackt
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
-        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_SWAMP_STONE;      // Sumpf ist nun mit Stein besetzt
+        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_QUICKSAND_STONE;      // Treibsand ist nun mit Stein besetzt
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
     }
 }
@@ -349,7 +289,7 @@ void ControlStoneSink(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlStoneSag
 ------------------------------------------------------------------------------
-Beschreibung: Steuert einen durchsackenden Stein, der den Sumpf verlässt.
+Beschreibung: Steuert einen durchsackenden Stein, der den Treibsand verlässt.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
@@ -362,9 +302,9 @@ void ControlStoneSag(uint32_t I) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
         return;
     }
-    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SWAMP1) {
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SWAMP2;  // Von Phase 1 in 2
-    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SWAMP2) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_QUICKSAND1) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_QUICKSAND2;  // Von Phase 1 in 2
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_QUICKSAND2) {
         Playfield.pLevel[I] = EMERALD_STONE;      // Stein ist durchgesackt
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN_SELF;
         ControlStone(I);
@@ -373,39 +313,187 @@ void ControlStoneSag(uint32_t I) {
 
 
 /*----------------------------------------------------------------------------
-Name:           ControlSwampStone
+Name:           ControlQuicksandStone
 ------------------------------------------------------------------------------
-Beschreibung: Steuert Sumpf, der einen Stein enthält.
+Beschreibung: Steuert Treibsand, der einen Stein enthält.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-void ControlSwampStone(uint32_t I) {
+void ControlQuicksandStone(uint32_t I) {
     if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {  // Kann Stein in Space durchsacken?
-        // SDL_Log("%s: Stone can leave swamp in Space",__FUNCTION__);
-        Playfield.pLevel[I] = EMERALD_SWAMP;    // Sumpf nun leer
+        // SDL_Log("%s: Stone can leave quicksand in Space",__FUNCTION__);
+        Playfield.pLevel[I] = EMERALD_QUICKSAND;    // Treibsand ist nun leer
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_STONE_SAG;
-        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SWAMP) {  // Kann Stein in anderen Sumpf durchsacken?
+        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_QUICKSAND1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_QUICKSAND) {  // Kann Stein in anderen (normalen) Treibsand durchsacken?
         if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) {
-            // SDL_Log("%s: Stone can leave swamp into another swamp",__FUNCTION__);
-            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP1;
-        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SWAMP1) {
-            // SDL_Log("%s: P1 Stone can leave swamp into another swamp",__FUNCTION__);
-            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP2;
-        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SWAMP2) {
-            // SDL_Log("%s: P2 Stone can leave swamp into another swamp",__FUNCTION__);
-            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SWAMP3;
-        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SWAMP3) {
-            // SDL_Log("%s: P3 Stone can leave swamp into another swamp",__FUNCTION__);
-            // Aktuelles Feld von Sumpf+Stone in Sumpf wandeln
-            Playfield.pLevel[I] = EMERALD_SWAMP;
+            // SDL_Log("%s: Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_QUICKSAND1;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_QUICKSAND1) {
+            // SDL_Log("%s: P1 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_QUICKSAND2;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_QUICKSAND2) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_QUICKSAND3;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_QUICKSAND3) {
+            // SDL_Log("%s: P3 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            // Aktuelles Feld von Treibsand+Stein in Treibsand wandeln
+            Playfield.pLevel[I] = EMERALD_QUICKSAND;
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
-            // Unteres Feld von Sumpf in Sumpf+Stone wandeln
-            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_SWAMP_STONE;
+            // Unteres Feld von Treibsand in Treibsand+Stein wandeln
+            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_QUICKSAND_STONE;
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+        }
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_QUICKSAND_SLOW) {  // Kann Stein in anderen (langsamen) Treibsand durchsacken?
+        if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) {
+            // SDL_Log("%s: Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND1;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND1) {
+            // SDL_Log("%s: P1 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND2;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND2) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND3;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND3) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND4;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND4) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND5;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND5) {
+            // SDL_Log("%s: P3 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            // Aktuelles Feld von Treibsand+Stein in Treibsand wandeln
+            Playfield.pLevel[I] = EMERALD_QUICKSAND;
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            // Unteres Feld von Treibsand in Treibsand+Stein wandeln
+            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_QUICKSAND_STONE_SLOW;
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlStoneSinkSlow
+------------------------------------------------------------------------------
+Beschreibung: Steuert einen versinkenden Stein in den langsamen Treibsand.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlStoneSinkSlow(uint32_t I) {
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND1) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND2;  // Von Phase 1 in 2
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND2) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND3;  // Von Phase 2 in 3
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND3) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND4;  // Von Phase 3 in 4
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND4) {
+        Playfield.pLevel[I] = EMERALD_SPACE;      // Stein ist versackt
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_QUICKSAND_STONE_SLOW;      // Langsamer Treibsand ist nun mit Stein besetzt
+        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlStoneSagSlow
+------------------------------------------------------------------------------
+Beschreibung: Steuert einen durchsackenden Stein, der den langsamen Treibsand verlässt.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlStoneSagSlow(uint32_t I) {
+    // Doppelte Steuerung vermeiden
+    if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
+        Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
+        return;
+    }
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND1) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND2;  // Von Phase 1 in 2
+
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND2) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND3;  // Von Phase 2 in 3
+
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND3) {
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STONE_SLOW_QUICKSAND4;  // Von Phase 3 in 4
+    } else if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_STONE_SLOW_QUICKSAND4) {
+        Playfield.pLevel[I] = EMERALD_STONE;      // Stein ist durchgesackt
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN_SELF;
+        ControlStone(I);
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ControlQuicksandStoneSlow
+------------------------------------------------------------------------------
+Beschreibung: Steuert langsamen Treibsand, der einen Stein enthält.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlQuicksandStoneSlow(uint32_t I) {
+    if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {  // Kann Stein in Space durchsacken?
+        // SDL_Log("%s: Stone can leave quicksand in Space",__FUNCTION__);
+        Playfield.pLevel[I] = EMERALD_QUICKSAND_SLOW;    // Treibsand ist nun leer
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_STONE_SAG_SLOW;
+        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND1 | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_QUICKSAND) {  // Kann Stein in anderen (normalen) Treibsand durchsacken?
+        if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) {
+            // SDL_Log("%s: Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_QUICKSAND1;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_QUICKSAND1) {
+            // SDL_Log("%s: P1 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_QUICKSAND2;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_QUICKSAND2) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_QUICKSAND3;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_QUICKSAND3) {
+            // SDL_Log("%s: P3 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            // Aktuelles Feld von Treibsand+Stein in Treibsand wandeln
+            Playfield.pLevel[I] = EMERALD_QUICKSAND_SLOW;
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            // Unteres Feld von Treibsand in Treibsand+Stein wandeln
+            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_QUICKSAND_STONE;
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
+        }
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_QUICKSAND_SLOW) {  // Kann Stein in anderen (langsamen) Treibsand durchsacken?
+        if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STAND) {
+            // SDL_Log("%s: Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND1;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND1) {
+            // SDL_Log("%s: P1 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND2;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND2) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND3;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND3) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND4;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND4) {
+            // SDL_Log("%s: P2 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STONE_SLOW_QUICKSAND5;
+        } else if (Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_STONE_SLOW_QUICKSAND5) {
+            // SDL_Log("%s: P3 Stone can leave quicksand into another quicksand",__FUNCTION__);
+            // Aktuelles Feld von Treibsand+Stein in Treibsand wandeln
+            Playfield.pLevel[I] = EMERALD_QUICKSAND_SLOW;
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            // Unteres Feld von Treibsand in Treibsand+Stein wandeln
+            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_QUICKSAND_STONE_SLOW;
             Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
         }
     }
