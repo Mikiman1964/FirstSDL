@@ -14,7 +14,6 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -135,6 +134,20 @@
 			<Option compilerVar="CC" />
 			<Option virtualFolder="EmeraldMine/" />
 		</Unit>
+		<Unit filename="drop.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="drop.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="earth.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="earth.h">
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
 		<Unit filename="editor.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="EmeraldMine/" />
@@ -165,13 +178,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="gamecontroller.h" />
-		<Unit filename="greendrop.c">
-			<Option compilerVar="CC" />
-			<Option virtualFolder="EmeraldMine/" />
-		</Unit>
-		<Unit filename="greendrop.h">
-			<Option virtualFolder="EmeraldMine/" />
-		</Unit>
 		<Unit filename="highscores.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="EmeraldMine/" />
@@ -300,18 +306,11 @@
 		<Unit filename="ruby.h">
 			<Option virtualFolder="EmeraldMine/" />
 		</Unit>
-		<Unit filename="sand.c">
+		<Unit filename="sapphire.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="EmeraldMine/" />
 		</Unit>
-		<Unit filename="sand.h">
-			<Option virtualFolder="EmeraldMine/" />
-		</Unit>
-		<Unit filename="saphir.c">
-			<Option compilerVar="CC" />
-			<Option virtualFolder="EmeraldMine/" />
-		</Unit>
-		<Unit filename="saphir.h">
+		<Unit filename="sapphire.h">
 			<Option virtualFolder="EmeraldMine/" />
 		</Unit>
 		<Unit filename="scroller.c">
@@ -338,6 +337,13 @@
 		</Unit>
 		<Unit filename="sdlmixer_mixer.h">
 			<Option virtualFolder="SDL_mixer/" />
+		</Unit>
+		<Unit filename="slime.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="slime.h">
+			<Option virtualFolder="EmeraldMine/" />
 		</Unit>
 		<Unit filename="smileys.c">
 			<Option compilerVar="CC" />
@@ -376,13 +382,6 @@
 			<Option virtualFolder="EmeraldMine/" />
 		</Unit>
 		<Unit filename="yam.h">
-			<Option virtualFolder="EmeraldMine/" />
-		</Unit>
-		<Unit filename="yellowdrop.c">
-			<Option compilerVar="CC" />
-			<Option virtualFolder="EmeraldMine/" />
-		</Unit>
-		<Unit filename="yellowdrop.h">
 			<Option virtualFolder="EmeraldMine/" />
 		</Unit>
 		<Extensions>

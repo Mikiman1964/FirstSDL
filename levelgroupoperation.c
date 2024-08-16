@@ -1,3 +1,4 @@
+#include "gfx/textures.h"
 #include "buttons_checkboxes.h"
 #include "editor.h"
 #include "EmeraldMineMainMenu.h"
@@ -683,7 +684,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
     while ((nErrorCode == 0) && (!bExit)) {
         UpdateInputStates();
         // Eingabe eines Zeichens für den Levelgruppennamen
-        nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
+        nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
         MainMenu.uFlashIndex++;
         if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
             MainMenu.uFlashIndex = 0;
@@ -742,7 +743,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
     }
     WaitNoKey();
     if (nErrorCode == 0) {
-        nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
+        nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
     }
     if ((bChangeLevelgroupname) && (strcmp(szTempName,SelectedLevelgroup.szLevelgroupname) != 0)) {
         nErrorCode = -1;
@@ -827,7 +828,7 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
         while ((nErrorCode == 0) && (!bExit)) {
             UpdateInputStates();
             // Eingabe eines Zeichens für den Levelgruppennamen
-            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
+            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
             MainMenu.uFlashIndex++;
             if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
                 MainMenu.uFlashIndex = 0;
@@ -886,7 +887,7 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
         }
         WaitNoKey();
         if (nErrorCode == 0) {
-            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
+            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
         }
         if (bChangeLevelgroupPassword) {
             // Passwort-Hash bilden
@@ -987,7 +988,7 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
         while ((nErrorCode == 0) && (!bExit)) {
             UpdateInputStates();
             // Eingabe eines Zeichens für den Levelgruppennamen
-            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
+            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
             MainMenu.uFlashIndex++;
             if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
                 MainMenu.uFlashIndex = 0;
@@ -1042,7 +1043,7 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
         }
         WaitNoKey();
         if (nErrorCode == 0) {
-            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
+            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
         }
         if (nErrorCode == 0) {
             if (strlen(szPassword) > 0) {
@@ -1110,7 +1111,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
     nColorDimm = 0;
     uModVolume = 0;
     SetMenuBorderAndClear();
-    SetMenuText(MainMenu.uMenuScreen,"SELECT BITMAP TO IMPORT",-1,0,EMERALD_FONT_STEEL_BLUE);
+    SetMenuText(MainMenu.uMenuScreen,"SELECT BITMAP TO IMPORT",-1,0,EMERALD_FONT_BLUE_STEEL);
     while ((nErrorCode == 0) && (!bExit)) {
         UpdateInputStates();
 
@@ -1120,7 +1121,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
         // Import-Dateien auflisten
         for (I = 0; I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST; I++) {
             if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
-                PrintLittleFont(pRenderer,40,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_RELATIVE);
+                PrintLittleFont(pRenderer,40,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_RELATIVE,1);
             }
         }
         nErrorCode = ImportMenuSelectFile(pRenderer,&uBeamPosition);

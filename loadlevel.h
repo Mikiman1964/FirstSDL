@@ -1,6 +1,8 @@
 #ifndef LOADLEVEL_H_INCLUDED
 #define LOADLEVEL_H_INCLUDED
 
+#include <stdbool.h>
+
 #include "EmeraldMine.h"
 #include "ezxml.h"
 #include "mystd.h"
@@ -96,6 +98,7 @@ int GetLevelTimesFromXml(ezxml_t xml);
 int GetReplicatorLighbarrierSettingsFromXml(ezxml_t xml);
 int GetConveyorBeltSettingsFromXml(ezxml_t xml);
 int GetLetterMessagesFromXml(ezxml_t xml);
+int GetTreasureChestElementsFromXml(ezxml_t xml);
 int GetYamExplosionsFromXml(ezxml_t xml);
 int GetLeveldataFromXml(ezxml_t xml);
 int GetMemoryForPlayfield(void);
@@ -108,6 +111,7 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim);
 int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim);
 void CloseAllDoors(void);
 void SetActiveDynamiteP1(void);
+void SetTreasureChests(void);
 void SetCentralExplosionCoordinates(void);
 void SetCentralMegaExplosionCoordinates(void);
 void InitLevelgroups(void);

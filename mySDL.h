@@ -10,16 +10,16 @@
 #define FONT_W              32
 #define FONT_H              32
 
-// Font 0
-#define FONT_LITTLE_347_W   10
-#define FONT_LITTLE_347_H   14
+// Little Font, schwarz, grün, rot
+#define FONT_LITTLE_W       10
+#define FONT_LITTLE_H       14
 
-// Font 1
-#define FONT_LITTLE_559_W   8
-#define FONT_LITTLE_559_H   14
+// Font Courier, schwarz
+#define FONT_LITTLE_COURIER_W   8
+#define FONT_LITTLE_COURIER_H   14
 
 // Button-Höhe für Font 1
-#define BUTTON_H            (FONT_LITTLE_559_H + 5)
+#define BUTTON_H            (FONT_LITTLE_COURIER_H + 5)
 
 // Für Messageboxen
 #define EMERALD_MAX_LINEFEEDS_IN_MESSAGE        30              // Maximal 30 Zeilenumbrüche in Message
@@ -69,7 +69,7 @@ int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int 
 void FreeTextures(void);
 SDL_Texture *GetTextureByIndex(int nIndex);
 int SetAllTextureColors(uint8_t uIntensityProzent);
-int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText,bool bAbsolute);
+int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText,bool bAbsolute,float fSizeFactor);
 void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, char *pszText);
 int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText);
 int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute);

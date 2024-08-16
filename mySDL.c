@@ -1,3 +1,4 @@
+#include "gfx/textures.h"
 #include <unistd.h>
 #include <SDL2/SDL.h>
 #include "config.h"
@@ -6,6 +7,7 @@
 #include "mySDL.h"
 #include "mystd.h"
 #include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
+#include "RenderLevel.h"
 
 int g_nGfxCount = 0;         // gefundenen Grafiken
 uint8_t g_uIntensityProzent = 100;
@@ -658,17 +660,18 @@ Parameter
                nXpos, int, Start-X-Position der oberen linke Ecke des Textfeldes
                nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes
                uFont, uint32_t, Zeichensatzes
-                        0 = Texture 347 - LittleFont_Green.bmp
-                        1 = Texture 559 - Font_8_15_Courier_transp
-                        2 = Texture 347 - LittleFont_Red.bmp
-                        3 = Texture 70  - LittleFont_Black.bmp
+                        0 = LittleFont_Green.bmp
+                        1 = Font_8_15_Courier_transp
+                        2 = LittleFont_Red.bmp
+                        3 = LittleFont_Black.bmp
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
-               bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
+               bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
+               fSizeFactor, float, Vergrößerung- bzw. Verkleinerungsfaktor
       Ausgang: -
       Rückgabewert: 0 = OK, sonst Fehler
 Seiteneffekte: ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText, bool bAbsolute) {
+int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText, bool bAbsolute, float fSizeFactor) {
     // Der komplette Zeichensatz liegt in Texture 347 vor. Für ein Darstellung eines Zeichens, muss die "richtige" Stelle ausgewählt werden.
     // Der Zeichensatz ist so aufgebaut, dass alle vorhandenen Zeichen in einer Zeile vorliegen.
     int nErrorCode;
@@ -678,7 +681,6 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
     uint8_t cSign;
     int nPrintXpos;
     int nPrintYpos;
-    float fSizeFactor = 1;
     uint32_t uFontW;
     uint32_t uFontH;
     uint32_t uTextureIndex;
@@ -688,21 +690,21 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
         uFont = 1;
     }
     if (uFont == 0) {
-        uFontW = FONT_LITTLE_347_W;
-        uFontH = FONT_LITTLE_347_H;
-        uTextureIndex = 347;
+        uFontW = FONT_LITTLE_W;
+        uFontH = FONT_LITTLE_H;
+        uTextureIndex = TEX_FONT_LITTLE_GREEN;
     } else if (uFont == 1) {
-        uFontW = FONT_LITTLE_559_W;
-        uFontH = FONT_LITTLE_559_H;
-        uTextureIndex = 559;
+        uFontW = FONT_LITTLE_COURIER_W;
+        uFontH = FONT_LITTLE_COURIER_H;
+        uTextureIndex = TEX_FONT_LITTLE_8_14_COURIER_BLACK;
     } else if (uFont == 2) {
-        uFontW = FONT_LITTLE_347_W;
-        uFontH = FONT_LITTLE_347_H;
-        uTextureIndex = 782;
+        uFontW = FONT_LITTLE_W;
+        uFontH = FONT_LITTLE_H;
+        uTextureIndex = TEX_FONT_LITTLE_RED;
     } else {
-        uFontW = FONT_LITTLE_347_W;
-        uFontH = FONT_LITTLE_347_H;
-        uTextureIndex = 70;
+        uFontW = FONT_LITTLE_W;
+        uFontH = FONT_LITTLE_H;
+        uTextureIndex = TEX_FONT_LITTLE_BLACK;
     }
     nPrintXpos = nXpos;
     nPrintYpos = nYpos;
@@ -819,15 +821,15 @@ void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, 
 
 
     *puLines = uWinH;
-    uWinW = ((uXmax * FONT_LITTLE_347_W) / (FONT_W / 2));
-    if ( ((uXmax * FONT_LITTLE_347_W) % (FONT_W / 2)) != 0) {
+    uWinW = ((uXmax * FONT_LITTLE_W) / (FONT_W / 2));
+    if ( ((uXmax * FONT_LITTLE_W) % (FONT_W / 2)) != 0) {
         uWinW++;
     }
     uWinW = uWinW + 3;  // Seitenstücke dazu
-    if ( ((uWinH * FONT_LITTLE_347_H) % (FONT_H / 2)) == 0) {
-        uWinH = ((uWinH * FONT_LITTLE_347_H) / (FONT_H / 2));
+    if ( ((uWinH * FONT_LITTLE_H) % (FONT_H / 2)) == 0) {
+        uWinH = ((uWinH * FONT_LITTLE_H) / (FONT_H / 2));
     } else {
-        uWinH = ((uWinH * FONT_LITTLE_347_H) / (FONT_H / 2)) + 1;
+        uWinH = ((uWinH * FONT_LITTLE_H) / (FONT_H / 2)) + 1;
     }
     *puWinW = uWinW;
     *puWinH = uWinH;
@@ -879,11 +881,11 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
         // Oberste Zeile des Fensters zeichnen
         for (X = 0; X < uWinW && (nErrorCode == 0); X++) {
             if (X == 0) {
-                uTextureIndex = 348;
+                uTextureIndex = TEX_STEEL_STRIPE_LEFT_TOP;
             } else if ((X + 1) >= uWinW) {
-                uTextureIndex = 350;
+                uTextureIndex = TEX_STEEL_STRIPE_RIGHT_TOP;
             } else {
-                uTextureIndex = 349;
+                uTextureIndex = TEX_STEEL_STRIPE_TOP;
             }
             DestR.x = nPrintXpos;
             DestR.y = nPrintYpos;
@@ -903,7 +905,7 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
             DestR.y = nPrintYpos;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(351),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_STRIPE_LEFT),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -911,7 +913,7 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
             DestR.y = nPrintYpos;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(352),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_STRIPE_RIGHT),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -921,11 +923,11 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
         nPrintXpos = nXpos;
         for (X = 0; X < uWinW && (nErrorCode == 0); X++) {
             if (X == 0) {
-                uTextureIndex = 353;
+                uTextureIndex = TEX_STEEL_STRIPE_LEFT_BOTTOM;
             } else if ((X + 1) >= uWinW) {
-                uTextureIndex = 355;
+                uTextureIndex = TEX_STEEL_STRIPE_RIGHT_BOTTOM;
             } else {
-                uTextureIndex = 354;
+                uTextureIndex = TEX_STEEL_STRIPE_BOTTOM;
             }
             DestR.x = nPrintXpos;
             DestR.y = nPrintYpos;
@@ -946,9 +948,9 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
             SDL_SetRenderDrawColor(pRenderer,0x20,0x20,0xF0,0xC0);  // dunkelblaue, halbtransparente Fensterfläche
             nErrorCode = SDL_RenderFillRect(pRenderer,&DestR);
             if (nErrorCode == 0) {
-                nXoffset = ((uWinH * (FONT_H / 2)) - (uLines * FONT_LITTLE_347_H)) / 2;
+                nXoffset = ((uWinH * (FONT_H / 2)) - (uLines * FONT_LITTLE_H)) / 2;
                 //SDL_Log("Lines: %u    WinH: %u    XOffset: %d",uLines,uWinH,nXoffset);
-                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, 0,pszText,K_ABSOLUTE);
+                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, 0,pszText,K_ABSOLUTE,1);
             } else {
                 SDL_Log("%s: SDL_RenderFillRect() failed: %s",__FUNCTION__,SDL_GetError());
             }

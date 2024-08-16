@@ -1,4 +1,5 @@
 #define SDL_MAIN_HANDLED // ansonsten kommt folgende Linker-Fehlermeldung: undefined reference to 'WinMain'
+#include "gfx/textures.h"
 #include <SDL2/SDL.h>
 #include "sdlmixer_SDL_mixer.h"
 #include <math.h>
@@ -19,6 +20,8 @@
 #include "mystd.h"
 #include "levelconverter.h"
 #include "scroller.h"
+
+void TestFunction(uint32_t I);
 
 void PrintSDLVersion(void);
 
@@ -43,8 +46,14 @@ int main(int argc, char *argv[]) {
     int nBallonSize = 0;
     SDL_Rect DestR_Ballon;
 
-    // \x3b = Teller/at \x3d = Paff     \x3e = Pfeil rechts   \xfe = Smiley
-    uint8_t szMessage1[] = {"PROGRAMMED BY#MIK\"IN SEPTEMBER 2022 - MAY 2024. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    // @ = Teller/at
+    // # = Man
+    //  _ = Paff
+    // & = Smiley
+    // | = Ö
+    // { = Ä
+    // } = Ü
+    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - AUGUST 2024. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS15, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
@@ -78,7 +87,6 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     uint8_t uAsteroidsGfx = 0;
     uint8_t uBallonsGfx = 0;
 
-    SDL_SetMainReady();
     PrintSDLVersion();
     ge_uXoffs = 0;
     ge_uYoffs = 0;
@@ -284,11 +292,11 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
             bAsteroidsStarted = true;
         if (bAsteroidsStarted) {
             if (uAsteroidsGfx == 1) {
-                MoveAsteroids(pRenderer,GetTextureByIndex(68));     // Ballons
+                MoveAsteroids(pRenderer,GetTextureByIndex(TEX_BALLONS_MULTICOLOR));     // Ballons
             } else if (uAsteroidsGfx == 2) {
-                MoveAsteroids(pRenderer,GetTextureByIndex(718));    // Smileys
+                MoveAsteroids(pRenderer,GetTextureByIndex(TEX_SMILEY_128));    // Smileys
             } else {    // 0
-                MoveAsteroids(pRenderer,GetTextureByIndex(69));     // Asteroide
+                MoveAsteroids(pRenderer,GetTextureByIndex(TEX_ASTEROID));     // Asteroide
             }
         }
         // Ballons anzeigen
@@ -298,11 +306,11 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         DestR_Ballon.h = nBallonSize; // 360;
 
         if (uBallonsGfx == 1) {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(69),NULL,&DestR_Ballon); // Asteroide
+            SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_ASTEROID),NULL,&DestR_Ballon); // Asteroide
         } else if (uBallonsGfx == 2) {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(718),NULL,&DestR_Ballon); // Smileys
+            SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_SMILEY_128),NULL,&DestR_Ballon); // Smileys
         } else {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(68),NULL,&DestR_Ballon); // Ballons
+            SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_BALLONS_MULTICOLOR),NULL,&DestR_Ballon); // Ballons
         }
 
         if (bScroller3Vor && bScroller3Started) {

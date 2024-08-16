@@ -7,7 +7,6 @@ extern PLAYFIELD Playfield;
 
 // Hinweis: Bei allen Funktion gilt: bLeftFree, bRightFree aus Sicht der Mole.
 
-
 /*----------------------------------------------------------------------------
 Name:           ControlMoleUp
 ------------------------------------------------------------------------------
@@ -24,12 +23,7 @@ void ControlMoleUp(uint32_t I) {
     bool bRightFree;
 
     if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
-        Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-        Playfield.pInvalidElement[I - Playfield.uLevel_X_Dimension] = EMERALD_MOLE_UP;
-        Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_DOWN;
-        // Aktuelles Element auf Animation "hoch"
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+        SetElementToNextPosition(I,EMERALD_ANIM_UP,EMERALD_ANIM_CLEAN_DOWN,EMERALD_MOLE_UP);
     } else if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_GREEN_CHEESE) {  // Gibt es oben grünen Käse ?
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt oben und läuft auf der Stelle
         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_GREEN_CHEESE_GOES;
@@ -92,13 +86,7 @@ void ControlMoleRight(uint32_t I) {
     bool bRightFree;
 
     if (IS_SPACE(I + 1)) {  // Ist nach rechts frei?
-        Playfield.pLevel[I + 1] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-        Playfield.pInvalidElement[I + 1] = EMERALD_MOLE_RIGHT;
-        Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-        Playfield.pLastStatusAnimation[I + 1] = Playfield.pStatusAnimation[I];
-        // Aktuelles Element auf Animation "rechts"
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+        SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MOLE_RIGHT);
     } else if (Playfield.pLevel[I + 1] == EMERALD_GREEN_CHEESE) {  // Gibt es rechts grünen Käse ?
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt rechts und läuft auf der Stelle
         Playfield.pLevel[I + 1] = EMERALD_GREEN_CHEESE_GOES;
@@ -165,13 +153,7 @@ void ControlMoleDown(uint32_t I) {
         return;
     }
     if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {  // Ist nach unten frei?
-        Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-        Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_MOLE_DOWN;
-        Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP;
-        Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = Playfield.pStatusAnimation[I];
-        // Aktuelles Element auf Animation "unten"
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+        SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_MOLE_DOWN);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_GREEN_CHEESE) {  // Gibt es unten grünen Käse ?
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt unten und läuft auf der Stelle
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_GREEN_CHEESE_GOES;
@@ -240,12 +222,7 @@ void ControlMoleLeft(uint32_t I) {
     bool bRightFree;
 
     if (IS_SPACE(I - 1)) {  // Ist nach links frei?
-        Playfield.pLevel[I - 1] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-        Playfield.pInvalidElement[I - 1] = EMERALD_MOLE_LEFT;
-        Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-        // Aktuelles Element auf Animation "links"
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+        SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_MOLE_LEFT);
     } else if (Playfield.pLevel[I - 1] == EMERALD_GREEN_CHEESE) {  // Gibt es links grünen Käse ?
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_STAND;   // Mole bleibt links und läuft auf der Stelle
         Playfield.pLevel[I - 1] = EMERALD_GREEN_CHEESE_GOES;

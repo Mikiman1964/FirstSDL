@@ -7,7 +7,7 @@
 #include "loadlevel.h"
 #include "man.h"
 #include "mySDL.h"
-#include "saphir.h"
+#include "sapphire.h"
 #include "sound.h"
 #include "stone.h"
 #include "teleporter.h"
@@ -351,6 +351,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
     uint32_t uRetAnimation;
     uint32_t uTouchStatus;
     uint32_t uTeleporterCoordinate;
+    uint8_t  uChestIndex;
 
     uRetAnimation = EMERALD_ANIM_STAND;
     uElement = Playfield.pLevel[uTouchPos];
@@ -428,6 +429,56 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 }
             }
             break;
+        /*
+        case (EMERALD_STONE_SINK):
+        case (EMERALD_STONE_SINK_SLOW):
+            // Versinkender Stein (Treibsand) in Phase 1 kann noch geschoben werden
+            // Wurde erstmal wieder auskommentiert, da bereits in Phase 1 bis zu 16 Pixel animiert wurden und dann quasi ein halb versunkener Stein aus dem Treibsand heraus gerollt werden kann.
+            if ( ((uElement == EMERALD_STONE_SINK) && (uTouchStatus == EMERALD_ANIM_STONE_QUICKSAND1)) || ((uElement == EMERALD_STONE_SINK_SLOW) && (uTouchStatus == EMERALD_ANIM_STONE_SLOW_QUICKSAND1)) ) {
+                if (!ManKey.bFire) {
+                    if (uAnimation == EMERALD_ANIM_RIGHT) {
+                        Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_MAN_PUSH_RIGHT;  // Falls Man gegen einen blockierten Gegenstand schiebt (durchdrehende Beine)
+                        if ((IS_SPACE(uTouchPos + 1)) && Playfield.bPushStone && (uTouchStatus != EMERALD_ANIM_DOWN_SELF)) {
+                            Playfield.pLevel[uTouchPos] = EMERALD_STONE;
+                            Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_STAND;
+                            // ursprüngliche Man-Position mit Space besetzen
+                            Playfield.pLevel[uActPos] = EMERALD_SPACE;
+                            Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
+                            // Man auf neue Position setzen
+                            Playfield.pLevel[uActPos + 1] = EMERALD_MAN;
+                            Playfield.pStatusAnimation[uActPos + 1]  = EMERALD_ANIM_RIGHT | EMERALD_ANIM_MAN_PUSH_RIGHT;
+                            // Stein auf neue Position setzen
+                            Playfield.pLevel[uActPos + 2] = EMERALD_STONE;
+                            Playfield.pStatusAnimation[uActPos + 2]  = EMERALD_ANIM_RIGHT | EMERALD_ANIM_MAN_PUSH_RIGHT;
+                            // Neue Man-Kooridiante setzen
+                            Playfield.uManXpos++;
+                            PreparePlaySound(SOUND_MAN_PUSH,uActPos + 1);
+                            uRetAnimation = EMERALD_ANIM_RIGHT;
+                        }
+                    } else if (uAnimation == EMERALD_ANIM_LEFT) {
+                        Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_MAN_PUSH_LEFT; // Falls Man gegen einen blockierten Gegenstand schiebt (durchdrehende Beine)
+                        if ((IS_SPACE(uTouchPos - 1)) && Playfield.bPushStone) {
+                            Playfield.pLevel[uTouchPos] = EMERALD_STONE;
+                            Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_STAND;
+                            // ursprüngliche Man-Position mit Space besetzen
+                            Playfield.pLevel[uActPos] = EMERALD_SPACE;
+                            Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
+                            // Man auf neue Position setzen
+                            Playfield.pLevel[uActPos - 1] = EMERALD_MAN;
+                            Playfield.pStatusAnimation[uActPos - 1]  = EMERALD_ANIM_LEFT | EMERALD_ANIM_MAN_PUSH_LEFT;
+                            // Stein auf neue Position setzen
+                            Playfield.pLevel[uActPos - 2] = EMERALD_STONE;
+                            Playfield.pStatusAnimation[uActPos - 2]  = EMERALD_ANIM_LEFT | EMERALD_ANIM_MAN_PUSH_LEFT;
+                            // Neue Man-Kooridiante setzen
+                            Playfield.uManXpos--;
+                            PreparePlaySound(SOUND_MAN_PUSH,uActPos - 1);
+                            uRetAnimation = EMERALD_ANIM_LEFT;
+                        }
+                    }
+                }
+            }
+            break;
+        */
         case (EMERALD_WHEEL):
             ControlWheels(uTouchPos);
             SetManArm(uActPos,uAnimation);
@@ -1453,100 +1504,100 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                     break;
             }
             break;
-        case (EMERALD_SAND):
-            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Sand-Rand-Status muss gelöscht werden
+        case (EMERALD_EARTH):
+            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Erde-Rand-Status muss gelöscht werden
             ManKey.uFireCount = 0;
-            PreparePlaySound(SOUND_DIG_SAND,uTouchPos);
+            PreparePlaySound(SOUND_DIG_EARTH,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoUp(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoUp(uActPos,EMERALD_ANIM_EARTH_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
                 case (EMERALD_ANIM_DOWN):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoDown(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoDown(uActPos,EMERALD_ANIM_EARTH_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
                 case (EMERALD_ANIM_LEFT):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoLeft(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoLeft(uActPos,EMERALD_ANIM_EARTH_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
                 case (EMERALD_ANIM_RIGHT):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoRight(uActPos,EMERALD_ANIM_SAND_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoRight(uActPos,EMERALD_ANIM_EARTH_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
             }
             break;
-        case (EMERALD_SAND_INVISIBLE):
-            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Sand-Rand-Status muss gelöscht werden
+        case (EMERALD_EARTH_INVISIBLE):
+            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Erde-Rand-Status muss gelöscht werden
             ManKey.uFireCount = 0;
-            PreparePlaySound(SOUND_DIG_SAND,uTouchPos);
+            PreparePlaySound(SOUND_DIG_EARTH,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_INVISIBLE_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoUp(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoUp(uActPos,EMERALD_ANIM_EARTH_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
                 case (EMERALD_ANIM_DOWN):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_INVISIBLE_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoDown(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoDown(uActPos,EMERALD_ANIM_EARTH_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
                 case (EMERALD_ANIM_LEFT):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_INVISIBLE_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoLeft(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoLeft(uActPos,EMERALD_ANIM_EARTH_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
                 case (EMERALD_ANIM_RIGHT):
                     if (ManKey.bFire) {
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_SAND_INVISIBLE_SHRINK;
+                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_EARTH_INVISIBLE_SHRINK;
                         SetManArm(uActPos,uAnimation);
                     } else {
-                        ManGoRight(uActPos,EMERALD_ANIM_SAND_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
+                        ManGoRight(uActPos,EMERALD_ANIM_EARTH_INVISIBLE_SHRINK,EMERALD_STANDARD_SPEED);
                         uRetAnimation = uAnimation;
                     }
                     break;
             }
             break;
-        case (EMERALD_SANDMINE):
+        case (EMERALD_MINE_EARTH):
             if ((uAnimation != EMERALD_ANIM_STAND) && (ManKey.bFire)) { // Man "schnippt" Sandmine weg
                 ManKey.uFireCount = 0;
                 SetManArm(uActPos,uAnimation);
                 Playfield.pLevel[uTouchPos] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                 Playfield.pStatusAnimation[uTouchPos] = EMERALD_SPACE;
             } else {                                                    // Man läuft auf Sandmine und löst Explosion aus
-                ControlCentralExplosion(uTouchPos);
+                ControlCentralExplosion(uTouchPos,EMERALD_SPACE);
             }
             PreparePlaySound(SOUND_EXPLOSION,uTouchPos);
             break;
@@ -1554,7 +1605,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_GRASS_COMES):
             Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Gras-Rand-Status muss gelöscht werden
             ManKey.uFireCount = 0;
-            PreparePlaySound(SOUND_DIG_SAND,uTouchPos);
+            PreparePlaySound(SOUND_DIG_EARTH,uTouchPos);
             switch (uAnimation) {
                 case (EMERALD_ANIM_UP):
                     if (ManKey.bFire) {
@@ -2004,6 +2055,14 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_DOOR_ONLY_DOWN_WALL):
         case (EMERALD_DOOR_ONLY_LEFT_WALL):
         case (EMERALD_DOOR_ONLY_RIGHT_WALL):
+        case (EMERALD_TREASURECHEST_1):
+        case (EMERALD_TREASURECHEST_2):
+        case (EMERALD_TREASURECHEST_3):
+        case (EMERALD_TREASURECHEST_4):
+        case (EMERALD_TREASURECHEST_5):
+        case (EMERALD_TREASURECHEST_6):
+        case (EMERALD_TREASURECHEST_7):
+        case (EMERALD_TREASURECHEST_8):
             if ((uAnimation != EMERALD_ANIM_STAND) && (ManKey.bFire) && (Playfield.uHammerCount > 0)) {
                 Playfield.uHammerCount--;
                 ManKey.uFireCount = 0;
@@ -2098,7 +2157,14 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                         Playfield.pStatusAnimation[uTouchPos] = EMERALD_ALIEN;
                         break;
                     default:
-                        Playfield.pStatusAnimation[uTouchPos] = EMERALD_SPACE;
+                        // Ab hier Schatztruhen aufmachen und unbekannte Situation bearbeiten
+                        if ((uElement >= EMERALD_TREASURECHEST_1) && (uElement < (EMERALD_TREASURECHEST_1 + EMERALD_MAX_TREASURECHESTS))) {
+                            uChestIndex = uElement - EMERALD_TREASURECHEST_1;
+                            Playfield.pStatusAnimation[uTouchPos] = Playfield.uTreasureChestElement[uChestIndex];
+                            Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreTreasureChest;
+                        } else {
+                            Playfield.pStatusAnimation[uTouchPos] = EMERALD_SPACE;
+                        }
                 }
                 PreparePlaySound(SOUND_EXPLOSION,uTouchPos);
             } else {
@@ -2170,7 +2236,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         default:
-            SDL_Log("%s:  unhandled element %u",__FUNCTION__,uElement);
+            SDL_Log("%s:  unhandled element %04X",__FUNCTION__,uElement);
             break;
     }
     if (uRetAnimation != EMERALD_ANIM_STAND) {

@@ -94,28 +94,38 @@ int GetMemoryForPlayfield(void) {
     Playfield.pLevel = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pPipeLevel = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pInvalidElement = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
+    Playfield.pSlimeElement = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
     Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
     Playfield.pLastStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
     Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
-    Playfield.pLastYamDirection = (uint8_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
-    if ((Playfield.pLevel != NULL) && (Playfield.pPipeLevel != NULL) && (Playfield.pStatusAnimation != NULL) && (Playfield.pLastStatusAnimation != NULL) && (Playfield.pPostAnimation != NULL) && (Playfield.pInvalidElement != NULL) && (Playfield.pLastYamDirection != NULL)) {
-        memset(Playfield.pLevel,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-        memset(Playfield.pInvalidElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-        memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-        memset(Playfield.pLastStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-        memset(Playfield.pPostAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
-        memset(Playfield.pLastYamDirection,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
-        nErrorCode = 0;
+    Playfield.pLastYamSlimeDirection = (uint8_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
+    if ((Playfield.pLevel != NULL) &&
+        (Playfield.pPipeLevel != NULL) &&
+        (Playfield.pStatusAnimation != NULL) &&
+        (Playfield.pLastStatusAnimation != NULL) &&
+        (Playfield.pPostAnimation != NULL) &&
+        (Playfield.pInvalidElement != NULL) &&
+        (Playfield.pSlimeElement != NULL) &&
+        (Playfield.pLastYamSlimeDirection != NULL)) {
+            memset(Playfield.pLevel,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
+            memset(Playfield.pInvalidElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
+            memset(Playfield.pSlimeElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));   // EMERALD_NONE
+            memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
+            memset(Playfield.pLastStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
+            memset(Playfield.pPostAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
+            memset(Playfield.pLastYamSlimeDirection,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
+            nErrorCode = 0;
     } else {
         nErrorCode = -1;
         SDL_Log("%s: can not allocate memory for playfield.",__FUNCTION__);
         SAFE_FREE(Playfield.pLevel);
         SAFE_FREE(Playfield.pPipeLevel);
         SAFE_FREE(Playfield.pInvalidElement);
+        SAFE_FREE(Playfield.pSlimeElement);
         SAFE_FREE(Playfield.pStatusAnimation);
         SAFE_FREE(Playfield.pLastStatusAnimation);
         SAFE_FREE(Playfield.pPostAnimation);
-        SAFE_FREE(Playfield.pLastYamDirection);
+        SAFE_FREE(Playfield.pLastYamSlimeDirection);
     }
     return nErrorCode;
 }
@@ -298,9 +308,9 @@ int GetLevelScoresFromXml(ezxml_t xml) {
                                                                         nNum = strtol(pAttr,NULL,10);
                                                                         Playfield.uScoreTimeCoin = (uint32_t)nNum;
                                                                         nErrorCode = 0;
-                                                                        // Der folgende Scores (Schildmünze und Schleim) wurden später eingeführt. Damit alte Levels
-                                                                        // kompatibel bleiben, wird der ShieldCoin-Score ohne Fehlerrückgabe ausgelesen. Ist ein
-                                                                        // Auslesen nicht möglich, wird der Score auf 0 gesetzt.
+                                                                        // Der folgende Scores (Schildmünze, Schleim und Schatztruhe) wurden später eingeführt.
+                                                                        // Damit alte Levels kompatibel bleiben, werden die Scores ohne Fehlerrückgabe ausgelesen.
+                                                                        // Ist ein Auslesen nicht möglich, wird der Score auf 0 gesetzt.
                                                                         node = ezxml_child(scores,"shieldcoin");
                                                                         if (node != NULL) {
                                                                             pAttr = node->txt;
@@ -318,6 +328,15 @@ int GetLevelScoresFromXml(ezxml_t xml) {
                                                                         } else {
                                                                             SDL_Log("%s: 'scores->stoning_slime' not found -> set score to 0",__FUNCTION__);
                                                                             Playfield.uScoreStoningSlime = 0;
+                                                                        }
+                                                                        node = ezxml_child(scores,"treasurechest");
+                                                                        if (node != NULL) {
+                                                                            pAttr = node->txt;
+                                                                            nNum = strtol(pAttr,NULL,10);
+                                                                            Playfield.uScoreTreasureChest = (uint32_t)nNum;
+                                                                        } else {
+                                                                            SDL_Log("%s: 'scores->treasurechest' not found -> set score to 0",__FUNCTION__);
+                                                                            Playfield.uScoreTreasureChest = 0;
                                                                         }
                                                                     } else {
                                                                         SDL_Log("%s: error in xml file, 'scores->timecoin' not found",__FUNCTION__);
@@ -1003,6 +1022,69 @@ int GetLetterMessagesFromXml(ezxml_t xml) {
 
 
 /*----------------------------------------------------------------------------
+Name:           GetTreasureChestElementsFromXml
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt alle Elemente für das Element 'Schatztruhe', EMERALD_TREASURECHEST_1 bis EMERALD_TREASURECHEST_8
+              und trägt diese in die Struktur Playfield.x ein.
+              Können die Elemente nicht ermittelt werden, so werden diese auf EMERALD_SPACE gesetzt.
+Parameter
+      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Ausgang: -
+               -
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+int GetTreasureChestElementsFromXml(ezxml_t xml) {
+    int nErrorCode;
+    int nNum;
+    uint32_t I;
+    ezxml_t treasurechests,treasurechestnr,treasurechestwarn;
+    char *pAttr;
+    char szTc[32];    // 'tc1' bis 'tc8', bzw. 'tc1_warn' bis 'tc8_warn'
+
+    // Default-Werte für Schatztruhen-Elemente setzen
+    for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
+        Playfield.uTreasureChestElement[I] = EMERALD_SPACE;
+        Playfield.bTreasureChestWarn[I] = true; // Warnung vor "Monstern" in Schatztruhen per default an.
+    }
+    nErrorCode = -1;
+    if (xml != NULL) {
+        treasurechests = ezxml_child(xml,"treasurechests");
+        if (treasurechests != NULL) {
+            for (I = 1; (I <= EMERALD_MAX_TREASURECHESTS) && (nErrorCode == -1); I++) {
+                sprintf(szTc,"tc%u",I);
+                treasurechestnr = ezxml_child(treasurechests,szTc);
+                if (treasurechestnr != NULL) {
+                    pAttr = treasurechestnr->txt;
+                    nNum = strtol(pAttr,NULL,10);
+                    Playfield.uTreasureChestElement[I - 1] = (uint32_t)nNum;
+                    sprintf(szTc,"tc%u_warn",I);
+                    treasurechestwarn = ezxml_child(treasurechests,szTc);
+                    if (treasurechestwarn != NULL) {
+                        pAttr = treasurechestwarn->txt;
+                        nNum = strtol(pAttr,NULL,10);
+                        Playfield.bTreasureChestWarn[I - 1] = (nNum == 1);
+                    } else {
+                        SDL_Log("%s: error in xml file, 'treasurechests->%s' not found",__FUNCTION__,szTc);
+                        nErrorCode = -2;
+                    }
+                } else {
+                    SDL_Log("%s: error in xml file, 'treasurechests->%s' not found",__FUNCTION__,szTc);
+                    nErrorCode = -2;
+                }
+            }
+            nErrorCode = 0;
+        } else {
+            SDL_Log("%s: error in xml file, 'treasurechests' not found",__FUNCTION__);
+        }
+    } else {
+        SDL_Log("%s: bad xml handle, null pointer",__FUNCTION__);
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           GetYamExplosionsFromXml
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt YAM-Explosionen und trägt diese in die Struktur Playfield.x ein.
@@ -1240,6 +1322,14 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
                                                                                 SetActiveDynamiteP1();
                                                                                 nErrorCode = SearchTeleporter();
                                                                                 Playfield.bInitOK = (nErrorCode == 0);
+                                                                                // Die Schatztruhen sind später dazu gekommen. Damit alte Levels kompatibel bleiben,
+                                                                                // wird beim Auslesen der Schatztruhen-Elemente kein Fehler zurückgegeben.
+                                                                                // Ist ein Auslesen nicht möglich, wird jedes Schatztruhen-Element auf EMERALD_SPACE
+                                                                                // gesetzt.
+                                                                                if (Playfield.bInitOK) {
+                                                                                    GetTreasureChestElementsFromXml(level);
+                                                                                    SetTreasureChests();
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -2089,6 +2179,40 @@ void SetActiveDynamiteP1(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           SetTreasureChests
+------------------------------------------------------------------------------
+Beschreibung: Setzt das Animationsflag für alle Schatztruhen. Falls die Schatztruhe
+              ein Monster enthält, so wird die Truhe animiert.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void SetTreasureChests(void) {
+    uint32_t I;                 // Index im Level
+    uint16_t uElement;
+    uint16_t uTreasureChestElement;     // Element, das in der Truhe versteckt ist
+    uint8_t  uChestIndex;               // Truhen-Index (0 bis 7)
+
+    for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
+        uElement = Playfield.pLevel[I];
+        // Truhen-Element gefunden?
+        if ( (uElement >= EMERALD_TREASURECHEST_1) && (uElement < (EMERALD_TREASURECHEST_1 + EMERALD_MAX_TREASURECHESTS)) ) {
+            uChestIndex = uElement - EMERALD_TREASURECHEST_1;
+            uTreasureChestElement = Playfield.uTreasureChestElement[uChestIndex];
+            if ((IsElementAlive(uTreasureChestElement)) && (Playfield.bTreasureChestWarn[uChestIndex])) {
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+            } else {
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            }
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           PrintPlayfieldValues
 ------------------------------------------------------------------------------
 Beschreibung: Zeigt die Werte der Struktur Playfield.x an.
@@ -2100,6 +2224,8 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void PrintPlayfieldValues() {
+    uint32_t I;
+
     if (Playfield.bInitOK) {
         printf("Playfield-Values\r\n");
         printf("================\r\n");
@@ -2126,6 +2252,7 @@ void PrintPlayfieldValues() {
         printf("Score stoning slime:         %u\r\n",Playfield.uScoreStoningSlime);
         printf("Score time coin:             %u\r\n",Playfield.uScoreTimeCoin);
         printf("Score shield coin:           %u\r\n",Playfield.uScoreShieldCoin);
+        printf("Score treasure chest:        %u\r\n",Playfield.uScoreTreasureChest);
         printf("Additional time for coin:    %u\r\n",Playfield.uAdditonalTimeCoinTime);
         printf("Shield coin time [fields]:   %u\r\n",Playfield.uShieldCoinTime);
         printf("Emerald to collect:          %u\r\n",Playfield.uEmeraldsToCollect);
@@ -2164,6 +2291,9 @@ void PrintPlayfieldValues() {
         printf("FrameCounter:                %u\r\n",Playfield.uFrameCounter);
         printf("MD5 hash for leveldata:      %s\r\n",Playfield.szMd5String);
         // PrintTeleporters();
+        for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
+            printf("TreasureChest[%d]:            %04X, warn:%d\r\n",I + 1,Playfield.uTreasureChestElement[I],Playfield.bTreasureChestWarn[I]);
+        }
     } else {
         printf("Error in level data, can't show playfield values\r\n");
     }

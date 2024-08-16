@@ -1,8 +1,11 @@
+#include "gfx/textures.h"
 #include <stdint.h>
 #include "GetTextureIndexByElement.h"
 #include "EmeraldMine.h"
 
 extern PLAYFIELD Playfield;
+extern uint8_t ge_ExitDoorSequence[8];
+
 
 /*----------------------------------------------------------------------------
 Name:           GetTextureIndexByElement
@@ -12,1650 +15,1733 @@ Beschreibung: Holt den entsprechenden Texture-Index anhand eines Elements und de
 Parameter
       Eingang: uElement, uint16_t, Element, z.B. EMERALD_MINE_RIGHT
                nAnimationCount, int, Animationsschritt
-      Ausgang: pfAngle, float *, Winkel
+      Ausgang: pfAngle, float *, Winkel, darf NULL sein
 Rückgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
                 SPACE (EMERALD_SPACE) zurückgegeben.
-Seiteneffekte: Playfield.x
+Seiteneffekte: Playfield.x, ge_ExitDoorSequence[]
 ------------------------------------------------------------------------------*/
 uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *pfAngle) {
     uint32_t uTextureIndex;
     uint32_t K;
+    float fAngle;
 
-    *pfAngle = 0;
+    fAngle = 0;
     switch (uElement) {
-        case (EMERALD_FONT_EXCLAMATION):
-            uTextureIndex = 1;
+        case (EMERALD_FONT_BLUE_EXCLAMATION):
+            uTextureIndex = TEX_FONT_BLUE_EXCLAMATION_MARK;
             break;
-        case (EMERALD_FONT_ARROW_RIGHT):
-            uTextureIndex = 4;
+        case (EMERALD_FONT_BLUE_DOUBLE_QUOTE):
+            uTextureIndex = TEX_FONT_BLUE_DOUBLE_QUOTE;
             break;
-        case (EMERALD_FONT_ARROW_UP):
-            uTextureIndex = 5;
+        case (EMERALD_FONT_BLUE_SEMICOLON):
+            uTextureIndex = TEX_FONT_BLUE_SEMICOLON;
             break;
-        case (EMERALD_FONT_ARROW_DOWN):
-            uTextureIndex = 6;
+        case (EMERALD_FONT_BLUE_ARROW_RIGHT):
+            uTextureIndex = TEX_FONT_BLUE_ARROW_RIGHT;
             break;
-        case (EMERALD_FONT_APOSTROPHE):
-            uTextureIndex = 7;
+        case (EMERALD_FONT_BLUE_ARROW_UP):
+            uTextureIndex = TEX_FONT_BLUE_ARROW_UP;
             break;
-        case (EMERALD_FONT_BRACE_OPEN):
-            uTextureIndex = 8;
+        case (EMERALD_FONT_BLUE_ARROW_DOWN):
+            uTextureIndex = TEX_FONT_BLUE_ARROW_DOWN;
             break;
-        case (EMERALD_FONT_BRACE_CLOSE):
-            uTextureIndex = 9;
+        case (EMERALD_FONT_BLUE_APOSTROPHE):
+            uTextureIndex = TEX_FONT_BLUE_APOSTROPHE;
             break;
-        case (EMERALD_FONT_COPYRIGHT):
-            uTextureIndex = 10;
+        case (EMERALD_FONT_BLUE_BRACE_OPEN):
+            uTextureIndex = TEX_FONT_BLUE_BRACKET_OPEN;
             break;
-        case (EMERALD_FONT_PLUS):
-            uTextureIndex = 11;
+        case (EMERALD_FONT_BLUE_BRACE_CLOSE):
+            uTextureIndex = TEX_FONT_BLUE_BRACKET_CLOSE;
             break;
-        case (EMERALD_FONT_COMMA):
-            uTextureIndex = 12;
+        case (EMERALD_FONT_BLUE_COPYRIGHT):
+            uTextureIndex = TEX_FONT_BLUE_COPYRIGHT;
             break;
-        case (EMERALD_FONT_MINUS):
-            uTextureIndex = 13;
+        case (EMERALD_FONT_BLUE_PLUS):
+            uTextureIndex = TEX_FONT_BLUE_PLUS;
             break;
-        case (EMERALD_FONT_POINT):
-            uTextureIndex = 14;
+        case (EMERALD_FONT_BLUE_COMMA):
+            uTextureIndex = TEX_FONT_BLUE_COMMA;
             break;
-        case (EMERALD_FONT_SLASH):
-            uTextureIndex = 15;
+        case (EMERALD_FONT_BLUE_MINUS):
+            uTextureIndex = TEX_FONT_BLUE_MINUS;
             break;
-        case (EMERALD_FONT_0):
-            uTextureIndex = 16;
+        case (EMERALD_FONT_BLUE_DOT):
+            uTextureIndex = TEX_FONT_BLUE_DOT;
             break;
-        case (EMERALD_FONT_1):
-            uTextureIndex = 17;
+        case (EMERALD_FONT_BLUE_SLASH):
+            uTextureIndex = TEX_FONT_BLUE_SLASH;
             break;
-        case (EMERALD_FONT_2):
-            uTextureIndex = 18;
+        case (EMERALD_FONT_BLUE_0):
+            uTextureIndex = TEX_FONT_BLUE_0;
             break;
-        case (EMERALD_FONT_3):
-            uTextureIndex = 19;
+        case (EMERALD_FONT_BLUE_1):
+            uTextureIndex = TEX_FONT_BLUE_1;
             break;
-        case (EMERALD_FONT_4):
-            uTextureIndex = 20;
+        case (EMERALD_FONT_BLUE_2):
+            uTextureIndex = TEX_FONT_BLUE_2;
             break;
-        case (EMERALD_FONT_5):
-            uTextureIndex = 21;
+        case (EMERALD_FONT_BLUE_3):
+            uTextureIndex = TEX_FONT_BLUE_3;
             break;
-        case (EMERALD_FONT_6):
-            uTextureIndex = 22;
+        case (EMERALD_FONT_BLUE_4):
+            uTextureIndex = TEX_FONT_BLUE_4;
             break;
-        case (EMERALD_FONT_7):
-            uTextureIndex = 23;
+        case (EMERALD_FONT_BLUE_5):
+            uTextureIndex = TEX_FONT_BLUE_5;
             break;
-        case (EMERALD_FONT_8):
-            uTextureIndex = 24;
+        case (EMERALD_FONT_BLUE_6):
+            uTextureIndex = TEX_FONT_BLUE_6;
             break;
-        case (EMERALD_FONT_9):
-            uTextureIndex = 25;
+        case (EMERALD_FONT_BLUE_7):
+            uTextureIndex = TEX_FONT_BLUE_7;
             break;
-        case (EMERALD_FONT_DOUBLE_POINT):
-            uTextureIndex = 26;
+        case (EMERALD_FONT_BLUE_8):
+            uTextureIndex = TEX_FONT_BLUE_8;
             break;
-        case (EMERALD_FONT_PLATE):
-            uTextureIndex = 27;
+        case (EMERALD_FONT_BLUE_9):
+            uTextureIndex = TEX_FONT_BLUE_9;
             break;
-        case (EMERALD_FONT_ARROW_LEFT):
-            uTextureIndex = 28;
+        case (EMERALD_FONT_BLUE_DOUBLE_DOT):
+            uTextureIndex = TEX_FONT_BLUE_DOUBLE_DOT;
             break;
-        case (EMERALD_FONT_PAFF):
-            uTextureIndex = 29;
+        case (EMERALD_FONT_BLUE_PLATE):
+            uTextureIndex = TEX_FONT_BLUE_AT;
             break;
-        case (EMERALD_FONT_QUESTION_MARK):
-            uTextureIndex = 31;
+        case (EMERALD_FONT_BLUE_ARROW_LEFT):
+            uTextureIndex = TEX_FONT_BLUE_ARROW_LEFT;
             break;
-        case (EMERALD_FONT_A):
-            uTextureIndex = 33;
+        case (EMERALD_FONT_BLUE_QUESTION_MARK):
+            uTextureIndex = TEX_FONT_BLUE_QUESTION_MARK;
             break;
-        case (EMERALD_FONT_B):
-            uTextureIndex = 34;
+        case (EMERALD_FONT_BLUE_A):
+            uTextureIndex = TEX_FONT_BLUE_A;
             break;
-        case (EMERALD_FONT_C):
-            uTextureIndex = 35;
+        case (EMERALD_FONT_BLUE_B):
+            uTextureIndex = TEX_FONT_BLUE_B;
             break;
-        case (EMERALD_FONT_D):
-            uTextureIndex = 36;
+        case (EMERALD_FONT_BLUE_C):
+            uTextureIndex = TEX_FONT_BLUE_C;
             break;
-        case (EMERALD_FONT_E):
-            uTextureIndex = 37;
+        case (EMERALD_FONT_BLUE_D):
+            uTextureIndex = TEX_FONT_BLUE_D;
             break;
-        case (EMERALD_FONT_F):
-            uTextureIndex = 38;
+        case (EMERALD_FONT_BLUE_E):
+            uTextureIndex = TEX_FONT_BLUE_E;
             break;
-        case (EMERALD_FONT_G):
-            uTextureIndex = 39;
+        case (EMERALD_FONT_BLUE_F):
+            uTextureIndex = TEX_FONT_BLUE_F;
             break;
-        case (EMERALD_FONT_H):
-            uTextureIndex = 40;
+        case (EMERALD_FONT_BLUE_G):
+            uTextureIndex = TEX_FONT_BLUE_G;
             break;
-        case (EMERALD_FONT_I):
-            uTextureIndex = 41;
+        case (EMERALD_FONT_BLUE_H):
+            uTextureIndex = TEX_FONT_BLUE_H;
             break;
-        case (EMERALD_FONT_J):
-            uTextureIndex = 42;
+        case (EMERALD_FONT_BLUE_I):
+            uTextureIndex = TEX_FONT_BLUE_I;
             break;
-        case (EMERALD_FONT_K):
-            uTextureIndex = 43;
+        case (EMERALD_FONT_BLUE_J):
+            uTextureIndex = TEX_FONT_BLUE_J;
             break;
-        case (EMERALD_FONT_L):
-            uTextureIndex = 44;
+        case (EMERALD_FONT_BLUE_K):
+            uTextureIndex = TEX_FONT_BLUE_K;
             break;
-        case (EMERALD_FONT_M):
-            uTextureIndex = 45;
+        case (EMERALD_FONT_BLUE_L):
+            uTextureIndex = TEX_FONT_BLUE_L;
             break;
-        case (EMERALD_FONT_N):
-            uTextureIndex = 46;
+        case (EMERALD_FONT_BLUE_M):
+            uTextureIndex = TEX_FONT_BLUE_M;
             break;
-        case (EMERALD_FONT_O):
-            uTextureIndex = 47;
+        case (EMERALD_FONT_BLUE_N):
+            uTextureIndex = TEX_FONT_BLUE_N;
             break;
-        case (EMERALD_FONT_P):
-            uTextureIndex = 48;
+        case (EMERALD_FONT_BLUE_O):
+            uTextureIndex = TEX_FONT_BLUE_O;
             break;
-        case (EMERALD_FONT_Q):
-            uTextureIndex = 49;
+        case (EMERALD_FONT_BLUE_P):
+            uTextureIndex = TEX_FONT_BLUE_P;
             break;
-        case (EMERALD_FONT_R):
-            uTextureIndex = 50;
+        case (EMERALD_FONT_BLUE_Q):
+            uTextureIndex = TEX_FONT_BLUE_Q;
             break;
-        case (EMERALD_FONT_S):
-            uTextureIndex = 51;
+        case (EMERALD_FONT_BLUE_R):
+            uTextureIndex = TEX_FONT_BLUE_R;
             break;
-        case (EMERALD_FONT_T):
-            uTextureIndex = 52;
+        case (EMERALD_FONT_BLUE_S):
+            uTextureIndex = TEX_FONT_BLUE_S;
             break;
-        case (EMERALD_FONT_U):
-            uTextureIndex = 53;
+        case (EMERALD_FONT_BLUE_T):
+            uTextureIndex = TEX_FONT_BLUE_T;
             break;
-        case (EMERALD_FONT_V):
-            uTextureIndex = 54;
+        case (EMERALD_FONT_BLUE_U):
+            uTextureIndex = TEX_FONT_BLUE_U;
             break;
-        case (EMERALD_FONT_W):
-            uTextureIndex = 55;
+        case (EMERALD_FONT_BLUE_V):
+            uTextureIndex = TEX_FONT_BLUE_V;
             break;
-        case (EMERALD_FONT_X):
-            uTextureIndex = 56;
+        case (EMERALD_FONT_BLUE_W):
+            uTextureIndex = TEX_FONT_BLUE_W;
             break;
-        case (EMERALD_FONT_Y):
-            uTextureIndex = 57;
+        case (EMERALD_FONT_BLUE_X):
+            uTextureIndex = TEX_FONT_BLUE_X;
             break;
-        case (EMERALD_FONT_Z):
-            uTextureIndex = 58;
+        case (EMERALD_FONT_BLUE_Y):
+            uTextureIndex = TEX_FONT_BLUE_Y;
             break;
-        case (EMERALD_FONT_AE):
-            uTextureIndex = 65;
+        case (EMERALD_FONT_BLUE_Z):
+            uTextureIndex = TEX_FONT_BLUE_Z;
             break;
-        case (EMERALD_FONT_OE):
-            uTextureIndex = 66;
+        case (EMERALD_FONT_BLUE_AE):
+            uTextureIndex = TEX_FONT_BLUE_AE;
             break;
-        case (EMERALD_FONT_UE):
-            uTextureIndex = 67;
+        case (EMERALD_FONT_BLUE_OE):
+            uTextureIndex = TEX_FONT_BLUE_OE;
             break;
-
-
-
-
-        case (EMERALD_FONT_STEEL_EXCLAMATION):
-            uTextureIndex = 674;
+        case (EMERALD_FONT_BLUE_UE):
+            uTextureIndex = TEX_FONT_BLUE_UE;
             break;
-        case (EMERALD_FONT_STEEL_ARROW_RIGHT):
-            uTextureIndex = 700;
+        case (EMERALD_FONT_BLUE_STEEL_EXCLAMATION):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_EXCLAMATION_MARK;
             break;
-        case (EMERALD_FONT_STEEL_ARROW_UP):
-            uTextureIndex = 698;
+        case (EMERALD_FONT_BLUE_STEEL_DOUBLE_QUOTE):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_DOUBLE_QUOTE;
             break;
-        case (EMERALD_FONT_STEEL_ARROW_DOWN):
-            uTextureIndex = 701;
+        case (EMERALD_FONT_BLUE_STEEL_SEMICOLON):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_SEMICOLON;
             break;
-        case (EMERALD_FONT_STEEL_APOSTROPHE):
-            uTextureIndex = 673;
+        case (EMERALD_FONT_BLUE_STEEL_ARROW_RIGHT):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_ARROW_RIGHT;
             break;
-        case (EMERALD_FONT_STEEL_BRACE_OPEN):
-            uTextureIndex = 688;
+        case (EMERALD_FONT_BLUE_STEEL_ARROW_UP):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_ARROW_UP;
             break;
-        case (EMERALD_FONT_STEEL_BRACE_CLOSE):
-            uTextureIndex = 689;
+        case (EMERALD_FONT_BLUE_STEEL_ARROW_DOWN):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_ARROW_DOWN;
             break;
-        case (EMERALD_FONT_STEEL_COPYRIGHT):
-            uTextureIndex = 677;
+        case (EMERALD_FONT_BLUE_STEEL_APOSTROPHE):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_APOSTROPHE;
             break;
-        case (EMERALD_FONT_STEEL_PLUS):
-            uTextureIndex = 702;
+        case (EMERALD_FONT_BLUE_STEEL_BRACE_OPEN):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_BRACKET_OPEN;
             break;
-        case (EMERALD_FONT_STEEL_COMMA):
-            uTextureIndex = 690;
+        case (EMERALD_FONT_BLUE_STEEL_BRACE_CLOSE):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_BRACKET_CLOSE;
             break;
-        case (EMERALD_FONT_STEEL_MINUS):
-            uTextureIndex = 693;
+        case (EMERALD_FONT_BLUE_STEEL_COPYRIGHT):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_COPYRIGHT;
             break;
-        case (EMERALD_FONT_STEEL_POINT):
-            uTextureIndex = 703;
+        case (EMERALD_FONT_BLUE_STEEL_PLUS):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_PLUS;
             break;
-        case (EMERALD_FONT_STEEL_SLASH):
-            uTextureIndex = 707;
+        case (EMERALD_FONT_BLUE_STEEL_COMMA):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_COMMA;
             break;
-        case (EMERALD_FONT_STEEL_0):
-            uTextureIndex = 662;
+        case (EMERALD_FONT_BLUE_STEEL_MINUS):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_MINUS;
             break;
-        case (EMERALD_FONT_STEEL_1):
-            uTextureIndex = 663;
+        case (EMERALD_FONT_BLUE_STEEL_DOT):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_DOT;
             break;
-        case (EMERALD_FONT_STEEL_2):
-            uTextureIndex = 664;
+        case (EMERALD_FONT_BLUE_STEEL_SLASH):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_SLASH;
             break;
-        case (EMERALD_FONT_STEEL_3):
-            uTextureIndex = 665;
+        case (EMERALD_FONT_BLUE_STEEL_0):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_0;
             break;
-        case (EMERALD_FONT_STEEL_4):
-            uTextureIndex = 666;
+        case (EMERALD_FONT_BLUE_STEEL_1):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_1;
             break;
-        case (EMERALD_FONT_STEEL_5):
-            uTextureIndex = 667;
+        case (EMERALD_FONT_BLUE_STEEL_2):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_2;
             break;
-        case (EMERALD_FONT_STEEL_6):
-            uTextureIndex = 668;
+        case (EMERALD_FONT_BLUE_STEEL_3):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_3;
             break;
-        case (EMERALD_FONT_STEEL_7):
-            uTextureIndex = 669;
+        case (EMERALD_FONT_BLUE_STEEL_4):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_4;
             break;
-        case (EMERALD_FONT_STEEL_8):
-            uTextureIndex = 670;
+        case (EMERALD_FONT_BLUE_STEEL_5):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_5;
             break;
-        case (EMERALD_FONT_STEEL_9):
-            uTextureIndex = 671;
+        case (EMERALD_FONT_BLUE_STEEL_6):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_6;
             break;
-        case (EMERALD_FONT_STEEL_DOUBLE_POINT):
-            uTextureIndex = 679;
+        case (EMERALD_FONT_BLUE_STEEL_7):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_7;
             break;
-        case (EMERALD_FONT_STEEL_PLATE):
-            uTextureIndex = 709;
+        case (EMERALD_FONT_BLUE_STEEL_8):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_8;
             break;
-        case (EMERALD_FONT_STEEL_ARROW_LEFT):
-            uTextureIndex = 699;
+        case (EMERALD_FONT_BLUE_STEEL_9):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_9;
             break;
-        case (EMERALD_FONT_STEEL_QUESTION_MARK):
-            uTextureIndex = 682;
+        case (EMERALD_FONT_BLUE_STEEL_DOUBLE_DOT):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_DOUBLE_DOT;
             break;
-        case (EMERALD_FONT_STEEL_A):
-            uTextureIndex = 675;
+        case (EMERALD_FONT_BLUE_STEEL_PLATE):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_AT;
             break;
-        case (EMERALD_FONT_STEEL_B):
-            uTextureIndex = 676;
+        case (EMERALD_FONT_BLUE_STEEL_ARROW_LEFT):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_ARROW_LEFT;
             break;
-        case (EMERALD_FONT_STEEL_C):
-            uTextureIndex = 678;
+        case (EMERALD_FONT_BLUE_STEEL_QUESTION_MARK):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_QUESTION_MARK;
             break;
-        case (EMERALD_FONT_STEEL_D):
-            uTextureIndex = 680;
+        case (EMERALD_FONT_BLUE_STEEL_A):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_A;
             break;
-        case (EMERALD_FONT_STEEL_E):
-            uTextureIndex = 681;
+        case (EMERALD_FONT_BLUE_STEEL_B):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_B;
             break;
-        case (EMERALD_FONT_STEEL_F):
-            uTextureIndex = 683;
+        case (EMERALD_FONT_BLUE_STEEL_C):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_C;
             break;
-        case (EMERALD_FONT_STEEL_G):
-            uTextureIndex = 684;
+        case (EMERALD_FONT_BLUE_STEEL_D):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_D;
             break;
-        case (EMERALD_FONT_STEEL_H):
-            uTextureIndex = 685;
+        case (EMERALD_FONT_BLUE_STEEL_E):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_E;
             break;
-        case (EMERALD_FONT_STEEL_I):
-            uTextureIndex = 686;
+        case (EMERALD_FONT_BLUE_STEEL_F):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_F;
             break;
-        case (EMERALD_FONT_STEEL_J):
-            uTextureIndex = 687;
+        case (EMERALD_FONT_BLUE_STEEL_G):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_G;
             break;
-        case (EMERALD_FONT_STEEL_K):
-            uTextureIndex = 691;
+        case (EMERALD_FONT_BLUE_STEEL_H):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_H;
             break;
-        case (EMERALD_FONT_STEEL_L):
-            uTextureIndex = 692;
+        case (EMERALD_FONT_BLUE_STEEL_I):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_I;
             break;
-        case (EMERALD_FONT_STEEL_M):
-            uTextureIndex = 694;
+        case (EMERALD_FONT_BLUE_STEEL_J):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_J;
             break;
-        case (EMERALD_FONT_STEEL_N):
-            uTextureIndex = 695;
+        case (EMERALD_FONT_BLUE_STEEL_K):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_K;
             break;
-        case (EMERALD_FONT_STEEL_O):
-            uTextureIndex = 697;
+        case (EMERALD_FONT_BLUE_STEEL_L):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_L;
             break;
-        case (EMERALD_FONT_STEEL_P):
-            uTextureIndex = 704;
+        case (EMERALD_FONT_BLUE_STEEL_M):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_M;
             break;
-        case (EMERALD_FONT_STEEL_Q):
-            uTextureIndex = 705;
+        case (EMERALD_FONT_BLUE_STEEL_N):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_N;
             break;
-        case (EMERALD_FONT_STEEL_R):
-            uTextureIndex = 706;
+        case (EMERALD_FONT_BLUE_STEEL_O):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_O;
             break;
-        case (EMERALD_FONT_STEEL_S):
-            uTextureIndex = 708;
+        case (EMERALD_FONT_BLUE_STEEL_P):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_P;
             break;
-        case (EMERALD_FONT_STEEL_T):
-            uTextureIndex = 710;
+        case (EMERALD_FONT_BLUE_STEEL_Q):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_Q;
             break;
-        case (EMERALD_FONT_STEEL_U):
-            uTextureIndex = 712;
+        case (EMERALD_FONT_BLUE_STEEL_R):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_R;
             break;
-        case (EMERALD_FONT_STEEL_V):
-            uTextureIndex = 713;
+        case (EMERALD_FONT_BLUE_STEEL_S):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_S;
             break;
-        case (EMERALD_FONT_STEEL_W):
-            uTextureIndex = 714;
+        case (EMERALD_FONT_BLUE_STEEL_T):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_T;
             break;
-        case (EMERALD_FONT_STEEL_X):
-            uTextureIndex = 715;
+        case (EMERALD_FONT_BLUE_STEEL_U):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_U;
             break;
-        case (EMERALD_FONT_STEEL_Y):
-            uTextureIndex = 716;
+        case (EMERALD_FONT_BLUE_STEEL_V):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_V;
             break;
-        case (EMERALD_FONT_STEEL_Z):
-            uTextureIndex = 717;
+        case (EMERALD_FONT_BLUE_STEEL_W):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_W;
             break;
-        case (EMERALD_FONT_STEEL_AE):
-            uTextureIndex = 672;
+        case (EMERALD_FONT_BLUE_STEEL_X):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_X;
             break;
-        case (EMERALD_FONT_STEEL_OE):
-            uTextureIndex = 696;
+        case (EMERALD_FONT_BLUE_STEEL_Y):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_Y;
             break;
-        case (EMERALD_FONT_STEEL_UE):
-            uTextureIndex = 711;
+        case (EMERALD_FONT_BLUE_STEEL_Z):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_Z;
+            break;
+        case (EMERALD_FONT_BLUE_STEEL_AE):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_AE;
+            break;
+        case (EMERALD_FONT_BLUE_STEEL_OE):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_OE;
+            break;
+        case (EMERALD_FONT_BLUE_STEEL_UE):
+            uTextureIndex = TEX_FONT_BLUE_STEEL_UE;
             break;
         case (EMERALD_FONT_GREEN_EXCLAMATION):
-            uTextureIndex = 562;
+            uTextureIndex = TEX_FONT_GREEN_EXCLAMATION_MARK;
+            break;
+        case (EMERALD_FONT_GREEN_DOUBLE_QUOTE):
+            uTextureIndex = TEX_FONT_GREEN_DOUBLE_QUOTE;
+            break;
+        case (EMERALD_FONT_GREEN_SEMICOLON):
+            uTextureIndex = TEX_FONT_GREEN_SEMICOLON;
             break;
         case (EMERALD_FONT_GREEN_ARROW_RIGHT):
-            uTextureIndex = 588;
+            uTextureIndex = TEX_FONT_GREEN_ARROW_RIGHT;
             break;
         case (EMERALD_FONT_GREEN_ARROW_UP):
-            uTextureIndex = 586;
+            uTextureIndex = TEX_FONT_GREEN_ARROW_UP;
             break;
         case (EMERALD_FONT_GREEN_ARROW_DOWN):
-            uTextureIndex = 589;
+            uTextureIndex = TEX_FONT_GREEN_ARROW_DOWN;
             break;
         case (EMERALD_FONT_GREEN_APOSTROPHE):
-            uTextureIndex = 561;
+            uTextureIndex = TEX_FONT_GREEN_APOSTROPHE;
             break;
         case (EMERALD_FONT_GREEN_BRACE_OPEN):
-            uTextureIndex = 576;
+            uTextureIndex = TEX_FONT_GREEN_BRACKET_OPEN;
             break;
         case (EMERALD_FONT_GREEN_BRACE_CLOSE):
-            uTextureIndex = 577;
+            uTextureIndex = TEX_FONT_GREEN_BRACKET_CLOSE;
             break;
         case (EMERALD_FONT_GREEN_COPYRIGHT):
-            uTextureIndex = 565;
+            uTextureIndex = TEX_FONT_GREEN_COPYRIGHT;
             break;
         case (EMERALD_FONT_GREEN_PLUS):
-            uTextureIndex = 590;
+            uTextureIndex = TEX_FONT_GREEN_PLUS;
             break;
         case (EMERALD_FONT_GREEN_COMMA):
-            uTextureIndex = 578;
+            uTextureIndex = TEX_FONT_GREEN_COMMA;
             break;
         case (EMERALD_FONT_GREEN_MINUS):
-            uTextureIndex = 581;
+            uTextureIndex = TEX_FONT_GREEN_MINUS;
             break;
-        case (EMERALD_FONT_GREEN_POINT):
-            uTextureIndex = 591;
+        case (EMERALD_FONT_GREEN_DOT):
+            uTextureIndex = TEX_FONT_GREEN_DOT;
             break;
         case (EMERALD_FONT_GREEN_SLASH):
-            uTextureIndex = 595;
+            uTextureIndex = TEX_FONT_GREEN_SLASH;
             break;
         case (EMERALD_FONT_GREEN_0):
-            uTextureIndex = 84;
+            uTextureIndex = TEX_FONT_GREEN_0;
             break;
         case (EMERALD_FONT_GREEN_1):
-            uTextureIndex = 85;
+            uTextureIndex = TEX_FONT_GREEN_1;
             break;
         case (EMERALD_FONT_GREEN_2):
-            uTextureIndex = 86;
+            uTextureIndex = TEX_FONT_GREEN_2;
             break;
         case (EMERALD_FONT_GREEN_3):
-            uTextureIndex = 87;
+            uTextureIndex = TEX_FONT_GREEN_3;
             break;
         case (EMERALD_FONT_GREEN_4):
-            uTextureIndex = 88;
+            uTextureIndex = TEX_FONT_GREEN_4;
             break;
         case (EMERALD_FONT_GREEN_5):
-            uTextureIndex = 89;
+            uTextureIndex = TEX_FONT_GREEN_5;
             break;
         case (EMERALD_FONT_GREEN_6):
-            uTextureIndex = 90;
+            uTextureIndex = TEX_FONT_GREEN_6;
             break;
         case (EMERALD_FONT_GREEN_7):
-            uTextureIndex = 91;
+            uTextureIndex = TEX_FONT_GREEN_7;
             break;
         case (EMERALD_FONT_GREEN_8):
-            uTextureIndex = 92;
+            uTextureIndex = TEX_FONT_GREEN_8;
             break;
         case (EMERALD_FONT_GREEN_9):
-            uTextureIndex = 93;
+            uTextureIndex = TEX_FONT_GREEN_9;
             break;
-        case (EMERALD_FONT_GREEN_DOUBLE_POINT):
-            uTextureIndex = 567;
+        case (EMERALD_FONT_GREEN_DOUBLE_DOT):
+            uTextureIndex = TEX_FONT_GREEN_DOUBLE_DOT;
             break;
         case (EMERALD_FONT_GREEN_PLATE):
-            uTextureIndex = 597;
+            uTextureIndex = TEX_FONT_GREEN_AT;
             break;
         case (EMERALD_FONT_GREEN_ARROW_LEFT):
-            uTextureIndex = 587;
+            uTextureIndex = TEX_FONT_GREEN_ARROW_LEFT;
             break;
         case (EMERALD_FONT_GREEN_QUESTION_MARK):
-            uTextureIndex = 570;
+            uTextureIndex = TEX_FONT_GREEN_QUESTION_MARK;
             break;
         case (EMERALD_FONT_GREEN_A):
-            uTextureIndex = 563;
+            uTextureIndex = TEX_FONT_GREEN_A;
             break;
         case (EMERALD_FONT_GREEN_B):
-            uTextureIndex = 564;
+            uTextureIndex = TEX_FONT_GREEN_B;
             break;
         case (EMERALD_FONT_GREEN_C):
-            uTextureIndex = 566;
+            uTextureIndex = TEX_FONT_GREEN_C;
             break;
         case (EMERALD_FONT_GREEN_D):
-            uTextureIndex = 568;
+            uTextureIndex = TEX_FONT_GREEN_D;
             break;
         case (EMERALD_FONT_GREEN_E):
-            uTextureIndex = 569;
+            uTextureIndex = TEX_FONT_GREEN_E;
             break;
         case (EMERALD_FONT_GREEN_F):
-            uTextureIndex = 571;
+            uTextureIndex = TEX_FONT_GREEN_F;
             break;
         case (EMERALD_FONT_GREEN_G):
-            uTextureIndex = 572;
+            uTextureIndex = TEX_FONT_GREEN_G;
             break;
         case (EMERALD_FONT_GREEN_H):
-            uTextureIndex = 573;
+            uTextureIndex = TEX_FONT_GREEN_H;
             break;
         case (EMERALD_FONT_GREEN_I):
-            uTextureIndex = 574;
+            uTextureIndex = TEX_FONT_GREEN_I;
             break;
         case (EMERALD_FONT_GREEN_J):
-            uTextureIndex = 575;
+            uTextureIndex = TEX_FONT_GREEN_J;
             break;
         case (EMERALD_FONT_GREEN_K):
-            uTextureIndex = 579;
+            uTextureIndex = TEX_FONT_GREEN_K;
             break;
         case (EMERALD_FONT_GREEN_L):
-            uTextureIndex = 580;
+            uTextureIndex = TEX_FONT_GREEN_L;
             break;
         case (EMERALD_FONT_GREEN_M):
-            uTextureIndex = 582;
+            uTextureIndex = TEX_FONT_GREEN_M;
             break;
         case (EMERALD_FONT_GREEN_N):
-            uTextureIndex = 583;
+            uTextureIndex = TEX_FONT_GREEN_N;
             break;
         case (EMERALD_FONT_GREEN_O):
-            uTextureIndex = 585;
+            uTextureIndex = TEX_FONT_GREEN_O;
             break;
         case (EMERALD_FONT_GREEN_P):
-            uTextureIndex = 592;
+            uTextureIndex = TEX_FONT_GREEN_P;
             break;
         case (EMERALD_FONT_GREEN_Q):
-            uTextureIndex = 593;
+            uTextureIndex = TEX_FONT_GREEN_Q;
             break;
         case (EMERALD_FONT_GREEN_R):
-            uTextureIndex = 594;
+            uTextureIndex = TEX_FONT_GREEN_R;
             break;
         case (EMERALD_FONT_GREEN_S):
-            uTextureIndex = 596;
+            uTextureIndex = TEX_FONT_GREEN_S;
             break;
         case (EMERALD_FONT_GREEN_T):
-            uTextureIndex = 598;
+            uTextureIndex = TEX_FONT_GREEN_T;
             break;
         case (EMERALD_FONT_GREEN_U):
-            uTextureIndex = 600;
+            uTextureIndex = TEX_FONT_GREEN_U;
             break;
         case (EMERALD_FONT_GREEN_V):
-            uTextureIndex = 601;
+            uTextureIndex = TEX_FONT_GREEN_V;
             break;
         case (EMERALD_FONT_GREEN_W):
-            uTextureIndex = 602;
+            uTextureIndex = TEX_FONT_GREEN_W;
             break;
         case (EMERALD_FONT_GREEN_X):
-            uTextureIndex = 603;
+            uTextureIndex = TEX_FONT_GREEN_X;
             break;
         case (EMERALD_FONT_GREEN_Y):
-            uTextureIndex = 604;
+            uTextureIndex = TEX_FONT_GREEN_Y;
             break;
         case (EMERALD_FONT_GREEN_Z):
-            uTextureIndex = 605;
+            uTextureIndex = TEX_FONT_GREEN_Z;
             break;
         case (EMERALD_FONT_GREEN_AE):
-            uTextureIndex = 560;
+            uTextureIndex = TEX_FONT_GREEN_AE;
             break;
         case (EMERALD_FONT_GREEN_OE):
-            uTextureIndex = 584;
+            uTextureIndex = TEX_FONT_GREEN_OE;
             break;
         case (EMERALD_FONT_GREEN_UE):
-            uTextureIndex = 599;
+            uTextureIndex = TEX_FONT_GREEN_UE;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_EXCLAMATION):
-            uTextureIndex = 618;
+        case (EMERALD_FONT_GREEN_STEEL_EXCLAMATION):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_EXCLAMATION_MARK;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_ARROW_RIGHT):
-            uTextureIndex = 644;
+        case (EMERALD_FONT_GREEN_STEEL_DOUBLE_QUOTE):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_DOUBLE_QUOTE;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_ARROW_UP):
-            uTextureIndex = 642;
+        case (EMERALD_FONT_GREEN_STEEL_SEMICOLON):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_SEMICOLON;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_ARROW_DOWN):
-            uTextureIndex = 645;
+        case (EMERALD_FONT_GREEN_STEEL_ARROW_RIGHT):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_ARROW_RIGHT;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_APOSTROPHE):
-            uTextureIndex = 617;
+        case (EMERALD_FONT_GREEN_STEEL_ARROW_UP):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_ARROW_UP;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_BRACE_OPEN):
-            uTextureIndex = 632;
+        case (EMERALD_FONT_GREEN_STEEL_ARROW_DOWN):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_ARROW_DOWN;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_BRACE_CLOSE):
-            uTextureIndex = 633;
+        case (EMERALD_FONT_GREEN_STEEL_APOSTROPHE):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_APOSTROPHE;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_COPYRIGHT):
-            uTextureIndex = 621;
+        case (EMERALD_FONT_GREEN_STEEL_BRACE_OPEN):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_BRACKET_OPEN;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_PLUS):
-            uTextureIndex = 646;
+        case (EMERALD_FONT_GREEN_STEEL_BRACE_CLOSE):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_BRACKET_CLOSE;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_COMMA):
-            uTextureIndex = 634;
+        case (EMERALD_FONT_GREEN_STEEL_COPYRIGHT):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_COPYRIGHT;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_MINUS):
-            uTextureIndex = 637;
+        case (EMERALD_FONT_GREEN_STEEL_PLUS):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_PLUS;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_POINT):
-            uTextureIndex = 647;
+        case (EMERALD_FONT_GREEN_STEEL_COMMA):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_COMMA;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_SLASH):
-            uTextureIndex = 651;
+        case (EMERALD_FONT_GREEN_STEEL_MINUS):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_MINUS;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_0):
-            uTextureIndex = 606;
+        case (EMERALD_FONT_GREEN_STEEL_DOT):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_DOT;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_1):
-            uTextureIndex = 607;
+        case (EMERALD_FONT_GREEN_STEEL_SLASH):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_SLASH;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_2):
-            uTextureIndex = 608;
+        case (EMERALD_FONT_GREEN_STEEL_0):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_0;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_3):
-            uTextureIndex = 609;
+        case (EMERALD_FONT_GREEN_STEEL_1):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_1;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_4):
-            uTextureIndex = 610;
+        case (EMERALD_FONT_GREEN_STEEL_2):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_2;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_5):
-            uTextureIndex = 611;
+        case (EMERALD_FONT_GREEN_STEEL_3):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_3;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_6):
-            uTextureIndex = 612;
+        case (EMERALD_FONT_GREEN_STEEL_4):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_4;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_7):
-            uTextureIndex = 613;
+        case (EMERALD_FONT_GREEN_STEEL_5):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_5;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_8):
-            uTextureIndex = 614;
+        case (EMERALD_FONT_GREEN_STEEL_6):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_6;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_9):
-            uTextureIndex = 615;
+        case (EMERALD_FONT_GREEN_STEEL_7):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_7;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_DOUBLE_POINT):
-            uTextureIndex = 623;
+        case (EMERALD_FONT_GREEN_STEEL_8):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_8;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_PLATE):
-            uTextureIndex = 653;
+        case (EMERALD_FONT_GREEN_STEEL_9):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_9;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_ARROW_LEFT):
-            uTextureIndex = 643;
+        case (EMERALD_FONT_GREEN_STEEL_DOUBLE_DOT):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_DOUBLE_DOT;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_QUESTION_MARK):
-            uTextureIndex = 626;
+        case (EMERALD_FONT_GREEN_STEEL_PLATE):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_AT;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_A):
-            uTextureIndex = 619;
+        case (EMERALD_FONT_GREEN_STEEL_ARROW_LEFT):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_ARROW_LEFT;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_B):
-            uTextureIndex = 620;
+        case (EMERALD_FONT_GREEN_STEEL_QUESTION_MARK):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_QUESTION_MARK;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_C):
-            uTextureIndex = 622;
+        case (EMERALD_FONT_GREEN_STEEL_A):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_A;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_D):
-            uTextureIndex = 624;
+        case (EMERALD_FONT_GREEN_STEEL_B):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_B;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_E):
-            uTextureIndex = 625;
+        case (EMERALD_FONT_GREEN_STEEL_C):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_C;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_F):
-            uTextureIndex = 627;
+        case (EMERALD_FONT_GREEN_STEEL_D):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_D;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_G):
-            uTextureIndex = 628;
+        case (EMERALD_FONT_GREEN_STEEL_E):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_E;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_H):
-            uTextureIndex = 629;
+        case (EMERALD_FONT_GREEN_STEEL_F):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_F;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_I):
-            uTextureIndex = 630;
+        case (EMERALD_FONT_GREEN_STEEL_G):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_G;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_J):
-            uTextureIndex = 631;
+        case (EMERALD_FONT_GREEN_STEEL_H):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_H;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_K):
-            uTextureIndex = 635;
+        case (EMERALD_FONT_GREEN_STEEL_I):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_I;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_L):
-            uTextureIndex = 636;
+        case (EMERALD_FONT_GREEN_STEEL_J):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_J;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_M):
-            uTextureIndex = 638;
+        case (EMERALD_FONT_GREEN_STEEL_K):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_K;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_N):
-            uTextureIndex = 639;
+        case (EMERALD_FONT_GREEN_STEEL_L):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_L;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_O):
-            uTextureIndex = 641;
+        case (EMERALD_FONT_GREEN_STEEL_M):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_M;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_P):
-            uTextureIndex = 648;
+        case (EMERALD_FONT_GREEN_STEEL_N):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_N;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_Q):
-            uTextureIndex = 649;
+        case (EMERALD_FONT_GREEN_STEEL_O):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_O;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_R):
-            uTextureIndex = 650;
+        case (EMERALD_FONT_GREEN_STEEL_P):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_P;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_S):
-            uTextureIndex = 652;
+        case (EMERALD_FONT_GREEN_STEEL_Q):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_Q;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_T):
-            uTextureIndex = 654;
+        case (EMERALD_FONT_GREEN_STEEL_R):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_R;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_U):
-            uTextureIndex = 656;
+        case (EMERALD_FONT_GREEN_STEEL_S):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_S;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_V):
-            uTextureIndex = 657;
+        case (EMERALD_FONT_GREEN_STEEL_T):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_T;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_W):
-            uTextureIndex = 658;
+        case (EMERALD_FONT_GREEN_STEEL_U):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_U;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_X):
-            uTextureIndex = 659;
+        case (EMERALD_FONT_GREEN_STEEL_V):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_V;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_Y):
-            uTextureIndex = 660;
+        case (EMERALD_FONT_GREEN_STEEL_W):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_W;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_Z):
-            uTextureIndex = 661;
+        case (EMERALD_FONT_GREEN_STEEL_X):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_X;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_AE):
-            uTextureIndex = 616;
+        case (EMERALD_FONT_GREEN_STEEL_Y):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_Y;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_OE):
-            uTextureIndex = 640;
+        case (EMERALD_FONT_GREEN_STEEL_Z):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_Z;
             break;
-        case (EMERALD_FONT_STEEL_GREEN_UE):
-            uTextureIndex = 655;
+        case (EMERALD_FONT_GREEN_STEEL_AE):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_AE;
+            break;
+        case (EMERALD_FONT_GREEN_STEEL_OE):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_OE;
+            break;
+        case (EMERALD_FONT_GREEN_STEEL_UE):
+            uTextureIndex = TEX_FONT_GREEN_STEEL_UE;
             break;
         case (EMERALD_DYNAMITE_ON):
-            uTextureIndex = 555 + nAnimationCount / 4;
+            uTextureIndex = TEX_DYNAMITE_ON_1 + nAnimationCount / 4;
             break;
-        case (EMERALD_SWAMP_STONE):
-            uTextureIndex = 554;                // Für Editor
+        case (EMERALD_QUICKSAND):
+            uTextureIndex = TEX_QUICKSAND;
+            break;
+        case (EMERALD_QUICKSAND_STONE):
+            uTextureIndex = TEX_QUICKSAND_STONE;                // Für Editor
+            break;
+        case (EMERALD_QUICKSAND_SLOW):
+            uTextureIndex = TEX_QUICKSAND_SLOW;
+            break;
+        case (EMERALD_QUICKSAND_STONE_SLOW):
+            uTextureIndex = TEX_QUICKSAND_SLOW_STONE;           // Für Editor
             break;
         case (EMERALD_WALL_WITH_CRYSTAL):
-            uTextureIndex = 533;
+            uTextureIndex = TEX_WALL_CRYSTAL;
             break;
         case (EMERALD_WALL_WITH_KEY_RED):
-            uTextureIndex = 534;
+            uTextureIndex = TEX_WALL_KEY_RED;
             break;
         case (EMERALD_WALL_WITH_KEY_GREEN):
-            uTextureIndex = 535;
+            uTextureIndex = TEX_WALL_KEY_GREEN;
             break;
         case (EMERALD_WALL_WITH_KEY_BLUE):
-            uTextureIndex = 536;
+            uTextureIndex = TEX_WALL_KEY_BLUE;
             break;
         case (EMERALD_WALL_WITH_KEY_YELLOW):
-            uTextureIndex = 537;
+            uTextureIndex = TEX_WALL_KEY_YELLOW;
             break;
         case (EMERALD_WALL_WITH_KEY_WHITE):
-            uTextureIndex = 538;
+            uTextureIndex = TEX_WALL_KEY_WHITE;
             break;
         case (EMERALD_WALL_WITH_KEY_GENERAL):
-            uTextureIndex = 539;
+            uTextureIndex = TEX_WALL_KEY_GENERAL;
             break;
         case (EMERALD_WALL_WITH_TIME_COIN):
-            uTextureIndex = 735;
+            uTextureIndex = TEX_WALL_COIN_TIME;
             break;
         case (EMERALD_WALL_WITH_SHIELD_COIN):
-            uTextureIndex = 1058;
+            uTextureIndex = TEX_WALL_COIN_SHIELD;
             break;
         case (EMERALD_WALL_WITH_BOMB):
-            uTextureIndex = 540;
+            uTextureIndex = TEX_WALL_BOMB;
             break;
         case (EMERALD_WALL_WITH_MEGABOMB):
-            uTextureIndex = 541;
+            uTextureIndex = TEX_WALL_BOMB_MEGA;
             break;
         case (EMERALD_WALL_WITH_STONE):
-            uTextureIndex = 542;
+            uTextureIndex = TEX_WALL_STONE;
             break;
         case (EMERALD_WALL_WITH_NUT):
-            uTextureIndex = 543;
+            uTextureIndex = TEX_WALL_NUT;
             break;
         case (EMERALD_WALL_WITH_WHEEL):
-            uTextureIndex = 544;
+            uTextureIndex = TEX_WALL_WHEEL;
             break;
         case (EMERALD_WALL_WITH_DYNAMITE):
-            uTextureIndex = 545;
+            uTextureIndex = TEX_WALL_DYNAMITE;
             break;
         case (EMERALD_WALL_WITH_ENDDOOR):
-            uTextureIndex = 546;
+            uTextureIndex = TEX_WALL_DOOR_EXIT;
             break;
         case (EMERALD_WALL_WITH_ENDDOOR_READY):
-            uTextureIndex = 547;
+            uTextureIndex = TEX_WALL_DOOR_EXIT_READY;
             break;
         case (EMERALD_WALL_WITH_MINE_UP):
-            uTextureIndex = 548;
+            uTextureIndex = TEX_WALL_MINE_UP;
             break;
         case (EMERALD_WALL_WITH_BEETLE_UP):
-            uTextureIndex = 549;
+            uTextureIndex = TEX_WALL_BEETLE_UP;
             break;
         case (EMERALD_WALL_WITH_YAM):
-            uTextureIndex = 550;
+            uTextureIndex = TEX_WALL_YAM;
             break;
         case (EMERALD_WALL_WITH_SLIME):
-            uTextureIndex = 1060;
+            uTextureIndex = TEX_WALL_SLIME;
             break;
         case (EMERALD_WALL_WITH_ALIEN):
-            uTextureIndex = 551;
+            uTextureIndex = TEX_WALL_ALIEN;
             break;
         case (EMERALD_WALL_WITH_MOLE_UP):
-            uTextureIndex = 552;
+            uTextureIndex = TEX_WALL_MOLE_UP;
             break;
         case (EMERALD_WALL_WITH_GREEN_CHEESE):
-            uTextureIndex = 553;
+            uTextureIndex = TEX_WALL_CHEESE_GREEN;
             break;
         case (EMERALD_WALL_WITH_YELLOW_CHEESE):
-            uTextureIndex = 1059;
+            uTextureIndex = TEX_WALL_CHEESE_YELLOW;
             break;
         case (EMERALD_WALL_WITH_EMERALD):
-            uTextureIndex = 529;
+            uTextureIndex = TEX_WALL_EMERALD;
             break;
         case (EMERALD_WALL_WITH_RUBY):
-            uTextureIndex = 530;
+            uTextureIndex = TEX_WALL_RUBY;
             break;
         case (EMERALD_WALL_WITH_SAPPHIRE):
-            uTextureIndex = 531;
+            uTextureIndex = TEX_WALL_SAPPHIRE;
             break;
         case (EMERALD_WALL_WITH_PERL):
-            uTextureIndex = 532;
+            uTextureIndex = TEX_WALL_PERL;
             break;
         case (EMERALD_DOOR_WHITE):
-            uTextureIndex = 521;
+            uTextureIndex = TEX_DOOR_WHITE;
             break;
         case (EMERALD_DOOR_WHITE_WOOD):
-            uTextureIndex = 522;
+            uTextureIndex = TEX_DOOR_WHITE_WOOD;
             break;
         case (EMERALD_DOOR_GREY_WHITE):
-            uTextureIndex = 523;
+            uTextureIndex = TEX_DOOR_GREY_WHITE;
             break;
         case (EMERALD_KEY_WHITE):
-            uTextureIndex = 519;
+            uTextureIndex = TEX_KEY_WHITE;
             break;
         case (EMERALD_KEY_GENERAL):
-            uTextureIndex = 520;
+            uTextureIndex = TEX_KEY_GENERAL;
             break;
         case (EMERALD_SWITCHDOOR_OPEN):
-            uTextureIndex = 506;
+            uTextureIndex = TEX_DOOR_SWITCHED_5;
             break;
         case (EMERALD_SWITCHDOOR_CLOSED):
-            uTextureIndex = 502;
+            uTextureIndex = TEX_DOOR_SWITCHED_1;
             break;
         case (EMERALD_SWITCH_SWITCHDOOR):
-            uTextureIndex = 507;
+            uTextureIndex = TEX_SWITCH_DOOR_SWITCHED_1;
             break;
         case (EMERALD_DOOR_TIME):
-            uTextureIndex = 501;
+            uTextureIndex = TEX_DOOR_TIME_1;
             break;
         case (EMERALD_WHEEL_TIMEDOOR):
-            uTextureIndex = 493 + nAnimationCount / 4;
+            uTextureIndex = TEX_WHEEL_DOOR_TIME_1 + nAnimationCount / 4;
             break;
         case (EMERALD_DOOR_EMERALD):
-            uTextureIndex = 487;
+            uTextureIndex = TEX_DOOR_EMERALD;
             break;
         case (EMERALD_DOOR_MULTICOLOR):
-            uTextureIndex = 488;
+            uTextureIndex = TEX_DOOR_MULTICOLOR;
             break;
         case (EMERALD_DOOR_ONLY_UP_STEEL):
-            uTextureIndex = 489;
+            uTextureIndex = TEX_DOOR_UP_STEEL;
             break;
         case (EMERALD_DOOR_ONLY_DOWN_STEEL):
-            uTextureIndex = 490;
+            uTextureIndex = TEX_DOOR_DOWN_STEEL;
             break;
         case (EMERALD_DOOR_ONLY_LEFT_STEEL):
-            uTextureIndex = 491;
+            uTextureIndex = TEX_DOOR_LEFT_STEEL;
             break;
         case (EMERALD_DOOR_ONLY_RIGHT_STEEL):
-            uTextureIndex = 492;
+            uTextureIndex = TEX_DOOR_RIGHT_STEEL;
             break;
         case (EMERALD_DOOR_ONLY_UP_WALL):
-            uTextureIndex = 964;
+            uTextureIndex = TEX_DOOR_UP_WALL;
             break;
         case (EMERALD_DOOR_ONLY_DOWN_WALL):
-            uTextureIndex = 965;
+            uTextureIndex = TEX_DOOR_DOWN_WALL;
             break;
         case (EMERALD_DOOR_ONLY_LEFT_WALL):
-            uTextureIndex = 962;
+            uTextureIndex = TEX_DOOR_LEFT_WALL;
             break;
         case (EMERALD_DOOR_ONLY_RIGHT_WALL):
-            uTextureIndex = 963;
+            uTextureIndex = TEX_DOOR_RIGHT_WALL;
             break;
         case (EMERALD_STEEL_INVISIBLE):
-            uTextureIndex = 484;
+            uTextureIndex = TEX_STEEL_INVISIBLE;
             break;
         case (EMERALD_WALL_INVISIBLE):
-            uTextureIndex = 485;
+            uTextureIndex = TEX_WALL_INVISIBLE;
             break;
         case (EMERALD_LIGHT_SWITCH):
-            uTextureIndex = 486;
+            uTextureIndex = TEX_SWITCH_LIGHT;
             break;
         case (EMERALD_STEEL_HEART):
-            uTextureIndex = 474;
+            uTextureIndex = TEX_STEEL_HEART;
             break;
         case (EMERALD_STEEL_PLAYERHEAD):
-            uTextureIndex = 475;
+            uTextureIndex = TEX_STEEL_PLAYER;
+            break;
+        case (EMERALD_STEEL_PLAYERHEAD_2):
+            uTextureIndex = TEX_STEEL_PLAYER2;
             break;
         case (EMERALD_STEEL_NO_ENTRY):
-            uTextureIndex = 476;
+            uTextureIndex = TEX_STEEL_ALL_VEHICLES_PROHIBITED;
             break;
         case (EMERALD_STEEL_GIVE_WAY):
-            uTextureIndex = 477;
+            uTextureIndex = TEX_STEEL_GIVE_WAY;
             break;
         case (EMERALD_STEEL_YING):
-            uTextureIndex = 478;
+            uTextureIndex = TEX_STEEL_YING_YANG;
             break;
         case (EMERALD_STEEL_WHEELCHAIR):
-            uTextureIndex = 479;
+            uTextureIndex = TEX_STEEL_WHEELCHAIR;
             break;
         case (EMERALD_STEEL_ARROW_DOWN):
-            uTextureIndex = 480;
+            uTextureIndex = TEX_STEEL_ARROW_DOWN;
             break;
         case (EMERALD_STEEL_ARROW_UP):
-            uTextureIndex = 481;
+            uTextureIndex = TEX_STEEL_ARROW_UP;
             break;
         case (EMERALD_STEEL_ARROW_LEFT):
-            uTextureIndex = 482;
+            uTextureIndex = TEX_STEEL_ARROW_LEFT;
             break;
         case (EMERALD_STEEL_ARROW_RIGHT):
-            uTextureIndex = 483;
+            uTextureIndex = TEX_STEEL_ARROW_RIGHT;
             break;
-        case (EMERALD_STANDMINE):
+        case (EMERALD_MINE_CONTACT):
             if ((((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) % 32) == 0) {
-                uTextureIndex = 448;
+                uTextureIndex = TEX_MINE_CONTACT_ON_1;
             } else if ((((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) % 16) == 0) {
-                uTextureIndex = 449;
+                uTextureIndex = TEX_MINE_CONTACT_ON_2;
             } else {
-                uTextureIndex = 447;
+                uTextureIndex = TEX_MINE_CONTACT_OFF;
             }
             break;
         case (EMERALD_MAGIC_WALL_SWITCH):
-            uTextureIndex = 435;
+            uTextureIndex = TEX_SWITCH_MAGIC_WALL;
             break;
         case (EMERALD_LIGHTBARRIER_RED_UP):
             if (Playfield.bLightBarrierRedOn) {
-                uTextureIndex = 423;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_UP_ON;
             } else {
-                uTextureIndex = 419;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_UP_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_RED_DOWN):
             if (Playfield.bLightBarrierRedOn) {
-                uTextureIndex = 424;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_DOWN_ON;
             } else {
-                uTextureIndex = 420;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_DOWN_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_RED_LEFT):
             if (Playfield.bLightBarrierRedOn) {
-                uTextureIndex = 425;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_LEFT_ON;
             } else {
-                uTextureIndex = 421;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_LEFT_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_RED_RIGHT):
             if (Playfield.bLightBarrierRedOn) {
-                uTextureIndex = 426;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_RIGHT_ON;
             } else {
-                uTextureIndex = 422;
+                uTextureIndex = TEX_LIGHT_BARRIER_RED_RIGHT_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_GREEN_UP):
             if (Playfield.bLightBarrierGreenOn) {
-                uTextureIndex = 399;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_UP_ON;
             } else {
-                uTextureIndex = 395;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_UP_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_GREEN_DOWN):
             if (Playfield.bLightBarrierGreenOn) {
-                uTextureIndex = 400;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_DOWN_ON;
             } else {
-                uTextureIndex = 396;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_DOWN_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_GREEN_LEFT):
             if (Playfield.bLightBarrierGreenOn) {
-                uTextureIndex = 401;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_LEFT_ON;
             } else {
-                uTextureIndex = 397;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_LEFT_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_GREEN_RIGHT):
             if (Playfield.bLightBarrierGreenOn) {
-                uTextureIndex = 402;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_RIGHT_ON;
             } else {
-                uTextureIndex = 398;
+                uTextureIndex = TEX_LIGHT_BARRIER_GREEN_RIGHT_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_BLUE_UP):
             if (Playfield.bLightBarrierBlueOn) {
-                uTextureIndex = 407;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_UP_ON;
             } else {
-                uTextureIndex = 403;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_UP_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_BLUE_DOWN):
             if (Playfield.bLightBarrierBlueOn) {
-                uTextureIndex = 408;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_DOWN_ON;
             } else {
-                uTextureIndex = 404;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_DOWN_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_BLUE_LEFT):
             if (Playfield.bLightBarrierBlueOn) {
-                uTextureIndex = 409;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_LEFT_ON;
             } else {
-                uTextureIndex = 405;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_LEFT_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_BLUE_RIGHT):
             if (Playfield.bLightBarrierBlueOn) {
-                uTextureIndex = 410;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_RIGHT_ON;
             } else {
-                uTextureIndex = 406;
+                uTextureIndex = TEX_LIGHT_BARRIER_BLUE_RIGHT_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_YELLOW_UP):
             if (Playfield.bLightBarrierYellowOn) {
-                uTextureIndex = 415;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_UP_ON;
             } else {
-                uTextureIndex = 411;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_UP_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_YELLOW_DOWN):
             if (Playfield.bLightBarrierYellowOn) {
-                uTextureIndex = 416;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_DOWN_ON;
             } else {
-                uTextureIndex = 412;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_DOWN_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_YELLOW_LEFT):
             if (Playfield.bLightBarrierYellowOn) {
-                uTextureIndex = 417;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_LEFT_ON;
             } else {
-                uTextureIndex = 413;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_LEFT_OFF;
             }
             break;
         case (EMERALD_LIGHTBARRIER_YELLOW_RIGHT):
             if (Playfield.bLightBarrierYellowOn) {
-                uTextureIndex = 418;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_RIGHT_ON;
             } else {
-                uTextureIndex = 414;
+                uTextureIndex = TEX_LIGHT_BARRIER_YELLOW_RIGHT_OFF;
             }
             break;
         case (EMERALD_BEAM_RED_VERTICAL):
-            uTextureIndex = 433;
+            uTextureIndex = TEX_BEAM_RED_VERTICAL;
             break;
         case (EMERALD_BEAM_RED_HORIZONTAL):
-            uTextureIndex = 434;
+            uTextureIndex = TEX_BEAM_RED_HORIZONTAL;
             break;
         case (EMERALD_BEAM_GREEN_VERTICAL):
-            uTextureIndex = 427;
+            uTextureIndex = TEX_BEAM_GREEN_VERTICAL;
             break;
         case (EMERALD_BEAM_GREEN_HORIZONTAL):
-            uTextureIndex = 428;
+            uTextureIndex = TEX_BEAM_GREEN_HORIZONTAL;
             break;
         case (EMERALD_BEAM_BLUE_VERTICAL):
-            uTextureIndex = 429;
+            uTextureIndex = TEX_BEAM_BLUE_VERTICAL;
             break;
         case (EMERALD_BEAM_BLUE_HORIZONTAL):
-            uTextureIndex = 430;
+            uTextureIndex = TEX_BEAM_BLUE_HORIZONTAL;
             break;
         case (EMERALD_BEAM_YELLOW_VERTICAL):
-            uTextureIndex = 431;
+            uTextureIndex = TEX_BEAM_YELLOW_VERTICAL;
             break;
         case (EMERALD_BEAM_YELLOW_HORIZONTAL):
-            uTextureIndex = 432;
+            uTextureIndex = TEX_BEAM_YELLOW_HORIZONTAL;
             break;
         case (EMERALD_BEAM_CROSS):
-            uTextureIndex = 0;
+            uTextureIndex = TEX_SPACE;
             break;
         case (EMERALD_LIGHTBARRIER_RED_SWITCH):
-            uTextureIndex = 383;
+            uTextureIndex = TEX_SWITCH_LIGHT_BARRIER_RED_OFF;
             break;
         case (EMERALD_LIGHTBARRIER_GREEN_SWITCH):
-            uTextureIndex = 389;
+            uTextureIndex = TEX_SWITCH_LIGHT_BARRIER_GREEN_OFF;
             break;
         case (EMERALD_LIGHTBARRIER_BLUE_SWITCH):
-            uTextureIndex = 392;
+            uTextureIndex = TEX_SWITCH_LIGHT_BARRIER_BLUE_OFF;
             break;
         case (EMERALD_LIGHTBARRIER_YELLOW_SWITCH):
-            uTextureIndex = 386;
+            uTextureIndex = TEX_SWITCH_LIGHT_BARRIER_YELLOW_OFF;
             break;
         case (EMERALD_YAM):
-            K = Playfield.uFrameCounter % 11;       // Y von 0 bis 10
+            K = Playfield.uFrameCounter % 11;       // K von 0 bis 10
             if (K <= 5) {                           // 0,1,2,3,4,5
-                uTextureIndex = 362 + K;            // 362 - 367
+                uTextureIndex = TEX_YAM_MOVE_1 + K;            // 362 - 367
             } else {                                // 6,7,8,9,10
-                uTextureIndex = 367 + 5 - K;        // 366 - 362
+                uTextureIndex = TEX_YAM_MOVE_6 + 5 - K;        // 366 - 362
             }
             break;
+        case (EMERALD_MESSAGE_0):                   // Dummy-Element für Editor
+            uTextureIndex = TEX_MESSAGE;
+            break;
         case (EMERALD_MESSAGE_1):
+            uTextureIndex = TEX_MESSAGE_1;
+            break;
         case (EMERALD_MESSAGE_2):
+            uTextureIndex = TEX_MESSAGE_2;
+            break;
         case (EMERALD_MESSAGE_3):
+            uTextureIndex = TEX_MESSAGE_3;
+            break;
         case (EMERALD_MESSAGE_4):
+            uTextureIndex = TEX_MESSAGE_4;
+            break;
         case (EMERALD_MESSAGE_5):
+            uTextureIndex = TEX_MESSAGE_5;
+            break;
         case (EMERALD_MESSAGE_6):
+            uTextureIndex = TEX_MESSAGE_6;
+            break;
         case (EMERALD_MESSAGE_7):
+            uTextureIndex = TEX_MESSAGE_7;
+            break;
         case (EMERALD_MESSAGE_8):
-            uTextureIndex = 356;
+            uTextureIndex = TEX_MESSAGE_8;
             break;
-        case (EMERALD_STEEL_MARKER_LEFT_UP):
-            uTextureIndex = 348;
+        case (EMERALD_TREASURECHEST_0):
+            uTextureIndex = TEX_TREASURECHEST_CLOSED;
             break;
-        case (EMERALD_STEEL_MARKER_UP):
-            uTextureIndex = 349;
+        case (EMERALD_TREASURECHEST_1):
+            uTextureIndex = TEX_TREASURECHEST_1;
             break;
-        case (EMERALD_STEEL_MARKER_RIGHT_UP):
-            uTextureIndex = 350;
+        case (EMERALD_TREASURECHEST_2):
+            uTextureIndex = TEX_TREASURECHEST_2;
             break;
-        case (EMERALD_STEEL_MARKER_LEFT):
-            uTextureIndex = 351;
+        case (EMERALD_TREASURECHEST_3):
+            uTextureIndex = TEX_TREASURECHEST_3;
             break;
-        case (EMERALD_STEEL_MARKER_RIGHT):
-            uTextureIndex = 352;
+        case (EMERALD_TREASURECHEST_4):
+            uTextureIndex = TEX_TREASURECHEST_4;
             break;
-        case (EMERALD_STEEL_MARKER_LEFT_BOTTOM):
-            uTextureIndex = 353;
+        case (EMERALD_TREASURECHEST_5):
+            uTextureIndex = TEX_TREASURECHEST_5;
             break;
-        case (EMERALD_STEEL_MARKER_BOTTOM):
-            uTextureIndex = 354;
+        case (EMERALD_TREASURECHEST_6):
+            uTextureIndex = TEX_TREASURECHEST_6;
             break;
-        case (EMERALD_STEEL_MARKER_RIGHT_BOTTOM):
-            uTextureIndex = 355;
+        case (EMERALD_TREASURECHEST_7):
+            uTextureIndex = TEX_TREASURECHEST_7;
+            break;
+        case (EMERALD_TREASURECHEST_8):
+            uTextureIndex = TEX_TREASURECHEST_8;
+            break;
+        case (EMERALD_TREASURECHEST_OPEN):
+            uTextureIndex = TEX_TREASURECHEST_OPENED;
+            break;
+        case (EMERALD_STEEL_STRIPE_LEFT_TOP):
+            uTextureIndex = TEX_STEEL_STRIPE_LEFT_TOP;
+            break;
+        case (EMERALD_STEEL_STRIPE_TOP):
+            uTextureIndex = TEX_STEEL_STRIPE_TOP;
+            break;
+        case (EMERALD_STEEL_STRIPE_RIGHT_TOP):
+            uTextureIndex = TEX_STEEL_STRIPE_RIGHT_TOP;
+            break;
+        case (EMERALD_STEEL_STRIPE_LEFT):
+            uTextureIndex = TEX_STEEL_STRIPE_LEFT;
+            break;
+        case (EMERALD_STEEL_STRIPE_RIGHT):
+            uTextureIndex = TEX_STEEL_STRIPE_RIGHT;
+            break;
+        case (EMERALD_STEEL_STRIPE_LEFT_BOTTOM):
+            uTextureIndex = TEX_STEEL_STRIPE_LEFT_BOTTOM;
+            break;
+        case (EMERALD_STEEL_STRIPE_BOTTOM):
+            uTextureIndex = TEX_STEEL_STRIPE_BOTTOM;
+            break;
+        case (EMERALD_STEEL_STRIPE_RIGHT_BOTTOM):
+            uTextureIndex = TEX_STEEL_STRIPE_RIGHT_BOTTOM;
             break;
         case (EMERALD_GREEN_DROP):
-            uTextureIndex = 346;
+            uTextureIndex = TEX_DROP_GREEN;
             break;
         case (EMERALD_YELLOW_DROP):
-            uTextureIndex = 1057;
+            uTextureIndex = TEX_DROP_YELLOW;
             break;
         case (EMERALD_GREEN_CHEESE):
-            uTextureIndex = 343;
+            uTextureIndex = TEX_CHEESE_GREEN_1;
             break;
         case (EMERALD_YELLOW_CHEESE):
-            uTextureIndex = 1053;
+            uTextureIndex = TEX_CHEESE_YELLOW_1;
             break;
         case (EMERALD_STEEL_FORBIDDEN):
-            uTextureIndex = 334;
+            uTextureIndex = TEX_STEEL_FORBIDDEN;
             break;
         case (EMERALD_STEEL_EXIT):
-            uTextureIndex = 332;
+            uTextureIndex = TEX_STEEL_EXIT;
             break;
         case (EMERALD_STEEL_RADIOACTIVE):
-            uTextureIndex = 337;
+            uTextureIndex = TEX_STEEL_RADIOACTIVE;
             break;
         case (EMERALD_STEEL_EXPLOSION):
-            uTextureIndex = 333;
+            uTextureIndex = TEX_STEEL_EXPLOSION;
             break;
         case (EMERALD_STEEL_ACID):
-            uTextureIndex = 329;
+            uTextureIndex = TEX_STEEL_ACID;
             break;
         case (EMERALD_STEEL_NOT_ROUND):
-            uTextureIndex = 335;
+            uTextureIndex = TEX_STEEL_NOT_ROUND;
             break;
         case (EMERALD_WALL_NOT_ROUND):
-            uTextureIndex = 342;
+            uTextureIndex = TEX_WALL_NOT_ROUND;
             break;
         case (EMERALD_STEEL_PARKING):
-            uTextureIndex = 336;
+            uTextureIndex = TEX_STEEL_PARKING;
             break;
         case (EMERALD_STEEL_STOP):
-            uTextureIndex = 340;
+            uTextureIndex = TEX_STEEL_STOP;
             break;
         case (EMERALD_STEEL_DEADEND):
-            uTextureIndex = 331;
+            uTextureIndex = TEX_STEEL_DEADEND;
             break;
         case (EMERALD_STEEL_BIOHAZARD):
-            uTextureIndex = 330;
+            uTextureIndex = TEX_STEEL_BIOHAZARD;
             break;
         case (EMERALD_STEEL_WARNING):
-            uTextureIndex = 341;
+            uTextureIndex = TEX_STEEL_WARNING;
             break;
         case (EMERALD_STEEL_ROUND):
-            uTextureIndex = 338;
+            uTextureIndex = TEX_STEEL_ROUND;
             break;
         case (EMERALD_STEEL_ROUND_PIKE):
-            uTextureIndex = 339;
+            uTextureIndex = TEX_STEEL_ROUND_PIKE;
             break;
         case (EMERALD_EMERALD):
-            uTextureIndex = 226 + nAnimationCount / 2;     // Emerald, liegend
+            uTextureIndex = TEX_EMERALD_1 + nAnimationCount / 2;     // Emerald, liegend
             break;
         case (EMERALD_RUBY):
-            uTextureIndex = 301 + nAnimationCount / 2;     // Rubin, liegend
+            uTextureIndex = TEX_RUBY_1 + nAnimationCount / 2;     // Rubin, liegend
             break;
         case (EMERALD_CRYSTAL):
-            uTextureIndex = 309;
+            uTextureIndex = TEX_CRYSTAL;
             break;
         case (EMERALD_SAPPHIRE):
-            uTextureIndex = 248 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 9; // Saphir fallend
+            uTextureIndex = TEX_SAPPHIRE_1 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 9; // Saphir fallend
             break;
         case (EMERALD_TIME_COIN):
-            uTextureIndex = 310 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Zeitmünze, drehend
+            uTextureIndex = TEX_COIN_TIME_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Zeitmünze, drehend
             break;
         case (EMERALD_SHIELD_COIN):
-            uTextureIndex = 1047 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Schildmünze, drehend
+            uTextureIndex = TEX_COIN_SHIELD_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Schildmünze, drehend
             break;
         case (EMERALD_HAMMER):
-            uTextureIndex = 318;                            // Hammer
+            uTextureIndex = TEX_HAMMER;                            // Hammer
             break;
         case (EMERALD_DYNAMITE_OFF):
-            uTextureIndex = 286;                            // Dynamit, aus
+            uTextureIndex = TEX_DYNAMITE_OFF;                            // Dynamit, aus
             break;
         case (EMERALD_NUT):
-            uTextureIndex = 234;
+            uTextureIndex = TEX_NUT;
             break;
         case (EMERALD_STONE):
-            uTextureIndex = 71;
+            uTextureIndex = TEX_STONE;
             break;
         case (EMERALD_ALIEN):
             if ((nAnimationCount >= 4) && (nAnimationCount <= 11)) {
-                uTextureIndex = 135;                        // Alien geht 2, Flügel voll ausgebreitet
+                uTextureIndex = TEX_ALIEN_MOVE_1;                        // Alien geht 1
             } else {
-                uTextureIndex = 136;                        // Alien geht 1
+                uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, Flügel voll ausgebreitet
             }
             break;
         case (EMERALD_MOLE_UP):
-            *pfAngle = 90;
-             uTextureIndex = 450 + Playfield.uFrameCounter % 11;     // Mole links
+            fAngle = 90;
+             uTextureIndex = TEX_MOLE_01 + Playfield.uFrameCounter % 11;     // Mole links
             break;
         case (EMERALD_MOLE_RIGHT):
-            *pfAngle = 180;
-             uTextureIndex = 450 + Playfield.uFrameCounter % 11;     // Mole links
+            fAngle = 180;
+             uTextureIndex = TEX_MOLE_01 + Playfield.uFrameCounter % 11;     // Mole links
              break;
         case (EMERALD_MOLE_DOWN):
-            *pfAngle = 270;
-            uTextureIndex = 450 + Playfield.uFrameCounter % 11;     // Mole links
+            fAngle = 270;
+            uTextureIndex = TEX_MOLE_01 + Playfield.uFrameCounter % 11;     // Mole links
             break;
         case( EMERALD_MOLE_LEFT):
-            *pfAngle = 0;
-             uTextureIndex = 450 + Playfield.uFrameCounter % 11;     // Mole links
+            fAngle = 0;
+             uTextureIndex = TEX_MOLE_01 + Playfield.uFrameCounter % 11;     // Mole links
             break;
         case (EMERALD_MINE_UP):
-            *pfAngle = 90;
+            fAngle = 90;
             if ( ((nAnimationCount >= 0) && (nAnimationCount <= 3)) || ((nAnimationCount >= 8) && (nAnimationCount <=11)) ) {
-                uTextureIndex = 73;     // Mine links
+                uTextureIndex = TEX_MINE_LEFT_OFF;     // Mine links
             } else {
-                uTextureIndex = 74;     // Mine links an
+                uTextureIndex = TEX_MINE_LEFT_ON;     // Mine links an
             }
             break;
         case (EMERALD_MINE_RIGHT):
-            *pfAngle = 180;
+            fAngle = 180;
             if ( ((nAnimationCount >= 0) && (nAnimationCount <= 3)) || ((nAnimationCount >= 8) && (nAnimationCount <=11)) ) {
-                uTextureIndex = 73;     // Mine links
+                uTextureIndex = TEX_MINE_LEFT_OFF;     // Mine links
             } else {
-                uTextureIndex = 74;     // Mine links an
+                uTextureIndex = TEX_MINE_LEFT_ON;     // Mine links an
             }
             break;
         case (EMERALD_MINE_DOWN):
-            *pfAngle = 270;
+            fAngle = 270;
             if ( ((nAnimationCount >= 0) && (nAnimationCount <= 3)) || ((nAnimationCount >= 8) && (nAnimationCount <=11)) ) {
-                uTextureIndex = 73;     // Mine links
+                uTextureIndex = TEX_MINE_LEFT_OFF;     // Mine links
             } else {
-                uTextureIndex = 74;     // Mine links an
+                uTextureIndex = TEX_MINE_LEFT_ON;     // Mine links an
             }
             break;
         case( EMERALD_MINE_LEFT):
-            *pfAngle = 0;
+            fAngle = 0;
             if ( ((nAnimationCount >= 0) && (nAnimationCount <= 3)) || ((nAnimationCount >= 8) && (nAnimationCount <=11)) ) {
-                uTextureIndex = 73;     // Mine links
+                uTextureIndex = TEX_MINE_LEFT_OFF;     // Mine links
             } else {
-                uTextureIndex = 74;     // Mine links an
+                uTextureIndex = TEX_MINE_LEFT_ON;     // Mine links an
             }
             break;
         case (EMERALD_BEETLE_UP):
-            *pfAngle = 90;
-            uTextureIndex = 75 + nAnimationCount % 8;     // Käfer links
+            fAngle = 90;
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
             break;
         case (EMERALD_BEETLE_RIGHT):
-            *pfAngle = 180;
-            uTextureIndex = 75 + nAnimationCount % 8;     // Käfer links
+            fAngle = 180;
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
             break;
         case (EMERALD_BEETLE_DOWN):
-            *pfAngle = 270;
-            uTextureIndex = 75 + nAnimationCount % 8;     // Käfer links
+            fAngle = 270;
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
             break;
         case (EMERALD_BEETLE_LEFT):
-            *pfAngle = 0;
-            uTextureIndex = 75 + nAnimationCount % 8;     // Käfer links
+            fAngle = 0;
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
             break;
         case (EMERALD_SLIME):
-            uTextureIndex = 1061;   // Schleim
+            uTextureIndex = TEX_SLIME;   // Schleim
             break;
         case (EMERALD_SPACE):
-            uTextureIndex = 0;      // Space
+            uTextureIndex = TEX_SPACE;      // Space
             break;
         case (EMERALD_STEEL):
-            uTextureIndex = 72;     // Mauer hart
+            uTextureIndex = TEX_STEEL;     // Stahl
             break;
         case (EMERALD_KEY_RED):
-            uTextureIndex = 98;     // roter Schlüssel
+            uTextureIndex = TEX_KEY_RED;     // roter Schlüssel
             break;
         case (EMERALD_KEY_YELLOW):
-            uTextureIndex = 101;    // gelber Schlüssel
+            uTextureIndex = TEX_KEY_YELLOW;    // gelber Schlüssel
             break;
         case (EMERALD_KEY_BLUE):
-            uTextureIndex = 100;    // blauer Schlüssel
+            uTextureIndex = TEX_KEY_BLUE;    // blauer Schlüssel
             break;
         case (EMERALD_KEY_GREEN):
-            uTextureIndex = 99;     // grüner Schlüssel
+            uTextureIndex = TEX_KEY_GREEN;     // grüner Schlüssel
             break;
         case (EMERALD_DOOR_RED):
-            uTextureIndex = 94;     // rote Tür
+            uTextureIndex = TEX_DOOR_RED;     // rote Tür
             break;
         case (EMERALD_DOOR_YELLOW):
-            uTextureIndex = 97;     // gelbe Tür
+            uTextureIndex = TEX_DOOR_YELLOW;     // gelbe Tür
             break;
         case (EMERALD_DOOR_BLUE):
-            uTextureIndex = 96;     // blaue Tür
+            uTextureIndex = TEX_DOOR_BLUE;     // blaue Tür
             break;
         case (EMERALD_DOOR_GREEN):
-            uTextureIndex = 95;     // grüne Tür
+            uTextureIndex = TEX_DOOR_GREEN;     // grüne Tür
             break;
         case (EMERALD_DOOR_RED_WOOD):     // rote Holztür
-            uTextureIndex = 462;
+            uTextureIndex = TEX_DOOR_RED_WOOD;
             break;
         case (EMERALD_DOOR_YELLOW_WOOD):  // gelbe Holztür
-            uTextureIndex = 465;
+            uTextureIndex = TEX_DOOR_YELLOW_WOOD;
             break;
         case (EMERALD_DOOR_BLUE_WOOD):    // blaue Holztür
-            uTextureIndex = 464;
+            uTextureIndex = TEX_DOOR_BLUE_WOOD;
             break;
         case (EMERALD_DOOR_GREEN_WOOD):   // grüne Holztür
-            uTextureIndex = 463;
+            uTextureIndex = TEX_DOOR_GREEN_WOOD;
             break;
         case (EMERALD_MAN):
-            uTextureIndex = 102;    // Man
+            uTextureIndex = TEX_MAN;    // Man
             //uTextureIndex = 119 + nAnimationCount % 8;     // Man runter
             break;
         case (EMERALD_REPLICATOR_RED_TOP_LEFT):
-            uTextureIndex = 138;
+            uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_RED_TOP_MID):
-            uTextureIndex = 139;
+            uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
-            uTextureIndex = 140;
+            uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
-            uTextureIndex = 141;
+            uTextureIndex = TEX_REPLICATOR_RED_LEFT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
-            uTextureIndex = 142;
+            uTextureIndex = TEX_REPLICATOR_RED_RIGHT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_RED_SWITCH):
-            uTextureIndex = 154;
+            uTextureIndex = TEX_SWITCH_REPLICATOR_RED_OFF;
             break;
         case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
-            uTextureIndex = 190;
+            uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
-            uTextureIndex = 191;
+            uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
-            uTextureIndex = 192;
+            uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
-            uTextureIndex = 193;
+            uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
-            uTextureIndex = 194;
+            uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_YELLOW_SWITCH):
-            uTextureIndex = 206;
+            uTextureIndex = TEX_SWITCH_REPLICATOR_YELLOW_OFF;
             break;
         case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
-            uTextureIndex = 172;
+            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_GREEN_TOP_MID):
-            uTextureIndex = 173;
+            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
-            uTextureIndex = 174;
+            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
-            uTextureIndex = 175;
+            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
-            uTextureIndex = 176;
+            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_GREEN_SWITCH):
-            uTextureIndex = 188;
+            uTextureIndex = TEX_SWITCH_REPLICATOR_GREEN_OFF;
             break;
         case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
-            uTextureIndex = 208;
+            uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_BLUE_TOP_MID):
-            uTextureIndex = 209;
+            uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
-            uTextureIndex = 210;
+            uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_OFF;
             break;
         case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
-            uTextureIndex = 211;
+            uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
-            uTextureIndex = 212;
+            uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_BLUE_SWITCH):
-            uTextureIndex = 224;
+            uTextureIndex = TEX_SWITCH_REPLICATOR_BLUE_OFF;
             break;
         case (EMERALD_ACIDPOOL_TOP_LEFT):
-            uTextureIndex = 257;
+            uTextureIndex = TEX_ACID_LEFT_TOP;
             break;
         case (EMERALD_ACIDPOOL_TOP_MID):
-            uTextureIndex = 262 + (Playfield.uFrameCounter / 13) % 4;  // Säurebecken, oben mitte (aktives Feld), verlangsamte Animation (13 Frames für eine Animations-Phase)
+            uTextureIndex = TEX_ACID_1 + (Playfield.uFrameCounter / 13) % 4;  // Säurebecken, oben mitte (aktives Feld), verlangsamte Animation (13 Frames für eine Animations-Phase)
             break;
         case (EMERALD_ACIDPOOL_TOP_RIGHT):
-            uTextureIndex = 259;
+            uTextureIndex = TEX_ACID_RIGHT_TOP;
             break;
         case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
-            uTextureIndex = 258;
+            uTextureIndex = TEX_ACID_LEFT_BOTTOM;
             break;
         case (EMERALD_ACIDPOOL_BOTTOM_MID):
-            uTextureIndex = 261;
+            uTextureIndex = TEX_ACID_BOTTOM;
             break;
         case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
-            uTextureIndex = 260;
+            uTextureIndex = TEX_ACID_RIGHT_BOTTOM;
             break;
-        case (EMERALD_SAND):
-            uTextureIndex = 171;
+        case (EMERALD_EARTH):
+            uTextureIndex = TEX_EARTH;
             break;
-        case (EMERALD_SAND_INVISIBLE):
-            uTextureIndex = 798;
+        case (EMERALD_EARTH_INVISIBLE):
+            uTextureIndex = TEX_EARTH_INVISIBLE;
             break;
-        case (EMERALD_SANDMINE):
-            uTextureIndex = 781;
+        case (EMERALD_MINE_EARTH):
+            uTextureIndex = TEX_MINE_EARTH;
             break;
         case (EMERALD_GRASS):
-            uTextureIndex = 765;
-            break;
-        case (EMERALD_SWAMP):
-            uTextureIndex = 266;
+            uTextureIndex = TEX_GRASS;
             break;
         case (EMERALD_PERL):
-            uTextureIndex = 436;
+            uTextureIndex = TEX_PERL_1;
             break;
         case (EMERALD_MEGABOMB):
-            uTextureIndex = 524 + ((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) % 5;
+            uTextureIndex = TEX_BOMB_MEGA_1 + ((Playfield.uFrameCounter & 0xFFFFFFFC) >> 2) % 5;
             break;
         case (EMERALD_BOMB):
-            uTextureIndex = 271;
+            uTextureIndex = TEX_BOMB_1;
             break;
         case (EMERALD_WHEEL):
-            uTextureIndex = 137;
-            *pfAngle = nAnimationCount * 11;
+            uTextureIndex = TEX_WHEEL;
+            fAngle = nAnimationCount * 11;
             break;
         case (EMERALD_DOOR_GREY_RED):            // Für Editor
-            uTextureIndex = 289;
+            uTextureIndex = TEX_DOOR_GREY_RED;
             break;
         case (EMERALD_DOOR_GREY_GREEN):         // Für Editor
-            uTextureIndex = 290;
+            uTextureIndex = TEX_DOOR_GREY_GREEN;
             break;
         case (EMERALD_DOOR_GREY_BLUE):         // Für Editor
-            uTextureIndex = 291;
+            uTextureIndex = TEX_DOOR_GREY_BLUE;
             break;
         case (EMERALD_DOOR_GREY_YELLOW):         // Für Editor
-            uTextureIndex = 292;
+            uTextureIndex = TEX_DOOR_GREY_YELLOW;
             break;
         case (EMERALD_MAGIC_WALL_STEEL):
-            uTextureIndex = 466 + nAnimationCount / 2;
+            uTextureIndex = TEX_MAGIC_WALL_STEEL_1 + nAnimationCount / 2;
             break;
         case (EMERALD_MAGIC_WALL):
-            uTextureIndex = 293 + nAnimationCount / 2;
+            uTextureIndex = TEX_MAGIC_WALL_1 + nAnimationCount / 2;
             break;
         case (EMERALD_WALL_CORNERED):
-            uTextureIndex = 316;
+            uTextureIndex = TEX_WALL;
             break;
         case (EMERALD_WALL_ROUND):
-            uTextureIndex = 317;
+            uTextureIndex = TEX_WALL_ROUND;
             break;
         case (EMERALD_DOOR_END_NOT_READY):
-            uTextureIndex = 287;
+            uTextureIndex = TEX_DOOR_EXIT;
             break;
         case (EMERALD_DOOR_END_READY):
-            uTextureIndex = 319 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8; // Endtür, blinkend
+            uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Endtür, blinkend
             break;
         case (EMERALD_DOOR_END_NOT_READY_STEEL):
-            uTextureIndex = 509;
+            uTextureIndex = TEX_DOOR_EXIT_STEEL;
             break;
         case (EMERALD_DOOR_END_READY_STEEL):
-            uTextureIndex = 510 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8; // Endtür, blinkend
+            uTextureIndex = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-Endtür, blinkend
             break;
         case (EMERALD_WALL_ROUND_PIKE):
-            uTextureIndex = 328;
+            uTextureIndex = TEX_WALL_ROUND_PIKE;
             break;
         case (EMERALD_STEEL_TRASHCAN):
-            uTextureIndex = 736;
+            uTextureIndex = TEX_STEEL_TRASHCAN;
             break;
         case (EMERALD_STEEL_JOYSTICK):
-            uTextureIndex = 737;
+            uTextureIndex = TEX_STEEL_JOYSTICK;
             break;
         case (EMERALD_STEEL_EDIT_LEVEL):
-            uTextureIndex = 738;
+            uTextureIndex = TEX_STEEL_EDIT;
             break;
         case (EMERALD_STEEL_MOVE_LEVEL):
-            uTextureIndex = 739;
+            uTextureIndex = TEX_STEEL_MOVE;
             break;
         case (EMERALD_STEEL_ADD_LEVELGROUP):
-            uTextureIndex = 740;
+            uTextureIndex = TEX_STEEL_ADD;
             break;
         case (EMERALD_STEEL_COPY_LEVEL):
-            uTextureIndex = 741;
+            uTextureIndex = TEX_STEEL_COPY;
             break;
         case (EMERALD_STEEL_CLIPBOARD_LEVEL):
-            uTextureIndex = 742;
+            uTextureIndex = TEX_STEEL_CLIPBOARD;
             break;
         case (EMERALD_STEEL_DC3_IMPORT):
-            uTextureIndex = 743;
+            uTextureIndex = TEX_STEEL_DC3;
             break;
         case (EMERALD_STEEL_RENAME_LEVELGROUP):
-            uTextureIndex = 744;
+            uTextureIndex = TEX_STEEL_RENAME_LEVELGROUP;
             break;
         case (EMERALD_STEEL_PASSWORD):
-            uTextureIndex = 745;
+            uTextureIndex = TEX_STEEL_PASSWORD;
             break;
         case (EMERALD_CONVEYORBELT_RED):
-            uTextureIndex = 799;
+            uTextureIndex = TEX_CONVEYOR_RED;
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_RED):
-            uTextureIndex = 800;
+            uTextureIndex = TEX_SWITCH_CONVEYOR_RED_OFF;
             break;
         case (EMERALD_CONVEYORBELT_GREEN):
-            uTextureIndex = 803;
+            uTextureIndex = TEX_CONVEYOR_GREEN;
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
-            uTextureIndex = 804;
+            uTextureIndex = TEX_SWITCH_CONVEYOR_GREEN_OFF;
             break;
         case (EMERALD_CONVEYORBELT_BLUE):
-            uTextureIndex = 807;
+            uTextureIndex = TEX_CONVEYOR_BLUE;
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
-            uTextureIndex = 808;
+            uTextureIndex = TEX_SWITCH_CONVEYOR_BLUE_OFF;
             break;
         case (EMERALD_CONVEYORBELT_YELLOW):
-            uTextureIndex = 811;
+            uTextureIndex = TEX_CONVEYOR_YELLOW;
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
-            uTextureIndex = 812;
+            uTextureIndex = TEX_SWITCH_CONVEYOR_YELLOW_OFF;
             break;
         case (EMERALD_LEVELEDITOR_MESSAGE_1_4):
-            uTextureIndex = 815;
+            uTextureIndex = TEX_ENLARGE_WINDOW_FOR_LEVELEDITOR_1;
             break;
         case (EMERALD_LEVELEDITOR_MESSAGE_2_4):
-            uTextureIndex = 816;
+            uTextureIndex = TEX_ENLARGE_WINDOW_FOR_LEVELEDITOR_2;
             break;
         case (EMERALD_LEVELEDITOR_MESSAGE_3_4):
-            uTextureIndex = 817;
+            uTextureIndex = TEX_ENLARGE_WINDOW_FOR_LEVELEDITOR_3;
             break;
         case (EMERALD_LEVELEDITOR_MESSAGE_4_4):
-            uTextureIndex = 818;
+            uTextureIndex = TEX_ENLARGE_WINDOW_FOR_LEVELEDITOR_4;
             break;
         case (EMERALD_STEEL_GROW_LEFT):
-            uTextureIndex = 884;
+            uTextureIndex = TEX_STEEL_GROW_LEFT;
             break;
         case (EMERALD_STEEL_GROW_RIGHT):
-            uTextureIndex = 885;
+            uTextureIndex = TEX_STEEL_GROW_RIGHT;
             break;
         case (EMERALD_STEEL_GROW_UP):
-            uTextureIndex = 886;
+            uTextureIndex = TEX_STEEL_GROW_UP;
             break;
         case (EMERALD_STEEL_GROW_DOWN):
-            uTextureIndex = 887;
+            uTextureIndex = TEX_STEEL_GROW_DOWN;
             break;
         case (EMERALD_STEEL_GROW_LEFT_RIGHT):
-            uTextureIndex = 888;
+            uTextureIndex = TEX_STEEL_GROW_LEFT_RIGHT;
             break;
         case (EMERALD_STEEL_GROW_UP_DOWN):
-            uTextureIndex = 889;
+            uTextureIndex = TEX_STEEL_GROW_UP_DOWN;
             break;
         case (EMERALD_STEEL_GROW_ALL):
-            uTextureIndex = 890;
+            uTextureIndex = TEX_STEEL_GROW_ALL;
             break;
         case (EMERALD_WALL_GROW_LEFT):
-            uTextureIndex = 955;
+            uTextureIndex = TEX_WALL_GROW_LEFT;
             break;
         case (EMERALD_WALL_GROW_RIGHT):
-            uTextureIndex = 956;
+            uTextureIndex = TEX_WALL_GROW_RIGHT;
             break;
         case (EMERALD_WALL_GROW_UP):
-            uTextureIndex = 957;
+            uTextureIndex = TEX_WALL_GROW_UP;
             break;
         case (EMERALD_WALL_GROW_DOWN):
-            uTextureIndex = 958;
+            uTextureIndex = TEX_WALL_GROW_DOWN;
             break;
         case (EMERALD_WALL_GROW_LEFT_RIGHT):
-            uTextureIndex = 959;
+            uTextureIndex = TEX_WALL_GROW_LEFT_RIGHT;
             break;
         case (EMERALD_WALL_GROW_UP_DOWN):
-            uTextureIndex = 960;
+            uTextureIndex = TEX_WALL_GROW_UP_DOWN;
             break;
         case (EMERALD_WALL_GROW_ALL):
-            uTextureIndex = 961;
+            uTextureIndex = TEX_WALL_GROW_ALL;
             break;
         case (EMERALD_TELEPORTER_RED):
-            uTextureIndex = 966 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, rot
+            uTextureIndex = TEX_TELEPORTER_RED_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, rot
             break;
         case (EMERALD_TELEPORTER_YELLOW):
-            uTextureIndex = 979 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, gelb
+            uTextureIndex = TEX_TELEPORTER_YELLOW_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, gelb
             break;
         case (EMERALD_TELEPORTER_GREEN):
-            uTextureIndex = 992 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grün
+            uTextureIndex = TEX_TELEPORTER_GREEN_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grün
             break;
         case (EMERALD_TELEPORTER_BLUE):
-            uTextureIndex = 1005 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, blau
+            uTextureIndex = TEX_TELEPORTER_BLUE_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, blau
             break;
         case (EMERALD_SWITCH_REMOTEBOMB_UP):
-            uTextureIndex = 1019;
+            uTextureIndex = TEX_SWITCH_BOMB_REMOTE_UP_OFF;
             break;
         case (EMERALD_SWITCH_REMOTEBOMB_DOWN):
-            uTextureIndex = 1021;
+            uTextureIndex = TEX_SWITCH_BOMB_REMOTE_DOWN_OFF;
             break;
         case (EMERALD_SWITCH_REMOTEBOMB_LEFT):
-            uTextureIndex = 1023;
+            uTextureIndex = TEX_SWITCH_BOMB_REMOTE_LEFT_OFF;
             break;
         case (EMERALD_SWITCH_REMOTEBOMB_RIGHT):
-            uTextureIndex = 1025;
+            uTextureIndex = TEX_SWITCH_BOMB_REMOTE_RIGHT_OFF;
             break;
         case (EMERALD_SWITCH_REMOTEBOMB_IGNITION):
-            uTextureIndex = 1027;
+            uTextureIndex = TEX_SWITCH_BOMB_REMOTE_IGNITION_OFF;
             break;
         case (EMERALD_REMOTEBOMB):
-            uTextureIndex = 1028;
+            uTextureIndex = TEX_BOMB_REMOTE;
             break;
         case (EMERALD_STEEL_MODERN_LEFT_END):
-            uTextureIndex = 1029;
+            uTextureIndex = TEX_STEEL_MODERN_LEFT_END;
             break;
         case (EMERALD_STEEL_MODERN_LEFT_RIGHT):
-            uTextureIndex = 1030;
+            uTextureIndex = TEX_STEEL_MODERN_LEFT_RIGHT;
             break;
         case (EMERALD_STEEL_MODERN_RIGHT_END):
-            uTextureIndex = 1031;
+            uTextureIndex = TEX_STEEL_MODERN_RIGHT_END;
             break;
         case (EMERALD_STEEL_MODERN_UP_END):
-            uTextureIndex = 1032;
+            uTextureIndex = TEX_STEEL_MODERN_TOP_END;
             break;
         case (EMERALD_STEEL_MODERN_UP_DOWN):
-            uTextureIndex = 1033;
+            uTextureIndex = TEX_STEEL_MODERN_TOP_BOTTOM;
             break;
         case (EMERALD_STEEL_MODERN_DOWN_END):
-            uTextureIndex = 1034;
+            uTextureIndex = TEX_STEEL_MODERN_BOTTOM_END;
             break;
         case (EMERALD_STEEL_MODERN_MIDDLE):
-            uTextureIndex = 1035;
+            uTextureIndex = TEX_STEEL_MODERN_MIDDLE;
             break;
         case (EMERALD_PIPE_UP_DOWN):
-            uTextureIndex = 1036;
+            uTextureIndex = TEX_PIPE_UP_DOWN;
             break;
         case (EMERALD_PIPE_LEFT_RIGHT):
-            uTextureIndex = 1037;
+            uTextureIndex = TEX_PIPE_LEFT_RIGHT;
             break;
         case (EMERALD_PIPE_LEFT_UP):
-            uTextureIndex = 1038;
+            uTextureIndex = TEX_PIPE_LEFT_UP;
             break;
         case (EMERALD_PIPE_LEFT_DOWN):
-            uTextureIndex = 1039;
+            uTextureIndex = TEX_PIPE_LEFT_DOWN;
             break;
         case (EMERALD_PIPE_RIGHT_UP):
-            uTextureIndex = 1040;
+            uTextureIndex = TEX_PIPE_RIGHT_UP;
             break;
         case (EMERALD_PIPE_RIGHT_DOWN):
-            uTextureIndex = 1041;
+            uTextureIndex = TEX_PIPE_RIGHT_DOWN;
             break;
         case (EMERALD_PIPE_LEFT_UP_DOWN):
-            uTextureIndex = 1042;
+            uTextureIndex = TEX_PIPE_LEFT_UP_DOWN;
             break;
         case (EMERALD_PIPE_RIGHT_UP_DOWN):
-            uTextureIndex = 1043;
+            uTextureIndex = TEX_PIPE_RIGHT_UP_DOWN;
             break;
         case (EMERALD_PIPE_LEFT_RIGHT_UP):
-            uTextureIndex = 1044;
+            uTextureIndex = TEX_PIPE_LEFT_RIGHT_UP;
             break;
         case (EMERALD_PIPE_LEFT_RIGHT_DOWN):
-            uTextureIndex = 1045;
+            uTextureIndex = TEX_PIPE_LEFT_RIGHT_DOWN;
             break;
         case (EMERALD_PIPE_LEFT_RIGHT_UP_DOWN):
-            uTextureIndex = 1046;
+            uTextureIndex = TEX_PIPE_LEFT_RIGHT_UP_DOWN;
+            break;
+        case (EMERALD_SMILEY):
+            uTextureIndex = TEX_SMILEY_128;
+            break;
+        case (EMERALD_FONT_PAFF):
+            uTextureIndex = TEX_MONKEY_PAFF;
             break;
         default:
             SDL_Log("%s: unknown element: %x     T:%u",__FUNCTION__,uElement,SDL_GetTicks());
-            uTextureIndex = 0;     // Space
+            uTextureIndex = TEX_SPACE;     // Space
             break;
+    }
+    if (pfAngle != NULL) {
+        *pfAngle = fAngle;
     }
     return uTextureIndex;
 }

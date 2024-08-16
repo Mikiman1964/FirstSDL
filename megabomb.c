@@ -37,14 +37,7 @@ void ControlMegaBomb(uint32_t I) {
         // Mega-Bombe kann vom Replikator geboren werden, dann hier nichts machen
         return;
     } else if (IS_SPACE(uHitCoordinate)) {   // Ist nach unten frei?
-        // neuen Platz mit ungültigem Element besetzen
-        Playfield.pLevel[uHitCoordinate] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-        Playfield.pInvalidElement[uHitCoordinate] = EMERALD_MEGABOMB;
-        Playfield.pLastStatusAnimation[uHitCoordinate] = EMERALD_ANIM_DOWN;
-        Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP;
-        // Aktuelles Element auf Animation "unten"
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+        SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_MEGABOMB);
     } else if (uHitElement == EMERALD_ACIDPOOL) {   // Fällt Mega-Bombe ins Säurebecken?
         SDL_Log("Mega-Bomb falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
@@ -61,123 +54,30 @@ void ControlMegaBomb(uint32_t I) {
         if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_MEGABOMB) != 0) {
             uFree = GetFreeRollDirections(I);
             if (uFree == 1) {   // Mega-Bombe kann links rollen
-                // neuen Platz mit ungültigem Element besetzen
-                Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                Playfield.pInvalidElement[I - 1] = EMERALD_MEGABOMB;
-                Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                // Aktuelles Element auf Animation "links"
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_MEGABOMB);
             } else if (uFree == 2) {    // Mega-Bombe kann rechts rollen
-                // neuen Platz mit ungültigem Element besetzen
-                Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
-                Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                // Aktuelles Element auf Animation "rechts"
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MEGABOMB);
             } else if (uFree == 3) {    // Mega-Bombe kann in beide Richtungen rollen
                 // Hier entscheiden, ob links oder rechts gerollt wird
                 if ((rand() & 0x01) == 0) {   // links
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_MEGABOMB;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                    SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_MEGABOMB);
                 } else {                    // rechts
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                    SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MEGABOMB);
                 }
             }
-        } else {    // Ab hier prüfen, ob Megabombe durch Laufband bewegt werden kann
-            if (uHitElement == EMERALD_CONVEYORBELT_RED) {
-                if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_MEGABOMB;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            } else if (uHitElement == EMERALD_CONVEYORBELT_GREEN) {
-                if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_MEGABOMB;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            } else if (uHitElement == EMERALD_CONVEYORBELT_BLUE) {
-                if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_MEGABOMB;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            } else if (uHitElement == EMERALD_CONVEYORBELT_YELLOW) {
-                if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) && (IS_SPACE(I - 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_MEGABOMB;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
-                } else if ((Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) && (IS_SPACE(I + 1))) {
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_MEGABOMB;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
-                }
-            } else {
-                // SDL_Log("Megabomb sleeps, Hitelement = %x",uHitElement);
-            }
+        // Ab hier prüfen, ob Kristall durch Laufband bewegt werden kann
+        } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT)))) {
+            SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_MEGABOMB);
+        } else if ((IS_SPACE(I + 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT)))) {
+            SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MEGABOMB);
+        } else {
+            // SDL_Log("Megabomb sleeps, Hitelement = %x",uHitElement);
         }
     }
 }
