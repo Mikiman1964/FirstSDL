@@ -1,9 +1,8 @@
 #include "EmeraldMine.h"
 #include "beetle.h"
+#include "drop.h"
 #include "explosion.h"
-#include "greendrop.h"
 #include "sound.h"
-#include "yellowdrop.h"
 
 extern PLAYFIELD Playfield;
 
@@ -24,7 +23,7 @@ void ControlBeetleUp(uint32_t I) {
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
     // Hat Käfer Kontakt zu grünem/gelbem Käse ?
-    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
+    if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_UP_TO_LEFT;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
@@ -33,25 +32,14 @@ void ControlBeetleUp(uint32_t I) {
         Playfield.pStatusAnimation[I] = 0;
         if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
             // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I - Playfield.uLevel_X_Dimension] = EMERALD_BEETLE_UP;
-            Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_DOWN;
-            // Aktuelles Element auf Animation "oben"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+            SetElementToNextPosition(I,EMERALD_ANIM_UP,EMERALD_ANIM_CLEAN_DOWN,EMERALD_BEETLE_UP);
         } else {                        // Oben ist nicht frei
             // Käfer bleibt zunächst auf "oben" muss sich aber bei Blockade nach links drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_LEFT;
         }
     } else if (!IS_SPACE(I + 1)) { // // Hat Käfer rechts Führung?
         if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
-            // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I - Playfield.uLevel_X_Dimension] = EMERALD_BEETLE_UP;
-            Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_DOWN;
-            // Aktuelles Element auf Animation "oben"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+            SetElementToNextPosition(I,EMERALD_ANIM_UP,EMERALD_ANIM_CLEAN_DOWN,EMERALD_BEETLE_UP);
         } else {                        // Oben ist nicht frei
             // Käfer bleibt zunächst auf "oben" muss sich aber bei Blockade nach links drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_LEFT;
@@ -80,7 +68,7 @@ void ControlBeetleRight(uint32_t I) {
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
     // Hat Käfer Kontakt zu grünem/gelbem Käse ?
-    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
+    if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_RIGHT_TO_UP;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
@@ -88,14 +76,7 @@ void ControlBeetleRight(uint32_t I) {
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
         if (IS_SPACE(I + 1)) {    // Ist rechts frei?
-            // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I + 1] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I + 1] = EMERALD_BEETLE_RIGHT;
-            Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-            Playfield.pLastStatusAnimation[I + 1] = Playfield.pStatusAnimation[I];
-            // Aktuelles Element auf Animation "rechts"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+            SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_BEETLE_RIGHT);
         } else {                           // Rechts ist nicht frei
             // Käfer bleibt zunächst auf "rechts" muss sich aber bei Blockade nach oben drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_UP;
@@ -104,14 +85,7 @@ void ControlBeetleRight(uint32_t I) {
     else if ( (!IS_SPACE(I + Playfield.uLevel_X_Dimension)) &&   // Hat Käfer rechts Führung? AcidPool ist wie Space.
               (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL) ) {
         if (IS_SPACE(I + 1)) {    // Ist nach rechts frei?
-            // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I + 1] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I + 1] = EMERALD_BEETLE_RIGHT;
-            Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT;
-            Playfield.pLastStatusAnimation[I + 1] = Playfield.pStatusAnimation[I];
-            // Aktuelles Element auf Animation "rechts"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+            SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_BEETLE_RIGHT);
         } else {                            // Rechts ist nicht frei
             // Käfer bleibt zunächst auf "rechts" muss sich aber bei Blockade nach oben drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_UP;
@@ -144,7 +118,7 @@ void ControlBeetleDown(uint32_t I) {
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
     // Hat Käfer Kontakt zu grünem/gelbem Käse ?
-    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
+    if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_DOWN_TO_RIGHT;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
@@ -152,14 +126,7 @@ void ControlBeetleDown(uint32_t I) {
         // Hatte Käfer vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
         Playfield.pStatusAnimation[I] = 0;
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {    // Ist nach unten frei?
-            // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_BEETLE_DOWN;
-            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP;
-            Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = Playfield.pStatusAnimation[I];
-            // Aktuelles Element auf Animation "unten"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+            SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_BEETLE_DOWN);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Käfer ins Säurebecken?
             SDL_Log("Beetle falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
@@ -172,14 +139,7 @@ void ControlBeetleDown(uint32_t I) {
         }
     } else if (!IS_SPACE(I - 1)) {   // Rechts von Käfer irgendwas?
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {    // Ist nach unten frei?
-            // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_BEETLE_DOWN;
-            Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP;
-            Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = Playfield.pStatusAnimation[I];
-            // Aktuelles Element auf Animation "unten"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+            SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_BEETLE_DOWN);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Käfer ins Säurebecken?
             SDL_Log("Beetle falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
@@ -214,7 +174,7 @@ void ControlBeetleLeft(uint32_t I) {
         return; // Für den Käfer ist das Spiel hier zu Ende
     }
     // Hat Käfer Kontakt zu grünem/gelbem Käse ?
-    if (IsGreenCheeseAround(I) || IsYellowCheeseAround(I)) {
+    if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_BEETLE_WILL_EXPLODE | EMERALD_ANIM_SPIN_LEFT_TO_DOWN;
         return; // Für den Käfer ist das Spiel nächste Runde zu Ende
     }
@@ -222,26 +182,14 @@ void ControlBeetleLeft(uint32_t I) {
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         Playfield.pStatusAnimation[I] = 0;
         if (IS_SPACE(I - 1)) {    // Ist nach links frei?
-            // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I - 1] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I - 1] = EMERALD_BEETLE_LEFT;
-            Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-            // Aktuelles Element auf Animation "links"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+            SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_BEETLE_LEFT);
         } else {                           // Links ist nicht frei
             // Käfer bleibt zunächst auf "links" muss sich aber bei Blockade nach unten drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_DOWN;
         }
     } else if (!IS_SPACE(I - Playfield.uLevel_X_Dimension)) {   // Rechts von Käfer irgendwas?{
         if (IS_SPACE(I - 1)) {    // Ist nach links frei?
-            // neuen Platz mit ungültigem Element besetzen
-            Playfield.pLevel[I - 1] = EMERALD_INVALID;
-            // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-            Playfield.pInvalidElement[I - 1] = EMERALD_BEETLE_LEFT;
-            Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT;
-            // Aktuelles Element auf Animation "links"
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+            SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_BEETLE_LEFT);
         } else {                           // Links ist nicht frei
             // Käfer bleibt zunächst auf "links" muss sich aber bei Blockade nach unten drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_DOWN;

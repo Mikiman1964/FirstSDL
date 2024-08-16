@@ -8,7 +8,7 @@
 
 #define MIN_Y_RESOLUTION_FOR_LEVELEDITOR        960
 
-#define MAX_PANEL_ELEMENTS                      280     // (8 * 35)
+#define MAX_PANEL_ELEMENTS                      (8 * 36)     // (8 * 36)
 #define EDITOR_MEM_SIZE                         4096
 
 #define MENUSTATE_LEVEL_STD                     0
@@ -21,27 +21,32 @@
 #define MENUSTATE_TIME_AND_SCORES_MESSAGE       7
 #define MENUSTATE_TIME_AND_SCORES_EDIT_TITLE    8
 #define MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR   9
-#define MENUSTATE_MAX                           (MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR + 1)
+#define MENUSTATE_TREASURECHESTS                10
+#define MENUSTATE_TREASURECHESTS_TEXT           11
+
+#define MENUSTATE_MAX                           (MENUSTATE_TREASURECHESTS_TEXT + 1)
 
 
-#define BUTTONLABEL_EDITOR_SAVE      "EDITOR_LEVEL_SAVE"
-#define BUTTONLABEL_EDITOR_QUIT      "EDITOR_QUIT"
-#define BUTTONLABEL_EDITOR_YAMS      "EDITOR_YAMS"
-#define BUTTONLABEL_RETURN_TO_LEVEL  "RETURN_TO_LEVEL"
-#define BUTTONLABEL_EDITOR_YAM_MINUS "EDITOR_YAM_MINUS"
-#define BUTTONLABEL_EDITOR_YAM_PLUS  "EDITOR_YAM_PLUS"
-#define BUTTONLABEL_EDITOR_MACHINES  "EDITOR_MACHINES"
-#define BUTTONLABEL_TIME_AND_SCORES  "TIME_AND_SCORES"
-#define BUTTONLABEL_EDITOR_TEXT      "EDITOR_TEXT"
-#define BUTTONLABEL_EDITOR_STD       "EDITOR_STD"
-#define BUTTONLABEL_EDITOR_OPTION_1  "EDITOR_OPTION1"
-#define BUTTONLABEL_EDITOR_OPTION_2  "EDITOR_OPTION2"
-#define BUTTONLABEL_EDITOR_OPTION_3  "EDITOR_OPTION3"
-#define BUTTONLABEL_SAVE_MESSAGE     "SAVE_MESSAGE"
-#define BUTTONLABEL_CANCEL_MESSAGE   "CANCEL_MESSAGE"
-#define BUTTONLABEL_CALL_GAME        "CALL_GAME"
-#define BUTTONLABEL_CALL_DEMO        "CALL_DEMO"
-#define BUTTONLABEL_CALL_QUIT        "CALL_QUIT"
+#define BUTTONLABEL_EDITOR_SAVE                 "EDITOR_LEVEL_SAVE"
+#define BUTTONLABEL_EDITOR_QUIT                 "EDITOR_QUIT"
+#define BUTTONLABEL_EDITOR_YAMS                 "EDITOR_YAMS"
+#define BUTTONLABEL_RETURN_TO_LEVEL             "RETURN_TO_LEVEL"
+#define BUTTONLABEL_EDITOR_YAM_MINUS            "EDITOR_YAM_MINUS"
+#define BUTTONLABEL_EDITOR_YAM_PLUS             "EDITOR_YAM_PLUS"
+#define BUTTONLABEL_EDITOR_MACHINES             "EDITOR_MACHINES"
+#define BUTTONLABEL_TIME_AND_SCORES             "TIME_AND_SCORES"
+#define BUTTONLABEL_EDITOR_TEXT                 "EDITOR_TEXT"
+#define BUTTONLABEL_EDITOR_STD                  "EDITOR_STD"
+#define BUTTONLABEL_EDITOR_OPTION_1             "EDITOR_OPTION1"
+#define BUTTONLABEL_EDITOR_OPTION_2             "EDITOR_OPTION2"
+#define BUTTONLABEL_EDITOR_OPTION_3             "EDITOR_OPTION3"
+#define BUTTONLABEL_EDITOR_TREASURECHESTS       "EDITOR_TREASURECHESTS"
+#define BUTTONLABEL_SAVE_MESSAGE                "SAVE_MESSAGE"
+#define BUTTONLABEL_CANCEL_MESSAGE              "CANCEL_MESSAGE"
+#define BUTTONLABEL_CALL_GAME                   "CALL_GAME"
+#define BUTTONLABEL_CALL_DEMO                   "CALL_DEMO"
+#define BUTTONLABEL_CALL_QUIT                   "CALL_QUIT"
+
 
 
 
@@ -139,6 +144,8 @@ typedef struct {
     char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "Mikiman"
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
     char            *pMessage[EMERALD_MAX_MESSAGES];            // 8 Nachrichtentexte
+    uint16_t        uTreasureChestElement[EMERALD_MAX_TREASURECHESTS];
+    bool            bTreasureChestWarn[EMERALD_MAX_TREASURECHESTS]; // Warnt den Spieler davor, dass in der Truhe etwas Gefährliches sein könnte
     uint32_t        uScoreEmerald;
     uint32_t        uScoreRuby;
     uint32_t        uScoreSaphir;
@@ -156,6 +163,7 @@ typedef struct {
     uint32_t        uScoreTimeCoin;
     uint32_t        uScoreShieldCoin;
     uint32_t        uScoreMessage;
+    uint32_t        uScoreTreasureChest;
     uint32_t        uEmeraldsToCollect;
     uint32_t        uTimeScoreFactor;
     uint32_t        uGreenCheeseSpreadSpeed;
@@ -212,6 +220,7 @@ DYNSTRING *GetLevelXmlFromEditor(void);
 int EditorStateLevel(SDL_Renderer *pRenderer);
 int EditorStateYams(SDL_Renderer *pRenderer);
 int EditorStateMachines(SDL_Renderer *pRenderer);
+int EditorStateTreasureChests(SDL_Renderer *pRenderer);
 int EditorStateTimeAndScores(SDL_Renderer *pRenderer);
 int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer);
 void PreCalcYamCoords(void);

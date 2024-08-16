@@ -1,3 +1,4 @@
+#include "gfx/textures.h"
 #include <ctype.h>
 #include <math.h>
 #include "buttons_checkboxes.h"
@@ -288,6 +289,10 @@ int SetMenuText(uint16_t *pMenuScreen, char *pszText, int nXpos, int nYpos,uint3
 Name:           GetFontElementByChar
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt ein Zeichensatz-Element anhand eines Zeichens.
+            Diese Funktion ist leider notwendig, da beim Anlegen der Elemente
+            nicht nach ASCII-Vorlage vorgegangen wurde. Die ursprünglichen
+            Elemente müssen an ihrem Platz verbleiben, ansonsten werden alte
+            Levelgruppen inkompatibel.
 Parameter
       Eingang: sign, char, Zeichen
                uFont, uint32_t, möglich ist Folgendes:
@@ -307,37 +312,37 @@ uint16_t GetFontElementByChar(char sign,uint32_t uFont) {
     if ((sign >= 'A') && (sign <= 'Z')) {
         switch (uFont) {
             case (EMERALD_FONT_BLUE):
-                uElement = EMERALD_FONT_A + sign - 'A';
+                uElement = EMERALD_FONT_BLUE_A + sign - 'A';
                 break;
-            case (EMERALD_FONT_STEEL_BLUE):
-                uElement = EMERALD_FONT_STEEL_A + sign - 'A';
+            case (EMERALD_FONT_BLUE_STEEL):
+                uElement = EMERALD_FONT_BLUE_STEEL_A + sign - 'A';
                 break;
             case (EMERALD_FONT_GREEN):
                 uElement = EMERALD_FONT_GREEN_A + sign - 'A';
                 break;
-            case (EMERALD_FONT_STEEL_GREEN):
-                uElement = EMERALD_FONT_STEEL_GREEN_A + sign - 'A';
+            case (EMERALD_FONT_GREEN_STEEL):
+                uElement = EMERALD_FONT_GREEN_STEEL_A + sign - 'A';
                 break;
             default:
-                uElement = EMERALD_FONT_A + sign - 'A';
+                uElement = EMERALD_FONT_BLUE_A + sign - 'A';
                 break;
         }
     } else if ((sign >= '0') && (sign <= '9')) {
         switch (uFont) {
             case (EMERALD_FONT_BLUE):
-                uElement = EMERALD_FONT_0 + sign - 0x30;
+                uElement = EMERALD_FONT_BLUE_0 + sign - 0x30;
                 break;
-            case (EMERALD_FONT_STEEL_BLUE):
-                uElement = EMERALD_FONT_STEEL_0 + sign - 0x30;
+            case (EMERALD_FONT_BLUE_STEEL):
+                uElement = EMERALD_FONT_BLUE_STEEL_0 + sign - 0x30;
                 break;
             case (EMERALD_FONT_GREEN):
                 uElement = EMERALD_FONT_GREEN_0 + sign - 0x30;
                 break;
-            case (EMERALD_FONT_STEEL_GREEN):
-                uElement = EMERALD_FONT_STEEL_GREEN_0 + sign - 0x30;
+            case (EMERALD_FONT_GREEN_STEEL):
+                uElement = EMERALD_FONT_GREEN_STEEL_0 + sign - 0x30;
                 break;
             default:
-                uElement = EMERALD_FONT_0 + sign - 0x30;
+                uElement = EMERALD_FONT_BLUE_0 + sign - 0x30;
                 break;
         }
     } else {
@@ -347,13 +352,13 @@ uint16_t GetFontElementByChar(char sign,uint32_t uFont) {
                     case (EMERALD_FONT_BLUE):
                         uElement = EMERALD_SPACE;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
+                    case (EMERALD_FONT_BLUE_STEEL):
                         uElement = EMERALD_STEEL;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_SPACE;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
+                    case (EMERALD_FONT_GREEN_STEEL):
                         uElement = EMERALD_STEEL;
                         break;
                     default:
@@ -364,269 +369,375 @@ uint16_t GetFontElementByChar(char sign,uint32_t uFont) {
             case ('!'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_EXCLAMATION;
+                        uElement = EMERALD_FONT_BLUE_EXCLAMATION;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_EXCLAMATION;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_EXCLAMATION;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_EXCLAMATION;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_EXCLAMATION;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_EXCLAMATION;
                         break;
                     default:
-                        uElement = EMERALD_FONT_EXCLAMATION;
+                        uElement = EMERALD_FONT_BLUE_EXCLAMATION;
                         break;
                 }
                 break;
             case ('>'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_ARROW_RIGHT;
+                        uElement = EMERALD_FONT_BLUE_ARROW_RIGHT;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_ARROW_RIGHT;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_ARROW_RIGHT;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_ARROW_RIGHT;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
+                    case (EMERALD_FONT_GREEN_STEEL):
                         break;
-                        uElement = EMERALD_FONT_STEEL_GREEN_ARROW_RIGHT;
+                        uElement = EMERALD_FONT_GREEN_STEEL_ARROW_RIGHT;
                     default:
-                        uElement = EMERALD_FONT_ARROW_RIGHT;
+                        uElement = EMERALD_FONT_BLUE_ARROW_RIGHT;
                         break;
                 }
                 break;
             case ('<'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_ARROW_LEFT;
+                        uElement = EMERALD_FONT_BLUE_ARROW_LEFT;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_ARROW_LEFT;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_ARROW_LEFT;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_ARROW_LEFT;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
+                    case (EMERALD_FONT_GREEN_STEEL):
                         break;
-                        uElement = EMERALD_FONT_STEEL_GREEN_ARROW_LEFT;
+                        uElement = EMERALD_FONT_GREEN_STEEL_ARROW_LEFT;
                     default:
-                        uElement = EMERALD_FONT_ARROW_LEFT;
+                        uElement = EMERALD_FONT_BLUE_ARROW_LEFT;
                         break;
                 }
                 break;
             case ('\''):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_APOSTROPHE;
+                        uElement = EMERALD_FONT_BLUE_APOSTROPHE;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_APOSTROPHE;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_APOSTROPHE;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_APOSTROPHE;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_APOSTROPHE;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_APOSTROPHE;
                         break;
                     default:
-                        uElement = EMERALD_FONT_APOSTROPHE;
+                        uElement = EMERALD_FONT_BLUE_APOSTROPHE;
                         break;
                 }
                 break;
             case ('('):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_BRACE_OPEN;
+                        uElement = EMERALD_FONT_BLUE_BRACE_OPEN;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_BRACE_OPEN;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_BRACE_OPEN;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_BRACE_OPEN;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_BRACE_OPEN;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_BRACE_OPEN;
                         break;
                     default:
-                        uElement = EMERALD_FONT_BRACE_OPEN;
+                        uElement = EMERALD_FONT_BLUE_BRACE_OPEN;
                         break;
                 }
                 break;
             case (')'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_BRACE_CLOSE;
+                        uElement = EMERALD_FONT_BLUE_BRACE_CLOSE;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_BRACE_CLOSE;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_BRACE_CLOSE;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_BRACE_CLOSE;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_BRACE_CLOSE;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_BRACE_CLOSE;
                         break;
                     default:
-                        uElement = EMERALD_FONT_BRACE_CLOSE;
+                        uElement = EMERALD_FONT_BLUE_BRACE_CLOSE;
                         break;
                 }
                 break;
             case ('+'):
-            case ('&'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_PLUS;
+                        uElement = EMERALD_FONT_BLUE_PLUS;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_PLUS;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_PLUS;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_PLUS;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_PLUS;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_PLUS;
                         break;
                     default:
-                        uElement = EMERALD_FONT_PLUS;
+                        uElement = EMERALD_FONT_BLUE_PLUS;
                         break;
                 }
                 break;
             case (','):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_COMMA;
+                        uElement = EMERALD_FONT_BLUE_COMMA;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_COMMA;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_COMMA;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_COMMA;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_COMMA;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_COMMA;
                         break;
                     default:
-                        uElement = EMERALD_FONT_COMMA;
+                        uElement = EMERALD_FONT_BLUE_COMMA;
                         break;
                 }
                 break;
             case ('-'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_MINUS;
+                        uElement = EMERALD_FONT_BLUE_MINUS;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_MINUS;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_MINUS;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_MINUS;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_MINUS;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_MINUS;
                         break;
                     default:
-                        uElement = EMERALD_FONT_MINUS;
+                        uElement = EMERALD_FONT_BLUE_MINUS;
                         break;
                 }
                 break;
             case ('.'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_POINT;
+                        uElement = EMERALD_FONT_BLUE_DOT;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_POINT;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_DOT;
                         break;
                     case (EMERALD_FONT_GREEN):
-                        uElement = EMERALD_FONT_GREEN_POINT;
+                        uElement = EMERALD_FONT_GREEN_DOT;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_POINT;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_DOT;
                         break;
                     default:
-                        uElement = EMERALD_FONT_POINT;
+                        uElement = EMERALD_FONT_BLUE_DOT;
                         break;
                 }
                 break;
             case ('/'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_SLASH;
+                        uElement = EMERALD_FONT_BLUE_SLASH;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_SLASH;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_SLASH;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_SLASH;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_SLASH;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_SLASH;
                         break;
                     default:
-                        uElement = EMERALD_FONT_SLASH;
+                        uElement = EMERALD_FONT_BLUE_SLASH;
                         break;
                 }
                 break;
             case (':'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_DOUBLE_POINT;
+                        uElement = EMERALD_FONT_BLUE_DOUBLE_DOT;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_DOUBLE_POINT;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_DOUBLE_DOT;
                         break;
                     case (EMERALD_FONT_GREEN):
-                        uElement = EMERALD_FONT_GREEN_DOUBLE_POINT;
+                        uElement = EMERALD_FONT_GREEN_DOUBLE_DOT;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_DOUBLE_POINT;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_DOUBLE_DOT;
                         break;
                     default:
-                        uElement = EMERALD_FONT_DOUBLE_POINT;
+                        uElement = EMERALD_FONT_BLUE_DOUBLE_DOT;
                         break;
                 }
                 break;
-            case ('*'):
+            case ('@'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_PLATE;
+                        uElement = EMERALD_FONT_BLUE_PLATE;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_PLATE;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_PLATE;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_PLATE;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_PLATE;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_PLATE;
                         break;
                     default:
-                        uElement = EMERALD_FONT_PLATE;
+                        uElement = EMERALD_FONT_BLUE_PLATE;
                         break;
                 }
                 break;
             case ('?'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
-                        uElement = EMERALD_FONT_QUESTION_MARK;
+                        uElement = EMERALD_FONT_BLUE_QUESTION_MARK;
                         break;
-                    case (EMERALD_FONT_STEEL_BLUE):
-                        uElement = EMERALD_FONT_STEEL_QUESTION_MARK;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_QUESTION_MARK;
                         break;
                     case (EMERALD_FONT_GREEN):
                         uElement = EMERALD_FONT_GREEN_QUESTION_MARK;
                         break;
-                    case (EMERALD_FONT_STEEL_GREEN):
-                        uElement = EMERALD_FONT_STEEL_GREEN_QUESTION_MARK;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_QUESTION_MARK;
                         break;
                     default:
-                        uElement = EMERALD_FONT_QUESTION_MARK;
+                        uElement = EMERALD_FONT_BLUE_QUESTION_MARK;
                         break;
                 }
+                break;
+            case (';'):
+                switch (uFont) {
+                    case (EMERALD_FONT_BLUE):
+                        uElement = EMERALD_FONT_BLUE_SEMICOLON;
+                        break;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_SEMICOLON;
+                        break;
+                    case (EMERALD_FONT_GREEN):
+                        uElement = EMERALD_FONT_GREEN_SEMICOLON;
+                        break;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_SEMICOLON;
+                        break;
+                    default:
+                        uElement = EMERALD_FONT_BLUE_SEMICOLON;
+                        break;
+                }
+                break;
+            case ('\"'):
+                switch (uFont) {
+                    case (EMERALD_FONT_BLUE):
+                        uElement = EMERALD_FONT_BLUE_DOUBLE_QUOTE;
+                        break;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_DOUBLE_QUOTE;
+                        break;
+                    case (EMERALD_FONT_GREEN):
+                        uElement = EMERALD_FONT_GREEN_DOUBLE_QUOTE;
+                        break;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_DOUBLE_QUOTE;
+                        break;
+                    default:
+                        uElement = EMERALD_FONT_BLUE_DOUBLE_QUOTE;
+                        break;
+                }
+                break;
+            case ('|'):
+                switch (uFont) {
+                    case (EMERALD_FONT_BLUE):
+                        uElement = EMERALD_FONT_BLUE_OE;
+                        break;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_OE;
+                        break;
+                    case (EMERALD_FONT_GREEN):
+                        uElement = EMERALD_FONT_GREEN_OE;
+                        break;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_OE;
+                        break;
+                    default:
+                        uElement = EMERALD_FONT_BLUE_OE;
+                        break;
+                }
+                break;
+            case ('{'):
+                switch (uFont) {
+                    case (EMERALD_FONT_BLUE):
+                        uElement = EMERALD_FONT_BLUE_AE;
+                        break;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_AE;
+                        break;
+                    case (EMERALD_FONT_GREEN):
+                        uElement = EMERALD_FONT_GREEN_AE;
+                        break;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_AE;
+                        break;
+                    default:
+                        uElement = EMERALD_FONT_BLUE_AE;
+                        break;
+                }
+                break;
+            case ('}'):
+                switch (uFont) {
+                    case (EMERALD_FONT_BLUE):
+                        uElement = EMERALD_FONT_BLUE_UE;
+                        break;
+                    case (EMERALD_FONT_BLUE_STEEL):
+                        uElement = EMERALD_FONT_BLUE_STEEL_UE;
+                        break;
+                    case (EMERALD_FONT_GREEN):
+                        uElement = EMERALD_FONT_GREEN_UE;
+                        break;
+                    case (EMERALD_FONT_GREEN_STEEL):
+                        uElement = EMERALD_FONT_GREEN_STEEL_UE;
+                        break;
+                    default:
+                        uElement = EMERALD_FONT_BLUE_UE;
+                        break;
+                }
+                break;
+            case ('&'): // Smiley
+                uElement = EMERALD_SMILEY;
+                break;
+            case ('_'): // Paff
+                uElement = EMERALD_FONT_PAFF;
+                break;
+            case ('#'): // Man
+                uElement = EMERALD_MAN;
+                break;
+            case ('*'):
+                uElement = EMERALD_SPACE;
                 break;
         }
     }
@@ -1140,9 +1251,9 @@ int SetDynamicMenuElements(void) {
 
     bShowLeveleditorButton = (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR);
     sprintf(szText," AVAILABLE LEVELGROUPS:%03u    LEVELS  ",g_LevelgroupFilesCount);
-    SetMenuText(MainMenu.uMenuScreen,szText,1,18,EMERALD_FONT_STEEL_BLUE);
+    SetMenuText(MainMenu.uMenuScreen,szText,1,18,EMERALD_FONT_BLUE_STEEL);
     sprintf(szText,"      AVAILABLE PLAYERS:%03u           ",Names.uNameCount);
-    SetMenuText(MainMenu.uMenuScreen,szText,1,13,EMERALD_FONT_STEEL_BLUE);
+    SetMenuText(MainMenu.uMenuScreen,szText,1,13,EMERALD_FONT_BLUE_STEEL);
     // Zeigt bis zu 4 Levelgruppen mit Levelanzahl im unteren Bereich an
     for (I = 0; I < 4; I++) {
         if (MainMenu.uLevelgroupList[I] != 0xFF) {
@@ -1228,7 +1339,7 @@ int SetDynamicMenuElements(void) {
         }
     } else if (MainMenu.nState == 1) {
         if (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) {  // Verlassen der Namens-Eingabe
-            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
+            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
             SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
@@ -1257,7 +1368,7 @@ int SetDynamicMenuElements(void) {
             MainMenu.nState = 0;
             WaitNoKey();
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_RETURN]) {
-            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),100,100,100);
+            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),100,100,100);
             SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
             MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
@@ -1321,7 +1432,7 @@ int SetDynamicMenuElements(void) {
             MainMenu.uMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_SPACE;
 
             // Eingabe eines Zeichens für den Spielernamen
-            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(71),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
+            nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
             MainMenu.uFlashIndex++;
             if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
                 MainMenu.uFlashIndex = 0;
@@ -1390,7 +1501,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     SCROLLER Scroller;
     uint8_t szMessage[] = {"START THE GAME WITH THE FIRE BUTTON (LEFT CTRL).  GAME MUSIC BY MAKTONE, VOYCE/DELIGHT AND JESPER KYD.  MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU).  \
     DATA (DE)COMPRESSOR 'MINIZ' BY RICH GELDREICH AND TENACIOUS SOFTWARE LLC.  XML READER 'EZXML' BY AARON VOISINE.  BASE64 DECODER BY CAMERON HARPER.  \
-    GAME GRAPHICS AND SOUNDS TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.             PLEASE SEND YOUR OWN LEVELGROUP TO DIETER1964\x3bGMX.NET           "};
+    GAME GRAPHICS AND SOUNDS TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.             PLEASE SEND YOUR OWN LEVELGROUP TO DIETER1964@GMX.NET           "};
 
     InitTeleporter();
     InitClipboard();
@@ -1657,7 +1768,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                             }
                         }
                         nLastButton = nButton;
-                        if (nButton != 0) SDL_Log("Button:%d",nButton);
+                        // if (nButton != 0) SDL_Log("Button:%d",nButton);
 
                         if ((!bPrepareExit) && (nColorDimm < 100)) {
                             nColorDimm = nColorDimm + 4;
@@ -1750,14 +1861,14 @@ int ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
         DestR.y = ge_uYoffs + 112 + I * 160;
         DestR.w = 117;
         DestR.h = 95;
-        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(746),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_GAME_CONTROLLER),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
     }
     for (I = 0; (I < MAX_JOYSTICKS) && (nErrorCode == 0); I++) {
         DestR.x = ge_uXoffs + 342;
         DestR.y = ge_uYoffs + 90 + I * 160;
         DestR.w = 123;
         DestR.h = 129;
-        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(748),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_JOYSTICK),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
     }
     DestR.x = ge_uXoffs + 70;
     DestR.y = ge_uYoffs + 570;
@@ -1765,7 +1876,7 @@ int ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
     DestR.h = 146;
     // Keyboard
     if (nErrorCode == 0) {
-        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(749),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_KEYBOARD),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
     }
     return nErrorCode;
 }
@@ -2219,10 +2330,10 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             }
         }
         /////////////////////  Stern-Ende
-        PrintLittleFont(pRenderer,570, 50,0,"KEYBOARD",K_RELATIVE);
-        PrintLittleFont(pRenderer,950, 50,0,"OTHER SETTINGS",K_RELATIVE);
-        PrintLittleFont(pRenderer,950, 138,0,"VIDEO",K_RELATIVE);
-        PrintLittleFont(pRenderer,950, 242,0,"VIDEO RESOLUTION",K_RELATIVE);
+        PrintLittleFont(pRenderer,570, 50,0,"KEYBOARD",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,950, 50,0,"OTHER SETTINGS",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,950, 138,0,"VIDEO",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,950, 242,0,"VIDEO RESOLUTION",K_RELATIVE,1);
         if (Config.uInputdevice == 1) {         // Joystick?
             Checkbox_Joy_Btn_Fire_A.bUse = CHK_USE;
             Checkbox_Joy_Btn_Fire_B.bUse = CHK_USE;
@@ -2253,9 +2364,9 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             Checkbox_GC_Btn_Exit_X.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_Y.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_None.bUse = CHK_UNUSE;
-            PrintLittleFont(pRenderer,570,220,0,"JOYSTICK FIRE BUTTON",K_RELATIVE);
-            PrintLittleFont(pRenderer,570,348,0,"JOYSTICK DYNAMITE BUTTON",K_RELATIVE);
-            PrintLittleFont(pRenderer,570,478,0,"JOYSTICK EXIT BUTTON",K_RELATIVE);
+            PrintLittleFont(pRenderer,570,220,0,"JOYSTICK FIRE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(pRenderer,570,348,0,"JOYSTICK DYNAMITE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(pRenderer,570,478,0,"JOYSTICK EXIT BUTTON",K_RELATIVE,1);
         } else if (Config.uInputdevice == 2) {  // GameController?
             Checkbox_GC_Dir_Digitalpad.bUse = CHK_USE;
             Checkbox_GC_Dir_LeftAxis.bUse = CHK_USE;
@@ -2286,60 +2397,60 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             Checkbox_Joy_Btn_Exit_X.bUse = CHK_UNUSE;
             Checkbox_Joy_Btn_Exit_Y.bUse = CHK_UNUSE;
             Checkbox_Joy_Btn_Exit_None.bUse = CHK_UNUSE;
-            PrintLittleFont(pRenderer,570,114,0,"GAMECONTROLLER DIRECTION",K_RELATIVE);
-            PrintLittleFont(pRenderer,570,220,0,"GAMECONTROLLER FIRE BUTTON",K_RELATIVE);
-            PrintLittleFont(pRenderer,570,348,0,"GAMECONTROLLER DYNAMITE BUTTON",K_RELATIVE);
-            PrintLittleFont(pRenderer,570,478,0,"GAMECONTROLLER EXIT BUTTON",K_RELATIVE);
+            PrintLittleFont(pRenderer,570,114,0,"GAMECONTROLLER DIRECTION",K_RELATIVE,1);
+            PrintLittleFont(pRenderer,570,220,0,"GAMECONTROLLER FIRE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(pRenderer,570,348,0,"GAMECONTROLLER DYNAMITE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(pRenderer,570,478,0,"GAMECONTROLLER EXIT BUTTON",K_RELATIVE,1);
             sprintf(szText,"AXIS LEFT: -%05d",abs(Config.nAxisLeftThreshold));
-            PrintLittleFont(pRenderer,570, 620,0,szText,K_RELATIVE);
+            PrintLittleFont(pRenderer,570, 620,0,szText,K_RELATIVE,1);
             sprintf(szText,"AXIS RIGHT: %05d",Config.nAxisRightThreshold);
-            PrintLittleFont(pRenderer,570, 647,0,szText,K_RELATIVE);
+            PrintLittleFont(pRenderer,570, 647,0,szText,K_RELATIVE,1);
             sprintf(szText,"AXIS UP:   -%05d",abs(Config.nAxisUpThreshold));
-            PrintLittleFont(pRenderer,570, 674,0,szText,K_RELATIVE);
+            PrintLittleFont(pRenderer,570, 674,0,szText,K_RELATIVE,1);
             sprintf(szText,"AXIS DOWN:  %05d",Config.nAxisDownThreshold);
-            PrintLittleFont(pRenderer,570, 701,0,szText,K_RELATIVE);
+            PrintLittleFont(pRenderer,570, 701,0,szText,K_RELATIVE,1);
             // Minus-Buttons für AXIS
             RecAxisButton.x = ge_uXoffs + 760;
             RecAxisButton.y = ge_uYoffs + 616;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = ge_uXoffs + 760;
             RecAxisButton.y = ge_uYoffs + 643;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = ge_uXoffs + 760;
             RecAxisButton.y = ge_uYoffs + 670;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = ge_uXoffs + 760;
             RecAxisButton.y = ge_uYoffs + 697;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(693),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             // Plus-Buttons für AXIS
             RecAxisButton.x = ge_uXoffs + 810;
             RecAxisButton.y = ge_uYoffs + 616;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = ge_uXoffs + 810;
             RecAxisButton.y = ge_uYoffs + 643;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = ge_uXoffs + 810;
             RecAxisButton.y = ge_uYoffs + 670;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = ge_uXoffs + 810;
             RecAxisButton.y = ge_uYoffs + 697;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(702),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             nLastAxisButton = nAxisButton;
             nAxisButton = GetSettingsMenuAxisButton();
             if ((nAxisButton == 0) && (nLastAxisButton != 0)) {
@@ -2419,56 +2530,56 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             Checkbox_GC_Btn_Exit_X.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_Y.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_None.bUse = CHK_UNUSE;
-            PrintLittleFont(pRenderer,600,100,0,"KEYBINDING",K_RELATIVE);
-            PrintLittleFont(pRenderer,630,123,0,"LEFT:",K_RELATIVE);
+            PrintLittleFont(pRenderer,600,100,0,"KEYBINDING",K_RELATIVE,1);
+            PrintLittleFont(pRenderer,630,123,0,"LEFT:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeLeft);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,123,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+                PrintLittleFont(pRenderer,700,123,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,123,0,"UNKNOWN",K_RELATIVE);
+                PrintLittleFont(pRenderer,700,123,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,146,0,"RIGHT:",K_RELATIVE);
+            PrintLittleFont(pRenderer,630,146,0,"RIGHT:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeRight);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,146,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+                PrintLittleFont(pRenderer,700,146,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,146,0,"UNKNOWN",K_RELATIVE);
+                PrintLittleFont(pRenderer,700,146,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,169,0,"UP:",K_RELATIVE);
+            PrintLittleFont(pRenderer,630,169,0,"UP:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeUp);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,169,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+                PrintLittleFont(pRenderer,700,169,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,169,0,"UNKNOWN",K_RELATIVE);
+                PrintLittleFont(pRenderer,700,169,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,192,0,"DOWN:",K_RELATIVE);
+            PrintLittleFont(pRenderer,630,192,0,"DOWN:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeDown);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,192,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+                PrintLittleFont(pRenderer,700,192,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,192,0,"UNKNOWN",K_RELATIVE);
+                PrintLittleFont(pRenderer,700,192,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,215,0,"FIRE:",K_RELATIVE);
+            PrintLittleFont(pRenderer,630,215,0,"FIRE:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeFire);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,215,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE);
+                PrintLittleFont(pRenderer,700,215,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,215,0,"UNKNOWN",K_RELATIVE);
+                PrintLittleFont(pRenderer,700,215,0,"UNKNOWN",K_RELATIVE,1);
             }
             // Buttons für Tastenbelegung zeichnen
             KeyboardButton.w = 18;
             KeyboardButton.h = 18;
             KeyboardButton.x = ge_uXoffs + 601;
             KeyboardButton.y = ge_uYoffs + 121;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = ge_uYoffs + 144;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = ge_uYoffs + 167;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = ge_uYoffs + 190;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = ge_uYoffs + 213;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(890),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             nKeyboardButton = GetSettingsMenuKeyboardButton();
             switch (nKeyboardButton) {
                 case (1):
@@ -2501,8 +2612,8 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
                 } else {
                     uBlinkColor = 2;
                 }
-                PrintLittleFont(pRenderer,600,250,uBlinkColor,"PRESS A KEY FOR ",K_RELATIVE);
-                PrintLittleFont(pRenderer,760,250,uBlinkColor,szSubString,K_RELATIVE);
+                PrintLittleFont(pRenderer,600,250,uBlinkColor,"PRESS A KEY FOR ",K_RELATIVE,1);
+                PrintLittleFont(pRenderer,760,250,uBlinkColor,szSubString,K_RELATIVE,1);
                 nScanCodeIndex = GetScancodeIndex(); // ScanCode einer gedrückten Taste ermitteln
                 if (nScanCodeIndex != -1) {
                     SDL_Log("ScanCode: %s",g_ScanCodeNames[nScanCodeIndex]);
@@ -3207,7 +3318,7 @@ int RenderSettingsbutton(SDL_Renderer *pRenderer) {
     DestR.y = ge_uYoffs + 1;
     DestR.w = 30;
     DestR.h = 30;
-    if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(747),NULL,&DestR,MainMenu.fSettingsbuttonAngle,NULL, SDL_FLIP_NONE) != 0) {
+    if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_SETTINGS),NULL,&DestR,MainMenu.fSettingsbuttonAngle,NULL, SDL_FLIP_NONE) != 0) {
         nErrorCode = -1;
         SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
     }
@@ -3405,10 +3516,10 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     uModVolume = 0;
     SetModVolume(uModVolume);
     SetAllTextureColors(nColorDimm);
-    SetMenuText(MainMenu.uMenuScreen,"TOP TWENTY",-1,0,EMERALD_FONT_STEEL_BLUE);
+    SetMenuText(MainMenu.uMenuScreen,"TOP TWENTY",-1,0,EMERALD_FONT_BLUE_STEEL);
     sprintf(szText,"%s/LEVEL:%03u",SelectedLevelgroup.szLevelgroupname,uLevel);
     SetMenuText(MainMenu.uMenuScreen,szText,-1,1,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"   NAME                          SCORE",1,2,EMERALD_FONT_STEEL_BLUE);
+    SetMenuText(MainMenu.uMenuScreen,"   NAME                          SCORE",1,2,EMERALD_FONT_BLUE_STEEL);
     for (I = 0; I < EMERALD_HIGHSCORE_LISTLEN; I++) {
         sprintf(szNum,"%02d",I + 1);    // Positionsnummer
         SetMenuText(MainMenu.uMenuScreen,szNum,1,I + 3,EMERALD_FONT_BLUE);  // Positionsnummer

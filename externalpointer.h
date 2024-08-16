@@ -3,7 +3,7 @@
 
 
 // Bindet das Grafiken-Array ein
-#include "Gfx/gfx.h"
+#include "gfx/gfx.h"
 
 // Das Array ist wie folgt aufgebaut:
 

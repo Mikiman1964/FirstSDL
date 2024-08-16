@@ -48,14 +48,7 @@ void ControlAlien(uint32_t I) {
             if (uCatchXpos > uXpos) {  // Ist Man-X-Koordinate > als eigene X-Koordinate ?
                 // Versuche nach rechts zu laufen
                 if (IS_SPACE(I + 1)) {  // Ist nach rechts frei?
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + 1] = EMERALD_ALIEN;
-                    Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_LEFT | EMERALD_ANIM_ALIEN_MOVED;
-                    Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
-                    // Aktuelles Element auf Animation "rechts"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_RIGHT;
+                    SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT | EMERALD_ANIM_ALIEN_MOVED,EMERALD_ALIEN);
                     PreparePlaySound(SOUND_ALIEN,I);
                 } else if ((Playfield.pLevel[I + 1] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I + 1] & 0xFF000000;
@@ -79,13 +72,7 @@ void ControlAlien(uint32_t I) {
             } else if (uCatchXpos < uXpos) {
                 // Versuche nach links zu laufen
                 if (IS_SPACE(I - 1)) {  // Ist nach links frei?
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - 1] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - 1] = EMERALD_ALIEN;
-                    Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_RIGHT | EMERALD_ANIM_ALIEN_MOVED;
-                    // Aktuelles Element auf Animation "links"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_LEFT;
+                    SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT | EMERALD_ANIM_ALIEN_MOVED,EMERALD_ALIEN);
                     PreparePlaySound(SOUND_ALIEN,I);
                 } else if ((Playfield.pLevel[I - 1] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I - 1] & 0xFF000000;
@@ -113,14 +100,7 @@ void ControlAlien(uint32_t I) {
             if (uCatchYpos > uYpos) {  // Ist Man-Y-Koordinate > als eigene Y-Koordinate ?
                 // Versuche nach unten zu laufen
                 if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {  // Ist nach unten frei?
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_ALIEN;
-                    Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP | EMERALD_ANIM_ALIEN_MOVED;
-                    Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN;
-                    // Aktuelles Element auf Animation "unten"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
+                    SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP | EMERALD_ANIM_ALIEN_MOVED,EMERALD_ALIEN);
                     PreparePlaySound(SOUND_ALIEN,I);
                 } else if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] & 0xFF000000;
@@ -150,13 +130,7 @@ void ControlAlien(uint32_t I) {
             } else if (uCatchYpos < uYpos) {
                 // Versuche nach oben zu laufen
                 if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
-                    // neuen Platz mit ungültigem Element besetzen
-                    Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-                    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
-                    Playfield.pInvalidElement[I - Playfield.uLevel_X_Dimension] = EMERALD_ALIEN;
-                    Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_DOWN | EMERALD_ANIM_ALIEN_MOVED;
-                    // Aktuelles Element auf Animation "oben"
-                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+                    SetElementToNextPosition(I,EMERALD_ANIM_UP,EMERALD_ANIM_CLEAN_DOWN | EMERALD_ANIM_ALIEN_MOVED,EMERALD_ALIEN);
                     PreparePlaySound(SOUND_ALIEN,I);
                 } else if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
                     uManSelfStatus = Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] & 0xFF000000;

@@ -1,22 +1,23 @@
 #include "EmeraldMine.h"
 #include "alien.h"
+#include "beetle.h"
 #include "bomb.h"
 #include "crystal.h"
+#include "drop.h"
 #include "emerald.h"
 #include "explosion.h"
-#include "greendrop.h"
 #include "megabomb.h"
 #include "mine.h"
 #include "mole.h"
 #include "nut.h"
 #include "perl.h"
 #include "ruby.h"
-#include "saphir.h"
+#include "sapphire.h"
+#include "slime.h"
 #include "sound.h"
 #include "stone.h"
 #include "teleporter.h"
 #include "yam.h"
-#include "yellowdrop.h"
 
 extern PLAYFIELD Playfield;
 
@@ -37,6 +38,8 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlExplosionToElement(uint32_t I) {
     uint16_t uNewElement;
+    uint16_t uChestElement;
+    uint8_t uChestIndex;
 
     if (Playfield.pLevel[I] == EMERALD_EXPLOSION_TO_ELEMENT_1) {
         Playfield.pLevel[I] = EMERALD_EXPLOSION_TO_ELEMENT_2;
@@ -53,9 +56,19 @@ void ControlExplosionToElement(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P1;
                 } else if (uNewElement == EMERALD_YAM) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_YAM_WAS_BLOCKED;  // Wenn neuer Yam entsteht, diesen erstmal blocken
+                } else if (uNewElement == EMERALD_SLIME) {
+                    Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND | EMERALD_ANIM_SLIME_STAND_PHASE1;  // Wenn neuer Schleim entsteht, diesen erstmal blocken
                 } else if ((uNewElement == EMERALD_TELEPORTER_RED) || (uNewElement == EMERALD_TELEPORTER_YELLOW) || (uNewElement == EMERALD_TELEPORTER_GREEN) || (uNewElement == EMERALD_TELEPORTER_BLUE)) {
                     AddTeleporterCoordinate(uNewElement,I);
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                } else if ((uNewElement >= EMERALD_TREASURECHEST_1) && (uNewElement < (EMERALD_TREASURECHEST_1 + EMERALD_MAX_TREASURECHESTS))) {
+                    uChestIndex = uNewElement - EMERALD_TREASURECHEST_1;
+                    uChestElement = Playfield.uTreasureChestElement[uChestIndex];
+                    if ((IsElementAlive(uChestElement)) && (Playfield.bTreasureChestWarn[uChestIndex])) {
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_UP;
+                    } else {
+                        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+                    }
                 } else {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
@@ -73,8 +86,7 @@ Name:           CleanInvalidFieldsForCentralExplosion
 Beschreibung: Entfernt invalide Felder innerhalb des Explosionsbereichs. Die
               Routine sucht innerhalb des Bereichs nach beweglichen Elementen und
               deren invaliden Feldern.
-              Objekte die von oben (nach unten) oder links (nacht rechts) in die
-              Explosion hineingelaufen sind (also zeitlich vorher gesteuert wurden),
+              Objekte die in die Explosion hineingelaufen sind (also zeitlich vorher gesteuert wurden),
               werden neu (nach)gesteuert.
 
 Parameter
@@ -90,7 +102,9 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
     int *pCoordArray;
     int nX;     // Lineare nCoordinate in X-
     int nY;     // und Y umgerechnet
+    void (*pFunc)(uint32_t);    // Zeiger auf Control-Funktionen (z.B. ControlStone, COntrolEmerald, usw.)
 
+    pFunc = NULL;
     if (bMega) {
         MaxK = 20;
         pCoordArray = Playfield.nCentralMegaExplosionCoordinates;
@@ -130,52 +144,65 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                     case (EMERALD_BEETLE_LEFT):
                     case (EMERALD_ALIEN):
                     case (EMERALD_YAM):
+                    case (EMERALD_SLIME):
                     case (EMERALD_GREEN_DROP):
                     case (EMERALD_YELLOW_DROP):
                     case (EMERALD_REMOTEBOMB):
                         switch (Playfield.pStatusAnimation[nCoordinate] & 0x0000FF00) { // Animationsstatus
                             case (EMERALD_ANIM_UP):
+                            case (EMERALD_ANIM_SLIME_GO_UP_1):
                                 if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == EMERALD_INVALID) {
                                     Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                                    Playfield.pSlimeElement[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                                     Playfield.pInvalidElement[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                                     Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                                     Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;   // Bewegtes Objekt zum Stillstand bringen
+                                    Playfield.pSlimeElement[nCoordinate] = EMERALD_NONE;
                                 }
                                 break;
                             case (EMERALD_ANIM_RIGHT):
+                            case (EMERALD_ANIM_SLIME_GO_RIGHT_1):
                                 if (Playfield.pLevel[nCoordinate + 1] == EMERALD_INVALID) {
                                     Playfield.pLevel[nCoordinate + 1] = EMERALD_SPACE;
+                                    Playfield.pSlimeElement[nCoordinate + 1] = EMERALD_NONE;
                                     Playfield.pInvalidElement[nCoordinate + 1] = EMERALD_NONE;
                                     Playfield.pStatusAnimation[nCoordinate + 1] = EMERALD_ANIM_STAND;
                                     Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;   // Bewegtes Objekt zum Stillstand bringen
+                                    Playfield.pSlimeElement[nCoordinate] = EMERALD_NONE;
                                 }
                                 break;
                             case (EMERALD_ANIM_DOWN):
+                            case (EMERALD_ANIM_SLIME_GO_DOWN_1):
                                 if (Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID) {
                                     Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
+                                    Playfield.pSlimeElement[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                                     Playfield.pInvalidElement[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                                     Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                                     Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;   // Bewegtes Objekt zum Stillstand bringen
+                                    Playfield.pSlimeElement[nCoordinate] = EMERALD_NONE;
                                 }
                                 break;
                             case (EMERALD_ANIM_LEFT):
+                            case (EMERALD_ANIM_SLIME_GO_LEFT_1):
                                 if (Playfield.pLevel[nCoordinate - 1] == EMERALD_INVALID) {
                                     Playfield.pLevel[nCoordinate - 1] = EMERALD_SPACE;
+                                    Playfield.pSlimeElement[nCoordinate - 1] = EMERALD_NONE;
                                     Playfield.pInvalidElement[nCoordinate - 1] = EMERALD_NONE;
                                     Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
                                     Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;   // Bewegtes Objekt zum Stillstand bringen
+                                    Playfield.pSlimeElement[nCoordinate] = EMERALD_NONE;
                                 }
                                 break;
                             default:
                                 //
                                 if ( (Playfield.pLevel[nCoordinate] == EMERALD_GREEN_DROP) && (Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID) &&
-                                     ((Playfield.pStatusAnimation[nCoordinate] ==  EMERALD_ANIM_GREEN_DROP_1) ||(Playfield.pStatusAnimation[nCoordinate] == EMERALD_ANIM_GREEN_DROP_2)) ) {
+                                     ((Playfield.pStatusAnimation[nCoordinate] ==  EMERALD_ANIM_DROP_1) ||(Playfield.pStatusAnimation[nCoordinate] == EMERALD_ANIM_DROP_2)) ) {
                                     Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
                                     Playfield.pInvalidElement[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                                     Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                                     Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;   // Bewegtes Objekt zum Stillstand bringen
                                 } else if ( (Playfield.pLevel[nCoordinate] == EMERALD_YELLOW_DROP) && (Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_INVALID) &&
-                                     ((Playfield.pStatusAnimation[nCoordinate] ==  EMERALD_ANIM_YELLOW_DROP_1) ||(Playfield.pStatusAnimation[nCoordinate] == EMERALD_ANIM_YELLOW_DROP_2)) ) {
+                                     ((Playfield.pStatusAnimation[nCoordinate] ==  EMERALD_ANIM_DROP_1) ||(Playfield.pStatusAnimation[nCoordinate] == EMERALD_ANIM_DROP_2)) ) {
                                     Playfield.pLevel[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_SPACE;
                                     Playfield.pInvalidElement[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_NONE;
                                     Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
@@ -187,7 +214,7 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
             }
         }
     }
-    // Pass 2: Entfernen der invaliden Elemente von Objekten, die sich von oben (nach unten) oder links (nach rechts) in die Explosion bewegen
+    // Pass 2: Entfernen der invaliden Elemente von Objekten, die sich in die Explosion bewegen
     // Für diese Objekte dann Re-Kontrolle des Objektes veranlassen.
     for (K = 0; K < MaxK; K++) {
         nCoordinate = I + pCoordArray[K];
@@ -199,411 +226,104 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                 if (Playfield.pLevel[nCoordinate] == EMERALD_INVALID) {
                     // SDL_Log("%s[EMERALD_INVALID]:  at K = %u",__FUNCTION__,K);
                     // SDL_Log("  element:   0x%X     old anim: 0x%X",Playfield.pInvalidElement[uCoordinate],Playfield.pLastStatusAnimation[uCoordinate]);
-                    // Zunächst Re-Kontrolle durchführen. Das invalide Feld wird zunächst belassen, damit das re-kontrollierte Objekt dort ein Hindernis erkennen kann und
-                    // sich nicht erneut in die Explosion bewegt.
+                    // Zunächst Re-Kontrolle durchführen.
+                    // Das invalide Feld wird in der Funktion Pass2InvalidElement() zunächst belassen, damit das re-kontrollierte Objekt
+                    // dort ein Hindernis erkennen kann und sich nicht erneut in die Explosion bewegt.
                     switch (Playfield.pInvalidElement[nCoordinate]) {    // Element
                         case (EMERALD_REMOTEBOMB):
-                            // Ferngesteuerte Bombe kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_REMOTEBOMB]: warning: Remote bombe not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Remote bomb not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Remote bomb with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = NULL;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_STONE):
-                            // Stein kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlStone(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Stone not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlStone(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Stone not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Stone with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlStone;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_EMERALD):
-                            // Emerald kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlEmerald(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Emerald not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlEmerald(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Emerald not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Emerald with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlEmerald;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_RUBY):
-                            // Rubin kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlRuby(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Ruby not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlRuby(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Ruby not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Ruby with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlRuby;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_SAPPHIRE):
-                            // Saphhire kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlSaphir(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Saphir not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlSaphir(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Saphir not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Saphir with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlSaphir;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_PERL):
-                            // Perle kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlPerl(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Perl not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN_SELF; // Damit Perle zerbricht
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlPerl(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Perl not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Perl with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlPerl;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_CRYSTAL):
-                            // Kristall kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlCrystal(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Crystal not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlCrystal(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Crystal not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Crystal with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlCrystal;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_NUT):
-                            // Nuss kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlNut(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Nut not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlNut(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Nut not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Nut with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlNut;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_BOMB):
-                            // Bombe kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlBomb(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Bomb not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_CENTRAL_EXPLOSION;
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Bomb not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Bomb with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlBomb;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_MEGABOMB):
-                            // Mega-Bombe kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlMegaBomb(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Mega-Bomb not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_CENTRAL_EXPLOSION_MEGA;
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Mega-Bomb not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Mega-Bomb with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlMegaBomb;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_MOLE_RIGHT):
-                            if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - 1] = Playfield.pLastStatusAnimation[nCoordinate];
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlMoleRight(nCoordinate - 1);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: MoleRight not found. element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
+                            pFunc = &ControlMoleRight;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
+                            break;
+                        case (EMERALD_MOLE_LEFT):
+                            pFunc = &ControlMoleLeft;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_MOLE_DOWN):
-                            if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = Playfield.pLastStatusAnimation[nCoordinate];
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlMineDown(nCoordinate - Playfield.uLevel_X_Dimension);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: MoleDown not found. element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
+                            pFunc = &ControlMoleDown;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_MINE_RIGHT):
-                            if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - 1] = Playfield.pLastStatusAnimation[nCoordinate];
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlMineRight(nCoordinate - 1);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: MineRight not found. element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
+                            pFunc = &ControlMineRight;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
+                            break;
+                        case (EMERALD_MINE_LEFT):
+                            pFunc = &ControlMineLeft;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_MINE_DOWN):
-                            if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = Playfield.pLastStatusAnimation[nCoordinate];
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlMineDown(nCoordinate - Playfield.uLevel_X_Dimension);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: MineDown not found. element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
+                            pFunc = &ControlMineDown;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_BEETLE_RIGHT):
-                            if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - 1] = Playfield.pLastStatusAnimation[nCoordinate];
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlMineRight(nCoordinate - 1);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: BeetleRight not found. element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
+                            pFunc = &ControlBeetleRight;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
+                            break;
+                        case (EMERALD_BEETLE_LEFT):
+                            pFunc = &ControlBeetleLeft;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_BEETLE_DOWN):
-                            if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = Playfield.pLastStatusAnimation[nCoordinate];
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlMineDown(nCoordinate - Playfield.uLevel_X_Dimension);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: BeetleDown not found. element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
+                            pFunc = &ControlBeetleDown;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_ALIEN):
-                            // Alien kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlAlien(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Alien not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlAlien(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Alien not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Alien with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlAlien;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_YAM):
-                            // Yam kann von oben (nach unten) oder links (nach rechts) kommen
-                            if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_RIGHT) {
-                                if (Playfield.pLevel[nCoordinate - 1] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlYam(nCoordinate - 1);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_RIGHT]: warning: Yam not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else if (Playfield.pLastStatusAnimation[nCoordinate] == EMERALD_ANIM_DOWN) {
-                                if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                    Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                    Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                    Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                    ControlYam(nCoordinate - Playfield.uLevel_X_Dimension);
-                                    Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                                } else {
-                                    SDL_Log("%s[EMERALD_ANIM_DOWN]: warning: Yam not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                                }
-                            } else {
-                                SDL_Log("%s: Yam with bad anim: 0x%X found",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
-                            }
+                            pFunc = &ControlYam;
+                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
+                            break;
+                        case (EMERALD_SLIME):
+                            // Schleim wird nicht behandelt, da dieser bereits 16 Pixel in einer Richtung unterwegs war. Rücksetzer ist störend sichtbar
                             break;
                         case (EMERALD_GREEN_DROP):
-                            // Kann nur von oben kommen
-                            if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlGreenDrop(nCoordinate - Playfield.uLevel_X_Dimension);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: green drop not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
-                            break;
                         case (EMERALD_YELLOW_DROP):
-                            // Kann nur von oben kommen
-                            if (Playfield.pLevel[nCoordinate - Playfield.uLevel_X_Dimension] == Playfield.pInvalidElement[nCoordinate]) {
-                                Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
-                                Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-                                Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
-                                ControlYellowDrop(nCoordinate - Playfield.uLevel_X_Dimension);
-                                Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
-                            } else {
-                                SDL_Log("%s: warning: yellow drop not found. instead element: 0x%X",__FUNCTION__,Playfield.pLevel[nCoordinate - 1]);
-                            }
+                            pFunc = &ControlDrop;
+                            Pass2InvalidElements(EMERALD_ANIM_DOWN,nCoordinate,pFunc);
                             break;
                         default:
-                            SDL_Log("%s: warning, element 0x%X can not controlled",__FUNCTION__,Playfield.pInvalidElement[nCoordinate]);
+                            SDL_Log("%s: warning, element 0x%X can not be controlled",__FUNCTION__,Playfield.pInvalidElement[nCoordinate]);
                             break;
                     }
                 }
@@ -614,16 +334,72 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
 
 
 /*----------------------------------------------------------------------------
+Name:           Pass2InvalidElements
+------------------------------------------------------------------------------
+Beschreibung: Hilfsfunktion für CleanInvalidFieldsForCentralExplosion(), die
+              das Entfernen von invaliden Elementen übernimmt.
+              In Abhängigkeit des Zeigers pControlFunction wird eine erneute
+              Steuerung des Elements von der ursprünglichen Position durchgeführt.
+Parameter
+      Eingang: uLastStatusAnimation, uint32_t, letzte Animation des Objektes
+               nCoordinate, int, Position des invaliden Feldes
+               pControlFunction, void *, Zeiger auf entsprechende Control-Funktion (z.B. ControlStone), darf NULL sein
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void Pass2InvalidElements(uint32_t uLastStatusAnimation, int nCoordinate, void *pControlFunction) {
+    int nLastCoordinate;
+    void (*pFunc)(uint32_t);
+
+    switch (uLastStatusAnimation) {
+        case (EMERALD_ANIM_RIGHT):
+            nLastCoordinate = nCoordinate - 1;
+            break;
+        case (EMERALD_ANIM_LEFT):
+            nLastCoordinate = nCoordinate + 1;
+            break;
+        case (EMERALD_ANIM_DOWN):
+            nLastCoordinate = nCoordinate - Playfield.uLevel_X_Dimension;
+            break;
+        case (EMERALD_ANIM_UP):
+            nLastCoordinate = nCoordinate + Playfield.uLevel_X_Dimension;
+            break;
+        default:
+            nLastCoordinate = -1;
+            break;
+    }
+    if (nLastCoordinate != -1) {
+        if (Playfield.pLevel[nLastCoordinate] == Playfield.pInvalidElement[nCoordinate]) {
+            Playfield.pStatusAnimation[nLastCoordinate] = EMERALD_ANIM_STAND;
+            Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+            Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
+            if (pControlFunction != NULL) {
+                pFunc = pControlFunction;
+                (*pFunc)(nLastCoordinate);
+            }
+            Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
+        } else {
+            SDL_Log("%s[LASTANIMSTATUS:0x%04X]: warning: Element 0x%04X not found. instead element: 0x%04X",
+                    __FUNCTION__,uLastStatusAnimation,Playfield.pInvalidElement[nCoordinate],Playfield.pLevel[nLastCoordinate]);
+        }
+    } else {
+        SDL_Log("%s: element 0x%04X with bad anim: 0x%X found",__FUNCTION__,Playfield.pInvalidElement[nCoordinate],Playfield.pLastStatusAnimation[nCoordinate]);
+    }
+}
+
+/*----------------------------------------------------------------------------
 Name:           ControlCentralExplosion
 ------------------------------------------------------------------------------
 Beschreibung: Steuert eine zentrale Explosion (3x3).
 Parameter
       Eingang: I, uint32_t, Index im Level (zentraler Punkt)
+               uSlimeElement, uint16_t, Element für Schleim
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-void ControlCentralExplosion(uint32_t I) {
+void ControlCentralExplosion(uint32_t I,uint16_t uSlimeElement) {
     uint32_t K;
     uint32_t uCoordinate;
     uint32_t uCheckExplosion;
@@ -632,7 +408,7 @@ void ControlCentralExplosion(uint32_t I) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     } else {
         Playfield.pLevel[I] = EMERALD_EXPLOSION_TO_ELEMENT_1;    // Mittelpunkt wird auf jedem Fall zur Explosion
-        Playfield.pStatusAnimation[I] = EMERALD_SPACE;
+        Playfield.pStatusAnimation[I] = uSlimeElement;
         CleanInvalidFieldsForCentralExplosion(I,NO_MEGA_EXPLOSION);
         for (K = 0; K < 8; K++) {
             uCoordinate = I + Playfield.nCentralExplosionCoordinates[K];
@@ -964,7 +740,7 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_ALIEN):
         case (EMERALD_YAM):
         case (EMERALD_SLIME):
-        case (EMERALD_SAND_MOLE):
+        case (EMERALD_EARTH_MOLE):
         case (EMERALD_GREEN_CHEESE_GOES):
         case (EMERALD_YELLOW_CHEESE_GOES):
         case (EMERALD_DYNAMITE_OFF):
@@ -982,6 +758,14 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_MESSAGE_6):
         case (EMERALD_MESSAGE_7):
         case (EMERALD_MESSAGE_8):
+        case (EMERALD_TREASURECHEST_1):
+        case (EMERALD_TREASURECHEST_2):
+        case (EMERALD_TREASURECHEST_3):
+        case (EMERALD_TREASURECHEST_4):
+        case (EMERALD_TREASURECHEST_5):
+        case (EMERALD_TREASURECHEST_6):
+        case (EMERALD_TREASURECHEST_7):
+        case (EMERALD_TREASURECHEST_8):
         case (EMERALD_KEY_RED):
         case (EMERALD_KEY_YELLOW):
         case (EMERALD_KEY_BLUE):
@@ -989,9 +773,9 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_KEY_WHITE):
         case (EMERALD_KEY_GENERAL):
         case (EMERALD_WALL_ROUND):
-        case (EMERALD_SAND):
-        case (EMERALD_SAND_INVISIBLE):
-        case (EMERALD_SANDMINE):
+        case (EMERALD_EARTH):
+        case (EMERALD_EARTH_INVISIBLE):
+        case (EMERALD_MINE_EARTH):
         case (EMERALD_GRASS):
         case (EMERALD_GRASS_COMES):
         case (EMERALD_WALL_CORNERED):
@@ -1013,10 +797,14 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_HAMMER):
         case (EMERALD_MAGIC_WALL):
         case (EMERALD_WHEEL):
-        case (EMERALD_SWAMP):
-        case (EMERALD_SWAMP_STONE):
+        case (EMERALD_QUICKSAND):
+        case (EMERALD_QUICKSAND_STONE):
         case (EMERALD_STONE_SINK):
         case (EMERALD_STONE_SAG):
+        case (EMERALD_QUICKSAND_SLOW):
+        case (EMERALD_QUICKSAND_STONE_SLOW):
+        case (EMERALD_STONE_SINK_SLOW):
+        case (EMERALD_STONE_SAG_SLOW):
         case (EMERALD_DOOR_END_NOT_READY):
         case (EMERALD_GREEN_DROP_COMES):
         case (EMERALD_GREEN_DROP):
@@ -1028,63 +816,62 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_DOOR_END_READY):
         case (EMERALD_WALL_NOT_ROUND):
         case (EMERALD_WALL_INVISIBLE):
-        case (EMERALD_FONT_EXCLAMATION):
-        case (EMERALD_FONT_ARROW_RIGHT):
-        case (EMERALD_FONT_ARROW_UP):
-        case (EMERALD_FONT_ARROW_DOWN):
-        case (EMERALD_FONT_APOSTROPHE):
-        case (EMERALD_FONT_BRACE_OPEN):
-        case (EMERALD_FONT_BRACE_CLOSE):
-        case (EMERALD_FONT_COPYRIGHT):
-        case (EMERALD_FONT_PLUS):
-        case (EMERALD_FONT_COMMA):
-        case (EMERALD_FONT_MINUS):
-        case (EMERALD_FONT_POINT):
-        case (EMERALD_FONT_SLASH):
-        case (EMERALD_FONT_0):
-        case (EMERALD_FONT_1):
-        case (EMERALD_FONT_2):
-        case (EMERALD_FONT_3):
-        case (EMERALD_FONT_4):
-        case (EMERALD_FONT_5):
-        case (EMERALD_FONT_6):
-        case (EMERALD_FONT_7):
-        case (EMERALD_FONT_8):
-        case (EMERALD_FONT_9):
-        case (EMERALD_FONT_DOUBLE_POINT):
-        case (EMERALD_FONT_PLATE):
-        case (EMERALD_FONT_ARROW_LEFT):
-        case (EMERALD_FONT_PAFF):
-        case (EMERALD_FONT_QUESTION_MARK):
-        case (EMERALD_FONT_A):
-        case (EMERALD_FONT_B):
-        case (EMERALD_FONT_C):
-        case (EMERALD_FONT_D):
-        case (EMERALD_FONT_E):
-        case (EMERALD_FONT_F):
-        case (EMERALD_FONT_G):
-        case (EMERALD_FONT_H):
-        case (EMERALD_FONT_I):
-        case (EMERALD_FONT_J):
-        case (EMERALD_FONT_K):
-        case (EMERALD_FONT_L):
-        case (EMERALD_FONT_M):
-        case (EMERALD_FONT_N):
-        case (EMERALD_FONT_O):
-        case (EMERALD_FONT_P):
-        case (EMERALD_FONT_Q):
-        case (EMERALD_FONT_R):
-        case (EMERALD_FONT_S):
-        case (EMERALD_FONT_T):
-        case (EMERALD_FONT_U):
-        case (EMERALD_FONT_V):
-        case (EMERALD_FONT_W):
-        case (EMERALD_FONT_X):
-        case (EMERALD_FONT_Y):
-        case (EMERALD_FONT_Z):
-        case (EMERALD_FONT_AE):
-        case (EMERALD_FONT_OE):
-        case (EMERALD_FONT_UE):
+        case (EMERALD_FONT_BLUE_EXCLAMATION):
+        case (EMERALD_FONT_BLUE_ARROW_RIGHT):
+        case (EMERALD_FONT_BLUE_ARROW_UP):
+        case (EMERALD_FONT_BLUE_ARROW_DOWN):
+        case (EMERALD_FONT_BLUE_APOSTROPHE):
+        case (EMERALD_FONT_BLUE_BRACE_OPEN):
+        case (EMERALD_FONT_BLUE_BRACE_CLOSE):
+        case (EMERALD_FONT_BLUE_COPYRIGHT):
+        case (EMERALD_FONT_BLUE_PLUS):
+        case (EMERALD_FONT_BLUE_COMMA):
+        case (EMERALD_FONT_BLUE_MINUS):
+        case (EMERALD_FONT_BLUE_DOT):
+        case (EMERALD_FONT_BLUE_SLASH):
+        case (EMERALD_FONT_BLUE_0):
+        case (EMERALD_FONT_BLUE_1):
+        case (EMERALD_FONT_BLUE_2):
+        case (EMERALD_FONT_BLUE_3):
+        case (EMERALD_FONT_BLUE_4):
+        case (EMERALD_FONT_BLUE_5):
+        case (EMERALD_FONT_BLUE_6):
+        case (EMERALD_FONT_BLUE_7):
+        case (EMERALD_FONT_BLUE_8):
+        case (EMERALD_FONT_BLUE_9):
+        case (EMERALD_FONT_BLUE_DOUBLE_DOT):
+        case (EMERALD_FONT_BLUE_PLATE):
+        case (EMERALD_FONT_BLUE_ARROW_LEFT):
+        case (EMERALD_FONT_BLUE_QUESTION_MARK):
+        case (EMERALD_FONT_BLUE_A):
+        case (EMERALD_FONT_BLUE_B):
+        case (EMERALD_FONT_BLUE_C):
+        case (EMERALD_FONT_BLUE_D):
+        case (EMERALD_FONT_BLUE_E):
+        case (EMERALD_FONT_BLUE_F):
+        case (EMERALD_FONT_BLUE_G):
+        case (EMERALD_FONT_BLUE_H):
+        case (EMERALD_FONT_BLUE_I):
+        case (EMERALD_FONT_BLUE_J):
+        case (EMERALD_FONT_BLUE_K):
+        case (EMERALD_FONT_BLUE_L):
+        case (EMERALD_FONT_BLUE_M):
+        case (EMERALD_FONT_BLUE_N):
+        case (EMERALD_FONT_BLUE_O):
+        case (EMERALD_FONT_BLUE_P):
+        case (EMERALD_FONT_BLUE_Q):
+        case (EMERALD_FONT_BLUE_R):
+        case (EMERALD_FONT_BLUE_S):
+        case (EMERALD_FONT_BLUE_T):
+        case (EMERALD_FONT_BLUE_U):
+        case (EMERALD_FONT_BLUE_V):
+        case (EMERALD_FONT_BLUE_W):
+        case (EMERALD_FONT_BLUE_X):
+        case (EMERALD_FONT_BLUE_Y):
+        case (EMERALD_FONT_BLUE_Z):
+        case (EMERALD_FONT_BLUE_AE):
+        case (EMERALD_FONT_BLUE_OE):
+        case (EMERALD_FONT_BLUE_UE):
         case (EMERALD_FONT_GREEN_EXCLAMATION):
         case (EMERALD_FONT_GREEN_ARROW_RIGHT):
         case (EMERALD_FONT_GREEN_ARROW_UP):
@@ -1096,7 +883,7 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_FONT_GREEN_PLUS):
         case (EMERALD_FONT_GREEN_COMMA):
         case (EMERALD_FONT_GREEN_MINUS):
-        case (EMERALD_FONT_GREEN_POINT):
+        case (EMERALD_FONT_GREEN_DOT):
         case (EMERALD_FONT_GREEN_SLASH):
         case (EMERALD_FONT_GREEN_0):
         case (EMERALD_FONT_GREEN_1):
@@ -1108,7 +895,7 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_FONT_GREEN_7):
         case (EMERALD_FONT_GREEN_8):
         case (EMERALD_FONT_GREEN_9):
-        case (EMERALD_FONT_GREEN_DOUBLE_POINT):
+        case (EMERALD_FONT_GREEN_DOUBLE_DOT):
         case (EMERALD_FONT_GREEN_PLATE):
         case (EMERALD_FONT_GREEN_ARROW_LEFT):
         case (EMERALD_FONT_GREEN_QUESTION_MARK):
@@ -1141,6 +928,10 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_FONT_GREEN_AE):
         case (EMERALD_FONT_GREEN_OE):
         case (EMERALD_FONT_GREEN_UE):
+        case (EMERALD_FONT_BLUE_SEMICOLON):
+        case (EMERALD_FONT_GREEN_SEMICOLON):
+        case (EMERALD_FONT_BLUE_DOUBLE_QUOTE):
+        case (EMERALD_FONT_GREEN_DOUBLE_QUOTE):
             uExplosion = EMERALD_EXPLOSION_EMPTY;
             if ((uElement == EMERALD_WHEEL) && (Playfield.pStatusAnimation[uCoordinate] == EMERALD_ANIM_WHEEL_RUN)) {
                 Playfield.bWheelRunning = false;
@@ -1264,7 +1055,7 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_MEGABOMB):
             uExplosion = EMERALD_EXPLOSION_NEWCENTRAL_MEGA;
             break;
-        case (EMERALD_STANDMINE):
+        case (EMERALD_MINE_CONTACT):
             uExplosion = EMERALD_EXPLOSION_NEWCENTRAL;
             break;
         case (EMERALD_BEETLE_UP):
@@ -1424,14 +1215,14 @@ Beschreibung: Prüft, ob sich eine "gefährlicher" Feind (Standmine, Käfer oder Mi
 Parameter
       Eingang: I, uint32_t, Index im Level, Position, an der geprüft werden soll
       Ausgang: puDangerPos, uint32_t *, Zeiger auf Position des gefärlichen Elements, darf NULL sein
-               puElement, uint16_t *, Zeiger auf Gefährlcihkeitstyp, darf NULL sein
+               puElement, uint16_t *, Zeiger auf Gefährlichkeitstyp, darf NULL sein
                         EMERALD_BEETLE_LEFT
                         EMERALD_MINE_LEFT (auch für EMERALD_STANDMINE)
 Rückgabewert:  bool, true = "gefährlicher" Feind  hat Kontakt mit Position I
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElement) {
-    if ( (Playfield.pLevel[I - 1] == EMERALD_STANDMINE) ||
+    if ( (Playfield.pLevel[I - 1] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I - 1] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I - 1] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I - 1] == EMERALD_MINE_LEFT) ||
@@ -1444,7 +1235,7 @@ bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElemen
             }
             return true;
     }
-    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) ||
+    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) ||
@@ -1457,7 +1248,7 @@ bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElemen
             }
             return true;
     }
-    if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_STANDMINE) ||
+    if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) ||
@@ -1470,7 +1261,7 @@ bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElemen
             }
             return true;
     }
-    if ( (Playfield.pLevel[I + 1] == EMERALD_STANDMINE) ||
+    if ( (Playfield.pLevel[I + 1] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I + 1] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I + 1] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I + 1] == EMERALD_MINE_LEFT) ||
@@ -1571,7 +1362,7 @@ bool IsPipeElement(uint16_t uElement) {
 
 
 /*----------------------------------------------------------------------------
-Name:           IsPipeElement
+Name:           IsAcidOrReplicatorElement
 ------------------------------------------------------------------------------
 Beschreibung: Prüft, ob ein Element zu einem Säurebad oder Replikator gehört.
 Parameter
@@ -1622,4 +1413,3 @@ bool IsAcidOrReplicatorElement(uint16_t uElement) {
     }
     return bElementIsAcidOrReplicator;
 }
-

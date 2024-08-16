@@ -15,7 +15,7 @@
 
 
 void ControlExplosionToElement(uint32_t I);
-void ControlCentralExplosion(uint32_t I);                               // eine "normale" 3x3-Explosion steuern
+void ControlCentralExplosion(uint32_t I, uint16_t uSlimeElement);       // eine "normale" 3x3-Explosion steuern
 void ControlCircleExplosion(uint32_t I);                                // Wie ControlCentralExplosion(), aber ohne Mittelpunkt
 void ControlCentralMegaExplosion(int nI);                               // eine Mega-Explosion steuern
 void ControlCentralBeetleExplosion(uint32_t I);                         // Käferexplosion 3x3
@@ -27,6 +27,7 @@ bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElemen
 void CleanInvalidFieldsForCentralExplosion(int I, bool bMega);
 bool IsPipeElement(uint16_t uElement);
 bool IsAcidOrReplicatorElement(uint16_t uElement);
+void Pass2InvalidElements(uint32_t uLastStatusAnimation, int nCoordinate, void *pControlFunction);
 #endif // EXPLOSION_H_INCLUDED
 
 

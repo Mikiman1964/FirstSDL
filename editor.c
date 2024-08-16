@@ -56,10 +56,10 @@ char ge_szElementNames[][64] =
                           "MINE RIGHT",                         // 0X09
                           "MINE DOWN",                          // 0X0A
                           "MINE LEFT",                          // 0X0B
-                          "LIGHT BARRIER SWITCH RED",           // 0X0C
-                          "LIGHT BARRIER SWITCH GREEN",         // 0X0D
-                          "LIGHT BARRIER SWITCH BLUE",          // 0X0E
-                          "LIGHT BARRIER SWITCH YELLOW",        // 0X0F
+                          "SWITCH, LIGHT BARRIER, RED",         // 0X0C
+                          "SWITCH, LIGHT BARRIER, GREEN",       // 0X0D
+                          "SWITCH, LIGHT BARRIER, BLUE",        // 0X0E
+                          "SWITCH, LIGHT BARRIER, YELLOW",      // 0X0F
                           "BOMB",                               // 0X10
                           "CRYSTAL",                            // 0X11
                           "EMERALD",                            // 0X12
@@ -84,30 +84,30 @@ char ge_szElementNames[][64] =
                           "NUT",                                // 0X25
                           "ALIEN",                              // 0X26
                           "YAM",                                // 0X27
-                          "FIXED MINE",                         // 0X28
-                          "MAGIC WALL, SWITCH",                 // 0X29
+                          "MINE, CONTACT",                      // 0X28
+                          "SWITCH, MAGIC WALL",                 // 0X29
                           "MAGIC WALL, STEEL",                  // 0X2A
-                          "SAND FROM MOLE, INTERNAL ELEMENT",   // 0X2B
+                          "EARTH FROM MOLE, INTERNAL ELEMENT",  // 0X2B
                           "GREEN CHEESE, DISAPPEAR, INT. ELEM.",// 0X2C
-                          "LIGHT SWITCH",                       // 0X2D
+                          "SWITCH, LIGHT",                      // 0X2D
                           "REPLICATOR GREEN, TOP LEFT",         // 0X2E
                           "REPLICATOR GREEN, TOP MIDDLE",       // 0X2F
                           "REPLICATOR GREEN, TOP RIGHT",        // 0X30
                           "REPLICATOR GREEN, BOTTOM LEFT",      // 0X31
                           "REPLICATOR GREEN, BOTTON RIGHT",     // 0X32
-                          "REPLICATOR GREEN, SWITCH",           // 0X33
+                          "SWITCH, REPLICATOR GREEN",           // 0X33
                           "REPLICATOR BLUE, TOP LEFT",          // 0X34
                           "REPLICATOR BLUE, TOP MIDDLE",        // 0X35
                           "REPLICATOR BLUE, TOP RIGHT",         // 0X36
                           "REPLICATOR BLUE, BOTTOM LEFT",       // 0X37
                           "REPLICATOR BLUE, BOTTON RIGHT",      // 0X38
-                          "REPLICATOR BLUE, SWITCH",            // 0X39
+                          "SWITCH, REPLICATOR BLUE",            // 0X39
                           "DYNAMITE, OFF",                      // 0X3A
                           "DYNAMITE, ON",                       // 0X3B
-                          "DOOR, WOOD, RED",                    // 0X3C
-                          "DOOR, WOOD, YELLOW",                 // 0X3D
-                          "DOOR, WOOD, BLUE",                   // 0X3E
-                          "DOOR, WOOD, GREEN",                  // 0X3F
+                          "DOOR, RED, WOOD",                    // 0X3C
+                          "DOOR, YELLOW, WOOD",                 // 0X3D
+                          "DOOR, BLUE, WOOD",                   // 0X3E
+                          "DOOR, GREEN, WOOD",                  // 0X3F
                           "MAN",                                // 0X40
                           "MESSAGE 1",                          // 0X41
                           "MESSAGE 2",                          // 0X42
@@ -158,7 +158,7 @@ char ge_szElementNames[][64] =
                           "KEY, WHITE",                         // 0X6F
                           "DOOR, WHITE",                        // 0X70
                           "DOOR, SECRET, WHITE",                // 0X71
-                          "DOOR, WOOD, WHITE",                  // 0X72
+                          "DOOR, WHITE, WOOD",                  // 0X72
                           "KEY, GENERAL",                       // 0X73
                           "MEGABOMB",                           // 0X74
                           "WALL, CORNERED, WITH EMERALD",       // 0X75
@@ -174,7 +174,7 @@ char ge_szElementNames[][64] =
                           "ACID POOL, BOTTOM RIGHT",            // 0X7F
                           "SPACE",                              // 0X80
                           "WALL, ROUND",                        // 0X81
-                          "SAND",                               // 0X82
+                          "EARTH",                              // 0X82
                           "STEEL",                              // 0X83
                           "WALL, CORNERED",                     // 0X84
                           "KEY, RED",                           // 0X85
@@ -186,16 +186,16 @@ char ge_szElementNames[][64] =
                           "DOOR, BLUE",                         // 0X8B
                           "DOOR, GREEN",                        // 0X8C
                           "HAMMER",                             // 0X8D
-                          "DOOR, SECRET, RED",                  // 0X8E
-                          "DOOR, SECRET, YELLOW",               // 0X8F
-                          "DOOR, SECRET, BLUE",                 // 0X90
-                          "DOOR, SECRET, GREEN",                // 0X91
+                          "DOOR, RED, SECRET",                  // 0X8E
+                          "DOOR, YELLOW, SECRET",               // 0X8F
+                          "DOOR, BLUE, SECRET",                 // 0X90
+                          "DOOR, GREEN, SECRET",                // 0X91
                           "MAGIC WALL",                         // 0X92
                           "WHEEL",                              // 0X93
-                          "SWAMP",                              // 0X94
-                          "SWAMP WITH STONE",                   // 0X95
-                          "STONE S.IN SWAMP, INTERNAL ELEMENT", // 0X96
-                          "STONE S.OUT SWAMP, INTERNAL ELEMENT",// 0X97
+                          "QUICKSAND",                          // 0X94
+                          "QUICKSAND WITH STONE",               // 0X95
+                          "STONE S.IN QS, INTERNAL ELEMENT",    // 0X96
+                          "STONE S.OUT QS, INTERNAL ELEMENT",   // 0X97
                           "ENDDOOR, NOT READY",                 // 0X98
                           "GREEN DROP COMES, INTERNAL ELEMENT", // 0X99
                           "GREEN DROP",                         // 0X9A
@@ -218,14 +218,14 @@ char ge_szElementNames[][64] =
                           "STEEL, ACID",                        // 0XAB
                           "STEEL, NOT ROUND",                   // 0XAC
                           "WALL, NOT ROUND",                    // 0XAD
-                          "STEEL, MARKER LEFT/UP",              // 0XAE
-                          "STEEL, MARKER UP",                   // 0XAF
-                          "STEEL, MARKER RIGHT/UP",             // 0XB0
-                          "STEEL, MARKER LEFT",                 // 0XB1
-                          "STEEL, MARKER RIGHT",                // 0XB2
-                          "STEEL, MARKER LEFT/BOTTOM",          // 0XB3
-                          "STEEL, MARKER BOTTOM",               // 0XB4
-                          "STEEL, MARKER RIGHT/BOTTOM",         // 0XB5
+                          "STEEL, STRIPE LEFT TOP",             // 0XAE
+                          "STEEL, STRIPE TOP",                  // 0XAF
+                          "STEEL, STRIPE RIGHT TOP",            // 0XB0
+                          "STEEL, STRIPE LEFT",                 // 0XB1
+                          "STEEL, STRIPE RIGHT",                // 0XB2
+                          "STEEL, STRIPE LEFT BOTTOM",          // 0XB3
+                          "STEEL, STRIPE BOTTOM",               // 0XB4
+                          "STEEL, STRIPE RIGHT BOTTOM",         // 0XB5
                           "STEEL, HEART",                       // 0XB6
                           "STEEL, PLAYER HEAD",                 // 0XB7
                           "STEEL, NO ENTRY",                    // 0XB8
@@ -300,119 +300,119 @@ char ge_szElementNames[][64] =
                           "NO ELEMENT",                         // 0XFD
                           "NO ELEMENT",                         // 0XFE
                           "NO ELEMENT",                         // 0XFF
-                          "FONT, EXCLAMATION",                  // 0X100
-                          "FONT, ARROW RIGHT",                  // 0X101
-                          "FONT, ARROW UP",                     // 0X102
-                          "FONT, ARROW DOWN",                   // 0X103
-                          "FONT, APOSTROPHE",                   // 0X104
-                          "FONT, BRACE OPEN",                   // 0X105
-                          "FONT, BRACE CLOSE",                  // 0X106
-                          "FONT, COPYRIGHT",                    // 0X107
-                          "FONT, PLUS",                         // 0X108
-                          "FONT, COMMA",                        // 0X109
-                          "FONT, MINUS",                        // 0X10A
-                          "FONT, POINT",                        // 0X10B
-                          "FONT, SLASH",                        // 0X10C
-                          "FONT, 0",                            // 0X10D
-                          "FONT, 1",                            // 0X10E
-                          "FONT, 2",                            // 0X10F
-                          "FONT, 3",                            // 0X110
-                          "FONT, 4",                            // 0X111
-                          "FONT, 5",                            // 0X112
-                          "FONT, 6",                            // 0X113
-                          "FONT, 7",                            // 0X114
-                          "FONT, 8",                            // 0X115
-                          "FONT, 9",                            // 0X116
-                          "FONT, DOUBLE POINT",                 // 0X117
-                          "FONT, PLATE",                        // 0X118
-                          "FONT, ARROW LEFT",                   // 0X119
-                          "FONT, PAFF",                         // 0X11A
-                          "FONT, QUESTION MARK",                // 0X11B
-                          "FONT, A",                            // 0X11C
-                          "FONT, B",                            // 0X11D
-                          "FONT, C",                            // 0X11E
-                          "FONT, D",                            // 0X11F
-                          "FONT, E",                            // 0X120
-                          "FONT, F",                            // 0X121
-                          "FONT, G",                            // 0X122
-                          "FONT, H",                            // 0X123
-                          "FONT, I",                            // 0X124
-                          "FONT, J",                            // 0X125
-                          "FONT, K",                            // 0X126
-                          "FONT, L",                            // 0X127
-                          "FONT, M",                            // 0X128
-                          "FONT, N",                            // 0X129
-                          "FONT, O",                            // 0X12A
-                          "FONT, P",                            // 0X12B
-                          "FONT, Q",                            // 0X12C
-                          "FONT, R",                            // 0X12D
-                          "FONT, S",                            // 0X12E
-                          "FONT, T",                            // 0X12F
-                          "FONT, U",                            // 0X130
-                          "FONT, V",                            // 0X131
-                          "FONT, W",                            // 0X132
-                          "FONT, X",                            // 0X133
-                          "FONT, Y",                            // 0X134
-                          "FONT, Z",                            // 0X135
-                          "FONT, AE",                           // 0X136
-                          "FONT, OE",                           // 0X137
-                          "FONT, UE",                           // 0X138
-                          "FONT, STEEL, EXCLAMATION",           // 0X139
-                          "FONT, STEEL, ARROW RIGHT",           // 0X13A
-                          "FONT, STEEL, ARROW UP",              // 0X13B
-                          "FONT, STEEL, ARROW DOWN",            // 0X13C
-                          "FONT, STEEL, APOSTROPHE",            // 0X13D
-                          "FONT, STEEL, BRACE OPEN",            // 0X13E
-                          "FONT, STEEL, BRACE CLOSE",           // 0X13F
-                          "FONT, STEEL, COPYRIGHT",             // 0X140
-                          "FONT, STEEL, PLUS",                  // 0X141
-                          "FONT, STEEL, COMMA",                 // 0X142
-                          "FONT, STEEL, MINUS",                 // 0X143
-                          "FONT, STEEL, POINT",                 // 0X144
-                          "FONT, STEEL, SLASH",                 // 0X145
-                          "FONT, STEEL, 0",                     // 0X146
-                          "FONT, STEEL, 1",                     // 0X147
-                          "FONT, STEEL, 2",                     // 0X148
-                          "FONT, STEEL, 3",                     // 0X149
-                          "FONT, STEEL, 4",                     // 0X14A
-                          "FONT, STEEL, 5",                     // 0X14B
-                          "FONT, STEEL, 6",                     // 0X14C
-                          "FONT, STEEL, 7",                     // 0X14D
-                          "FONT, STEEL, 8",                     // 0X14E
-                          "FONT, STEEL, 9",                     // 0X14F
-                          "FONT, STEEL, DOUBLE POINT",          // 0X150
-                          "FONT, STEEL, PLATE",                 // 0X151
-                          "FONT, STEEL, ARROW LEFT",            // 0X152
-                          "FONT, STEEL, QUESTION MARK",         // 0X153
-                          "FONT, STEEL, A",                     // 0X154
-                          "FONT, STEEL, B",                     // 0X155
-                          "FONT, STEEL, C",                     // 0X156
-                          "FONT, STEEL, D",                     // 0X157
-                          "FONT, STEEL, E",                     // 0X158
-                          "FONT, STEEL, F",                     // 0X159
-                          "FONT, STEEL, G",                     // 0X15A
-                          "FONT, STEEL, H",                     // 0X15B
-                          "FONT, STEEL, I",                     // 0X15C
-                          "FONT, STEEL, J",                     // 0X15D
-                          "FONT, STEEL, K",                     // 0X15E
-                          "FONT, STEEL, L",                     // 0X15F
-                          "FONT, STEEL, M",                     // 0X160
-                          "FONT, STEEL, N",                     // 0X161
-                          "FONT, STEEL, O",                     // 0X162
-                          "FONT, STEEL, P",                     // 0X163
-                          "FONT, STEEL, Q",                     // 0X164
-                          "FONT, STEEL, R",                     // 0X165
-                          "FONT, STEEL, S",                     // 0X166
-                          "FONT, STEEL, T",                     // 0X167
-                          "FONT, STEEL, U",                     // 0X168
-                          "FONT, STEEL, V",                     // 0X169
-                          "FONT, STEEL, W",                     // 0X16A
-                          "FONT, STEEL, X",                     // 0X16B
-                          "FONT, STEEL, Y",                     // 0X16C
-                          "FONT, STEEL, Z",                     // 0X16D
-                          "FONT, STEEL, AE",                    // 0X16E
-                          "FONT, STEEL, OE",                    // 0X16F
-                          "FONT, STEEL, UE",                    // 0X170
+                          "FONT, BLUE, EXCLAMATION",            // 0X100
+                          "FONT, BLUE, ARROW RIGHT",            // 0X101
+                          "FONT, BLUE, ARROW UP",               // 0X102
+                          "FONT, BLUE, ARROW DOWN",             // 0X103
+                          "FONT, BLUE, APOSTROPHE",             // 0X104
+                          "FONT, BLUE, BRACE OPEN",             // 0X105
+                          "FONT, BLUE, BRACE CLOSE",            // 0X106
+                          "FONT, BLUE, COPYRIGHT",              // 0X107
+                          "FONT, BLUE, PLUS",                   // 0X108
+                          "FONT, BLUE, COMMA",                  // 0X109
+                          "FONT, BLUE, MINUS",                  // 0X10A
+                          "FONT, BLUE, DOT",                    // 0X10B
+                          "FONT, BLUE, SLASH",                  // 0X10C
+                          "FONT, BLUE, 0",                      // 0X10D
+                          "FONT, BLUE, 1",                      // 0X10E
+                          "FONT, BLUE, 2",                      // 0X10F
+                          "FONT, BLUE, 3",                      // 0X110
+                          "FONT, BLUE, 4",                      // 0X111
+                          "FONT, BLUE, 5",                      // 0X112
+                          "FONT, BLUE, 6",                      // 0X113
+                          "FONT, BLUE, 7",                      // 0X114
+                          "FONT, BLUE, 8",                      // 0X115
+                          "FONT, BLUE, 9",                      // 0X116
+                          "FONT, BLUE, DOUBLE DOT",             // 0X117
+                          "FONT, BLUE, PLATE",                  // 0X118
+                          "FONT, BLUE, ARROW LEFT",             // 0X119
+                          "FONT, BLUE, PAFF",                   // 0X11A
+                          "FONT, BLUE, QUESTION MARK",          // 0X11B
+                          "FONT, BLUE, A",                      // 0X11C
+                          "FONT, BLUE, B",                      // 0X11D
+                          "FONT, BLUE, C",                      // 0X11E
+                          "FONT, BLUE, D",                      // 0X11F
+                          "FONT, BLUE, E",                      // 0X120
+                          "FONT, BLUE, F",                      // 0X121
+                          "FONT, BLUE, G",                      // 0X122
+                          "FONT, BLUE, H",                      // 0X123
+                          "FONT, BLUE, I",                      // 0X124
+                          "FONT, BLUE, J",                      // 0X125
+                          "FONT, BLUE, K",                      // 0X126
+                          "FONT, BLUE, L",                      // 0X127
+                          "FONT, BLUE, M",                      // 0X128
+                          "FONT, BLUE, N",                      // 0X129
+                          "FONT, BLUE, O",                      // 0X12A
+                          "FONT, BLUE, P",                      // 0X12B
+                          "FONT, BLUE, Q",                      // 0X12C
+                          "FONT, BLUE, R",                      // 0X12D
+                          "FONT, BLUE, S",                      // 0X12E
+                          "FONT, BLUE, T",                      // 0X12F
+                          "FONT, BLUE, U",                      // 0X130
+                          "FONT, BLUE, V",                      // 0X131
+                          "FONT, BLUE, W",                      // 0X132
+                          "FONT, BLUE, X",                      // 0X133
+                          "FONT, BLUE, Y",                      // 0X134
+                          "FONT, BLUE, Z",                      // 0X135
+                          "FONT, BLUE, AE",                     // 0X136
+                          "FONT, BLUE, OE",                     // 0X137
+                          "FONT, BLUE, UE",                     // 0X138
+                          "FONT, BLUE, STEEL, EXCLAMATION",     // 0X139
+                          "FONT, BLUE, STEEL, ARROW RIGHT",     // 0X13A
+                          "FONT, BLUE, STEEL, ARROW UP",        // 0X13B
+                          "FONT, BLUE, STEEL, ARROW DOWN",      // 0X13C
+                          "FONT, BLUE, STEEL, APOSTROPHE",      // 0X13D
+                          "FONT, BLUE, STEEL, BRACE OPEN",      // 0X13E
+                          "FONT, BLUE, STEEL, BRACE CLOSE",     // 0X13F
+                          "FONT, BLUE, STEEL, COPYRIGHT",       // 0X140
+                          "FONT, BLUE, STEEL, PLUS",            // 0X141
+                          "FONT, BLUE, STEEL, COMMA",           // 0X142
+                          "FONT, BLUE, STEEL, MINUS",           // 0X143
+                          "FONT, BLUE, STEEL, DOT",             // 0X144
+                          "FONT, BLUE, STEEL, SLASH",           // 0X145
+                          "FONT, BLUE, STEEL, 0",               // 0X146
+                          "FONT, BLUE, STEEL, 1",               // 0X147
+                          "FONT, BLUE, STEEL, 2",               // 0X148
+                          "FONT, BLUE, STEEL, 3",               // 0X149
+                          "FONT, BLUE, STEEL, 4",               // 0X14A
+                          "FONT, BLUE, STEEL, 5",               // 0X14B
+                          "FONT, BLUE, STEEL, 6",               // 0X14C
+                          "FONT, BLUE, STEEL, 7",               // 0X14D
+                          "FONT, BLUE, STEEL, 8",               // 0X14E
+                          "FONT, BLUE, STEEL, 9",               // 0X14F
+                          "FONT, BLUE, STEEL, DOUBLE DOT",      // 0X150
+                          "FONT, BLUE, STEEL, PLATE",           // 0X151
+                          "FONT, BLUE, STEEL, ARROW LEFT",      // 0X152
+                          "FONT, BLUE, STEEL, QUESTION MARK",   // 0X153
+                          "FONT, BLUE, STEEL, A",               // 0X154
+                          "FONT, BLUE, STEEL, B",               // 0X155
+                          "FONT, BLUE, STEEL, C",               // 0X156
+                          "FONT, BLUE, STEEL, D",               // 0X157
+                          "FONT, BLUE, STEEL, E",               // 0X158
+                          "FONT, BLUE, STEEL, F",               // 0X159
+                          "FONT, BLUE, STEEL, G",               // 0X15A
+                          "FONT, BLUE, STEEL, H",               // 0X15B
+                          "FONT, BLUE, STEEL, I",               // 0X15C
+                          "FONT, BLUE, STEEL, J",               // 0X15D
+                          "FONT, BLUE, STEEL, K",               // 0X15E
+                          "FONT, BLUE, STEEL, L",               // 0X15F
+                          "FONT, BLUE, STEEL, M",               // 0X160
+                          "FONT, BLUE, STEEL, N",               // 0X161
+                          "FONT, BLUE, STEEL, O",               // 0X162
+                          "FONT, BLUE, STEEL, P",               // 0X163
+                          "FONT, BLUE, STEEL, Q",               // 0X164
+                          "FONT, BLUE, STEEL, R",               // 0X165
+                          "FONT, BLUE, STEEL, S",               // 0X166
+                          "FONT, BLUE, STEEL, T",               // 0X167
+                          "FONT, BLUE, STEEL, U",               // 0X168
+                          "FONT, BLUE, STEEL, V",               // 0X169
+                          "FONT, BLUE, STEEL, W",               // 0X16A
+                          "FONT, BLUE, STEEL, X",               // 0X16B
+                          "FONT, BLUE, STEEL, Y",               // 0X16C
+                          "FONT, BLUE, STEEL, Z",               // 0X16D
+                          "FONT, BLUE, STEEL, AE",              // 0X16E
+                          "FONT, BLUE, STEEL, OE",              // 0X16F
+                          "FONT, BLUE, STEEL, UE",              // 0X170
                           "FONT, GREEN, EXCLAMATION",           // 0X171
                           "FONT, GREEN, ARROW RIGHT",           // 0X172
                           "FONT, GREEN, ARROW UP",              // 0X173
@@ -424,7 +424,7 @@ char ge_szElementNames[][64] =
                           "FONT, GREEN, PLUS",                  // 0X179
                           "FONT, GREEN, COMMA",                 // 0X17A
                           "FONT, GREEN, MINUS",                 // 0X17B
-                          "FONT, GREEN, POINT",                 // 0X17C
+                          "FONT, GREEN, DOT",                   // 0X17C
                           "FONT, GREEN, SLASH",                 // 0X17D
                           "FONT, GREEN, 0",                     // 0X17E
                           "FONT, GREEN, 1",                     // 0X17F
@@ -436,7 +436,7 @@ char ge_szElementNames[][64] =
                           "FONT, GREEN, 7",                     // 0X185
                           "FONT, GREEN, 8",                     // 0X186
                           "FONT, GREEN, 9",                     // 0X187
-                          "FONT, GREEN, DOUBLE POINT",          // 0X188
+                          "FONT, GREEN, DOUBLE DOT",            // 0X188
                           "FONT, GREEN, PLATE",                 // 0X189
                           "FONT, GREEN, ARROW LEFT",            // 0X18A
                           "FONT, GREEN, QUESTION MARK",         // 0X18B
@@ -469,62 +469,62 @@ char ge_szElementNames[][64] =
                           "FONT, GREEN, AE",                    // 0X1A6
                           "FONT, GREEN, OE",                    // 0X1A7
                           "FONT, GREEN, UE",                    // 0X1A8
-                          "FONT, STEEL, GREEN, EXCLAMATION",    // 0X1A9
-                          "FONT, STEEL, GREEN, ARROW RIGHT",    // 0X1AA
-                          "FONT, STEEL, GREEN, ARROW UP",       // 0X1AB
-                          "FONT, STEEL, GREEN, ARROW DOWN",     // 0X1AC
-                          "FONT, STEEL, GREEN, APOSTROPHE",     // 0X1AD
-                          "FONT, STEEL, GREEN, BRACE OPEN",     // 0X1AE
-                          "FONT, STEEL, GREEN, BRACE CLOSE",    // 0X1AF
-                          "FONT, STEEL, GREEN, COPYRIGHT",      // 0X1B0
-                          "FONT, STEEL, GREEN, PLUS",           // 0X1B1
-                          "FONT, STEEL, GREEN, COMMA",          // 0X1B2
-                          "FONT, STEEL, GREEN, MINUS",          // 0X1B3
-                          "FONT, STEEL, GREEN, POINT",          // 0X1B4
-                          "FONT, STEEL, GREEN, SLASH",          // 0X1B5
-                          "FONT, STEEL, GREEN, 0",              // 0X1B6
-                          "FONT, STEEL, GREEN, 1",              // 0X1B7
-                          "FONT, STEEL, GREEN, 2",              // 0X1B8
-                          "FONT, STEEL, GREEN, 3",              // 0X1B9
-                          "FONT, STEEL, GREEN, 4",              // 0X1BA
-                          "FONT, STEEL, GREEN, 5",              // 0X1BB
-                          "FONT, STEEL, GREEN, 6",              // 0X1BC
-                          "FONT, STEEL, GREEN, 7",              // 0X1BD
-                          "FONT, STEEL, GREEN, 8",              // 0X1BE
-                          "FONT, STEEL, GREEN, 9",              // 0X1BF
-                          "FONT, STEEL, GREEN, DOUBLE POINT",   // 0X1C0
-                          "FONT, STEEL, GREEN, PLATE",          // 0X1C1
-                          "FONT, STEEL, GREEN, ARROW LEFT",     // 0X1C2
-                          "FONT, STEEL, GREEN, QUESTION MARK",  // 0X1C3
-                          "FONT, STEEL, GREEN, A",              // 0X1C4
-                          "FONT, STEEL, GREEN, B",              // 0X1C5
-                          "FONT, STEEL, GREEN, C",              // 0X1C6
-                          "FONT, STEEL, GREEN, D",              // 0X1C7
-                          "FONT, STEEL, GREEN, E",              // 0X1C8
-                          "FONT, STEEL, GREEN, F",              // 0X1C9
-                          "FONT, STEEL, GREEN, G",              // 0X1CA
-                          "FONT, STEEL, GREEN, H",              // 0X1CB
-                          "FONT, STEEL, GREEN, I",              // 0X1CC
-                          "FONT, STEEL, GREEN, J",              // 0X1CD
-                          "FONT, STEEL, GREEN, K",              // 0X1CE
-                          "FONT, STEEL, GREEN, L",              // 0X1CF
-                          "FONT, STEEL, GREEN, M",              // 0X1D0
-                          "FONT, STEEL, GREEN, N",              // 0X1D1
-                          "FONT, STEEL, GREEN, O",              // 0X1D2
-                          "FONT, STEEL, GREEN, P",              // 0X1D3
-                          "FONT, STEEL, GREEN, Q",              // 0X1D4
-                          "FONT, STEEL, GREEN, R",              // 0X1D5
-                          "FONT, STEEL, GREEN, S",              // 0X1D6
-                          "FONT, STEEL, GREEN, T",              // 0X1D7
-                          "FONT, STEEL, GREEN, U",              // 0X1D8
-                          "FONT, STEEL, GREEN, V",              // 0X1D9
-                          "FONT, STEEL, GREEN, W",              // 0X1DA
-                          "FONT, STEEL, GREEN, X",              // 0X1DB
-                          "FONT, STEEL, GREEN, Y",              // 0X1DC
-                          "FONT, STEEL, GREEN, Z",              // 0X1DD
-                          "FONT, STEEL, GREEN, AE",             // 0X1DE
-                          "FONT, STEEL, GREEN, OE",             // 0X1DF
-                          "FONT, STEEL, GREEN, UE",             // 0X1E0
+                          "FONT, GREEN, STEEL, EXCLAMATION",    // 0X1A9
+                          "FONT, GREEN, STEEL, ARROW RIGHT",    // 0X1AA
+                          "FONT, GREEN, STEEL, ARROW UP",       // 0X1AB
+                          "FONT, GREEN, STEEL, ARROW DOWN",     // 0X1AC
+                          "FONT, GREEN, STEEL, APOSTROPHE",     // 0X1AD
+                          "FONT, GREEN, STEEL, BRACE OPEN",     // 0X1AE
+                          "FONT, GREEN, STEEL, BRACE CLOSE",    // 0X1AF
+                          "FONT, GREEN, STEEL, COPYRIGHT",      // 0X1B0
+                          "FONT, GREEN, STEEL, PLUS",           // 0X1B1
+                          "FONT, GREEN, STEEL, COMMA",          // 0X1B2
+                          "FONT, GREEN, STEEL, MINUS",          // 0X1B3
+                          "FONT, GREEN, STEEL, DOT",            // 0X1B4
+                          "FONT, GREEN, STEEL, SLASH",          // 0X1B5
+                          "FONT, GREEN, STEEL, 0",              // 0X1B6
+                          "FONT, GREEN, STEEL, 1",              // 0X1B7
+                          "FONT, GREEN, STEEL, 2",              // 0X1B8
+                          "FONT, GREEN, STEEL, 3",              // 0X1B9
+                          "FONT, GREEN, STEEL, 4",              // 0X1BA
+                          "FONT, GREEN, STEEL, 5",              // 0X1BB
+                          "FONT, GREEN, STEEL, 6",              // 0X1BC
+                          "FONT, GREEN, STEEL, 7",              // 0X1BD
+                          "FONT, GREEN, STEEL, 8",              // 0X1BE
+                          "FONT, GREEN, STEEL, 9",              // 0X1BF
+                          "FONT, GREEN, STEEL, DOUBLE DOT",     // 0X1C0
+                          "FONT, GREEN, STEEL, PLATE",          // 0X1C1
+                          "FONT, GREEN, STEEL, ARROW LEFT",     // 0X1C2
+                          "FONT, GREEN, STEEL, QUESTION MARK",  // 0X1C3
+                          "FONT, GREEN, STEEL, A",              // 0X1C4
+                          "FONT, GREEN, STEEL, B",              // 0X1C5
+                          "FONT, GREEN, STEEL, C",              // 0X1C6
+                          "FONT, GREEN, STEEL, D",              // 0X1C7
+                          "FONT, GREEN, STEEL, E",              // 0X1C8
+                          "FONT, GREEN, STEEL, F",              // 0X1C9
+                          "FONT, GREEN, STEEL, G",              // 0X1CA
+                          "FONT, GREEN, STEEL, H",              // 0X1CB
+                          "FONT, GREEN, STEEL, I",              // 0X1CC
+                          "FONT, GREEN, STEEL, J",              // 0X1CD
+                          "FONT, GREEN, STEEL, K",              // 0X1CE
+                          "FONT, GREEN, STEEL, L",              // 0X1CF
+                          "FONT, GREEN, STEEL, M",              // 0X1D0
+                          "FONT, GREEN, STEEL, N",              // 0X1D1
+                          "FONT, GREEN, STEEL, O",              // 0X1D2
+                          "FONT, GREEN, STEEL, P",              // 0X1D3
+                          "FONT, GREEN, STEEL, Q",              // 0X1D4
+                          "FONT, GREEN, STEEL, R",              // 0X1D5
+                          "FONT, GREEN, STEEL, S",              // 0X1D6
+                          "FONT, GREEN, STEEL, T",              // 0X1D7
+                          "FONT, GREEN, STEEL, U",              // 0X1D8
+                          "FONT, GREEN, STEEL, V",              // 0X1D9
+                          "FONT, GREEN, STEEL, W",              // 0X1DA
+                          "FONT, GREEN, STEEL, X",              // 0X1DB
+                          "FONT, GREEN, STEEL, Y",              // 0X1DC
+                          "FONT, GREEN, STEEL, Z",              // 0X1DD
+                          "FONT, GREEN, STEEL, AE",             // 0X1DE
+                          "FONT, GREEN, STEEL, OE",             // 0X1DF
+                          "FONT, GREEN, STEEL, UE",             // 0X1E0
                           "EXPL. CENTRAL, INTERNAL ELEMENT",    // 0X1E1
                           "EXPL. MEGACENTRAL, INT. ELEMENT",    // 0X1E2
                           "EXPL. CENTRAL BEETLE, INT. ELEMENT", // 0X1E3
@@ -544,16 +544,16 @@ char ge_szElementNames[][64] =
                           "STEEL, PASSWORD",                    // 0X1F1
                           "GRASS",                              // 0X1F2
                           "GRASS COMES, INTERNAL ELEMENT",      // 0X1F3
-                          "SANDMINE",                           // 0X1F4
-                          "SAND, INVISIBLE",                    // 0X1F5
+                          "MINE, EARTH",                        // 0X1F4
+                          "EARTH, INVISIBLE",                   // 0X1F5
                           "CONVEYOR BELT, RED",                 // 0X1F6
-                          "CONVEYOR BELT SWITCH, RED",          // 0X1F7
+                          "SWITCH, CONVEYOR BELT, RED",         // 0X1F7
                           "CONVEYOR BELT, GREEN",               // 0X1F8
-                          "CONVEYOR BELT SWITCH, GREEN",        // 0X1F9
+                          "SWITCH, CONVEYOR BELT, GREEN",       // 0X1F9
                           "CONVEYOR BELT, BLUE",                // 0X1FA
-                          "CONVEYOR BELT SWITCH, BLUE",         // 0X1FB
+                          "SWITCH, CONVEYOR BELT, BLUE",        // 0X1FB
                           "CONVEYOR BELT, YELLOW",              // 0X1FC
-                          "CONVEYOR BELT SWITCH, YELLOW",       // 0X1FD
+                          "SWITCH, CONVEYOR BELT, YELLOW",      // 0X1FD
                           "EDITOR MESSAGE 1, INTERNAL ELEMENT", // 0X1FE
                           "EDITOR MESSAGE 2, INTERNAL ELEMENT", // 0X1FF
                           "EDITOR MESSAGE 3, INTERNAL ELEMENT", // 0X200
@@ -621,7 +621,33 @@ char ge_szElementNames[][64] =
                           "WALL, WITH SHIELD COIN",             // 0X23E
                           "SLIME",                              // 0X2EF
                           "WALL, WITH SLIME",                   // 0X240
+                          "FONT, BLUE, SEMICOLON",              // 0X241
+                          "FONT, BLUE, STEEL, SEMICOLON",       // 0X242
+                          "FONT, BLUE, DOUBLE QUOTE",           // 0X243
+                          "FONT, BLUE, STEEL, DOUBLE QUOTE",    // 0X244
+                          "FONT, GREEN, SEMICOLON",             // 0X245
+                          "FONT, GREEN, STEEL, SEMICOLON",      // 0X246
+                          "FONT, GREEN, DOUBLE QUOTE",          // 0X247
+                          "FONT, GREEN, STEEL, DOUBLE QUOTE",   // 0X248
+                          "QUICKSAND, SLOW",                    // 0X249
+                          "QUICKSAND WITH STONE, SLOW",         // 0X24A
+                          "STONE S.IN QS,S, INTERNAL ELEMENT",  // 0X24B
+                          "STONE S.OUT QS,S, INTERNAL ELEMENT", // 0X24C
+                          "STEEL, PLAYER HEAD 2",               // 0X24D
+                          "TREASURE CHEST 1",                   // 0X24E    // Schatztruhen sind
+                          "TREASURE CHEST 2",                   // 0X24F    // noch nicht
+                          "TREASURE CHEST 3",                   // 0X250    // im
+                          "TREASURE CHEST 4",                   // 0X251    // Leveleditor
+                          "TREASURE CHEST 5",                   // 0X252    // auswählbar
+                          "TREASURE CHEST 6",                   // 0X253
+                          "TREASURE CHEST 7",                   // 0X254
+                          "TREASURE CHEST 8",                   // 0X255
+                          "MESSAGE 0, INTERNAL ELEMENT",        // 0X256
+                          "TREASURE CHEST 0, INTERNAL ELEMENT", // 0x257
+                          "TREASURE CHEST, OPEN, INT. ELEMENT", // 0X258
+                          "SMILEY",                             // 0X259
                           };
+
 
 
 // Level-Elemente, die aktuell angezeigt werden
@@ -647,23 +673,26 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_CONVEYORBELT_RED,EMERALD_CONVEYORBELT_SWITCH_RED,EMERALD_CONVEYORBELT_YELLOW,EMERALD_CONVEYORBELT_SWITCH_YELLOW,EMERALD_CONVEYORBELT_GREEN,EMERALD_CONVEYORBELT_SWITCH_GREEN,EMERALD_CONVEYORBELT_BLUE,EMERALD_CONVEYORBELT_SWITCH_BLUE,
                             EMERALD_LIGHTBARRIER_RED_LEFT,EMERALD_LIGHTBARRIER_RED_DOWN,EMERALD_LIGHTBARRIER_RED_RIGHT,EMERALD_LIGHTBARRIER_RED_UP,EMERALD_LIGHTBARRIER_YELLOW_LEFT,EMERALD_LIGHTBARRIER_YELLOW_DOWN,EMERALD_LIGHTBARRIER_YELLOW_RIGHT,EMERALD_LIGHTBARRIER_YELLOW_UP,
                             EMERALD_LIGHTBARRIER_GREEN_LEFT,EMERALD_LIGHTBARRIER_GREEN_DOWN,EMERALD_LIGHTBARRIER_GREEN_RIGHT,EMERALD_LIGHTBARRIER_GREEN_UP,EMERALD_LIGHTBARRIER_BLUE_LEFT,EMERALD_LIGHTBARRIER_BLUE_DOWN,EMERALD_LIGHTBARRIER_BLUE_RIGHT,EMERALD_LIGHTBARRIER_BLUE_UP,
-                            EMERALD_LIGHTBARRIER_RED_SWITCH,EMERALD_LIGHTBARRIER_YELLOW_SWITCH,EMERALD_LIGHTBARRIER_GREEN_SWITCH,EMERALD_LIGHTBARRIER_BLUE_SWITCH,EMERALD_SANDMINE,EMERALD_SAND,EMERALD_SWAMP,EMERALD_SWAMP_STONE,
-                            EMERALD_ACIDPOOL_TOP_LEFT,EMERALD_ACIDPOOL_TOP_MID,EMERALD_ACIDPOOL_TOP_RIGHT,EMERALD_NUT,EMERALD_BOMB,EMERALD_MEGABOMB,EMERALD_STANDMINE,EMERALD_STONE,
+                            EMERALD_LIGHTBARRIER_RED_SWITCH,EMERALD_LIGHTBARRIER_YELLOW_SWITCH,EMERALD_LIGHTBARRIER_GREEN_SWITCH,EMERALD_LIGHTBARRIER_BLUE_SWITCH,EMERALD_MINE_EARTH,EMERALD_EARTH,EMERALD_GRASS,EMERALD_EARTH_INVISIBLE,
+                            EMERALD_ACIDPOOL_TOP_LEFT,EMERALD_ACIDPOOL_TOP_MID,EMERALD_ACIDPOOL_TOP_RIGHT,EMERALD_NUT,EMERALD_BOMB,EMERALD_MEGABOMB,EMERALD_MINE_CONTACT,EMERALD_STONE,
                             EMERALD_ACIDPOOL_BOTTOM_LEFT,EMERALD_ACIDPOOL_BOTTOM_MID,EMERALD_ACIDPOOL_BOTTOM_RIGHT,EMERALD_EMERALD,EMERALD_RUBY,EMERALD_SAPPHIRE,EMERALD_PERL,EMERALD_CRYSTAL,
                             EMERALD_MESSAGE_1,EMERALD_MESSAGE_2,EMERALD_MESSAGE_3,EMERALD_MESSAGE_4,EMERALD_MESSAGE_5,EMERALD_MESSAGE_6,EMERALD_MESSAGE_7,EMERALD_MESSAGE_8,
+
+                            EMERALD_TREASURECHEST_1,EMERALD_TREASURECHEST_2,EMERALD_TREASURECHEST_3,EMERALD_TREASURECHEST_4,EMERALD_TREASURECHEST_5,EMERALD_TREASURECHEST_6,EMERALD_TREASURECHEST_7,EMERALD_TREASURECHEST_8,
+
                             EMERALD_STEEL,EMERALD_STEEL_ROUND,EMERALD_STEEL_ROUND_PIKE,EMERALD_WALL_CORNERED,EMERALD_WALL_ROUND,EMERALD_WALL_ROUND_PIKE,EMERALD_STEEL_INVISIBLE,EMERALD_WALL_INVISIBLE,
-                            EMERALD_STEEL_MARKER_LEFT_UP,EMERALD_STEEL_MARKER_UP,EMERALD_STEEL_MARKER_RIGHT_UP,EMERALD_STEEL_NOT_ROUND,EMERALD_WALL_NOT_ROUND,EMERALD_STEEL_NO_ENTRY,EMERALD_STEEL_GIVE_WAY,EMERALD_STEEL_WARNING,
-                            EMERALD_STEEL_MARKER_LEFT,EMERALD_SPACE,EMERALD_STEEL_MARKER_RIGHT,EMERALD_STEEL_DEADEND,EMERALD_STEEL_PARKING,EMERALD_STEEL_WHEELCHAIR,EMERALD_STEEL_STOP,EMERALD_STEEL_FORBIDDEN,
-                            EMERALD_STEEL_MARKER_LEFT_BOTTOM,EMERALD_STEEL_MARKER_BOTTOM,EMERALD_STEEL_MARKER_RIGHT_BOTTOM,EMERALD_STEEL_ARROW_DOWN,EMERALD_STEEL_ARROW_UP,EMERALD_STEEL_ARROW_LEFT,EMERALD_STEEL_ARROW_RIGHT,EMERALD_STEEL_EXIT,
-                            EMERALD_STEEL_BIOHAZARD,EMERALD_STEEL_RADIOACTIVE,EMERALD_STEEL_EXPLOSION,EMERALD_STEEL_ACID,EMERALD_STEEL_PLAYERHEAD,EMERALD_STEEL_HEART,EMERALD_STEEL_YING,EMERALD_SPACE,
+                            EMERALD_STEEL_STRIPE_LEFT_TOP,EMERALD_STEEL_STRIPE_TOP,EMERALD_STEEL_STRIPE_RIGHT_TOP,EMERALD_STEEL_NOT_ROUND,EMERALD_WALL_NOT_ROUND,EMERALD_STEEL_NO_ENTRY,EMERALD_STEEL_GIVE_WAY,EMERALD_STEEL_WARNING,
+                            EMERALD_STEEL_STRIPE_LEFT,EMERALD_SPACE,EMERALD_STEEL_STRIPE_RIGHT,EMERALD_STEEL_DEADEND,EMERALD_STEEL_PARKING,EMERALD_STEEL_WHEELCHAIR,EMERALD_STEEL_STOP,EMERALD_STEEL_FORBIDDEN,
+                            EMERALD_STEEL_STRIPE_LEFT_BOTTOM,EMERALD_STEEL_STRIPE_BOTTOM,EMERALD_STEEL_STRIPE_RIGHT_BOTTOM,EMERALD_STEEL_ARROW_DOWN,EMERALD_STEEL_ARROW_UP,EMERALD_STEEL_ARROW_LEFT,EMERALD_STEEL_ARROW_RIGHT,EMERALD_STEEL_EXIT,
+                            EMERALD_STEEL_BIOHAZARD,EMERALD_STEEL_RADIOACTIVE,EMERALD_STEEL_EXPLOSION,EMERALD_STEEL_ACID,EMERALD_STEEL_PLAYERHEAD,EMERALD_STEEL_PLAYERHEAD_2,EMERALD_STEEL_HEART,EMERALD_STEEL_YING,
                             EMERALD_WALL_GROW_LEFT,EMERALD_WALL_GROW_DOWN,EMERALD_WALL_GROW_RIGHT,EMERALD_WALL_GROW_UP,EMERALD_WALL_GROW_LEFT_RIGHT,EMERALD_WALL_GROW_UP_DOWN,EMERALD_WALL_GROW_ALL,EMERALD_SPACE,
                             EMERALD_STEEL_GROW_LEFT,EMERALD_STEEL_GROW_DOWN,EMERALD_STEEL_GROW_RIGHT,EMERALD_STEEL_GROW_UP,EMERALD_STEEL_GROW_LEFT_RIGHT,EMERALD_STEEL_GROW_UP_DOWN,EMERALD_STEEL_GROW_ALL,EMERALD_SPACE,
                             EMERALD_STEEL_MODERN_LEFT_END,EMERALD_STEEL_MODERN_LEFT_RIGHT,EMERALD_STEEL_MODERN_RIGHT_END,EMERALD_STEEL_MODERN_UP_END,EMERALD_STEEL_MODERN_UP_DOWN,EMERALD_STEEL_MODERN_DOWN_END,EMERALD_STEEL_MODERN_MIDDLE,EMERALD_SPACE,
                             EMERALD_SWITCH_REMOTEBOMB_LEFT,EMERALD_SWITCH_REMOTEBOMB_DOWN,EMERALD_SWITCH_REMOTEBOMB_RIGHT,EMERALD_SWITCH_REMOTEBOMB_UP,EMERALD_SWITCH_REMOTEBOMB_IGNITION,EMERALD_REMOTEBOMB,EMERALD_TIME_COIN,EMERALD_SHIELD_COIN,
                             EMERALD_PIPE_UP_DOWN,EMERALD_PIPE_LEFT_RIGHT,EMERALD_PIPE_LEFT_UP,EMERALD_PIPE_LEFT_DOWN,EMERALD_PIPE_RIGHT_UP,EMERALD_PIPE_RIGHT_DOWN,EMERALD_PIPE_LEFT_UP_DOWN,EMERALD_PIPE_RIGHT_UP_DOWN,
-                            EMERALD_PIPE_LEFT_RIGHT_UP,EMERALD_PIPE_LEFT_RIGHT_DOWN,EMERALD_PIPE_LEFT_RIGHT_UP_DOWN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_GRASS,EMERALD_SAND_INVISIBLE,
+                            EMERALD_PIPE_LEFT_RIGHT_UP,EMERALD_PIPE_LEFT_RIGHT_DOWN,EMERALD_PIPE_LEFT_RIGHT_UP_DOWN,EMERALD_SPACE,EMERALD_QUICKSAND,EMERALD_QUICKSAND_STONE,EMERALD_QUICKSAND_SLOW,EMERALD_QUICKSAND_STONE_SLOW,
                             EMERALD_WALL_WITH_EMERALD,EMERALD_WALL_WITH_RUBY,EMERALD_WALL_WITH_SAPPHIRE,EMERALD_WALL_WITH_PERL,EMERALD_WALL_WITH_CRYSTAL,EMERALD_WALL_WITH_STONE,EMERALD_WALL_WITH_NUT,EMERALD_WALL_WITH_WHEEL,
-                            EMERALD_WALL_WITH_KEY_RED,EMERALD_WALL_WITH_KEY_GREEN,EMERALD_WALL_WITH_KEY_BLUE,EMERALD_WALL_WITH_KEY_YELLOW,EMERALD_WALL_WITH_KEY_WHITE,EMERALD_WALL_WITH_KEY_GENERAL,EMERALD_WALL_WITH_BOMB,EMERALD_WALL_WITH_MEGABOMB,
+                            EMERALD_WALL_WITH_KEY_RED,EMERALD_WALL_WITH_KEY_YELLOW,EMERALD_WALL_WITH_KEY_GREEN,EMERALD_WALL_WITH_KEY_BLUE,EMERALD_WALL_WITH_KEY_WHITE,EMERALD_WALL_WITH_KEY_GENERAL,EMERALD_WALL_WITH_BOMB,EMERALD_WALL_WITH_MEGABOMB,
                             EMERALD_WALL_WITH_DYNAMITE,EMERALD_WALL_WITH_ENDDOOR,EMERALD_WALL_WITH_ENDDOOR_READY,EMERALD_WALL_WITH_MINE_UP,EMERALD_WALL_WITH_BEETLE_UP,EMERALD_WALL_WITH_YAM,EMERALD_WALL_WITH_ALIEN,EMERALD_WALL_WITH_MOLE_UP,
                             EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_YELLOW_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_WALL_WITH_SHIELD_COIN,EMERALD_WALL_WITH_SLIME,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_INVALID
@@ -671,8 +700,8 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
 
 uint16_t g_PanelElementsMachines[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_EMERALD,EMERALD_RUBY,EMERALD_SAPPHIRE,EMERALD_PERL,EMERALD_CRYSTAL,EMERALD_STONE,EMERALD_NUT,EMERALD_SPACE,
-                            EMERALD_BOMB,EMERALD_MEGABOMB,EMERALD_STANDMINE,EMERALD_REMOTEBOMB,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
-                            EMERALD_MINE_DOWN,EMERALD_BEETLE_DOWN,EMERALD_YAM,EMERALD_ALIEN,EMERALD_MOLE_DOWN,EMERALD_GREEN_DROP,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_BOMB,EMERALD_MEGABOMB,EMERALD_MINE_CONTACT,EMERALD_REMOTEBOMB,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_MINE_DOWN,EMERALD_BEETLE_DOWN,EMERALD_YAM,EMERALD_SLIME,EMERALD_ALIEN,EMERALD_MOLE_DOWN,EMERALD_GREEN_DROP,EMERALD_YELLOW_DROP,
                             EMERALD_DOOR_END_NOT_READY,EMERALD_DOOR_END_READY,EMERALD_TIME_COIN,EMERALD_SHIELD_COIN,EMERALD_DYNAMITE_OFF,EMERALD_HAMMER,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_KEY_RED,EMERALD_KEY_YELLOW,EMERALD_KEY_GREEN,EMERALD_KEY_BLUE,EMERALD_KEY_WHITE,EMERALD_KEY_GENERAL,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_WALL_GROW_DOWN,EMERALD_STEEL_GROW_DOWN,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
@@ -684,37 +713,41 @@ uint16_t g_PanelElementsTimesScores[MAX_PANEL_ELEMENTS + 1] = {EMERALD_INVALID};
 
 
 uint16_t g_PanelElementsText[MAX_PANEL_ELEMENTS + 1] = {
-                            EMERALD_FONT_EXCLAMATION,EMERALD_FONT_ARROW_RIGHT,EMERALD_FONT_ARROW_UP,EMERALD_FONT_ARROW_DOWN,EMERALD_FONT_ARROW_LEFT,EMERALD_FONT_BRACE_OPEN,EMERALD_FONT_BRACE_CLOSE,EMERALD_FONT_COPYRIGHT,
-                            EMERALD_FONT_PLUS,EMERALD_FONT_COMMA,EMERALD_FONT_MINUS,EMERALD_FONT_POINT,EMERALD_FONT_SLASH,EMERALD_FONT_DOUBLE_POINT,EMERALD_FONT_PLATE,EMERALD_FONT_APOSTROPHE,
-                            EMERALD_FONT_0,EMERALD_FONT_1,EMERALD_FONT_2,EMERALD_FONT_3,EMERALD_FONT_4,EMERALD_FONT_5,EMERALD_FONT_6,EMERALD_FONT_7,
-                            EMERALD_FONT_8,EMERALD_FONT_9,EMERALD_FONT_QUESTION_MARK,EMERALD_FONT_A,EMERALD_FONT_B,EMERALD_FONT_C,EMERALD_FONT_D,EMERALD_FONT_E,
-                            EMERALD_FONT_F,EMERALD_FONT_G,EMERALD_FONT_H,EMERALD_FONT_I,EMERALD_FONT_J,EMERALD_FONT_K,EMERALD_FONT_L,EMERALD_FONT_M,
-                            EMERALD_FONT_N,EMERALD_FONT_O,EMERALD_FONT_P,EMERALD_FONT_Q,EMERALD_FONT_R,EMERALD_FONT_S,EMERALD_FONT_T,EMERALD_FONT_U,
-                            EMERALD_FONT_V,EMERALD_FONT_W,EMERALD_FONT_X,EMERALD_FONT_Y,EMERALD_FONT_Z,EMERALD_FONT_AE,EMERALD_FONT_OE,EMERALD_FONT_UE,
+                            EMERALD_FONT_BLUE_EXCLAMATION,EMERALD_FONT_BLUE_ARROW_RIGHT,EMERALD_FONT_BLUE_ARROW_UP,EMERALD_FONT_BLUE_ARROW_DOWN,EMERALD_FONT_BLUE_ARROW_LEFT,EMERALD_FONT_BLUE_BRACE_OPEN,EMERALD_FONT_BLUE_BRACE_CLOSE,EMERALD_FONT_BLUE_COPYRIGHT,
+                            EMERALD_FONT_BLUE_PLUS,EMERALD_FONT_BLUE_COMMA,EMERALD_FONT_BLUE_MINUS,EMERALD_FONT_BLUE_DOT,EMERALD_FONT_BLUE_SLASH,EMERALD_FONT_BLUE_DOUBLE_DOT,EMERALD_FONT_BLUE_PLATE,EMERALD_FONT_BLUE_APOSTROPHE,
+                            EMERALD_FONT_BLUE_0,EMERALD_FONT_BLUE_1,EMERALD_FONT_BLUE_2,EMERALD_FONT_BLUE_3,EMERALD_FONT_BLUE_4,EMERALD_FONT_BLUE_5,EMERALD_FONT_BLUE_6,EMERALD_FONT_BLUE_7,
+                            EMERALD_FONT_BLUE_8,EMERALD_FONT_BLUE_9,EMERALD_FONT_BLUE_QUESTION_MARK,EMERALD_FONT_BLUE_A,EMERALD_FONT_BLUE_B,EMERALD_FONT_BLUE_C,EMERALD_FONT_BLUE_D,EMERALD_FONT_BLUE_E,
+                            EMERALD_FONT_BLUE_F,EMERALD_FONT_BLUE_G,EMERALD_FONT_BLUE_H,EMERALD_FONT_BLUE_I,EMERALD_FONT_BLUE_J,EMERALD_FONT_BLUE_K,EMERALD_FONT_BLUE_L,EMERALD_FONT_BLUE_M,
+                            EMERALD_FONT_BLUE_N,EMERALD_FONT_BLUE_O,EMERALD_FONT_BLUE_P,EMERALD_FONT_BLUE_Q,EMERALD_FONT_BLUE_R,EMERALD_FONT_BLUE_S,EMERALD_FONT_BLUE_T,EMERALD_FONT_BLUE_U,
+                            EMERALD_FONT_BLUE_V,EMERALD_FONT_BLUE_W,EMERALD_FONT_BLUE_X,EMERALD_FONT_BLUE_Y,EMERALD_FONT_BLUE_Z,EMERALD_FONT_BLUE_AE,EMERALD_FONT_BLUE_OE,EMERALD_FONT_BLUE_UE,
+                            EMERALD_FONT_BLUE_SEMICOLON,EMERALD_FONT_BLUE_DOUBLE_QUOTE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
 
-                            EMERALD_FONT_STEEL_EXCLAMATION,EMERALD_FONT_STEEL_ARROW_RIGHT,EMERALD_FONT_STEEL_ARROW_UP,EMERALD_FONT_STEEL_ARROW_DOWN,EMERALD_FONT_STEEL_ARROW_LEFT,EMERALD_FONT_STEEL_BRACE_OPEN,EMERALD_FONT_STEEL_BRACE_CLOSE,EMERALD_FONT_STEEL_COPYRIGHT,
-                            EMERALD_FONT_STEEL_PLUS,EMERALD_FONT_STEEL_COMMA,EMERALD_FONT_STEEL_MINUS,EMERALD_FONT_STEEL_POINT,EMERALD_FONT_STEEL_SLASH,EMERALD_FONT_STEEL_DOUBLE_POINT,EMERALD_FONT_STEEL_PLATE,EMERALD_FONT_STEEL_APOSTROPHE,
-                            EMERALD_FONT_STEEL_0,EMERALD_FONT_STEEL_1,EMERALD_FONT_STEEL_2,EMERALD_FONT_STEEL_3,EMERALD_FONT_STEEL_4,EMERALD_FONT_STEEL_5,EMERALD_FONT_STEEL_6,EMERALD_FONT_STEEL_7,
-                            EMERALD_FONT_STEEL_8,EMERALD_FONT_STEEL_9,EMERALD_FONT_STEEL_QUESTION_MARK,EMERALD_FONT_STEEL_A,EMERALD_FONT_STEEL_B,EMERALD_FONT_STEEL_C,EMERALD_FONT_STEEL_D,EMERALD_FONT_STEEL_E,
-                            EMERALD_FONT_STEEL_F,EMERALD_FONT_STEEL_G,EMERALD_FONT_STEEL_H,EMERALD_FONT_STEEL_I,EMERALD_FONT_STEEL_J,EMERALD_FONT_STEEL_K,EMERALD_FONT_STEEL_L,EMERALD_FONT_STEEL_M,
-                            EMERALD_FONT_STEEL_N,EMERALD_FONT_STEEL_O,EMERALD_FONT_STEEL_P,EMERALD_FONT_STEEL_Q,EMERALD_FONT_STEEL_R,EMERALD_FONT_STEEL_S,EMERALD_FONT_STEEL_T,EMERALD_FONT_STEEL_U,
-                            EMERALD_FONT_STEEL_V,EMERALD_FONT_STEEL_W,EMERALD_FONT_STEEL_X,EMERALD_FONT_STEEL_Y,EMERALD_FONT_STEEL_Z,EMERALD_FONT_STEEL_AE,EMERALD_FONT_STEEL_OE,EMERALD_FONT_STEEL_UE,
+                            EMERALD_FONT_BLUE_STEEL_EXCLAMATION,EMERALD_FONT_BLUE_STEEL_ARROW_RIGHT,EMERALD_FONT_BLUE_STEEL_ARROW_UP,EMERALD_FONT_BLUE_STEEL_ARROW_DOWN,EMERALD_FONT_BLUE_STEEL_ARROW_LEFT,EMERALD_FONT_BLUE_STEEL_BRACE_OPEN,EMERALD_FONT_BLUE_STEEL_BRACE_CLOSE,EMERALD_FONT_BLUE_STEEL_COPYRIGHT,
+                            EMERALD_FONT_BLUE_STEEL_PLUS,EMERALD_FONT_BLUE_STEEL_COMMA,EMERALD_FONT_BLUE_STEEL_MINUS,EMERALD_FONT_BLUE_STEEL_DOT,EMERALD_FONT_BLUE_STEEL_SLASH,EMERALD_FONT_BLUE_STEEL_DOUBLE_DOT,EMERALD_FONT_BLUE_STEEL_PLATE,EMERALD_FONT_BLUE_STEEL_APOSTROPHE,
+                            EMERALD_FONT_BLUE_STEEL_0,EMERALD_FONT_BLUE_STEEL_1,EMERALD_FONT_BLUE_STEEL_2,EMERALD_FONT_BLUE_STEEL_3,EMERALD_FONT_BLUE_STEEL_4,EMERALD_FONT_BLUE_STEEL_5,EMERALD_FONT_BLUE_STEEL_6,EMERALD_FONT_BLUE_STEEL_7,
+                            EMERALD_FONT_BLUE_STEEL_8,EMERALD_FONT_BLUE_STEEL_9,EMERALD_FONT_BLUE_STEEL_QUESTION_MARK,EMERALD_FONT_BLUE_STEEL_A,EMERALD_FONT_BLUE_STEEL_B,EMERALD_FONT_BLUE_STEEL_C,EMERALD_FONT_BLUE_STEEL_D,EMERALD_FONT_BLUE_STEEL_E,
+                            EMERALD_FONT_BLUE_STEEL_F,EMERALD_FONT_BLUE_STEEL_G,EMERALD_FONT_BLUE_STEEL_H,EMERALD_FONT_BLUE_STEEL_I,EMERALD_FONT_BLUE_STEEL_J,EMERALD_FONT_BLUE_STEEL_K,EMERALD_FONT_BLUE_STEEL_L,EMERALD_FONT_BLUE_STEEL_M,
+                            EMERALD_FONT_BLUE_STEEL_N,EMERALD_FONT_BLUE_STEEL_O,EMERALD_FONT_BLUE_STEEL_P,EMERALD_FONT_BLUE_STEEL_Q,EMERALD_FONT_BLUE_STEEL_R,EMERALD_FONT_BLUE_STEEL_S,EMERALD_FONT_BLUE_STEEL_T,EMERALD_FONT_BLUE_STEEL_U,
+                            EMERALD_FONT_BLUE_STEEL_V,EMERALD_FONT_BLUE_STEEL_W,EMERALD_FONT_BLUE_STEEL_X,EMERALD_FONT_BLUE_STEEL_Y,EMERALD_FONT_BLUE_STEEL_Z,EMERALD_FONT_BLUE_STEEL_AE,EMERALD_FONT_BLUE_STEEL_OE,EMERALD_FONT_BLUE_STEEL_UE,
+                            EMERALD_FONT_BLUE_STEEL_SEMICOLON,EMERALD_FONT_BLUE_STEEL_DOUBLE_QUOTE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
 
                             EMERALD_FONT_GREEN_EXCLAMATION,EMERALD_FONT_GREEN_ARROW_RIGHT,EMERALD_FONT_GREEN_ARROW_UP,EMERALD_FONT_GREEN_ARROW_DOWN,EMERALD_FONT_GREEN_ARROW_LEFT,EMERALD_FONT_GREEN_BRACE_OPEN,EMERALD_FONT_GREEN_BRACE_CLOSE,EMERALD_FONT_GREEN_COPYRIGHT,
-                            EMERALD_FONT_GREEN_PLUS,EMERALD_FONT_GREEN_COMMA,EMERALD_FONT_GREEN_MINUS,EMERALD_FONT_GREEN_POINT,EMERALD_FONT_GREEN_SLASH,EMERALD_FONT_GREEN_DOUBLE_POINT,EMERALD_FONT_GREEN_PLATE,EMERALD_FONT_GREEN_APOSTROPHE,
+                            EMERALD_FONT_GREEN_PLUS,EMERALD_FONT_GREEN_COMMA,EMERALD_FONT_GREEN_MINUS,EMERALD_FONT_GREEN_DOT,EMERALD_FONT_GREEN_SLASH,EMERALD_FONT_GREEN_DOUBLE_DOT,EMERALD_FONT_GREEN_PLATE,EMERALD_FONT_GREEN_APOSTROPHE,
                             EMERALD_FONT_GREEN_0,EMERALD_FONT_GREEN_1,EMERALD_FONT_GREEN_2,EMERALD_FONT_GREEN_3,EMERALD_FONT_GREEN_4,EMERALD_FONT_GREEN_5,EMERALD_FONT_GREEN_6,EMERALD_FONT_GREEN_7,
                             EMERALD_FONT_GREEN_8,EMERALD_FONT_GREEN_9,EMERALD_FONT_GREEN_QUESTION_MARK,EMERALD_FONT_GREEN_A,EMERALD_FONT_GREEN_B,EMERALD_FONT_GREEN_C,EMERALD_FONT_GREEN_D,EMERALD_FONT_GREEN_E,
                             EMERALD_FONT_GREEN_F,EMERALD_FONT_GREEN_G,EMERALD_FONT_GREEN_H,EMERALD_FONT_GREEN_I,EMERALD_FONT_GREEN_J,EMERALD_FONT_GREEN_K,EMERALD_FONT_GREEN_L,EMERALD_FONT_GREEN_M,
                             EMERALD_FONT_GREEN_N,EMERALD_FONT_GREEN_O,EMERALD_FONT_GREEN_P,EMERALD_FONT_GREEN_Q,EMERALD_FONT_GREEN_R,EMERALD_FONT_GREEN_S,EMERALD_FONT_GREEN_T,EMERALD_FONT_GREEN_U,
                             EMERALD_FONT_GREEN_V,EMERALD_FONT_GREEN_W,EMERALD_FONT_GREEN_X,EMERALD_FONT_GREEN_Y,EMERALD_FONT_GREEN_Z,EMERALD_FONT_GREEN_AE,EMERALD_FONT_GREEN_OE,EMERALD_FONT_GREEN_UE,
+                            EMERALD_FONT_GREEN_SEMICOLON,EMERALD_FONT_GREEN_DOUBLE_QUOTE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
 
-                            EMERALD_FONT_STEEL_GREEN_EXCLAMATION,EMERALD_FONT_STEEL_GREEN_ARROW_RIGHT,EMERALD_FONT_STEEL_GREEN_ARROW_UP,EMERALD_FONT_STEEL_GREEN_ARROW_DOWN,EMERALD_FONT_STEEL_GREEN_ARROW_LEFT,EMERALD_FONT_STEEL_GREEN_BRACE_OPEN,EMERALD_FONT_STEEL_GREEN_BRACE_CLOSE,EMERALD_FONT_STEEL_GREEN_COPYRIGHT,
-                            EMERALD_FONT_STEEL_GREEN_PLUS,EMERALD_FONT_STEEL_GREEN_COMMA,EMERALD_FONT_STEEL_GREEN_MINUS,EMERALD_FONT_STEEL_GREEN_POINT,EMERALD_FONT_STEEL_GREEN_SLASH,EMERALD_FONT_STEEL_GREEN_DOUBLE_POINT,EMERALD_FONT_STEEL_GREEN_PLATE,EMERALD_FONT_STEEL_GREEN_APOSTROPHE,
-                            EMERALD_FONT_STEEL_GREEN_0,EMERALD_FONT_STEEL_GREEN_1,EMERALD_FONT_STEEL_GREEN_2,EMERALD_FONT_STEEL_GREEN_3,EMERALD_FONT_STEEL_GREEN_4,EMERALD_FONT_STEEL_GREEN_5,EMERALD_FONT_STEEL_GREEN_6,EMERALD_FONT_STEEL_GREEN_7,
-                            EMERALD_FONT_STEEL_GREEN_8,EMERALD_FONT_STEEL_GREEN_9,EMERALD_FONT_STEEL_GREEN_QUESTION_MARK,EMERALD_FONT_STEEL_GREEN_A,EMERALD_FONT_STEEL_GREEN_B,EMERALD_FONT_STEEL_GREEN_C,EMERALD_FONT_STEEL_GREEN_D,EMERALD_FONT_STEEL_GREEN_E,
-                            EMERALD_FONT_STEEL_GREEN_F,EMERALD_FONT_STEEL_GREEN_G,EMERALD_FONT_STEEL_GREEN_H,EMERALD_FONT_STEEL_GREEN_I,EMERALD_FONT_STEEL_GREEN_J,EMERALD_FONT_STEEL_GREEN_K,EMERALD_FONT_STEEL_GREEN_L,EMERALD_FONT_STEEL_GREEN_M,
-                            EMERALD_FONT_STEEL_GREEN_N,EMERALD_FONT_STEEL_GREEN_O,EMERALD_FONT_STEEL_GREEN_P,EMERALD_FONT_STEEL_GREEN_Q,EMERALD_FONT_STEEL_GREEN_R,EMERALD_FONT_STEEL_GREEN_S,EMERALD_FONT_STEEL_GREEN_T,EMERALD_FONT_STEEL_GREEN_U,
-                            EMERALD_FONT_STEEL_GREEN_V,EMERALD_FONT_STEEL_GREEN_W,EMERALD_FONT_STEEL_GREEN_X,EMERALD_FONT_STEEL_GREEN_Y,EMERALD_FONT_STEEL_GREEN_Z,EMERALD_FONT_STEEL_GREEN_AE,EMERALD_FONT_STEEL_GREEN_OE,EMERALD_FONT_STEEL_GREEN_UE,
+                            EMERALD_FONT_GREEN_STEEL_EXCLAMATION,EMERALD_FONT_GREEN_STEEL_ARROW_RIGHT,EMERALD_FONT_GREEN_STEEL_ARROW_UP,EMERALD_FONT_GREEN_STEEL_ARROW_DOWN,EMERALD_FONT_GREEN_STEEL_ARROW_LEFT,EMERALD_FONT_GREEN_STEEL_BRACE_OPEN,EMERALD_FONT_GREEN_STEEL_BRACE_CLOSE,EMERALD_FONT_GREEN_STEEL_COPYRIGHT,
+                            EMERALD_FONT_GREEN_STEEL_PLUS,EMERALD_FONT_GREEN_STEEL_COMMA,EMERALD_FONT_GREEN_STEEL_MINUS,EMERALD_FONT_GREEN_STEEL_DOT,EMERALD_FONT_GREEN_STEEL_SLASH,EMERALD_FONT_GREEN_STEEL_DOUBLE_DOT,EMERALD_FONT_GREEN_STEEL_PLATE,EMERALD_FONT_GREEN_STEEL_APOSTROPHE,
+                            EMERALD_FONT_GREEN_STEEL_0,EMERALD_FONT_GREEN_STEEL_1,EMERALD_FONT_GREEN_STEEL_2,EMERALD_FONT_GREEN_STEEL_3,EMERALD_FONT_GREEN_STEEL_4,EMERALD_FONT_GREEN_STEEL_5,EMERALD_FONT_GREEN_STEEL_6,EMERALD_FONT_GREEN_STEEL_7,
+                            EMERALD_FONT_GREEN_STEEL_8,EMERALD_FONT_GREEN_STEEL_9,EMERALD_FONT_GREEN_STEEL_QUESTION_MARK,EMERALD_FONT_GREEN_STEEL_A,EMERALD_FONT_GREEN_STEEL_B,EMERALD_FONT_GREEN_STEEL_C,EMERALD_FONT_GREEN_STEEL_D,EMERALD_FONT_GREEN_STEEL_E,
+                            EMERALD_FONT_GREEN_STEEL_F,EMERALD_FONT_GREEN_STEEL_G,EMERALD_FONT_GREEN_STEEL_H,EMERALD_FONT_GREEN_STEEL_I,EMERALD_FONT_GREEN_STEEL_J,EMERALD_FONT_GREEN_STEEL_K,EMERALD_FONT_GREEN_STEEL_L,EMERALD_FONT_GREEN_STEEL_M,
+                            EMERALD_FONT_GREEN_STEEL_N,EMERALD_FONT_GREEN_STEEL_O,EMERALD_FONT_GREEN_STEEL_P,EMERALD_FONT_GREEN_STEEL_Q,EMERALD_FONT_GREEN_STEEL_R,EMERALD_FONT_GREEN_STEEL_S,EMERALD_FONT_GREEN_STEEL_T,EMERALD_FONT_GREEN_STEEL_U,
+                            EMERALD_FONT_GREEN_STEEL_V,EMERALD_FONT_GREEN_STEEL_W,EMERALD_FONT_GREEN_STEEL_X,EMERALD_FONT_GREEN_STEEL_Y,EMERALD_FONT_GREEN_STEEL_Z,EMERALD_FONT_GREEN_STEEL_AE,EMERALD_FONT_GREEN_STEEL_OE,EMERALD_FONT_GREEN_STEEL_UE,
+                            EMERALD_FONT_GREEN_STEEL_SEMICOLON,EMERALD_FONT_GREEN_STEEL_DOUBLE_QUOTE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
                             EMERALD_INVALID
                             };
@@ -741,6 +774,7 @@ void SetPanelElements(uint32_t uMenuState) {
             break;
         case (MENUSTATE_LEVEL_TEXT):
         case (MENUSTATE_YAMS_TEXT):
+        case (MENUSTATE_TREASURECHESTS_TEXT):
             memcpy(g_PanelElements,g_PanelElementsText,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
             break;
         case (MENUSTATE_YAMS):
@@ -749,13 +783,7 @@ void SetPanelElements(uint32_t uMenuState) {
                 // Yam-Menü soll einige Elemente nicht anbieten
                 switch (g_PanelElements[K]) {
                     case (EMERALD_MAN):
-                    /*
-                    case (EMERALD_TELEPORTER_RED):
-                    case (EMERALD_TELEPORTER_YELLOW):
-                    case (EMERALD_TELEPORTER_GREEN):
-                    case (EMERALD_TELEPORTER_BLUE):
-                    */
-                        g_PanelElements[K] = EMERALD_SPACE; // Im Yam-Editor das entsprechende Element durch Space ersetzen
+                        g_PanelElements[K] = EMERALD_SPACE;
                         break;
                 }
             }
@@ -765,6 +793,43 @@ void SetPanelElements(uint32_t uMenuState) {
             break;
         case (MENUSTATE_TIME_AND_SCORES):
             memcpy(g_PanelElements,g_PanelElementsTimesScores,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
+            break;
+        case (MENUSTATE_TREASURECHESTS):
+            memcpy(g_PanelElements,g_PanelElementsMain,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
+            for (K = 0; K < MAX_PANEL_ELEMENTS; K++) {
+                // Schatztruhen-Menü soll einige Elemente nicht anbieten
+                switch (g_PanelElements[K]) {
+                    case (EMERALD_MAN):
+                    case (EMERALD_REPLICATOR_RED_TOP_LEFT):
+                    case (EMERALD_REPLICATOR_RED_TOP_MID):
+                    case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
+                    case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
+                    case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
+                    case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
+                    case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
+                    case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
+                    case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
+                    case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
+                    case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
+                    case (EMERALD_REPLICATOR_GREEN_TOP_MID):
+                    case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
+                    case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
+                    case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
+                    case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
+                    case (EMERALD_REPLICATOR_BLUE_TOP_MID):
+                    case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
+                    case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
+                    case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
+                    case (EMERALD_ACIDPOOL_TOP_LEFT):
+                    case (EMERALD_ACIDPOOL_TOP_MID):
+                    case (EMERALD_ACIDPOOL_TOP_RIGHT):
+                    case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
+                    case (EMERALD_ACIDPOOL_BOTTOM_MID):
+                    case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
+                        g_PanelElements[K] = EMERALD_SPACE;
+                        break;
+                }
+            }
             break;
         default:
             memcpy(g_PanelElements,g_PanelElementsMain,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
@@ -820,6 +885,7 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     uint32_t uMaxCompressedSize;
     MD5Context MD5Leveldata;
     char szM[4];    // 'm1' bis 'm8'
+    char szTc[32];   // 'tc1' bis 'tc8'
     char szTag[32];
     DYNSTRING *XML = NULL;
     bool bError = false;
@@ -888,6 +954,8 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     DynStringAdd(XML,"    <timecoin>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</timecoin>\r\n");
     sprintf(szNum,"%u",Ed.uScoreShieldCoin);
     DynStringAdd(XML,"    <shieldcoin>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</shieldcoin>\r\n");
+    sprintf(szNum,"%u",Ed.uScoreTreasureChest);
+    DynStringAdd(XML,"    <treasurechest>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</treasurechest>\r\n");
     DynStringAdd(XML,"  </scores>\r\n");
     DynStringAdd(XML,"  <times>\r\n");
     sprintf(szNum,"%u",Ed.uTimeToPlay);
@@ -1111,6 +1179,18 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
     DynStringAdd(XML,"    </yellow>\r\n");
     DynStringAdd(XML,"  </conveyorbelts>\r\n");
+    DynStringAdd(XML,"  <treasurechests>\r\n");
+    for (I = 1; (I <= EMERALD_MAX_TREASURECHESTS); I++) {
+        sprintf(szTc,"    <tc%u>%u</tc%u>\r\n",I,Ed.uTreasureChestElement[I - 1],I);
+        DynStringAdd(XML,szTc);
+        if (Ed.bTreasureChestWarn[I - 1]) {
+            sprintf(szTc,"    <tc%u_warn>1</tc%u_warn>\r\n",I,I);
+        } else {
+            sprintf(szTc,"    <tc%u_warn>0</tc%u_warn>\r\n",I,I);
+        }
+        DynStringAdd(XML,szTc);
+    }
+    DynStringAdd(XML,"  </treasurechests>\r\n");
     DynStringAdd(XML,"  <messages>\r\n");
     for (I = 1; (I <= EMERALD_MAX_MESSAGES) && (!bError); I++) {
         szM[1] = I + 0x30;
@@ -1279,6 +1359,10 @@ int CopyPlayfieldValueToEditor(void) {
         for (I = 0; I <EMERALD_MAX_MESSAGES; I++) {
             Ed.pMessage[I] = Playfield.pMessage[I];
         }
+        for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
+            Ed.uTreasureChestElement[I] = Playfield.uTreasureChestElement[I];
+            Ed.bTreasureChestWarn[I] = Playfield.bTreasureChestWarn[I];
+        }
         Ed.uScoreEmerald = Playfield.uScoreEmerald;
         Ed.uScoreRuby = Playfield.uScoreRuby;
         Ed.uScoreSaphir = Playfield.uScoreSaphir;
@@ -1296,6 +1380,7 @@ int CopyPlayfieldValueToEditor(void) {
         Ed.uScoreTimeCoin = Playfield.uScoreTimeCoin;
         Ed.uScoreShieldCoin = Playfield.uScoreShieldCoin;
         Ed.uScoreMessage = Playfield.uScoreMessage;
+        Ed.uScoreTreasureChest = Playfield.uScoreTreasureChest;
         Ed.uEmeraldsToCollect = Playfield.uEmeraldsToCollect;
         Ed.uTimeScoreFactor = Playfield.uTimeScoreFactor;
         Ed.uGreenCheeseSpreadSpeed = Playfield.uGreenCheeseSpreadSpeed;
@@ -1494,10 +1579,11 @@ uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos) {
     int nMaxY;
 
     // SDL_Log("uMenuState: %d     nMouseYpos: %d",Ed.uMenuState,nMouseYpos);
-    if ((Ed.uMenuState == 1) || (Ed.uMenuState == 3)) {     // Zeichensatz bei Standard und Yam
-        nMaxY = 655;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
+    // Zeichensatz bei Standard und Yam
+    if ((Ed.uMenuState == MENUSTATE_LEVEL_TEXT) || (Ed.uMenuState == MENUSTATE_YAMS_TEXT) || (Ed.uMenuState == MENUSTATE_TREASURECHESTS_TEXT)) {
+        nMaxY = 755;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
     } else {
-        nMaxY = 806;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
+        nMaxY = 828;    // da vom oberen Rand gerechnet, Y-Werte sind absolut
     }
     uElement = EMERALD_NONE;
     if ((nMouseXpos >= Config.uResX - 184) && (nMouseXpos <= Config.uResX - 8)) {
@@ -1634,7 +1720,7 @@ int DrawEditorPanel(SDL_Renderer *pRenderer) {
     }
     if (nErrorCode == 0) {
         nErrorCode = -1;
-        if (PrintLittleFont(pRenderer,Config.uResX - 180,Config.uResY - 71,0,(char*)"SELECTED ELEMENTS",K_ABSOLUTE) == 0) {
+        if (PrintLittleFont(pRenderer,Config.uResX - 180,Config.uResY - 71,0,(char*)"SELECTED ELEMENTS",K_ABSOLUTE,1) == 0) {
             nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);
         }
     }
@@ -1800,25 +1886,25 @@ int EditorStateLevel(SDL_Renderer *pRenderer) {
     if (CheckReplicators(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension) == 0) {
         if (GetManCoordinates(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,NULL,NULL) == 0) {
             if (CheckAcidPools(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension) == 0) {
-                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: OK",K_ABSOLUTE);
+                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: OK",K_ABSOLUTE,1);
             } else {
-                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: ACID POOL ERROR",K_ABSOLUTE);
+                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: ACID POOL ERROR",K_ABSOLUTE,1);
                 Ed.bFoundError = true;
             }
         } else {
-            PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: MAN ERROR",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: MAN ERROR",K_ABSOLUTE,1);
             Ed.bFoundError = true;
         }
     } else {
-        PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: REPLICATOR ERROR",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: REPLICATOR ERROR",K_ABSOLUTE,1);
         Ed.bFoundError = true;
     }
     if (Ed.bHalfSize) {
-        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM OFF",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM OFF",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM ON",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM ON",K_ABSOLUTE,1);
     }
-    return PrintLittleFont(pRenderer,Config.uResX - 350, Config.uResY - 16,0,szText,K_ABSOLUTE); // Level-Koordinaten anzeigen
+    return PrintLittleFont(pRenderer,Config.uResX - 350, Config.uResY - 16,0,szText,K_ABSOLUTE,1); // Level-Koordinaten anzeigen
 }
 
 
@@ -1925,15 +2011,15 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
         sprintf(szText,"YAM%02d",I);
         uXpos = ((I % 10) * 80) + 4;
         uYpos = ((I / 10) * 74) + 4;
-        PrintLittleFont(pRenderer,uXpos,uYpos,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,uXpos,uYpos,0,szText,K_ABSOLUTE,1);
 
         for (uLine = 0; (uLine < 4) && (nErrorCode == 0); uLine++) {
             // Quadrat für Yam
             SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
             Rect.x = uXpos - uLine;
             Rect.y = uYpos - uLine;
-            Rect.w = FONT_LITTLE_347_W * 5 + uLine * 2;
-            Rect.h = FONT_LITTLE_347_W * 5 + 16 + uLine * 2;
+            Rect.w = FONT_LITTLE_W * 5 + uLine * 2;
+            Rect.h = FONT_LITTLE_W * 5 + 16 + uLine * 2;
             nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
         }
         for (uLine = 0; (uLine < 4) && (nErrorCode == 0); uLine++) {
@@ -1983,10 +2069,10 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
         } else {
             sprintf(szText,"YYAM[%02u]:ACID POOL ERROR",uYamErrorIndex);
         }
-        PrintLittleFont(pRenderer,Config.uResX - 740, Config.uResY - 16,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,Config.uResX - 740, Config.uResY - 16,0,szText,K_ABSOLUTE,1);
     }
     sprintf(szText,"YAMS: %02u",Ed.uMaxYamExplosionIndex);
-    PrintLittleFont(pRenderer,Config.uResX  - 355,Config.uResY - 20,0,szText,K_ABSOLUTE);
+    PrintLittleFont(pRenderer,Config.uResX  - 355,Config.uResY - 20,0,szText,K_ABSOLUTE,1);
     return nErrorCode;
 }
 
@@ -2116,109 +2202,109 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
     }
 
     // Replikatoren
-    PrintLittleFont(pRenderer,80,24,0,"REPLICATORS",K_ABSOLUTE);
-    PrintLittleFont(pRenderer,192,112,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,80,24,0,"REPLICATORS",K_ABSOLUTE,1);
+    PrintLittleFont(pRenderer,192,112,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorRedOn) {
-        PrintLittleFont(pRenderer,352,112,0,"YES",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,112,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,112,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,112,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,192,208,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,192,208,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorYellowOn) {
-        PrintLittleFont(pRenderer,352,208,0,"YES",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,208,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,208,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,208,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,192,304,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,192,304,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorGreenOn) {
-        PrintLittleFont(pRenderer,352,304,0,"YES",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,304,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,304,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,304,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,192,400,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,192,400,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorBlueOn) {
-        PrintLittleFont(pRenderer,352,400,0,"YES",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,400,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,400,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,352,400,0,"NO",K_ABSOLUTE,1);
     }
     // Lichtschranken
-    PrintLittleFont(pRenderer,80,464,0,"LIGHT BARRIERS",K_ABSOLUTE);
-    PrintLittleFont(pRenderer,240,520,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,80,464,0,"LIGHT BARRIERS",K_ABSOLUTE,1);
+    PrintLittleFont(pRenderer,240,520,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierRedOn) {
-        PrintLittleFont(pRenderer,400,520,0,"YES",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,400,520,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,400,520,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,400,520,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,240,584,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,240,584,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierYellowOn) {
-        PrintLittleFont(pRenderer,400,584,0,"YES",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,400,584,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,400,584,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,400,584,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,240,648,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,240,648,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierGreenOn) {
-        PrintLittleFont(pRenderer,400,648,0,"YES",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,400,648,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,400,648,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,400,648,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,240,712,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,240,712,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierBlueOn) {
-        nErrorCode = PrintLittleFont(pRenderer,400,712,0,"YES",K_ABSOLUTE);
+        nErrorCode = PrintLittleFont(pRenderer,400,712,0,"YES",K_ABSOLUTE,1);
     } else {
-        nErrorCode = PrintLittleFont(pRenderer,400,712,0,"NO",K_ABSOLUTE);
+        nErrorCode = PrintLittleFont(pRenderer,400,712,0,"NO",K_ABSOLUTE,1);
     }
     // Laufbänder
-    PrintLittleFont(pRenderer,682,24,0,"CONVEYOR BELTS",K_ABSOLUTE);
-    PrintLittleFont(pRenderer,848,72,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,682,24,0,"CONVEYOR BELTS",K_ABSOLUTE,1);
+    PrintLittleFont(pRenderer,848,72,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,72,0,"LEFT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,72,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,72,0,"RIGHT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,72,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,72,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,72,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
-    PrintLittleFont(pRenderer,848,168,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,848,168,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,168,0,"LEFT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,168,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,168,0,"RIGHT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,168,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,168,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,168,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
-    PrintLittleFont(pRenderer,848,264,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,848,264,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,264,0,"LEFT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,264,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,264,0,"RIGHT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,264,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,264,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,264,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
-    PrintLittleFont(pRenderer,848,360,0,"ACTIVE AT START:",K_ABSOLUTE);
+    PrintLittleFont(pRenderer,848,360,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,360,0,"LEFT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,360,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,360,0,"RIGHT",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,360,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,360,0,"NO",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,848 + 160,360,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
     for (I = 0; (I < sizeof(uPositionsAndElements) / (3 * sizeof(uint32_t))) && (nErrorCode == 0); I++) {
@@ -2420,6 +2506,185 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
 
 
 /*----------------------------------------------------------------------------
+Name:           EditorStateTreasureChests
+------------------------------------------------------------------------------
+Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_TREASURECHESTS,
+              oder in Menustate = MENUSTATE_TREASURECHESTS_TEXT befindet,
+              wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration der
+              Schatztruhen.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Ausgang: -
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: Ed.x, InputStates.x
+------------------------------------------------------------------------------*/
+int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
+    int nErrorCode;
+    uint32_t uTextureIndex;
+    uint32_t I,Q;
+    uint8_t uChestIndex;
+    bool bXfound;
+    float fAngle;
+    SDL_Rect DestR,Rect;
+    uint32_t uPositionsAndElements[] = {// Schatztruhen
+                                        // TREASURE
+                                        320,16,EMERALD_FONT_BLUE_T,
+                                        352,16,EMERALD_FONT_BLUE_R,
+                                        384,16,EMERALD_FONT_BLUE_E,
+                                        416,16,EMERALD_FONT_BLUE_A,
+                                        448,16,EMERALD_FONT_BLUE_S,
+                                        480,16,EMERALD_FONT_BLUE_U,
+                                        512,16,EMERALD_FONT_BLUE_R,
+                                        544,16,EMERALD_FONT_BLUE_E,
+                                        // CHESTS
+                                        608,16,EMERALD_FONT_BLUE_C,
+                                        640,16,EMERALD_FONT_BLUE_H,
+                                        672,16,EMERALD_FONT_BLUE_E,
+                                        704,16,EMERALD_FONT_BLUE_S,
+                                        736,16,EMERALD_FONT_BLUE_T,
+                                        768,16,EMERALD_FONT_BLUE_S,
+                                        // Schatztruhen 1 bis 8
+                                        320,64,EMERALD_TREASURECHEST_1,
+                                        384,64,EMERALD_TREASURECHEST_2,
+                                        448,64,EMERALD_TREASURECHEST_3,
+                                        512,64,EMERALD_TREASURECHEST_4,
+                                        576,64,EMERALD_TREASURECHEST_5,
+                                        640,64,EMERALD_TREASURECHEST_6,
+                                        704,64,EMERALD_TREASURECHEST_7,
+                                        768,64,EMERALD_TREASURECHEST_8,
+                                        // grüne Pfeile runter
+                                        320,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        384,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        448,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        512,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        576,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        640,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        704,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        768,128,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        // Platzhalter für Elemente
+                                        320,192,EMERALD_SPACE, // 30
+                                        384,192,EMERALD_SPACE,
+                                        448,192,EMERALD_SPACE,
+                                        512,192,EMERALD_SPACE,
+                                        576,192,EMERALD_SPACE,
+                                        640,192,EMERALD_SPACE,
+                                        704,192,EMERALD_SPACE,
+                                        768,192,EMERALD_SPACE,
+                                        // grüne Pfeile runter
+                                        320,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        384,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        448,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        512,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        576,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        640,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        704,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        768,256,EMERALD_FONT_GREEN_ARROW_DOWN,
+                                        // Platzhalter für Warnungen
+                                        320,320,EMERALD_SPACE, // 46.
+                                        384,320,EMERALD_SPACE,
+                                        448,320,EMERALD_SPACE,
+                                        512,320,EMERALD_SPACE,
+                                        576,320,EMERALD_SPACE,
+                                        640,320,EMERALD_SPACE,
+                                        704,320,EMERALD_SPACE,
+                                        768,320,EMERALD_SPACE,
+                                        };
+
+    // Aktuelle Schatztruhen-Elemente und Warnungen in die Platzhalter eintragen
+    for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
+        uPositionsAndElements[(30 + I) * 3 + 2] = Ed.uTreasureChestElement[I];
+        if (Ed.bTreasureChestWarn[I]) {
+            uPositionsAndElements[(46 + I) * 3 + 2] = EMERALD_TREASURECHEST_OPEN;
+        } else {
+            uPositionsAndElements[(46 + I) * 3 + 2] = EMERALD_TREASURECHEST_0;
+        }
+    }
+    // Quadrate für Schatztruhen zeichnen (Elemente)
+    for (Q = 0; Q < EMERALD_MAX_TREASURECHESTS; Q++) {
+        for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
+            // linkes Quadrat, selected Element
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            Rect.x = 319 + Q * 64 - I;
+            Rect.y = 191 - I;
+            Rect.w = FONT_W + 2 + I * 2;
+            Rect.h = FONT_H + 2 + I * 2;
+            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+        }
+    }
+    PrintLittleFont(pRenderer,10,328,0,"WARNING OF DANGEROUS CONTENT:",K_ABSOLUTE,1);
+    // Quadrate für Schatztruhen zeichnen (Warnung)
+    for (Q = 0; Q < EMERALD_MAX_TREASURECHESTS; Q++) {
+        for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
+            // linkes Quadrat, selected Element
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            Rect.x = 319 + Q * 64 - I;
+            Rect.y = 319 - I;
+            Rect.w = FONT_W + 2 + I * 2;
+            Rect.h = FONT_H + 2 + I * 2;
+            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+        }
+    }
+    // Elemente zeichnen
+    for (I = 0; (I < sizeof(uPositionsAndElements) / (3 * sizeof(uint32_t))) && (nErrorCode == 0); I++) {
+        uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],0,&fAngle);
+        DestR.x = uPositionsAndElements[I * 3 + 0];
+        DestR.y = uPositionsAndElements[I * 3 + 1];
+        DestR.w = FONT_W;
+        DestR.h = FONT_H;
+        if (nErrorCode == 0) {
+            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+                nErrorCode = -1;
+                SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+            }
+        }
+    }
+    // Mausposition für Elemente abfragen
+    bXfound = false;
+    if ((InputStates.nMouseYpos_Absolute >= 192) && (InputStates.nMouseYpos_Absolute <= 192 + FONT_H)) {    // Y-Mausposition
+        for (I = 0; (I < EMERALD_MAX_TREASURECHESTS) && (!bXfound); I++) {      // X-Mauspositionen prüfen
+            if ((InputStates.nMouseXpos_Absolute >= 320 + I * 64) && (InputStates.nMouseXpos_Absolute <= 320 + FONT_W + I * 64)) {
+                uChestIndex = I;
+                bXfound = true;
+            }
+        }
+    }
+    // Dieser Block kann das Element einer Schatztruhe ändern
+    if (bXfound) {
+        if (InputStates.bLeftMouseButton) {
+            Ed.uTreasureChestElement[uChestIndex] = Ed.uSelectedElementLeft[Ed.uMenuState];
+        } else if (InputStates.bMidMouseButton) {
+            Ed.uTreasureChestElement[uChestIndex] = Ed.uSelectedElementMiddle[Ed.uMenuState];
+        } else if (InputStates.bRightMouseButton) {
+            Ed.uTreasureChestElement[uChestIndex] = Ed.uSelectedElementRight[Ed.uMenuState];
+        }
+    }
+
+    // Mausposition für Warnungen abfragen
+    bXfound = false;
+    if ((InputStates.nMouseYpos_Absolute >= 320) && (InputStates.nMouseYpos_Absolute <= 320 + FONT_H)) {    // Y-Mausposition
+        for (I = 0; (I < EMERALD_MAX_TREASURECHESTS) && (!bXfound); I++) {      // X-Mauspositionen prüfen
+            if ((InputStates.nMouseXpos_Absolute >= 320 + I * 64) && (InputStates.nMouseXpos_Absolute <= 320 + FONT_W + I * 64)) {
+                uChestIndex = I;
+                bXfound = true;
+            }
+        }
+    }
+    // Dieser Block kann eine Warnung togglen
+    if (bXfound) {
+        if (InputStates.bLeftMouseButton) {
+            Ed.bTreasureChestWarn[uChestIndex] = !Ed.bTreasureChestWarn[uChestIndex];
+            do {
+                UpdateManKey(); // ruft auch UpdateInputStates(); auf
+                SDL_Delay(20);
+            } while (InputStates.bLeftMouseButton);
+
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           EditorStateTimeAndScores
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_TIME_AND_SCORES befindet,
@@ -2448,21 +2713,21 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;
     uint32_t uPositionsAndElements[] = {// 1. Zeile
                                         // SCORES
-                                        416,16,EMERALD_FONT_S,
-                                        448,16,EMERALD_FONT_C,
-                                        480,16,EMERALD_FONT_O,
-                                        512,16,EMERALD_FONT_R,
-                                        544,16,EMERALD_FONT_E,
-                                        576,16,EMERALD_FONT_S,
+                                        416,16,EMERALD_FONT_BLUE_S,
+                                        448,16,EMERALD_FONT_BLUE_C,
+                                        480,16,EMERALD_FONT_BLUE_O,
+                                        512,16,EMERALD_FONT_BLUE_R,
+                                        544,16,EMERALD_FONT_BLUE_E,
+                                        576,16,EMERALD_FONT_BLUE_S,
                                         // MESSAGES
-                                        992,16,EMERALD_FONT_M,
-                                        1024,16,EMERALD_FONT_E,
-                                        1056,16,EMERALD_FONT_S,
-                                        1088,16,EMERALD_FONT_S,
-                                        1120,16,EMERALD_FONT_A,
-                                        1152,16,EMERALD_FONT_G,
-                                        1184,16,EMERALD_FONT_E,
-                                        1216,16,EMERALD_FONT_S,
+                                        992,16,EMERALD_FONT_BLUE_M,
+                                        1024,16,EMERALD_FONT_BLUE_E,
+                                        1056,16,EMERALD_FONT_BLUE_S,
+                                        1088,16,EMERALD_FONT_BLUE_S,
+                                        1120,16,EMERALD_FONT_BLUE_A,
+                                        1152,16,EMERALD_FONT_BLUE_G,
+                                        1184,16,EMERALD_FONT_BLUE_E,
+                                        1216,16,EMERALD_FONT_BLUE_S,
                                         // 1. Zeile
                                         32,64,EMERALD_EMERALD,
                                         64,64,EMERALD_STEEL_ARROW_RIGHT,
@@ -2477,24 +2742,16 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         832,64,EMERALD_NUT,
                                         864,64,EMERALD_STEEL_ARROW_RIGHT,
                                         // Messages 1 - 8
-                                        1088,64,EMERALD_FONT_GREEN_1,
-                                        1120,64,EMERALD_MESSAGE_1,
-                                        1088,128,EMERALD_FONT_GREEN_2,
-                                        1120,128,EMERALD_MESSAGE_2,
-                                        1088,192,EMERALD_FONT_GREEN_3,
-                                        1120,192,EMERALD_MESSAGE_3,
-                                        1088,256,EMERALD_FONT_GREEN_4,
-                                        1120,256,EMERALD_MESSAGE_4,
-                                        1088,320,EMERALD_FONT_GREEN_5,
-                                        1120,320,EMERALD_MESSAGE_5,
-                                        1088,384,EMERALD_FONT_GREEN_6,
-                                        1120,384,EMERALD_MESSAGE_6,
-                                        1088,448,EMERALD_FONT_GREEN_7,
-                                        1120,448,EMERALD_MESSAGE_7,
-                                        1088,512,EMERALD_FONT_GREEN_8,
-                                        1120,512,EMERALD_MESSAGE_8,
+                                        1008,64,EMERALD_MESSAGE_1,
+                                        1072,64,EMERALD_MESSAGE_2,
+                                        1136,64,EMERALD_MESSAGE_3,
+                                        1200,64,EMERALD_MESSAGE_4,
+                                        1008,128,EMERALD_MESSAGE_5,
+                                        1072,128,EMERALD_MESSAGE_6,
+                                        1136,128,EMERALD_MESSAGE_7,
+                                        1200,128,EMERALD_MESSAGE_8,
                                         // 2. Zeile
-                                        32,128,EMERALD_MESSAGE_1,
+                                        32,128,EMERALD_MESSAGE_0,
                                         64,128,EMERALD_STEEL_ARROW_RIGHT,
                                         192,128,EMERALD_KEY_RED,
                                         224,128,EMERALD_STEEL_ARROW_RIGHT,
@@ -2517,12 +2774,14 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         544,192,EMERALD_STEEL_ARROW_RIGHT,
                                         672,192,EMERALD_YAM,
                                         704,192,EMERALD_STEEL_ARROW_RIGHT,
+                                        832,192,EMERALD_TREASURECHEST_0,
+                                        864,192,EMERALD_STEEL_ARROW_RIGHT,
                                         // TIMES
-                                        320,272,EMERALD_FONT_T,
-                                        352,272,EMERALD_FONT_I,
-                                        384,272,EMERALD_FONT_M,
-                                        416,272,EMERALD_FONT_E,
-                                        448,272,EMERALD_FONT_S,
+                                        320,272,EMERALD_FONT_BLUE_T,
+                                        352,272,EMERALD_FONT_BLUE_I,
+                                        384,272,EMERALD_FONT_BLUE_M,
+                                        416,272,EMERALD_FONT_BLUE_E,
+                                        448,272,EMERALD_FONT_BLUE_S,
                                         // 4.Zeile
                                         32,320,EMERALD_MAN,
                                         64,320,EMERALD_STEEL_ARROW_RIGHT,
@@ -2540,29 +2799,29 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         192,384,EMERALD_SHIELD_COIN,
                                         224,384,EMERALD_STEEL_ARROW_RIGHT,
                                         // INVENTORY ----- SPREADING RATE
-                                        96,464,EMERALD_FONT_I,
-                                        128,464,EMERALD_FONT_N,
-                                        160,464,EMERALD_FONT_V,
-                                        192,464,EMERALD_FONT_E,
-                                        224,464,EMERALD_FONT_N,
-                                        256,464,EMERALD_FONT_T,
-                                        288,464,EMERALD_FONT_O,
-                                        320,464,EMERALD_FONT_R,
-                                        352,464,EMERALD_FONT_Y,
+                                        96,464,EMERALD_FONT_BLUE_I,
+                                        128,464,EMERALD_FONT_BLUE_N,
+                                        160,464,EMERALD_FONT_BLUE_V,
+                                        192,464,EMERALD_FONT_BLUE_E,
+                                        224,464,EMERALD_FONT_BLUE_N,
+                                        256,464,EMERALD_FONT_BLUE_T,
+                                        288,464,EMERALD_FONT_BLUE_O,
+                                        320,464,EMERALD_FONT_BLUE_R,
+                                        352,464,EMERALD_FONT_BLUE_Y,
                                         // SPREADING RATE
-                                        512,464,EMERALD_FONT_S,
-                                        544,464,EMERALD_FONT_P,
-                                        576,464,EMERALD_FONT_R,
-                                        608,464,EMERALD_FONT_E,
-                                        640,464,EMERALD_FONT_A,
-                                        672,464,EMERALD_FONT_D,
-                                        704,464,EMERALD_FONT_I,
-                                        736,464,EMERALD_FONT_N,
-                                        768,464,EMERALD_FONT_G,
-                                        832,464,EMERALD_FONT_R,
-                                        864,464,EMERALD_FONT_A,
-                                        896,464,EMERALD_FONT_T,
-                                        928,464,EMERALD_FONT_E,
+                                        512,464,EMERALD_FONT_BLUE_S,
+                                        544,464,EMERALD_FONT_BLUE_P,
+                                        576,464,EMERALD_FONT_BLUE_R,
+                                        608,464,EMERALD_FONT_BLUE_E,
+                                        640,464,EMERALD_FONT_BLUE_A,
+                                        672,464,EMERALD_FONT_BLUE_D,
+                                        704,464,EMERALD_FONT_BLUE_I,
+                                        736,464,EMERALD_FONT_BLUE_N,
+                                        768,464,EMERALD_FONT_BLUE_G,
+                                        832,464,EMERALD_FONT_BLUE_R,
+                                        864,464,EMERALD_FONT_BLUE_A,
+                                        896,464,EMERALD_FONT_BLUE_T,
+                                        928,464,EMERALD_FONT_BLUE_E,
                                         // 6.Zeile
                                         32,512,EMERALD_DYNAMITE_OFF,
                                         64,512,EMERALD_STEEL_ARROW_RIGHT,
@@ -2577,15 +2836,15 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         832,512,EMERALD_GRASS,
                                         864,512,EMERALD_STEEL_ARROW_RIGHT,
                                         // TO COLLECT
-                                        32,592,EMERALD_FONT_T,
-                                        64,592,EMERALD_FONT_O,
-                                        128,592,EMERALD_FONT_C,
-                                        160,592,EMERALD_FONT_O,
-                                        192,592,EMERALD_FONT_L,
-                                        224,592,EMERALD_FONT_L,
-                                        256,592,EMERALD_FONT_E,
-                                        288,592,EMERALD_FONT_C,
-                                        320,592,EMERALD_FONT_T,
+                                        32,592,EMERALD_FONT_BLUE_T,
+                                        64,592,EMERALD_FONT_BLUE_O,
+                                        128,592,EMERALD_FONT_BLUE_C,
+                                        160,592,EMERALD_FONT_BLUE_O,
+                                        192,592,EMERALD_FONT_BLUE_L,
+                                        224,592,EMERALD_FONT_BLUE_L,
+                                        256,592,EMERALD_FONT_BLUE_E,
+                                        288,592,EMERALD_FONT_BLUE_C,
+                                        320,592,EMERALD_FONT_BLUE_T,
                                         // 7.Zeile
                                         64,640,EMERALD_EMERALD,
                                         96,640,EMERALD_RUBY,
@@ -2626,12 +2885,12 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         928,864,EMERALD_STEEL_INVISIBLE,
                                         928,896,EMERALD_STEEL_INVISIBLE,
                                         // Dimension X
-                                        720,736,EMERALD_FONT_X,
-                                        752,736,EMERALD_FONT_DOUBLE_POINT,
-                                        784,736,EMERALD_FONT_0,             // 165. Element
-                                        816,736,EMERALD_FONT_0,
-                                        848,736,EMERALD_FONT_0,
-                                        880,736,EMERALD_FONT_0,
+                                        720,736,EMERALD_FONT_BLUE_X,
+                                        752,736,EMERALD_FONT_BLUE_DOUBLE_DOT,
+                                        784,736,EMERALD_FONT_BLUE_0,             // 165. Element
+                                        816,736,EMERALD_FONT_BLUE_0,
+                                        848,736,EMERALD_FONT_BLUE_0,
+                                        880,736,EMERALD_FONT_BLUE_0,
                                         // Pfeil hoch über X
                                         784,704,EMERALD_STEEL_ARROW_UP,
                                         816,704,EMERALD_STEEL_ARROW_UP,
@@ -2643,12 +2902,12 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         848,768,EMERALD_STEEL_ARROW_DOWN,
                                         880,768,EMERALD_STEEL_ARROW_DOWN,
                                         // Dimension Y
-                                        720,832,EMERALD_FONT_Y,
-                                        752,832,EMERALD_FONT_DOUBLE_POINT,
-                                        784,832,EMERALD_FONT_0,             // 179. Element
-                                        816,832,EMERALD_FONT_0,
-                                        848,832,EMERALD_FONT_0,
-                                        880,832,EMERALD_FONT_0,
+                                        720,832,EMERALD_FONT_BLUE_Y,
+                                        752,832,EMERALD_FONT_BLUE_DOUBLE_DOT,
+                                        784,832,EMERALD_FONT_BLUE_0,             // 179. Element
+                                        816,832,EMERALD_FONT_BLUE_0,
+                                        848,832,EMERALD_FONT_BLUE_0,
+                                        880,832,EMERALD_FONT_BLUE_0,
                                         // Pfeil hoch über Y
                                         784,800,EMERALD_STEEL_ARROW_UP,
                                         816,800,EMERALD_STEEL_ARROW_UP,
@@ -2697,6 +2956,9 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             580,589,214,224,590,599,214,224,600,609,214,224,610,619,214,224, // ---- Alien
                             740,749,188,198,750,759,188,198,760,769,188,198,770,779,188,198, // ++++ Yam
                             740,749,214,224,750,759,214,224,760,769,214,224,770,779,214,224, // ---- Yam
+                            900,909,188,198,910,919,188,198,920,929,188,198,930,939,188,198, // ++++ Treasure chest
+                            900,909,214,224,910,919,214,224,920,929,214,224,930,939,214,224, // ---- Treasure chest
+
                             // 4. Zeile
                             100,109,316,326,110,119,316,326,120,129,316,326,130,139,316,326, // ++++ Time to play
                             100,109,342,352,110,119,342,352,120,129,342,352,130,139,342,352, // ---- Time to play
@@ -2737,8 +2999,8 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             // Level-Dimension Y, 32x32 Buttons
                             784,815,800,831,816,847,800,831,848,879,800,831,880,911,800,831, // ++++ Level-Dimension Y
                             784,815,864,895,816,847,864,895,848,879,864,895,880,911,864,895, // ---- Level-Dimension Y
-                            // Message 1, Message 2       Message3        Message 4       Message 5       Message6        Message 7       Message 8
-                            1088,1152,64,96,1088,1152,128,160,1088,1152,192,224,1088,1152,256,288,1088,1152,320,352,1088,1152,384,416,1088,1152,448,480,1088,1152,512,544,
+                            // Message 1,   Message 2       Message3        Message 4       Message 5         Message6          Message 7         Message 8
+                            1008,1039,64,95,1072,1103,64,95,1136,1167,64,95,1200,1231,64,95,1008,1039,128,159,1072,1103,128,159,1136,1167,128,159,1200,1231,128,159,
                             };
 
     // Rahmen und Füllung für Level-Title und Level Author zeichnen
@@ -2747,30 +3009,30 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         SDL_SetRenderDrawColor(pRenderer,20,200,20, SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
         DestR.x = 28;
         DestR.y = 764;
-        DestR.w = (EMERALD_TITLE_LEN + 15) * FONT_LITTLE_347_W;
-        DestR.h = FONT_LITTLE_347_H + 8;
+        DestR.w = (EMERALD_TITLE_LEN + 15) * FONT_LITTLE_W;
+        DestR.h = FONT_LITTLE_H + 8;
         SDL_RenderDrawRect(pRenderer,&DestR);
         DestR.x = 28;
         DestR.y = 860;
-        DestR.w = (EMERALD_AUTHOR_LEN + 15) * FONT_LITTLE_347_W;
-        DestR.h = FONT_LITTLE_347_H + 8;
+        DestR.w = (EMERALD_AUTHOR_LEN + 15) * FONT_LITTLE_W;
+        DestR.h = FONT_LITTLE_H + 8;
         nErrorCode = SDL_RenderDrawRect(pRenderer,&DestR);
         // Senkrechte Linien hinter Doppelpunkt setzen
-        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_347_W,764,31 + 13 *FONT_LITTLE_347_W,764 + FONT_LITTLE_347_H + 6); // Level-Title
-        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_347_W,860,31 + 13 *FONT_LITTLE_347_W,860 + FONT_LITTLE_347_H + 6); // Level-Author
+        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,764,31 + 13 *FONT_LITTLE_W,764 + FONT_LITTLE_H + 6); // Level-Title
+        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,860,31 + 13 *FONT_LITTLE_W,860 + FONT_LITTLE_H + 6); // Level-Author
         // Untergründe für Title und Author (vor Doppelunkt) zeichnen
-        DrawBeam(pRenderer,29, 765, 13 * FONT_LITTLE_347_W + 2,FONT_LITTLE_347_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
-        DrawBeam(pRenderer,29, 861, 13 * FONT_LITTLE_347_W + 2,FONT_LITTLE_347_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,29, 765, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,29, 861, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
         // Untergründe für Title und Author (nach Doppelunkt) zeichnen
-        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_347_W, 765, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_347_W + 5,FONT_LITTLE_347_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
-        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_347_W, 861, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_347_W + 5,FONT_LITTLE_347_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 765, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 861, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
     }
     if (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_MESSAGE) {
         nErrorCode = CreateMessageWindow(pRenderer,-1,-1,0,Ed.MessageEditor.szMessageEditorMem);
         if (Ed.MessageEditor.bInsert) {
-            PrintLittleFont(pRenderer,10,10,0,"MODE: INSERT",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,10,10,0,"MODE: INSERT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,10,10,0,"MODE: OVERWRITE",K_ABSOLUTE);
+            PrintLittleFont(pRenderer,10,10,0,"MODE: OVERWRITE",K_ABSOLUTE,1);
         }
         Ed.MessageEditor.uFrameCounter++;
         if (Ed.MessageEditor.uFrameCounter - Ed.MessageEditor.uLastToggleCursorFrame >= Ed.MessageEditor.uCursorFlashSpeedFrames) {
@@ -2937,185 +3199,190 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         // Ziffern für Level-Dimension
         sprintf(szText,"%04d",Ed.uTmpLevel_X_Dimension);
         for (I = 0; I < 4; I++) {
-            uPositionsAndElements[(165 + I) * 3 + 2] = EMERALD_FONT_0 + szText[I] - 0x30;
+            uPositionsAndElements[(159 + I) * 3 + 2] = EMERALD_FONT_BLUE_0 + szText[I] - 0x30;
         }
         sprintf(szText,"%04d",Ed.uTmpLevel_Y_Dimension);
         for (I = 0; I < 4; I++) {
-            uPositionsAndElements[(179 + I) * 3 + 2] = EMERALD_FONT_0 + szText[I] - 0x30;
+            uPositionsAndElements[(173 + I) * 3 + 2] = EMERALD_FONT_BLUE_0 + szText[I] - 0x30;
         }
         // 1. Zeile
         // Emerald
-        PrintLittleFont(pRenderer,100,60,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,100,86,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,100,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreEmerald);
-        PrintLittleFont(pRenderer,100,73,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,73,0,szText,K_ABSOLUTE,1);
         // Rubin
-        PrintLittleFont(pRenderer,260,60,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,260,86,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,260,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreRuby);
-        PrintLittleFont(pRenderer,260,73,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,73,0,szText,K_ABSOLUTE,1);
         // Saphir
-        PrintLittleFont(pRenderer,420,60,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,420,86,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,420,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreSaphir);
-        PrintLittleFont(pRenderer,420,73,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,73,0,szText,K_ABSOLUTE,1);
         // Perle
-        PrintLittleFont(pRenderer,580,60,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,580,86,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,580,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScorePerl);
-        PrintLittleFont(pRenderer,580,73,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,73,0,szText,K_ABSOLUTE,1);
         // Kristal
-        PrintLittleFont(pRenderer,740,60,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,740,86,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,740,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreCrystal);
-        PrintLittleFont(pRenderer,740,73,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,73,0,szText,K_ABSOLUTE,1);
         // Nuss
-        PrintLittleFont(pRenderer,900,60,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,900,86,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,900,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,900,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreNutCracking);
-        PrintLittleFont(pRenderer,900,73,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,900,73,0,szText,K_ABSOLUTE,1);
         // 2. Zeile
         // Nachricht
-        PrintLittleFont(pRenderer,100,124,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,100,150,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,100,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreMessage);
-        PrintLittleFont(pRenderer,100,137,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,137,0,szText,K_ABSOLUTE,1);
         // Schlüssel
-        PrintLittleFont(pRenderer,260,124,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,260,150,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,260,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreKey);
-        PrintLittleFont(pRenderer,260,137,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,137,0,szText,K_ABSOLUTE,1);
         // Dynamit
-        PrintLittleFont(pRenderer,420,124,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,420,150,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,420,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreDynamite);
-        PrintLittleFont(pRenderer,420,137,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,137,0,szText,K_ABSOLUTE,1);
         // Hammer
-        PrintLittleFont(pRenderer,580,124,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,580,150,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,580,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreHammer);
-        PrintLittleFont(pRenderer,580,137,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,137,0,szText,K_ABSOLUTE,1);
         // Time-Coin
-        PrintLittleFont(pRenderer,740,124,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,740,150,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,740,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreTimeCoin);
-        PrintLittleFont(pRenderer,740,137,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,137,0,szText,K_ABSOLUTE,1);
         // Shield-Coin
-        PrintLittleFont(pRenderer,900,124,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,900,150,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,900,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,900,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreShieldCoin);
-        PrintLittleFont(pRenderer,900,137,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,900,137,0,szText,K_ABSOLUTE,1);
         // 3. Zeile
-        PrintLittleFont(pRenderer,100,188,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,100,214,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,100,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningSlime);
-        PrintLittleFont(pRenderer,100,201,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,201,0,szText,K_ABSOLUTE,1);
         // Stoning Beetle
-        PrintLittleFont(pRenderer,260,188,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,260,214,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,260,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningBeetle);
-        PrintLittleFont(pRenderer,260,201,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,201,0,szText,K_ABSOLUTE,1);
         // Stoning Mine
-        PrintLittleFont(pRenderer,420,188,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,420,214,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,420,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningMine);
-        PrintLittleFont(pRenderer,420,201,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,201,0,szText,K_ABSOLUTE,1);
         // Stoning Alien
-        PrintLittleFont(pRenderer,580,188,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,580,214,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,580,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningAlien);
-        PrintLittleFont(pRenderer,580,201,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,201,0,szText,K_ABSOLUTE,1);
         // Stoning Yam
-        PrintLittleFont(pRenderer,740,188,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,740,214,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,740,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningYam);
-        PrintLittleFont(pRenderer,740,201,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,201,0,szText,K_ABSOLUTE,1);
+        // Open Treasure chest
+        PrintLittleFont(pRenderer,900,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,900,214,0,"----",K_ABSOLUTE,1);
+        sprintf(szText,"%04d",Ed.uScoreTreasureChest);
+        PrintLittleFont(pRenderer,900,201,0,szText,K_ABSOLUTE,1);
         // 4. Zeile
         // Time to Play
-        PrintLittleFont(pRenderer,100,316,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,100,342,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,100,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeToPlay);
-        PrintLittleFont(pRenderer,100,329,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,329,0,szText,K_ABSOLUTE,1);
         // Wheel rotation time
-        PrintLittleFont(pRenderer,260,316,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,260,342,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,260,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeWheelRotation);
-        PrintLittleFont(pRenderer,260,329,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,329,0,szText,K_ABSOLUTE,1);
         // Magic wall time
-        PrintLittleFont(pRenderer,420,316,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,420,342,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,420,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeMagicWall);
-        PrintLittleFont(pRenderer,420,329,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,329,0,szText,K_ABSOLUTE,1);
         // Light time
-        PrintLittleFont(pRenderer,580,316,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,580,342,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,580,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeLight);
-        PrintLittleFont(pRenderer,580,329,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,329,0,szText,K_ABSOLUTE,1);
         // Time door time
-        PrintLittleFont(pRenderer,740,316,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,740,342,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,740,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeDoorTime);
-        PrintLittleFont(pRenderer,740,329,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,329,0,szText,K_ABSOLUTE,1);
         // 5. Zeile
         // Additional Time for time coin
-        PrintLittleFont(pRenderer,100,380,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,100,406,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,380,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,100,406,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uAdditonalTimeCoinTime);
-        PrintLittleFont(pRenderer,100,393,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,393,0,szText,K_ABSOLUTE,1);
         // Shield coint [fields]
-        PrintLittleFont(pRenderer,260,380,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,260,406,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,380,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,260,406,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uShieldCoinTime);
-        PrintLittleFont(pRenderer,260,393,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,393,0,szText,K_ABSOLUTE,1);
         // Remaining Time factor
-        nErrorCode = PrintLittleFont(pRenderer,350,395,0,"REMAINING TIME FACTOR:",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,580,380,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,580,406,0,"----",K_ABSOLUTE);
+        nErrorCode = PrintLittleFont(pRenderer,350,395,0,"REMAINING TIME FACTOR:",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,580,380,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,580,406,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeScoreFactor);
-        PrintLittleFont(pRenderer,580,393,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,393,0,szText,K_ABSOLUTE,1);
         // 6. Zeile
         // Dynamite Count
-        PrintLittleFont(pRenderer,100,508,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,100,534,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,100,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uDynamiteCount);
-        PrintLittleFont(pRenderer,100,521,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,100,521,0,szText,K_ABSOLUTE,1);
         // Hammer Count
-        PrintLittleFont(pRenderer,260,508,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,260,534,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,260,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uHammerCount);
-        PrintLittleFont(pRenderer,260,521,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,521,0,szText,K_ABSOLUTE,1);
         // White key Count
-        PrintLittleFont(pRenderer,420,508,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,420,534,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,420,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uWhiteKeyCount);
-        PrintLittleFont(pRenderer,420,521,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,420,521,0,szText,K_ABSOLUTE,1);
         // Green Cheese spread speed
-        PrintLittleFont(pRenderer,580,508,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,580,534,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,580,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uGreenCheeseSpreadSpeed);
-        PrintLittleFont(pRenderer,580,521,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,580,521,0,szText,K_ABSOLUTE,1);
         // Yellow Cheese spread speed
-        PrintLittleFont(pRenderer,740,508,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,740,534,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,740,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uYellowCheeseSpreadSpeed);
-        PrintLittleFont(pRenderer,740,521,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,740,521,0,szText,K_ABSOLUTE,1);
         // Grass spread speed
-        PrintLittleFont(pRenderer,900,508,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,900,534,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,900,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,900,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uGrassSpreadSpeed);
-        PrintLittleFont(pRenderer,900,521,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,900,521,0,szText,K_ABSOLUTE,1);
         // 7. Zeile
         // Emeralds to collect
-        PrintLittleFont(pRenderer,260,636,0,"++++",K_ABSOLUTE);
-        PrintLittleFont(pRenderer,260,662,0,"----",K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,636,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,260,662,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uEmeraldsToCollect);
-        PrintLittleFont(pRenderer,260,649,0,szText,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,260,649,0,szText,K_ABSOLUTE,1);
         // Level-Title
-        PrintLittleFont(pRenderer,32,768,0,"LEVEL-TITLE :",K_ABSOLUTE);
-        nErrorCode = PrintLittleFont(pRenderer,164,768,0,Ed.szLevelTitle,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,32,768,0,"LEVEL-TITLE :",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(pRenderer,164,768,0,Ed.szLevelTitle,K_ABSOLUTE,1);
         // Level-Author
-        PrintLittleFont(pRenderer,32,864,0,"LEVEL-AUTHOR:",K_ABSOLUTE);
-        nErrorCode = PrintLittleFont(pRenderer,164,864,0,Ed.szLevelAuthor,K_ABSOLUTE);
+        PrintLittleFont(pRenderer,32,864,0,"LEVEL-AUTHOR:",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(pRenderer,164,864,0,Ed.szLevelAuthor,K_ABSOLUTE,1);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],Ed.uFrameCounter % 16,&fAngle);
             DestR.x = uPositionsAndElements[I * 3 + 0];
@@ -3142,12 +3409,13 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                     nSwitchField = GetTimeScoresSwitchfieldAndOffset(I,&uSwitchFieldOffset);
                     // SDL_Log("Switch: %u   nSwitchField: %d   uSwitchFieldOffset: %u  ",I,nSwitchField,uSwitchFieldOffset);
                     if (nSwitchField != -1) {
-                        if ((nSwitchField >= 0) && (nSwitchField <= 33)) {
+                        if ((nSwitchField >= 0) && (nSwitchField <= 34)) {
                             ChangeTimeScoresValue(nSwitchField,uSwitchFieldOffset);
-                        } else if (nSwitchField == 34) {    // Messages 1 - 8
+                        } else if (nSwitchField == 35) {    // Messages 1 - 8
                             Ed.MessageEditor.nEditMessage = uSwitchFieldOffset;
                             SDL_Log("edit Message %d",Ed.MessageEditor.nEditMessage);
                             Ed.uMenuState = MENUSTATE_TIME_AND_SCORES_MESSAGE;
+                            SetButtonActivity(BUTTONLABEL_EDITOR_TREASURECHESTS,false);
                             SetButtonActivity(BUTTONLABEL_RETURN_TO_LEVEL,false);
                             SetButtonActivity(BUTTONLABEL_SAVE_MESSAGE,true);
                             SetButtonActivity(BUTTONLABEL_CANCEL_MESSAGE,true);
@@ -3172,7 +3440,6 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                 SDL_Log("%s: invalid Message: %d",__FUNCTION__,Ed.MessageEditor.nEditMessage);
                             }
                         }
-                        // SDL_Log("found switchfield no.: %u / %u",nSwitchField,uSwitchFieldOffset);
                     }
                     WaitNoKey();
                     break;
@@ -3198,7 +3465,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 szCursor[0] = 102;  // Cursor an
             }
             szCursor[1] = 0;
-            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),768,0,szCursor,K_ABSOLUTE);
+            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),768,0,szCursor,K_ABSOLUTE,1);
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                if (uCursorPos < EMERALD_TITLE_LEN) {
@@ -3222,7 +3489,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 szCursor[0] = 102;  // Cursor an
             }
             szCursor[1] = 0;
-            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),864,0,szCursor,K_ABSOLUTE);
+            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),864,0,szCursor,K_ABSOLUTE,1);
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                 if (uCursorPos < EMERALD_AUTHOR_LEN) {
@@ -3240,7 +3507,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             }
         }
         // Level-Dimension
-        nErrorCode = PrintLittleFont(pRenderer,744,680,0,"LEVEL DIMENSION",K_ABSOLUTE);
+        nErrorCode = PrintLittleFont(pRenderer,744,680,0,"LEVEL DIMENSION",K_ABSOLUTE,1);
     }
     return nErrorCode;
 }
@@ -3252,7 +3519,7 @@ Name:           ChangeTimeScoresValue
 Beschreibung: Ändert einen Wert im Menü Times & Scores anhand eines Schaltersfeldes
               und den Schalteroffset.
 Parameter
-      Eingang: nSwitchField, int, Schalterfeld im Menü Times & Scores, 0 bis 30
+      Eingang: nSwitchField, int, Schalterfeld im Menü Times & Scores, 0 bis 34
                uSwitchFieldOffset, uint32_t, Schalteroffset
       Ausgang: -
 Rückgabewert:  -
@@ -3262,172 +3529,177 @@ void ChangeTimeScoresValue(int nSwitchField,uint32_t uSwitchFieldOffset) {
     uint32_t uValue;
 
     switch (nSwitchField) {
-        case(0):
+        case (0):
             uValue = Ed.uScoreEmerald;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreEmerald = uValue;
             break;
-        case(1):
+        case (1):
             uValue = Ed.uScoreRuby;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreRuby = uValue;
             break;
-        case(2):
+        case (2):
             uValue = Ed.uScoreSaphir;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreSaphir = uValue;
             break;
-        case(3):
+        case (3):
             uValue = Ed.uScorePerl;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScorePerl = uValue;
             break;
-        case(4):
+        case (4):
             uValue = Ed.uScoreCrystal;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreCrystal = uValue;
             break;
-        case(5):
+        case (5):
             uValue = Ed.uScoreNutCracking;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreNutCracking = uValue;
             break;
-        case(6):
+        case (6):
             uValue = Ed.uScoreMessage;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreMessage = uValue;
             break;
-        case(7):
+        case (7):
             uValue = Ed.uScoreKey;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreKey = uValue;
             break;
-        case(8):
+        case (8):
             uValue = Ed.uScoreDynamite;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreDynamite = uValue;
             break;
-        case(9):
+        case (9):
             uValue = Ed.uScoreHammer;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreHammer = uValue;
             break;
-        case(10):
+        case (10):
             uValue = Ed.uScoreTimeCoin;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreTimeCoin = uValue;
             break;
-        case(11):
+        case (11):
             uValue = Ed.uScoreShieldCoin;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreShieldCoin = uValue;
             break;
-        case(12):
+        case (12):
             uValue = Ed.uScoreStoningSlime;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreStoningSlime = uValue;
             break;
-        case(13):
+        case (13):
             uValue = Ed.uScoreStoningBeetle;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreStoningBeetle = uValue;
             break;
-        case(14):
+        case (14):
             uValue = Ed.uScoreStoningMine;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreStoningMine = uValue;
             break;
-        case(15):
+        case (15):
             uValue = Ed.uScoreStoningAlien;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreStoningAlien = uValue;
             break;
-        case(16):
+        case (16):
             uValue = Ed.uScoreStoningYam;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uScoreStoningYam = uValue;
             break;
-        case(17):
+        case (17):
+            uValue = Ed.uScoreTreasureChest;
+            uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
+            Ed.uScoreTreasureChest = uValue;
+            break;
+        case (18):
             uValue = Ed.uTimeToPlay;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTimeToPlay = uValue;
             break;
-        case(18):
+        case (19):
             uValue = Ed.uTimeWheelRotation;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTimeWheelRotation = uValue;
             break;
-        case(19):
+        case (20):
             uValue = Ed.uTimeMagicWall;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTimeMagicWall = uValue;
             break;
-        case(20):
+        case (21):
             uValue = Ed.uTimeLight;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTimeLight = uValue;
             break;
-        case(21):
+        case (22):
             uValue = Ed.uTimeDoorTime;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTimeDoorTime = uValue;
             break;
-        case(22):
+        case (23):
             uValue = Ed.uAdditonalTimeCoinTime;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uAdditonalTimeCoinTime = uValue;
             break;
-        case(23):
+        case (24):
             uValue = Ed.uShieldCoinTime;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uShieldCoinTime = uValue;
             break;
-        case(24):
+        case (25):
             uValue = Ed.uTimeScoreFactor;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTimeScoreFactor = uValue;
             break;
-        case(25):
+        case (26):
             uValue = Ed.uDynamiteCount;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uDynamiteCount = uValue;
             break;
-        case(26):
+        case (27):
             uValue = Ed.uHammerCount;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uHammerCount = uValue;
             break;
-        case(27):
+        case (28):
             uValue = Ed.uWhiteKeyCount;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uWhiteKeyCount = uValue;
             break;
-        case(28):
+        case (29):
             uValue = Ed.uGreenCheeseSpreadSpeed;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uGreenCheeseSpreadSpeed = uValue;
             break;
-        case(29):
+        case (30):
             uValue = Ed.uYellowCheeseSpreadSpeed;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uYellowCheeseSpreadSpeed = uValue;
             break;
-        case(30):
+        case (31):
             uValue = Ed.uGrassSpreadSpeed;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uGrassSpreadSpeed = uValue;
             break;
-        case (31):
+        case (32):
             uValue = Ed.uEmeraldsToCollect;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uEmeraldsToCollect = uValue;
             break;
-        case (32):
+        case (33):
             uValue = Ed.uTmpLevel_X_Dimension;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTmpLevel_X_Dimension = uValue;
             break;
-        case (33):
+        case (34):
             uValue = Ed.uTmpLevel_Y_Dimension;
             uValue = IncreaseOrDecreaseTimeScoreValue(uValue,uSwitchFieldOffset);
             Ed.uTmpLevel_Y_Dimension = uValue;
@@ -3533,13 +3805,13 @@ int GetTimeScoresSwitchfieldAndOffset(uint32_t uSwitch,uint32_t *puSwitchOffset)
     int nSwitchfield;
 
     nSwitchfield = -1;
-    if ((uSwitch <= 279) && (puSwitchOffset != NULL)) {
-        if (uSwitch <= 271) {        // Die ersten 34 Felder (0 bis 33) mit 8 Schaltern
+    if ((uSwitch <= 287) && (puSwitchOffset != NULL)) {
+        if (uSwitch <= 279) {        // Die ersten 35 Felder (0 bis 34) mit 8 Schaltern
             nSwitchfield = uSwitch / 8; // Switchfield 0 bis 30
             *puSwitchOffset = uSwitch % 8;
-        } else  {  // Messages 1 - 8 ab uSwitch 272
-            nSwitchfield = 34;
-            *puSwitchOffset = (uSwitch - 272);
+        } else  {  // Messages 1 - 8 ab uSwitch 280
+            nSwitchfield = 35;
+            *puSwitchOffset = (uSwitch - 280);
         }
     }
     return nSwitchfield;
@@ -3572,71 +3844,71 @@ int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
     MainMenu.uMenuScreen[4 * MainMenu.uXdim + 25] = EMERALD_BOMB;
     MainMenu.uMenuScreen[4 * MainMenu.uXdim + 26] = EMERALD_BOMB;
     // Obere Wand
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 11] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 12] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 13] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 14] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 15] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 16] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 17] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 18] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 19] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 20] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 21] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 22] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 23] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 24] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 25] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 26] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 27] = EMERALD_STEEL_MARKER_UP;
-    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT_UP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 11] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 12] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 13] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 14] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 15] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 16] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 17] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 18] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 19] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 20] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 21] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 22] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 23] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 24] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 25] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 26] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 27] = EMERALD_STEEL_STRIPE_TOP;
+    MainMenu.uMenuScreen[6 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT_TOP;
     //Seitenwände
-    MainMenu.uMenuScreen[7 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT;
-    MainMenu.uMenuScreen[8 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT;
-    MainMenu.uMenuScreen[9 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT;
-    MainMenu.uMenuScreen[10 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT;
-    MainMenu.uMenuScreen[11 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT;
-    MainMenu.uMenuScreen[12 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT;
-    MainMenu.uMenuScreen[7 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT;
-    MainMenu.uMenuScreen[8 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT;
-    MainMenu.uMenuScreen[9 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT;
-    MainMenu.uMenuScreen[10 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT;
-    MainMenu.uMenuScreen[11 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT;
-    MainMenu.uMenuScreen[12 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT;
+    MainMenu.uMenuScreen[7 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
+    MainMenu.uMenuScreen[8 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
+    MainMenu.uMenuScreen[9 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
+    MainMenu.uMenuScreen[10 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
+    MainMenu.uMenuScreen[11 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
+    MainMenu.uMenuScreen[12 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
+    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
+    MainMenu.uMenuScreen[7 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT;
+    MainMenu.uMenuScreen[8 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT;
+    MainMenu.uMenuScreen[9 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT;
+    MainMenu.uMenuScreen[10 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT;
+    MainMenu.uMenuScreen[11 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT;
+    MainMenu.uMenuScreen[12 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT;
+    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT;
     // untere Wand
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 10] = EMERALD_STEEL_MARKER_LEFT_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 11] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 12] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 13] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 14] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 15] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 16] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 17] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 18] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 19] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 20] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 21] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 22] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 23] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 24] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 25] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 26] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 27] = EMERALD_STEEL_MARKER_BOTTOM;
-    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 28] = EMERALD_STEEL_MARKER_RIGHT_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 11] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 12] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 13] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 14] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 15] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 16] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 17] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 18] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 19] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 20] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 21] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 22] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 23] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 24] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 25] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 26] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 27] = EMERALD_STEEL_STRIPE_BOTTOM;
+    MainMenu.uMenuScreen[14 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT_BOTTOM;
     nErrorCode = RenderMenuElements(pRenderer);
     if (nErrorCode == 0) {
         // 20 Pixel Zeilenabstand für LittleFont
-        nErrorCode = PrintLittleFont(pRenderer,364,234,0,"LEVEL DIMENSION WAS CHANGED FROM",K_RELATIVE);
+        nErrorCode = PrintLittleFont(pRenderer,364,234,0,"LEVEL DIMENSION WAS CHANGED FROM",K_RELATIVE,1);
         sprintf(szText,"%d X %d  TO  %d X %d.",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,Ed.uTmpLevel_X_Dimension,Ed.uTmpLevel_Y_Dimension);
-        PrintLittleFont(pRenderer,364,254,0,szText,K_RELATIVE);
-        PrintLittleFont(pRenderer,404,294,0,"COPY EXISTING LEVEL DATA FROM UPPER LEFT TO",K_RELATIVE);
-        PrintLittleFont(pRenderer,404,314,0,"NEW LEVEL (AS MUCH AS POSSIBLE)",K_RELATIVE);
-        PrintLittleFont(pRenderer,404,354,0,"CLEAR NEW LEVEL",K_RELATIVE);
-        PrintLittleFont(pRenderer,404,394,0,"DON'T CHANGE LEVEL DIMENSION AND",K_RELATIVE);
-        PrintLittleFont(pRenderer,404,414,0,"KEEP EXISTING LEVEL DATA",K_RELATIVE);
+        PrintLittleFont(pRenderer,364,254,0,szText,K_RELATIVE,1);
+        PrintLittleFont(pRenderer,404,294,0,"COPY EXISTING LEVEL DATA FROM UPPER LEFT TO",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,404,314,0,"NEW LEVEL (AS MUCH AS POSSIBLE)",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,404,354,0,"CLEAR NEW LEVEL",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,404,394,0,"DON'T CHANGE LEVEL DIMENSION AND",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,404,414,0,"KEEP EXISTING LEVEL DATA",K_RELATIVE,1);
     }
     return nErrorCode;
 }
@@ -3659,11 +3931,12 @@ int CreateEditorButtons(void) {
     nErrors = CreateButton(BUTTONLABEL_EDITOR_SAVE,"Save",Config.uResX - 184 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,true,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_QUIT,"Quit",Config.uResX - 139 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,true,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_YAMS,"Yams",Config.uResX - 48 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_TREASURECHESTS,"Treasure chests",Config.uResX -184 - ge_uXoffs,Config.uResY - 140 - ge_uYoffs,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_RETURN_TO_LEVEL,"Return to level",Config.uResX - 184 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_YAM_MINUS,"-",Config.uResX - 382 - ge_uXoffs,Config.uResY - FONT_H + 8 - ge_uYoffs,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_YAM_PLUS,"+",Config.uResX - 265 - ge_uXoffs,Config.uResY - FONT_H + 8 - ge_uYoffs,false,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_MACHINES,"Machines",Config.uResX - 184 - ge_uXoffs,Config.uResY - 130 - ge_uYoffs,true,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_TIME_AND_SCORES,"Time+Scores",Config.uResX - 104 - ge_uXoffs,Config.uResY - 130 - ge_uYoffs,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_MACHINES,"Machines",Config.uResX - 184 - ge_uXoffs,Config.uResY - 126 - ge_uYoffs,true,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_TIME_AND_SCORES,"Time+Scores",Config.uResX - 104 - ge_uXoffs,Config.uResY - 126 - ge_uYoffs,true,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_TEXT,"Text",Config.uResX - 94 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,true,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_STD,"Std.",Config.uResX - 49 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_1,"-->",362,290,false,true);
@@ -3701,6 +3974,7 @@ void FreeEditorButtons(void) {
     FreeButton(BUTTONLABEL_EDITOR_OPTION_3);
     FreeButton(BUTTONLABEL_SAVE_MESSAGE);
     FreeButton(BUTTONLABEL_CANCEL_MESSAGE);
+    FreeButton(BUTTONLABEL_EDITOR_TREASURECHESTS);
 }
 
 
@@ -3910,13 +4184,13 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
     if (nErrorCode == 0) {
         Ed.uFrameCounter = 0;
         Ed.bHalfSize = !Config.bEditorZoom;
-        Ed.uSelectedElementLeft[MENUSTATE_LEVEL_STD] = EMERALD_SAND;
+        Ed.uSelectedElementLeft[MENUSTATE_LEVEL_STD] = EMERALD_EARTH;
         Ed.uSelectedElementMiddle[MENUSTATE_LEVEL_STD] = EMERALD_STONE;
         Ed.uSelectedElementRight[MENUSTATE_LEVEL_STD] = EMERALD_STEEL;
 
         Ed.uSelectedElementLeft[MENUSTATE_LEVEL_TEXT] = EMERALD_SPACE;
         Ed.uSelectedElementMiddle[MENUSTATE_LEVEL_TEXT] = EMERALD_SPACE;
-        Ed.uSelectedElementRight[MENUSTATE_LEVEL_TEXT] = EMERALD_SAND;
+        Ed.uSelectedElementRight[MENUSTATE_LEVEL_TEXT] = EMERALD_EARTH;
 
         Ed.uSelectedElementLeft[MENUSTATE_YAMS] = EMERALD_STONE;
         Ed.uSelectedElementMiddle[MENUSTATE_YAMS] = EMERALD_EMERALD;
@@ -3950,6 +4224,13 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
         Ed.uSelectedElementMiddle[MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR] = EMERALD_SPACE;
         Ed.uSelectedElementRight[MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR] = EMERALD_SPACE;
 
+        Ed.uSelectedElementLeft[MENUSTATE_TREASURECHESTS] = EMERALD_EMERALD;
+        Ed.uSelectedElementMiddle[MENUSTATE_TREASURECHESTS] = EMERALD_RUBY;
+        Ed.uSelectedElementRight[MENUSTATE_TREASURECHESTS] = EMERALD_CRYSTAL;
+
+        Ed.uSelectedElementLeft[MENUSTATE_TREASURECHESTS_TEXT] = EMERALD_FONT_BLUE_A;
+        Ed.uSelectedElementMiddle[MENUSTATE_TREASURECHESTS_TEXT] = EMERALD_FONT_BLUE_B;
+        Ed.uSelectedElementRight[MENUSTATE_TREASURECHESTS_TEXT] = EMERALD_FONT_BLUE_C;
 
         CalcEditorViewArea();
     }
@@ -4016,6 +4297,8 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             Ed.bEditorRun = (EditorStateYams(pRenderer) == 0);
         } else if (Ed.uMenuState == MENUSTATE_MACHINES) {
             Ed.bEditorRun = (EditorStateMachines(pRenderer) == 0);
+        } else if ((Ed.uMenuState == MENUSTATE_TREASURECHESTS) || (Ed.uMenuState == MENUSTATE_TREASURECHESTS_TEXT)) {
+            Ed.bEditorRun = (EditorStateTreasureChests(pRenderer) == 0);
         } else if ((Ed.uMenuState == MENUSTATE_TIME_AND_SCORES) || (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_MESSAGE) ||
                    (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_EDIT_TITLE) || (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR)) {
             Ed.bEditorRun = (EditorStateTimeAndScores(pRenderer) == 0);
@@ -4025,7 +4308,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
         if ((Ed.uMenuState != MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION) && (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_MESSAGE) && (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES) &&
             (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_EDIT_TITLE) && (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR)) {
             DrawEditorPanel(pRenderer);
-            PrintLittleFont(pRenderer, 0, Config.uResY - FONT_LITTLE_347_H,0,ge_szElementNames[uMouseElement],K_ABSOLUTE);// Element unten links anzeigen
+            PrintLittleFont(pRenderer,0,Config.uResY - FONT_LITTLE_H,0,ge_szElementNames[uMouseElement],K_ABSOLUTE,1);// Element unten links anzeigen
         }
         ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_EDITOR_SAVE) && (!Ed.bFoundError)) {
@@ -4065,6 +4348,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
                 SetButtonActivity(BUTTONLABEL_TIME_AND_SCORES,true);
                 SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
                 SetButtonActivity(BUTTONLABEL_EDITOR_STD,false);
+                SetButtonActivity(BUTTONLABEL_EDITOR_TREASURECHESTS,false);
                 SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 94 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs);
             }
             SetButtonActivity(BUTTONLABEL_RETURN_TO_LEVEL,false);
@@ -4090,6 +4374,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             Ed.uMenuState = MENUSTATE_TIME_AND_SCORES;
             SetPanelElements(Ed.uMenuState);
             SetButtonActivity(BUTTONLABEL_RETURN_TO_LEVEL,true);
+            SetButtonActivity(BUTTONLABEL_EDITOR_TREASURECHESTS,true);
             SetButtonActivity(BUTTONLABEL_EDITOR_MACHINES,false);
             SetButtonActivity(BUTTONLABEL_TIME_AND_SCORES,false);
             SetButtonActivity(BUTTONLABEL_EDITOR_YAMS,false);
@@ -4110,6 +4395,9 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             } else if (Ed.uMenuState == MENUSTATE_YAMS) {
                 Ed.uMenuState = MENUSTATE_YAMS_TEXT;
                 SetButtonActivity(BUTTONLABEL_EDITOR_STD,true);
+            } else if (Ed.uMenuState == MENUSTATE_TREASURECHESTS) {
+                Ed.uMenuState = MENUSTATE_TREASURECHESTS_TEXT;
+                SetButtonActivity(BUTTONLABEL_EDITOR_STD,true);
             }
             SetPanelElements(Ed.uMenuState);
             SetButtonActivity(BUTTONLABEL_RETURN_TO_LEVEL,true);
@@ -4120,9 +4408,14 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonActivity(BUTTONLABEL_EDITOR_QUIT,false);
             SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,false);
         } else if (IsButtonPressed(BUTTONLABEL_EDITOR_STD)) {
-            // Kann nur aus Yam-Menü gedrückt werden
+            // Kann nur aus Yam- und Schatztruhen-Menü gedrückt werden
             if (Ed.uMenuState == MENUSTATE_YAMS_TEXT) {
                 Ed.uMenuState = MENUSTATE_YAMS;
+                SetPanelElements(Ed.uMenuState);
+                SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
+                SetButtonActivity(BUTTONLABEL_EDITOR_STD,false);
+            } else if (Ed.uMenuState == MENUSTATE_TREASURECHESTS_TEXT) {
+                Ed.uMenuState = MENUSTATE_TREASURECHESTS;
                 SetPanelElements(Ed.uMenuState);
                 SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
                 SetButtonActivity(BUTTONLABEL_EDITOR_STD,false);
@@ -4166,6 +4459,12 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
             SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 94 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs);
             SetButtonActivity(BUTTONLABEL_EDITOR_STD,false);
+        } else if (IsButtonPressed(BUTTONLABEL_EDITOR_TREASURECHESTS)) {
+            Ed.uMenuState = MENUSTATE_TREASURECHESTS;
+            SetButtonActivity(BUTTONLABEL_EDITOR_TREASURECHESTS,false);
+            SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
+            SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 48 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs);
+            SetPanelElements(Ed.uMenuState);
         }
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
@@ -4446,7 +4745,7 @@ int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
         *puBeamPosition = 0xFFFFFFFF;
         uBeamPosition = GetLevelnameBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
-            nErrorCode = DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_347_H + 6) * uBeamPosition, FONT_W * 15, FONT_LITTLE_347_H + 6, 0x20,0x20,0xFF,0x60,K_RELATIVE);
+            nErrorCode = DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_RELATIVE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
                 *puBeamPosition = uBeamPosition;
             }
@@ -4477,7 +4776,7 @@ int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
         *puBeamPosition = 0xFFFFFFFF;
         uBeamPosition = GetImportFilesBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
-            nErrorCode = DrawBeam(pRenderer,FONT_W,35 + (FONT_LITTLE_347_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_347_H + 6, 0x20,0x20,0xFF,0x60,K_RELATIVE);
+            nErrorCode = DrawBeam(pRenderer,FONT_W,35 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_RELATIVE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
                 *puBeamPosition = uBeamPosition;
             }
@@ -4660,7 +4959,7 @@ void PreparePreEditormenu(void) {
     uint32_t I;
 
     SetMenuBorderAndClear();
-    SetMenuText(MainMenu.uMenuScreen,"NO.  LEVELNAME                        ",1,2,EMERALD_FONT_STEEL_BLUE);
+    SetMenuText(MainMenu.uMenuScreen,"NO.  LEVELNAME                        ",1,2,EMERALD_FONT_BLUE_STEEL);
     for (I = 0; I < 20; I++) {
         MainMenu.uMenuScreen[(3 + I) * MainMenu.uXdim + 4] = EMERALD_STEEL;
         MainMenu.uMenuScreen[(3 + I) * MainMenu.uXdim + 16] = EMERALD_STEEL;
@@ -4737,12 +5036,12 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         // Hervorhebung für ausgewähltes Level
         if ((nSelectedBeamPosition >= 0) && (nSelectedBeamPosition < MAX_LEVELTITLES_IN_LIST)) {
             if (nMoveState == 0) {
-                DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_347_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_347_H + 6, 0xF0,0x20,0x20,0x60,K_RELATIVE);
+                DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0x20,0x20,0x60,K_RELATIVE);
             } else {
                 if (((Playfield.uFrameCounter >> 4) & 0x01) == 0) {
-                    DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_347_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_347_H + 6, 0xF0,0xF0,0x20,0x60,K_RELATIVE);
+                    DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0xF0,0x20,0x60,K_RELATIVE);
                 } else {
-                    DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_347_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_347_H + 6, 0x20,0xF0,0x20,0x60,K_RELATIVE);
+                    DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0xF0,0x20,0x60,K_RELATIVE);
                 }
             }
         }
@@ -4917,8 +5216,8 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         for (I = 0; I < MAX_LEVELTITLES_IN_LIST; I++) {
             if (MainMenu.uLevelTitleList[I] != 0xFFFF) {
                 sprintf(szText,"%03u",MainMenu.uLevelTitleList[I]);
-                PrintLittleFont(pRenderer,62,110 + I * 20,0,szText,K_RELATIVE);
-                PrintLittleFont(pRenderer,176,110 + I * 20,0,SelectedLevelgroup.szLevelTitle[MainMenu.uLevelTitleList[I]],K_RELATIVE);
+                PrintLittleFont(pRenderer,62,110 + I * 20,0,szText,K_RELATIVE,1);
+                PrintLittleFont(pRenderer,176,110 + I * 20,0,SelectedLevelgroup.szLevelTitle[MainMenu.uLevelTitleList[I]],K_RELATIVE,1);
             }
         }
         nErrorCode = MenuSelectLevelname(pRenderer,&uBeamPosition);
@@ -4975,14 +5274,14 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
 
         if (bWarnDefaultLevelGroup) {
             if (bColorToggle) {
-                uFontColor = 0;
+                uFontColor = 3;//0;     // grün
             } else {
-                uFontColor = 2;
+                uFontColor = 2;     // rot
             }
             if ((Playfield.uFrameCounter % 10) == 0) {
                 bColorToggle = !bColorToggle;
             }
-            PrintLittleFont(pRenderer,260,8,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_RELATIVE);
+            PrintLittleFont(pRenderer,100,5,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_RELATIVE,1.5);
 
         }
         if (Clipboard.pLevelXml != NULL) {
@@ -4990,8 +5289,8 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         } else {
             strcpy(szText,"CLIPBOARD IS EMPTY");
         }
-        PrintLittleFont(pRenderer,176,745,0,szText,K_RELATIVE);
-        PrintLittleFont(pRenderer,177,746,3,szText,K_RELATIVE);
+        PrintLittleFont(pRenderer,176,745,0,szText,K_RELATIVE,1);
+        PrintLittleFont(pRenderer,177,746,3,szText,K_RELATIVE,1);
 
 
         if ((IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES)) ||  ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || InputStates.bQuit)) {

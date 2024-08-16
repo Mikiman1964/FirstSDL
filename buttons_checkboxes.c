@@ -156,7 +156,7 @@ int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute) {
                 nErrorCode = -1;
                 if (SDL_SetRenderDrawColor(pRenderer,0,(255 * nDimm) / 100,0,255) == 0) {
                     if (SDL_RenderDrawRect(pRenderer,&Rect) == 0) {
-                        nErrorCode = PrintLittleFont(pRenderer,pC->nXpos + 25,pC->nYpos + 3,0,pC->szText,bAbsolute);
+                        nErrorCode = PrintLittleFont(pRenderer,pC->nXpos + 25,pC->nYpos + 3,0,pC->szText,bAbsolute,1);
                         if (nErrorCode == 0) {
                             // Kreuz bzw. kleines Quadrat malen, wenn aktiv
                             if (pC->bActive) {
@@ -503,7 +503,7 @@ int ShowButtons(SDL_Renderer *pRenderer) {
         if ((Buttons[I].pszLabel != NULL) && (Buttons[I].pszText != NULL) && (Buttons[I].bActive)) {
             uXpos = Buttons[I].uXpos;
             uYpos = Buttons[I].uYpos;
-            uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_559_W + FONT_LITTLE_559_W;
+            uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W;
             uButtonH = BUTTON_H;
             bButtonArea = ((InputStates.nMouseXpos_Relative >= uXpos) && (InputStates.nMouseXpos_Relative <= (uXpos + uButtonW)) &&
                            (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
@@ -511,7 +511,7 @@ int ShowButtons(SDL_Renderer *pRenderer) {
                 // Buttonfläche erzeugen
                 Buttons[I].bPressed = true;
                 nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
-                nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE);
+                nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
                 ShowOtherButtons(pRenderer);
                 SDL_RenderPresent(pRenderer);   // Renderer anzeigen
                 if (Buttons[I].bWaitRelease) {
@@ -537,7 +537,7 @@ int ShowButtons(SDL_Renderer *pRenderer) {
             SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // rechts
             SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
-            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE);
+            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
         }
     }
     return nErrorCode;
@@ -569,7 +569,7 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
         if ((Buttons[I].pszLabel != NULL) && (Buttons[I].pszText != NULL) && (Buttons[I].bActive) && (!Buttons[I].bPressed)) { // Nicht den gedrückten Button anzeigen
             uXpos = Buttons[I].uXpos;
             uYpos = Buttons[I].uYpos;
-            uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_559_W + FONT_LITTLE_559_W;
+            uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W;
             uButtonH = BUTTON_H;
             // Buttonfläche erzeugen
             nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
@@ -586,7 +586,7 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
             SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // rechts
             SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
-            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE);
+            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
         }
     }
     return nErrorCode;
