@@ -13,7 +13,7 @@
 
 #define PANEL_H                                 32      // Spiel-Anzeige (Time, Score usw.)
 
-#define EMERALD_VERSION                         "01.09" // Version
+#define EMERALD_VERSION                         "01.10" // Version
 
 #define EMERALD_VERSION_LEN                     5       // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                       32      // Maximale Titellänge
@@ -583,8 +583,10 @@
 #define EMERALD_MESSAGE_0                       0x0256            // Dummy-Element für Editor
 #define EMERALD_TREASURECHEST_0                 0x0257            // Dummy-Element für Editor, geschlossene Schatztruhe (ohne Zahl)
 #define EMERALD_TREASURECHEST_OPEN              0x0258            // Dummy-Element für Editor, geöffnete Schatztruhe (ohne Zahl)
-#define EMERALD_SMILEY                          0x0259            // nicht für das Spiel
-#define EMERALD_MAX_ELEMENT                     0x0259            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
+#define EMERALD_DOOR_GREY_NOKEY                 0x0259            // Geheimtür ohne Schlüssel
+#define EMERALD_SMILEY                          0x025A            // nicht für das Spiel
+
+#define EMERALD_MAX_ELEMENT                     0x025A            // hier immer das letzte Element eintragen (für ControlExplosionToElement())
 #define EMERALD_INVALID                         0xFFFF            // ungültiges Element
 
 #define EMERALD_FONT_BLUE                       0x00              // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
@@ -731,11 +733,14 @@
 #define EMERALD_ANIM_SLIME_STAND_PHASE2         0x4A000000      // Schleim blockiert in Phase 2 (horizontal ausdehnen)
 #define EMERALD_ANIM_SLIME_STAND_PHASE3         0x4B000000      // Schleim blockiert in Phase 3 (vertikal zusammenziehen)
 #define EMERALD_ANIM_SLIME_STAND_PHASE4         0x4C000000      // Schleim blockiert in Phase 4 (vertikal ausdehnen)
-#define EMERALD_ANIM_STONE_SLOW_QUICKSAND1      0x4D000000      // Stein versinkt/durchsackt, Phase 1, langsamer Treibsand
-#define EMERALD_ANIM_STONE_SLOW_QUICKSAND2      0x4E000000      // Stein versinkt/durchsackt, Phase 2, langsamer Treibsand
-#define EMERALD_ANIM_STONE_SLOW_QUICKSAND3      0x4F000000      // Stein versinkt/durchsackt, Phase 3, langsamer Treibsand
-#define EMERALD_ANIM_STONE_SLOW_QUICKSAND4      0x50000000      // Stein versinkt/durchsackt, Phase 4, langsamer Treibsand
-#define EMERALD_ANIM_STONE_SLOW_QUICKSAND5      0x51000000      // Stein durchsackt, Phase 5 (Beim Durchsacken eine Phase mehr)
+#define EMERALD_ANIM_SLIME_CLEAN                0x4D000000      // Schleim, der in der 2. Phase in eine Explosion gelaufen ist
+#define EMERALD_ANIM_STONE_SLOW_QUICKSAND1      0x4E000000      // Stein versinkt/durchsackt, Phase 1, langsamer Treibsand
+#define EMERALD_ANIM_STONE_SLOW_QUICKSAND2      0x4F000000      // Stein versinkt/durchsackt, Phase 2, langsamer Treibsand
+#define EMERALD_ANIM_STONE_SLOW_QUICKSAND3      0x50000000      // Stein versinkt/durchsackt, Phase 3, langsamer Treibsand
+#define EMERALD_ANIM_STONE_SLOW_QUICKSAND4      0x51000000      // Stein versinkt/durchsackt, Phase 4, langsamer Treibsand
+#define EMERALD_ANIM_STONE_SLOW_QUICKSAND5      0x52000000      // Stein durchsackt, Phase 5 (Beim Durchsacken eine Phase mehr)
+
+
 
 
 
@@ -841,9 +846,7 @@ typedef struct {
     char            szMd5String[EMERALD_MD5_STRING_LEN + 1];    // MD5-Prüfsumme als String für komprimierte Leveldaten, d.h. ohne Header
     char            *pMessage[EMERALD_MAX_MESSAGES];            // 8 Nachrichtentexte
     uint16_t        uTreasureChestElement[EMERALD_MAX_TREASURECHESTS];
-
     bool            bTreasureChestWarn[EMERALD_MAX_TREASURECHESTS]; // Warnt den Spieler davor, dass in der Truhe etwas Gefährliches sein könnte
-
     uint32_t        uScoreEmerald;
     uint32_t        uScoreRuby;
     uint32_t        uScoreSaphir;
@@ -886,6 +889,7 @@ typedef struct {
     uint32_t        uWhiteKeyCount;                             // Anzahl der weißen Schlüssel, die der Man hat
     uint32_t        uLevel_X_Dimension;
     uint32_t        uLevel_Y_Dimension;
+    uint32_t        uLevel_XY_Dimension;                        // X * Y
     int             nTopLeftXpos;                               // aktuelle X-Pixel-Position (obere linke sichtbare Ecke)
     int             nTopLeftYpos;                               // aktuelle Y-Pixel-Position (obere linke sichtbare Ecke)
     uint32_t        uTotalScore;
