@@ -25,7 +25,7 @@ void ControlPerl(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     }
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
@@ -42,7 +42,7 @@ void ControlPerl(uint32_t I) {
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_PERL);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Perle ins Säurebecken?
-        SDL_Log("Perl falls in pool");
+        // SDL_Log("Perl falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_PERL;
         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -55,26 +55,26 @@ void ControlPerl(uint32_t I) {
             Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
             if ((uHitElement == EMERALD_MAGIC_WALL) || (uHitElement == EMERALD_MAGIC_WALL_STEEL)) { // Perle trifft auf Magic wall
                 if (Playfield.bMagicWallRunning) {
-                    SDL_Log("Perl hit running magic wall");
+                    // SDL_Log("Perl hit running magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     ElementGoesMagicWall(I,EMERALD_BOMB);
                     PreparePlaySound(SOUND_SQUEAK,I);
                 } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
-                    SDL_Log("Perl start magic wall");
+                    // SDL_Log("Perl start magic wall");
                     Playfield.bMagicWallWasOn = true;
                     Playfield.uTimeMagicWallLeft = Playfield.uTimeMagicWall;
                     Playfield.bMagicWallRunning = true;
                     ElementGoesMagicWall(I,EMERALD_BOMB);
                     PreparePlaySound(SOUND_SQUEAK,I);
                 } else {
-                    SDL_Log("Perl hit used magic wall");
+                    // SDL_Log("Perl hit used magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_PERL_BREAK;
                     PreparePlaySound(SOUND_SQUEAK,I);
                 }
             } else {
                 if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
-                    SDL_Log("Perl kills man");
+                    // SDL_Log("Perl kills man");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_PERL_BREAK;
                     Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
                     Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
@@ -82,11 +82,11 @@ void ControlPerl(uint32_t I) {
                     PreparePlaySound(SOUND_SQUEAK,I);
                     Playfield.bManDead = true;
                 } else if (uHitElement == EMERALD_MINE_CONTACT) {
-                    SDL_Log("Perl hit contact mine");
+                    // SDL_Log("Perl hit contact mine");
                     ControlCentralExplosion(uHitCoordinate,EMERALD_SPACE);
                     PreparePlaySound(SOUND_EXPLOSION,I);
                 } else {
-                    SDL_Log("Perl hit other element");
+                    // SDL_Log("Perl hit other element");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_PERL_BREAK;
                     PreparePlaySound(SOUND_SQUEAK,I);
                 }

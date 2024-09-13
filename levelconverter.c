@@ -561,6 +561,7 @@ char g_szDC3_MD5[][33] =
         "0808C63BE1A50C2FE97F93A8964F2C56",        // EMERALD_TREASURECHEST_6
         "406288FB66F424C94E35D8AFC5C2184A",        // EMERALD_TREASURECHEST_7
         "1D9A7A29523C52B5D7A5041B96BE36F0",        // EMERALD_TREASURECHEST_8
+        "8BBE85CD2BC5679732A37A24815DE7CA",        // EMERALD_DOOR_GREY_NOKEY
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",        // ENDE der MD5-Liste
     };
 
@@ -1096,14 +1097,15 @@ uint16_t g_DC3_Elements[] = {
         ,EMERALD_QUICKSAND_SLOW
         ,EMERALD_QUICKSAND_STONE_SLOW
         ,EMERALD_STEEL_PLAYERHEAD_2
-        , EMERALD_TREASURECHEST_1
-        , EMERALD_TREASURECHEST_2
-        , EMERALD_TREASURECHEST_3
-        , EMERALD_TREASURECHEST_4
-        , EMERALD_TREASURECHEST_5
-        , EMERALD_TREASURECHEST_6
-        , EMERALD_TREASURECHEST_7
-        , EMERALD_TREASURECHEST_8
+        ,EMERALD_TREASURECHEST_1
+        ,EMERALD_TREASURECHEST_2
+        ,EMERALD_TREASURECHEST_3
+        ,EMERALD_TREASURECHEST_4
+        ,EMERALD_TREASURECHEST_5
+        ,EMERALD_TREASURECHEST_6
+        ,EMERALD_TREASURECHEST_7
+        ,EMERALD_TREASURECHEST_8
+        ,EMERALD_DOOR_GREY_NOKEY
 };
 
 
@@ -1162,10 +1164,11 @@ int LevelConverterFromBitap(char *pszFilename) {
     }
     Ed.uLevel_X_Dimension = Bitmap.nW / 16;
     Ed.uLevel_Y_Dimension = Bitmap.nH / 16;
+    Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
     Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
     Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
 
-    Ed.pLevel = malloc(Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t));
+    Ed.pLevel = malloc(Ed.uLevel_XY_Dimension * sizeof(uint16_t));
     if (Ed.pLevel == NULL) {
         SDL_Log("%s: can not allocate memory for level (%u x %u)",__FUNCTION__,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension);
         return -1;
@@ -1599,7 +1602,7 @@ int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESL
                     szFileExtension[U] = toupper(szFileExtension[U]);
                 }
                 if ( (bNoExtensionFilter) || (strcmp(szFileExtension,szFileExtensionFilter) == 0) ) {
-                    SDL_Log("%s: Filename: %s",__FUNCTION__,entry->d_name);
+                    // SDL_Log("%s: Filename: %s",__FUNCTION__,entry->d_name);
                     strcpy(pLevelFileList[I].szFilename,entry->d_name);
                     strcpy(pLevelFileList[I].szShowFilename,entry->d_name);
                     for (U = 0; U < uFilenameLen; U++) {
@@ -1621,7 +1624,7 @@ int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESL
                 }
             }
         }
-        SDL_Log("%s: found %d files in directory %s",__FUNCTION__,I,pszDirectoryName);
+        // SDL_Log("%s: found %d files in directory %s",__FUNCTION__,I,pszDirectoryName);
         *puFileCount = I;
         closedir(dir);
     }

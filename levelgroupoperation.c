@@ -610,8 +610,9 @@ int LevelgroupOperaton_NewGroup(void) {
         strcpy((char*)pszlevel,(char*)ge_new_levelgroup);
         strcpy(szLevelgroupname,"NEW LG "); // <groupname>NEW LG 20230411_222417</groupname>
         GetActualTimestamp(szTimestamp);
-        strcat(szLevelgroupname,szTimestamp);
         sprintf(szFilename,"%s/LG_%s.xml",EMERALD_LEVELGROUPS_DIRECTORYNAME,szTimestamp);
+        szTimestamp[8] = '-';   // Unterstrich in Bindestrich wandeln
+        strcat(szLevelgroupname,szTimestamp);
         upGroupnameStartTag = (uint8_t*)strstr((char*)pszlevel,"<groupname>");
         upGroupnameEndTag = (uint8_t*)strstr((char*)pszlevel,"</groupname>");
         if ((upGroupnameStartTag != NULL) && (upGroupnameEndTag != NULL)) {

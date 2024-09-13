@@ -821,10 +821,10 @@ int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
             if (SelectAlternativeLevelgroup(LevelgroupFiles[MainMenu.uLevelgroupList[uBeamPosition]].uMd5Hash,true) == 0) {
             //if (SelectAlternativeLevelgroup(LevelgroupFiles[uBeamPosition].uMd5Hash,true) == 0) {
-                SDL_Log("Select %s, OK",SelectedLevelgroup.szLevelgroupname);
+                // SDL_Log("Select %s, OK",SelectedLevelgroup.szLevelgroupname);
                 if (Actualplayer.bValid) {  // Der aktuelle Name wird nochmals ausgewählt, damit dieser ggf. den Levelgruppen-Hash bekommt
                     strcpy(szPlayername,Actualplayer.szPlayername); // Muss kopiert werden, da Selectname die Struktur Actualplayer.x löscht
-                    SDL_Log("%s: selecting name: %s",__FUNCTION__,szPlayername);
+                    // SDL_Log("%s: selecting name: %s",__FUNCTION__,szPlayername);
                     nErrorCode = SelectName(szPlayername,SelectedLevelgroup.uMd5Hash);
                     if (nErrorCode != 0) {
                         SDL_Log("%s: Selectname() failed",__FUNCTION__);
@@ -864,7 +864,7 @@ int MenuSelectName(SDL_Renderer *pRenderer) {
         nErrorCode = DrawBeam(pRenderer,FONT_W,448 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 7 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_RELATIVE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
             if (SelectName(Names.Name[MainMenu.uNamesList[uBeamPosition]].szName,SelectedLevelgroup.uMd5Hash) == 0) {
-                SDL_Log("select name: %s, OK",Names.Name[MainMenu.uNamesList[uBeamPosition]].szName);
+                // SDL_Log("select name: %s, OK",Names.Name[MainMenu.uNamesList[uBeamPosition]].szName);
                 strcpy(Config.szPlayername,Names.Name[MainMenu.uNamesList[uBeamPosition]].szName);
                 memcpy(Config.uLevelgroupMd5Hash,SelectedLevelgroup.uMd5Hash,16);
                 nErrorCode = WriteConfigFile();
@@ -1395,7 +1395,7 @@ int SetDynamicMenuElements(void) {
             if (InsertNewName(MainMenu.szTempName) == 0) {
                 if (ReadNamesFile() == 0) {
                     InitLists();
-                    SDL_Log("Inserting name: %s ... OK",MainMenu.szTempName);
+                    // SDL_Log("Inserting name: %s ... OK",MainMenu.szTempName);
                 } else {
                     SDL_Log("Inserting name: %s ... ERRROR 2",MainMenu.szTempName);
                 }
@@ -1439,13 +1439,13 @@ int SetDynamicMenuElements(void) {
             }
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
-               SDL_Log("Key = %u",uKey);
+               // SDL_Log("Key = %u",uKey);
                if (MainMenu.uCursorPos < EMERALD_PLAYERNAME_LEN) {
                     MainMenu.szTempName[MainMenu.uCursorPos] = uKey;
                     MainMenu.uCursorPos++;
                }
             } else  if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
-                 SDL_Log("Key = BACKSPACE");
+                 // SDL_Log("Key = BACKSPACE");
                  if (MainMenu.uCursorPos > 0) {
                     MainMenu.szTempName[MainMenu.uCursorPos - 1] = 0;
                     MainMenu.uCursorPos--;
@@ -1582,7 +1582,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                             bShowHighscores = true;
                         } else if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_DELETE_PLAYER))) {
                             if (Actualplayer.bValid) {
-                                SDL_Log("Deleting name :%s",Actualplayer.szPlayername);
+                                // SDL_Log("Deleting name :%s",Actualplayer.szPlayername);
                                 nErrorCode = DeleteName(Actualplayer.szPlayername);
                                 if (nErrorCode == 0) {
                                     memset(&Actualplayer,0,sizeof(Actualplayer));
@@ -1693,14 +1693,14 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     WaitNoKey();
                                 } else if (nErrorCode == 0) {
                                     // Ein erster Entwurf für Emerald Mine. Das Spielergebnis (Erfolg oder Versagen) kann in Playfield.x abgefragt werden.
-                                    SDL_Log("Start Game with level %u",Actualplayer.uLevel);
+                                    // SDL_Log("Start Game with level %u",Actualplayer.uLevel);
                                     nErrorCode = RunGame(pRenderer,Actualplayer.uLevel);
                                     SDL_Log("%s: RunGame() ErrorCode: %u",__FUNCTION__,nErrorCode);
                                     if (nErrorCode == 0) {
                                         nErrorCode = EvaluateGame(&nNewHighscoreIndex,&uHighscoreLevel);
                                     }
                                     if ((nNewHighscoreIndex >= 0) && (nErrorCode == 0) && (Config.bShowHighscores)) {
-                                        SDL_Log("%s: New highscore at index: %u",__FUNCTION__,nNewHighscoreIndex);
+                                        // SDL_Log("%s: New highscore at index: %u",__FUNCTION__,nNewHighscoreIndex);
                                         SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
                                         SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
                                         SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
@@ -2454,7 +2454,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             nLastAxisButton = nAxisButton;
             nAxisButton = GetSettingsMenuAxisButton();
             if ((nAxisButton == 0) && (nLastAxisButton != 0)) {
-                SDL_Log("AXIS-Button: %d",nLastAxisButton);
+                // SDL_Log("AXIS-Button: %d",nLastAxisButton);
                 nErrorCode = WriteConfigFile();
             }
             switch (nAxisButton) {
@@ -2616,7 +2616,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
                 PrintLittleFont(pRenderer,760,250,uBlinkColor,szSubString,K_RELATIVE,1);
                 nScanCodeIndex = GetScancodeIndex(); // ScanCode einer gedrückten Taste ermitteln
                 if (nScanCodeIndex != -1) {
-                    SDL_Log("ScanCode: %s",g_ScanCodeNames[nScanCodeIndex]);
+                    // SDL_Log("ScanCode: %s",g_ScanCodeNames[nScanCodeIndex]);
                     switch (nKeybindingState) {
                         case (1):   // links
                             Config.uKeyboardScancodeLeft = g_uScanCodes[nScanCodeIndex];
@@ -2691,7 +2691,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             if (Checkbox_Resolution[I].bChanged) {
                 Checkbox_Resolution[I].bChanged = false;
                 Checkbox_Resolution[I].bActive = true;
-                SDL_Log("Resolution Checkbox :%d ticked",I);
+                // SDL_Log("Resolution Checkbox :%d ticked",I);
                 for (II = 0; II < ShowableDisplayModes.nDisplayModeCount; II++) {
                     if (II != I) {
                         Checkbox_Resolution[II].bActive = false;
@@ -2700,7 +2700,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
                 if ((Config.uResX != ShowableDisplayModes.nW[I]) || (Config.uResY != ShowableDisplayModes.nH[I])) {
                     Config.uResX = ShowableDisplayModes.nW[I];
                     Config.uResY = ShowableDisplayModes.nH[I];
-                    SDL_Log("Resolution changed to %d X %d",ShowableDisplayModes.nW[I],ShowableDisplayModes.nH[I]);
+                    // SDL_Log("Resolution changed to %d X %d",ShowableDisplayModes.nW[I],ShowableDisplayModes.nH[I]);
                     // Fenstergröße ändern
                     SDL_SetWindowSize(ge_pWindow,Config.uResX,Config.uResY); // Ist erst in SDL3 eine int-Funktion
                     nErrorCode = CenterWindow(Config.uResX,Config.uResY);
@@ -3082,7 +3082,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
         nLastButton = nButton;
         nButton = GetSettingsMenuButton();
         if (((nButton != 0) && (nLastButton != nButton)) && (nErrorCode == 0)) {
-            SDL_Log("Button: %d",nButton);
+            // SDL_Log("Button: %d",nButton);
             switch (nButton) {
                 case (1):   // Gamecontroller 0
                     Config.uInputdevice = 2;

@@ -25,7 +25,7 @@ void ControlSaphir(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     }
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
@@ -45,7 +45,7 @@ void ControlSaphir(uint32_t I) {
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_SAPPHIRE);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Saphir ins Säurebecken?
-        SDL_Log("Saphir falls in pool");
+        // SDL_Log("Saphir falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_SAPPHIRE;
         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -58,30 +58,30 @@ void ControlSaphir(uint32_t I) {
             Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
             if ((uHitElement == EMERALD_MAGIC_WALL) || (uHitElement == EMERALD_MAGIC_WALL_STEEL)) { // Saphir trifft auf Magic wall
                 if (Playfield.bMagicWallRunning) {
-                    SDL_Log("Sapphire hit running magic wall");
+                    // SDL_Log("Sapphire hit running magic wall");
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
                     ElementGoesMagicWall(I,EMERALD_STONE);
                     PreparePlaySound(SOUND_SQUEAK,I);
                 } else if ((!Playfield.bMagicWallWasOn) && (Playfield.uTimeMagicWall > 0)) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_SINK_IN_MAGIC_WALL;
-                    SDL_Log("Sapphire start magic wall");
+                    // SDL_Log("Sapphire start magic wall");
                     Playfield.bMagicWallWasOn = true;
                     Playfield.uTimeMagicWallLeft = Playfield.uTimeMagicWall;
                     Playfield.bMagicWallRunning = true;
                     ElementGoesMagicWall(I,EMERALD_STONE);
                     PreparePlaySound(SOUND_SQUEAK,I);
                 } else {
-                    SDL_Log("Sapphire hit used magic wall");
+                    // SDL_Log("Sapphire hit used magic wall");
                     PreparePlaySound(SOUND_PING,I);
                 }
             } else if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
-                SDL_Log("Sapphire kills man");
+                // SDL_Log("Sapphire kills man");
                 Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
                 Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
                 PreparePlaySound(SOUND_MAN_CRIES,I);
                 Playfield.bManDead = true;
             } else if (uHitElement == EMERALD_MINE_CONTACT) {
-                SDL_Log("Sapphire hit contact mine");
+                // SDL_Log("Sapphire hit contact mine");
                 ControlCentralExplosion(uHitCoordinate,EMERALD_SPACE);
                 PreparePlaySound(SOUND_EXPLOSION,I);
             } else {

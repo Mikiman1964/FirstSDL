@@ -112,7 +112,7 @@ int InitGameSound(void) {
     GameSound.uAllSounds = 0;
     if (Mix_OpenAudio(44100,AUDIO_S16,2,1024) == 0) {       // Samplerate, Audioformat,Kanäle,Chunksize die in einem Stück verarbeitet wird
         Mix_AllocateChannels(MAX_WAV_CHUNKS);  // Die Allocation muss nach Mix_OpenAudio erfolgen, ansonsten bleibt es bei 8 Kanälen
-        SDL_Log("%s: allocated channels: %d",__FUNCTION__,Mix_AllocateChannels(-2));
+        // SDL_Log("%s: allocated channels: %d",__FUNCTION__,Mix_AllocateChannels(-2));
         return CreateWavChunks();
     } else {
         SDL_Log("%s: Mix_OpenAudio() failed, Error: %s",__FUNCTION__,SDL_GetError());

@@ -124,7 +124,7 @@ void CheckYamGoLeft(uint32_t I) {
             Playfield.pLastYamSlimeDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
             PreparePlaySound(SOUND_YAM,I);
         } else {
-            SDL_Log("Yam kills man -> left");
+            // SDL_Log("Yam kills man -> left");
             Playfield.pLevel[I] = EMERALD_YAM_KILLS_MAN;
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_LEFT;
             Playfield.pLevel[I - 1] = EMERALD_MAN_DIES;
@@ -177,7 +177,7 @@ void CheckYamGoRight(uint32_t I) {
             Playfield.pLastYamSlimeDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
             PreparePlaySound(SOUND_YAM,I);
         } else {
-            SDL_Log("Yam kills man -> right");
+            // SDL_Log("Yam kills man -> right");
             Playfield.pLevel[I] = EMERALD_YAM_KILLS_MAN;
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_RIGHT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
             Playfield.pLevel[I + 1] = EMERALD_MAN_DIES;
@@ -230,7 +230,7 @@ void CheckYamGoUp(uint32_t I) {
             Playfield.pLastYamSlimeDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
             PreparePlaySound(SOUND_YAM,I);
         } else {
-            SDL_Log("Yam kills man -> up");
+            // SDL_Log("Yam kills man -> up");
             Playfield.pLevel[I] = EMERALD_YAM_KILLS_MAN;
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_UP;
             Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
@@ -277,7 +277,7 @@ void CheckYamGoDown(uint32_t I) {
             Playfield.pLastYamSlimeDirection[I + Playfield.uLevel_X_Dimension] = EMERALD_LAST_YAM_DIR_DOWN;
         }
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Yam ins Säurebecken?
-        SDL_Log("Yam falls in pool");
+        // SDL_Log("Yam falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_YAM;
         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -289,7 +289,7 @@ void CheckYamGoDown(uint32_t I) {
             Playfield.pLastYamSlimeDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
             PreparePlaySound(SOUND_YAM,I);
         } else {
-            SDL_Log("Yam kills man -> down");
+            // SDL_Log("Yam kills man -> down");
             Playfield.pLevel[I] = EMERALD_YAM_KILLS_MAN;
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
@@ -323,7 +323,7 @@ void ControlYamKillsMan(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     }
     // Ab hier: Nach Tötung des Mans den Yam auf ursprüngliche Man-Position setzen

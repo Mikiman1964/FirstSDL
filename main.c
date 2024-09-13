@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     // | = Ö
     // { = Ä
     // } = Ü
-    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - AUGUST 2024. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - SEPTEMBER 2024. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS15, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
@@ -155,9 +155,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     if (nMenuChoose == 1) {
         return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop();
     }
-    if (nMenuChoose == 2) {
-        SDL_Log("Start SDL2 Demo");
-    }
+    // Ab hier SDL2-Demo
     if (SetModMusic(3) != 0) {        // Mit MOD 3 class_cracktro#15 starten
         RestoreDesktop();
         return -1;
@@ -238,14 +236,14 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
                 uModVolume++;
                 SetModVolume(uModVolume);
             }
-            SDL_Log("plus, V:%u",uModVolume);
+            // SDL_Log("plus, V:%u",uModVolume);
         }
         if (InputStates.pKeyboardArray[SDL_SCANCODE_KP_MINUS]) {
             if (uModVolume > 0) {
                 uModVolume--;
                 SetModVolume(uModVolume);
             }
-            SDL_Log("minus, V:%u",uModVolume);
+            // SDL_Log("minus, V:%u",uModVolume);
         }
 
         DoCopper(pRenderer,bCopperScoll);

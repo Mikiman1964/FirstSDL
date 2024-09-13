@@ -97,7 +97,7 @@ int GetDesktopDisplayMode(void) {
     int nDisplays;
 
     nDisplays = SDL_GetNumVideoDisplays();
-    SDL_Log("%s: Displays: %d",__FUNCTION__,nDisplays);
+    // SDL_Log("%s: Displays: %d",__FUNCTION__,nDisplays);
     // Falls in der Konfiguration eine zu hohe Displaynummer eingestellt ist, wird hier korrigiert
     if (nDisplays >= 1) {
         if (Config.uDisplay > (nDisplays - 1)) {
@@ -105,11 +105,11 @@ int GetDesktopDisplayMode(void) {
             if (Config.uDisplayUse > 1) {   // Es wird primary (0) und secondary (1) Display unterstützt
                 Config.uDisplayUse = 1;
             }
-            SDL_Log("%s: display: %u is not available ... use display: %u",__FUNCTION__,Config.uDisplay,Config.uDisplayUse);
+            // SDL_Log("%s: display: %u is not available ... use display: %u",__FUNCTION__,Config.uDisplay,Config.uDisplayUse);
         }
         nRet = SDL_GetDesktopDisplayMode(Config.uDisplayUse,&ge_DisplayMode);
         if (nRet == 0) {
-            SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,ge_DisplayMode.w,ge_DisplayMode.h,ge_DisplayMode.refresh_rate);
+            // SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,ge_DisplayMode.w,ge_DisplayMode.h,ge_DisplayMode.refresh_rate);
         } else {
             SDL_Log("%s: SDL_GetDesktopDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -416,7 +416,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
     uCompressedSize = &_binary_gfx_compressed_bin_end - &_binary_gfx_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
     // SDL_Log("%s: compressed gfx packet size: %u",__FUNCTION__,uCompressedSize);
     uUnCompressedSize = *(uint32_t*)pStartCompressedGfx;
-    SDL_Log("%s: gfx packet size: %d Bytes / compressed: %d Bytes",__FUNCTION__,uUnCompressedSize,uCompressedSize);
+    // SDL_Log("%s: gfx packet size: %d Bytes / compressed: %d Bytes",__FUNCTION__,uUnCompressedSize,uCompressedSize);
     pStartGfxPacket = malloc(uUnCompressedSize);
     if (pStartGfxPacket == NULL) {
         SDL_Log("%s: can not allocate memory for decompressed graphics (%u bytes)",__FUNCTION__,uUnCompressedSize);
@@ -445,7 +445,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
     } while (bFound);
     bOK = (nCount > 0);
     if (bOK) {
-        SDL_Log("%s: found %d gfx.",__FUNCTION__,nCount);
+        // SDL_Log("%s: found %d gfx.",__FUNCTION__,nCount);
         // Speicher für Texturen erzeugen
         pTextures = malloc(sizeof(SDL_Texture*) * nCount);
         if (pTextures == NULL) {

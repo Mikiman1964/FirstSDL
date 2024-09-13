@@ -90,7 +90,7 @@ Rückgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int WriteDefaultConfigFile(void) {
-    SDL_Log("Writing default config file ...");
+    // SDL_Log("Writing default config file ...");
     memset(&Config,0,sizeof(Config));               // löscht auch letzten Spieler
     Config.bStartDynamiteWithSpace = true;          // true = Dynamite wird mit Space gezündet
     Config.bFullScreen = false;                     // Spiel läuft als Fullscreen
@@ -139,7 +139,7 @@ int WriteConfigFile(void) {
     char szMd5String[32 + 1];
     char szString[256];
 
-    SDL_Log("%s: T: %u",__FUNCTION__,SDL_GetTicks());
+    // SDL_Log("%s: T: %u",__FUNCTION__,SDL_GetTicks());
     memset(szXML,0,sizeof(szXML));
     strcpy(szXML,"<?xml version=\"1.0\"?>\n");
     strcat(szXML,"<configuration>\n");

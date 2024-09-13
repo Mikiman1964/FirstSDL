@@ -107,10 +107,7 @@ int MoveSmileys(SDL_Renderer *pRenderer) {
             Smileys[I].fXpos = Smileys[I].fXpos + Smileys[I].fXSpeed;
             Smileys[I].fYpos = Smileys[I].fYpos + Smileys[I].fYSpeed;
             Smileys[I].fSize = Smileys[I].fSize + 0.003;
-
             Smileys[I].fAngleRotate = Smileys[I].fAngleRotate + Smileys[I].fRotationSpeed;
-
-
             // Smiley außerhalb des Sichtbereichs?
             if ( (Smileys[I].fXpos > (Config.uResX + 200)) || (Smileys[I].fXpos < - 200) || (Smileys[I].fYpos > (Config.uResY + 200)) || (Smileys[I].fYpos < - 200) ) {
                 Smileys[I].bReady = true;

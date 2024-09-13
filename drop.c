@@ -43,11 +43,13 @@ void ControlDrop(uint32_t I) {
         Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = uDropElement;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_NOTHING;
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Tropfen ins Säurebecken?
+        /*
         if (uDropElement == EMERALD_GREEN_DROP) {
             SDL_Log("Green drop falls in pool");
         } else {
             SDL_Log("Yellow drop falls in pool");
         }
+        */
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = uDropElement;
         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -60,20 +62,22 @@ void ControlDrop(uint32_t I) {
             PreparePlaySound(SOUND_MAN_CRIES,I);
             Playfield.bManDead = true;
             if (uDropElement == EMERALD_GREEN_DROP) {
-                SDL_Log("Green drop kills man");
+                // SDL_Log("Green drop kills man");
                 Playfield.pLevel[I] = EMERALD_GREEN_CHEESE;     // Tropfen, der Man getroffen hat, verwandelt sich in Käse
             } else {
-                SDL_Log("Yellow drop kills man");
+                // SDL_Log("Yellow drop kills man");
                 Playfield.pLevel[I] = EMERALD_YELLOW_CHEESE;     // Tropfen, der Man getroffen hat, verwandelt sich in Käse
             }
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
             PreparePlaySound(SOUND_CHEESE,I);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_CONTACT) {
+            /*
             if (uDropElement == EMERALD_GREEN_DROP) {
                 SDL_Log("Green drop hit contact mine");
             } else {
                 SDL_Log("Yellow drop hit contact mine");
             }
+            */
             ControlCentralExplosion(I + Playfield.uLevel_X_Dimension,EMERALD_SPACE);
             PreparePlaySound(SOUND_EXPLOSION,I);
         } else {

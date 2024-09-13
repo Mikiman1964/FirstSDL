@@ -1510,6 +1510,9 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_DOOR_GREY_YELLOW):         // Für Editor
             uTextureIndex = TEX_DOOR_GREY_YELLOW;
             break;
+        case (EMERALD_DOOR_GREY_NOKEY):
+            uTextureIndex = TEX_DOOR_GREY;
+            break;
         case (EMERALD_MAGIC_WALL_STEEL):
             uTextureIndex = TEX_MAGIC_WALL_STEEL_1 + nAnimationCount / 2;
             break;

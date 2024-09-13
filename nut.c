@@ -42,7 +42,7 @@ void ControlNut(uint32_t I) {
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_NUT);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Nut ins Säurebecken?
-        SDL_Log("Nut falls in pool");
+        // SDL_Log("Nut falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_NUT;
         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -55,20 +55,20 @@ void ControlNut(uint32_t I) {
             Playfield.pStatusAnimation[I] &= 0x00FFFFFF;
             PreparePlaySound(SOUND_NUT_FALL,I);
             if ( (uHitElement == EMERALD_WALL_ROUND_PIKE) || (uHitElement == EMERALD_STEEL_ROUND_PIKE) ) {
-                SDL_Log("Nut hits wall with pike");
+                // SDL_Log("Nut hits wall with pike");
                 PreparePlaySound(SOUND_NUT_CRACK,I);
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_NUT_CRACK2;
                 Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreNutCracking;
                 return;
             } else if ((uHitElement == EMERALD_MAN) && (!Playfield.bManProtected) && (Playfield.uShieldCoinTimeLeft == 0)) {
-                SDL_Log("Nut kills man");
+                // SDL_Log("Nut kills man");
                 Playfield.pLevel[uHitCoordinate] = EMERALD_MAN_DIES;
                 Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
                 PreparePlaySound(SOUND_MAN_CRIES,I);
                 Playfield.bManDead = true;
                 return;
             } else if (uHitElement == EMERALD_MINE_CONTACT) {
-                SDL_Log("Nut hit contact mine");
+                // SDL_Log("Nut hit contact mine");
                 ControlCentralExplosion(uHitCoordinate,EMERALD_SPACE);
                 PreparePlaySound(SOUND_EXPLOSION,I);
                 return;

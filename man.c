@@ -107,7 +107,7 @@ void ControlManDies(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
     } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_MAN_DIES_P1) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MAN_DIES_P2;
     } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_MAN_DIES_P2) {
@@ -171,14 +171,14 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                 if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach oben frei?
                     if (!ManKey.bFire) {
                         if ((Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
-                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
                         // Befindet sich Man in einer Röhre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
                             // Kann er diese in die gewünschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_UP)) {
-                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
@@ -190,7 +190,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                                 Playfield.bManProtected = true;
                                 uRetDirection = EMERALD_ANIM_UP;
                             } else {
-                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         } else {
@@ -208,14 +208,14 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                 if (Playfield.pLevel[I + 1] == EMERALD_SPACE) {  // Ist nach rechts frei?
                     if (!ManKey.bFire) {
                         if ((Playfield.pStatusAnimation[I + 1] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
-                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
                         // Befindet sich Man in einer Röhre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
                             // Kann er diese in die gewünschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_RIGHT)) {
-                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
@@ -227,7 +227,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                                 Playfield.bManProtected = true;
                                 uRetDirection = EMERALD_ANIM_RIGHT;
                             } else {
-                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         } else {
@@ -245,14 +245,14 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                 if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_SPACE) {  // Ist nach unten frei?
                     if (!ManKey.bFire) {
                         if ((Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
-                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
                         // Befindet sich Man in einer Röhre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
                             // Kann er diese in die gewünschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_DOWN)) {
-                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
@@ -264,7 +264,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                                 Playfield.bManProtected = true;
                                 uRetDirection = EMERALD_ANIM_DOWN;
                             } else {
-                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         } else {
@@ -282,14 +282,14 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                 if (Playfield.pLevel[I - 1] == EMERALD_SPACE) {  // Ist nach links frei?
                     if (!ManKey.bFire) {
                         if ((Playfield.pStatusAnimation[I - 1] & 0xFF000000) == EMERALD_ANIM_BLOCK_MAN) {
-                            SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                            // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
                         // Befindet sich Man in einer Röhre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
                             // Kann er diese in die gewünschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_LEFT)) {
-                                SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
@@ -301,7 +301,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                                 Playfield.bManProtected = true;
                                 uRetDirection = EMERALD_ANIM_LEFT;
                             } else {
-                                SDL_Log("%s: Man is blocked!",__FUNCTION__);
+                                // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         } else {
@@ -357,7 +357,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
     uElement = Playfield.pLevel[uTouchPos];
     uTouchStatus = Playfield.pStatusAnimation[uTouchPos] & 0xFF000000;
     if ((uTouchStatus == EMERALD_ANIM_BORN1) || (uTouchStatus == EMERALD_ANIM_BORN2)) {
-        SDL_Log("%s: element '%s' is born!",__FUNCTION__,ge_szElementNames[uElement]);
+        // SDL_Log("%s: element '%s' is born!",__FUNCTION__,ge_szElementNames[uElement]);
         return uRetAnimation;
     }
     // Befindet sich Man in einer Röhre?
@@ -1647,7 +1647,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_EMERALD):
             if (uTouchStatus == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
-                SDL_Log("%s: emerald sinks already !",__FUNCTION__);
+                // SDL_Log("%s: emerald sinks already !",__FUNCTION__);
                 if (!ManKey.bFire) {
                     if (uAnimation == EMERALD_ANIM_RIGHT) {
                         PreparePlaySound(SOUND_MAN,uActPos);
@@ -1708,7 +1708,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_PERL):
             if ( (uTouchStatus == EMERALD_ANIM_SINK_IN_MAGIC_WALL) || (uTouchStatus == EMERALD_ANIM_PERL_BREAK) ) {
-                SDL_Log("%s: perl sinks or breaks already !",__FUNCTION__);
+                // SDL_Log("%s: perl sinks or breaks already !",__FUNCTION__);
                 if (!ManKey.bFire) {
                     if (uAnimation == EMERALD_ANIM_RIGHT) {
                         PreparePlaySound(SOUND_MAN,uActPos);
@@ -1771,7 +1771,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_RUBY):
             if (uTouchStatus == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
-                SDL_Log("%s: ruby sinks already !",__FUNCTION__);
+                // SDL_Log("%s: ruby sinks already !",__FUNCTION__);
                 if (!ManKey.bFire) {
                     if (uAnimation == EMERALD_ANIM_RIGHT) {
                         PreparePlaySound(SOUND_MAN,uActPos);
@@ -1834,7 +1834,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_CRYSTAL):
             if (uTouchStatus == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
-                SDL_Log("%s: crystal sinks already !",__FUNCTION__);
+                // SDL_Log("%s: crystal sinks already !",__FUNCTION__);
                 if (!ManKey.bFire) {
                     if (uAnimation == EMERALD_ANIM_RIGHT) {
                         PreparePlaySound(SOUND_MAN,uActPos);
@@ -1897,7 +1897,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_SAPPHIRE):
             if (uTouchStatus == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
-                SDL_Log("%s: sapphire sinks already !",__FUNCTION__);
+                // SDL_Log("%s: sapphire sinks already !",__FUNCTION__);
                 if (!ManKey.bFire) {
                     if (uAnimation == EMERALD_ANIM_RIGHT) {
                         PreparePlaySound(SOUND_MAN,uActPos);
@@ -2198,7 +2198,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_ACIDPOOL):
-            SDL_Log("Man falls in pool, I:%d    E:%d",uActPos,Playfield.pLevel[uActPos]);
+            // SDL_Log("Man falls in pool, I:%d    E:%d",uActPos,Playfield.pLevel[uActPos]);
             Playfield.pLevel[uActPos] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
             Playfield.pInvalidElement[uActPos] = EMERALD_MAN;
@@ -2211,19 +2211,19 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             if (!ManKey.bFire) {
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
-                        SDL_Log("Man reach enddoor -> go up");
+                        // SDL_Log("Man reach enddoor -> go up");
                         Playfield.pStatusAnimation[uActPos - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_UP | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                         break;
                     case (EMERALD_ANIM_DOWN):
-                        SDL_Log("Man reach enddoor -> go down");
+                        // SDL_Log("Man reach enddoor -> go down");
                         Playfield.pStatusAnimation[uActPos + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                         break;
                     case (EMERALD_ANIM_LEFT):
-                        SDL_Log("Man reach enddoor -> go left");
+                        // SDL_Log("Man reach enddoor -> go left");
                         Playfield.pStatusAnimation[uActPos - 1] = EMERALD_ANIM_LEFT | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                         break;
                     case (EMERALD_ANIM_RIGHT):
-                        SDL_Log("Man reach enddoor -> go right");
+                        // SDL_Log("Man reach enddoor -> go right");
                         Playfield.pStatusAnimation[uActPos + 1] = EMERALD_ANIM_RIGHT | EMERALD_ANIM_MAN_GOES_ENDDOOR | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                         break;
                 }
@@ -2236,7 +2236,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         default:
-            SDL_Log("%s:  unhandled element %04X",__FUNCTION__,uElement);
+            // SDL_Log("%s:  unhandled element %04X",__FUNCTION__,uElement);
             break;
     }
     if (uRetAnimation != EMERALD_ANIM_STAND) {
@@ -2474,7 +2474,7 @@ void ControlEnddoorReady(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_DOOR_READY_SHRINK) {
         Playfield.pLevel[I] = EMERALD_SPACE;
@@ -2501,7 +2501,7 @@ void ControlEnddoorReadySteel(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_DOOR_READY_SHRINK) {
         Playfield.pLevel[I] = EMERALD_STEEL_PLAYERHEAD;

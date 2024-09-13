@@ -30,7 +30,7 @@ void InitXorShift(void) {
     XorShift.y = rand() * 88675123;
     XorShift.z = (uint64_t)(&nErrorCode) * XorShift.y * XorShift.x;
     XorShift.w = (uint64_t)(&XorShift) * rand();
-    printf("%s:\r\n x = %u\r\n y = %u\r\n z = %u\r\n w = %u\r\n i = %u\n",__FUNCTION__,XorShift.x,XorShift.y,XorShift.z,XorShift.w,XorShift.x & 0xFFFF);
+    // printf("%s:\r\n x = %u\r\n y = %u\r\n z = %u\r\n w = %u\r\n i = %u\n",__FUNCTION__,XorShift.x,XorShift.y,XorShift.z,XorShift.w,XorShift.x & 0xFFFF);
     I = (XorShift.x & 0xFFFF);
     while (I > 0) {
         xorshift128();

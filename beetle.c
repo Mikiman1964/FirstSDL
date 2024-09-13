@@ -128,7 +128,7 @@ void ControlBeetleDown(uint32_t I) {
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {    // Ist nach unten frei?
             SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_BEETLE_DOWN);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Käfer ins Säurebecken?
-            SDL_Log("Beetle falls in pool");
+            // SDL_Log("Beetle falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pInvalidElement[I] = EMERALD_BEETLE_DOWN;
             PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -141,7 +141,7 @@ void ControlBeetleDown(uint32_t I) {
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {    // Ist nach unten frei?
             SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_BEETLE_DOWN);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Käfer ins Säurebecken?
-            SDL_Log("Beetle falls in pool");
+            // SDL_Log("Beetle falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pInvalidElement[I] = EMERALD_BEETLE_DOWN;
             PreparePlaySound(SOUND_POOL_BLUB,I);

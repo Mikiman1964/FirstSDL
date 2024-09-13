@@ -91,14 +91,14 @@ Seiteneffekte: Playfield.x
 int GetMemoryForPlayfield(void) {
     int nErrorCode;
 
-    Playfield.pLevel = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-    Playfield.pPipeLevel = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-    Playfield.pInvalidElement = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-    Playfield.pSlimeElement = (uint16_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-    Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-    Playfield.pLastStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-    Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
-    Playfield.pLastYamSlimeDirection = (uint8_t*)malloc(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
+    Playfield.pLevel = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+    Playfield.pPipeLevel = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+    Playfield.pInvalidElement = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+    Playfield.pSlimeElement = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+    Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
+    Playfield.pLastStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
+    Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_XY_Dimension * sizeof(POSTANIMATION));
+    Playfield.pLastYamSlimeDirection = (uint8_t*)malloc(Playfield.uLevel_XY_Dimension);
     if ((Playfield.pLevel != NULL) &&
         (Playfield.pPipeLevel != NULL) &&
         (Playfield.pStatusAnimation != NULL) &&
@@ -107,13 +107,13 @@ int GetMemoryForPlayfield(void) {
         (Playfield.pInvalidElement != NULL) &&
         (Playfield.pSlimeElement != NULL) &&
         (Playfield.pLastYamSlimeDirection != NULL)) {
-            memset(Playfield.pLevel,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-            memset(Playfield.pInvalidElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));
-            memset(Playfield.pSlimeElement,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t));   // EMERALD_NONE
-            memset(Playfield.pStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-            memset(Playfield.pLastStatusAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint32_t));
-            memset(Playfield.pPostAnimation,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(POSTANIMATION));
-            memset(Playfield.pLastYamSlimeDirection,0,Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension);
+            memset(Playfield.pLevel,0,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+            memset(Playfield.pInvalidElement,0,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+            memset(Playfield.pSlimeElement,0,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));   // EMERALD_NONE
+            memset(Playfield.pStatusAnimation,0,Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
+            memset(Playfield.pLastStatusAnimation,0,Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
+            memset(Playfield.pPostAnimation,0,Playfield.uLevel_XY_Dimension * sizeof(POSTANIMATION));
+            memset(Playfield.pLastYamSlimeDirection,0,Playfield.uLevel_XY_Dimension);
             nErrorCode = 0;
     } else {
         nErrorCode = -1;
@@ -317,7 +317,7 @@ int GetLevelScoresFromXml(ezxml_t xml) {
                                                                             nNum = strtol(pAttr,NULL,10);
                                                                             Playfield.uScoreShieldCoin = (uint32_t)nNum;
                                                                         } else {
-                                                                            SDL_Log("%s: 'scores->shieldcoin' not found -> set score to 0",__FUNCTION__);
+                                                                            // SDL_Log("%s: 'scores->shieldcoin' not found -> set score to 0",__FUNCTION__);
                                                                             Playfield.uScoreShieldCoin = 0;
                                                                         }
                                                                         node = ezxml_child(scores,"stoning_slime");
@@ -326,7 +326,7 @@ int GetLevelScoresFromXml(ezxml_t xml) {
                                                                             nNum = strtol(pAttr,NULL,10);
                                                                             Playfield.uScoreStoningSlime = (uint32_t)nNum;
                                                                         } else {
-                                                                            SDL_Log("%s: 'scores->stoning_slime' not found -> set score to 0",__FUNCTION__);
+                                                                            // SDL_Log("%s: 'scores->stoning_slime' not found -> set score to 0",__FUNCTION__);
                                                                             Playfield.uScoreStoningSlime = 0;
                                                                         }
                                                                         node = ezxml_child(scores,"treasurechest");
@@ -335,7 +335,7 @@ int GetLevelScoresFromXml(ezxml_t xml) {
                                                                             nNum = strtol(pAttr,NULL,10);
                                                                             Playfield.uScoreTreasureChest = (uint32_t)nNum;
                                                                         } else {
-                                                                            SDL_Log("%s: 'scores->treasurechest' not found -> set score to 0",__FUNCTION__);
+                                                                            // SDL_Log("%s: 'scores->treasurechest' not found -> set score to 0",__FUNCTION__);
                                                                             Playfield.uScoreTreasureChest = 0;
                                                                         }
                                                                     } else {
@@ -448,7 +448,7 @@ int GetOtherLevelValuesFromXml(ezxml_t xml) {
                                 nNum = strtol(pAttr,NULL,10);
                                 Playfield.uYellowCheeseSpreadSpeed = (uint32_t)nNum;
                             } else {
-                                SDL_Log("%s: 'values->speed_yellow_cheese_spread' not found -> set value to 0",__FUNCTION__);
+                                // SDL_Log("%s: 'values->speed_yellow_cheese_spread' not found -> set value to 0",__FUNCTION__);
                                 Playfield.uYellowCheeseSpreadSpeed = 0;
                             }
                         } else {
@@ -535,7 +535,7 @@ int GetLevelTimesFromXml(ezxml_t xml) {
                                         nNum = strtol(pAttr,NULL,10);
                                         Playfield.uShieldCoinTime = (uint32_t)nNum;
                                     } else {
-                                        SDL_Log("%s: 'times->shieldcoin' not found -> set time to 0",__FUNCTION__);
+                                        // SDL_Log("%s: 'times->shieldcoin' not found -> set time to 0",__FUNCTION__);
                                         Playfield.uShieldCoinTime = 0;
                                     }
                                 } else {
@@ -765,7 +765,8 @@ int GetConveyorBeltSettingsFromXml(ezxml_t xml) {
         Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
         Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
     } else {
-        SDL_Log("Alles bestens:");
+        /*
+        SDL_Log("All OK:");
         SDL_Log("Playfield.uConveybeltRedState: %d",Playfield.uConveybeltRedState);
         SDL_Log("Playfield.uConveybeltRedDirection :%d",Playfield.uConveybeltRedDirection);
         SDL_Log("Playfield.uConveybeltGreenState: %d",Playfield.uConveybeltGreenState);
@@ -774,6 +775,7 @@ int GetConveyorBeltSettingsFromXml(ezxml_t xml) {
         SDL_Log("Playfield.uConveybeltBlueDirection :%d",Playfield.uConveybeltBlueDirection);
         SDL_Log("Playfield.uConveybeltYellowState: %d",Playfield.uConveybeltYellowState);
         SDL_Log("Playfield.uConveybeltYellowDirection :%d",Playfield.uConveybeltYellowDirection);
+        */
     }
     return nErrorCode;
 }
@@ -1194,13 +1196,13 @@ int GetLeveldataFromXml(ezxml_t xml) {
                         pCompressed = malloc(uBinLen);
                         if (pCompressed != NULL) {
                             Base64ToBin(pCompressed,(uint8_t*)pAttr,strlen(pAttr),&uBinLen);
-                            uUnCompressLen = Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t);
+                            uUnCompressLen = Playfield.uLevel_XY_Dimension * sizeof(uint16_t);
                             nMiniz = mz_uncompress((uint8_t*)Playfield.pLevel,(mz_ulong*)&uUnCompressLen,pCompressed,(mz_ulong)uBinLen);
                             if (nMiniz == MZ_OK) {
-                                if (uUnCompressLen == (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t))) {
+                                if (uUnCompressLen == (Playfield.uLevel_XY_Dimension * sizeof(uint16_t))) {
                                     nErrorCode = 0;
                                 } else {
-                                    SDL_Log("%s: decompress unexpected len: %u     expected: %u",__FUNCTION__,(uint32_t)uUnCompressLen,(uint32_t)(Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension * sizeof(uint16_t)));
+                                    SDL_Log("%s: decompress unexpected len: %u     expected: %u",__FUNCTION__,(uint32_t)uUnCompressLen,(uint32_t)(Playfield.uLevel_XY_Dimension * sizeof(uint16_t)));
                                 }
                             } else {
                                 SDL_Log("%s: mz_uncompress ERROR: %d",__FUNCTION__,nMiniz);
@@ -1292,7 +1294,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
     if ((SelectedLevelgroup.bOK) && (uLevelNumber < SelectedLevelgroup.uLevelCount)) {
         pXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen);     // Levelgruppen-Datei einlesen
         if (pXml != NULL) {
-            SDL_Log("%s: using levelgroup %s, filesize: %u",__FUNCTION__,SelectedLevelgroup.szFilename,uXmlLen);
+            // SDL_Log("%s: using levelgroup %s, filesize: %u",__FUNCTION__,SelectedLevelgroup.szFilename,uXmlLen);
         } else {
             SDL_Log("%s: can not read levelgroup file %s",__FUNCTION__,SelectedLevelgroup.szFilename);
             return -1;
@@ -1303,6 +1305,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
             if (level != NULL) {
                 // Zunächst X- und Y-Dimension ermitteln. Diese Werte werden benötigt, um die Größe des Levelspeichers zu bestimmen
                 if (GetLeveldimensionFromXml(level,&Playfield.uLevel_X_Dimension,&Playfield.uLevel_Y_Dimension) == 0) {
+                    Playfield.uLevel_XY_Dimension = Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension;
                     if (GetMemoryForPlayfield() == 0) {
                         if (GetTitleAuthorVersionHashFromXml(level) == 0) {
                             if (GetLevelScoresFromXml(level) == 0) {
@@ -1558,7 +1561,7 @@ void SetPipeLevel(void) {
     uint32_t I;
     uint16_t uElement;
 
-    for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
+    for (I = 0; I < (Playfield.uLevel_XY_Dimension); I++) {
         uElement = Playfield.pLevel[I];
         switch (uElement) {
             case (EMERALD_PIPE_UP_DOWN):
@@ -1605,7 +1608,7 @@ int CheckLevelBorder(void) {
         }
     }
     // Untere Zeile prüfen
-    for (I = Playfield.uLevel_X_Dimension * (Playfield.uLevel_Y_Dimension - 1); (I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); I++) {
+    for (I = Playfield.uLevel_X_Dimension * (Playfield.uLevel_Y_Dimension - 1); (I < Playfield.uLevel_XY_Dimension) && (nErrorCode == 0); I++) {
         if (!IsSteel(Playfield.pLevel[I])) {
             SDL_Log("%s[buttom line]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
             nErrorCode = -1;
@@ -2148,7 +2151,7 @@ Seiteneffekte: Playfield.x
 void CloseAllDoors(void) {
     uint32_t I;                 // Index im Level
 
-    for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
+    for (I = 0; I < (Playfield.uLevel_XY_Dimension); I++) {
         if (Playfield.pLevel[I] == EMERALD_DOOR_TIME) {
             Playfield.pStatusAnimation[I] = EMERALD_STATUS_DOOR_CLOSE;
         }
@@ -2170,7 +2173,7 @@ Seiteneffekte: Playfield.x
 void SetActiveDynamiteP1(void) {
     uint32_t I;                 // Index im Level
 
-    for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
+    for (I = 0; I < (Playfield.uLevel_XY_Dimension); I++) {
         if (Playfield.pLevel[I] == EMERALD_DYNAMITE_ON) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P1;
         }
@@ -2196,7 +2199,7 @@ void SetTreasureChests(void) {
     uint16_t uTreasureChestElement;     // Element, das in der Truhe versteckt ist
     uint8_t  uChestIndex;               // Truhen-Index (0 bis 7)
 
-    for (I = 0; I < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension); I++) {
+    for (I = 0; I < (Playfield.uLevel_XY_Dimension); I++) {
         uElement = Playfield.pLevel[I];
         // Truhen-Element gefunden?
         if ( (uElement >= EMERALD_TREASURECHEST_1) && (uElement < (EMERALD_TREASURECHEST_1 + EMERALD_MAX_TREASURECHESTS)) ) {
@@ -2672,13 +2675,13 @@ int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHig
     // Zunächst versuchen die gewünschte Levelgruppe zu selektieren
     nErrorCode = SelectLevelgroup(puLevelgroupMd5Hash,bReadWriteHighscores);
     if (nErrorCode != 0) {
-        SDL_Log("%s: searching for an alternative levelgroup ...",__FUNCTION__);
+        // SDL_Log("%s: searching for an alternative levelgroup ...",__FUNCTION__);
         // Falls das nicht klappt, die Nächstbeste selektieren
         for (G = 0; (G < g_LevelgroupFilesCount) && (!bSelected); G++) {
             if (SelectLevelgroup(LevelgroupFiles[G].uMd5Hash,bReadWriteHighscores) == 0) {
                 bSelected = true;
                 nErrorCode = 0;
-                SDL_Log("%s: found an alternative levelgroup, OK",__FUNCTION__);
+                // SDL_Log("%s: found an alternative levelgroup, OK",__FUNCTION__);
             }
         }
         if (!bSelected) {
@@ -2760,7 +2763,7 @@ Rückgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
 int WriteDefaultNamesFile(void) {
-    SDL_Log("Writing default names file ...");
+    // SDL_Log("Writing default names file ...");
     memset(&Names,0,sizeof(Names));         // setzt alle Hashes auf "00000000000000000000000000000000" und alle Spielernamen auf \0, Spieleranzahl = 0
     return WriteNamesFile();
 }
@@ -2995,7 +2998,7 @@ int InsertNewName(char *pszName) {
                 uInsertIndex = Names.uNameCount;
                 for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                     if (strcmp(pszName,Names.Name[N].szName) == 0) {
-                        SDL_Log("%s: Name %s already exist, clearing GroupHashes ...",__FUNCTION__,pszName);
+                        // SDL_Log("%s: Name %s already exist, clearing GroupHashes ...",__FUNCTION__,pszName);
                         bNameFound = true;
                         uInsertIndex = N;
                     }
@@ -3051,7 +3054,7 @@ int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
             // Zunächst schauen, ob es diesen Namen bereits gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
-                    SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
+                    // SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
                     bNameFound = true;
                     uFoundIndex = N;
                 }
@@ -3061,7 +3064,7 @@ int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
                 bHashFound = false;
                 for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
                     if (memcmp(Names.Name[uFoundIndex].GroupHash[H].uHash,puHash,16) == 0) {
-                        SDL_Log("%s: level group Hash for Name %s found",__FUNCTION__,pszName);
+                        // SDL_Log("%s: level group Hash for Name %s found",__FUNCTION__,pszName);
                         bHashFound = true;
                         Names.Name[uFoundIndex].GroupHash[H].uHandicap = Actualplayer.uHandicap;
                         Names.Name[uFoundIndex].GroupHash[H].uGamesPlayed = Actualplayer.uGamesPlayed;
@@ -3119,7 +3122,7 @@ int SelectName(char *pszName, uint8_t *puHash) {
             // Zunächst schauen, ob es diesen Namen bereits gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
-                    SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
+                    // SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
                     bNameFound = true;
                     uFoundIndex = N;
                 }
@@ -3129,7 +3132,7 @@ int SelectName(char *pszName, uint8_t *puHash) {
                 bHashFound = false;
                 for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
                     if (memcmp(Names.Name[uFoundIndex].GroupHash[H].uHash,puHash,16) == 0) {
-                        SDL_Log("%s: level group Hash for Name %s found",__FUNCTION__,pszName);
+                        // SDL_Log("%s: level group Hash for Name %s found",__FUNCTION__,pszName);
                         bHashFound = true;
                         strcpy(Actualplayer.szPlayername,pszName);
                         memcpy(Actualplayer.uLevelgroupMd5Hash,Names.Name[uFoundIndex].GroupHash[H].uHash,16);
@@ -3208,7 +3211,7 @@ int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
             // Zunächst schauen, ob es diesen Namen bereits gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
-                    SDL_Log("%s: Name %s exist, clearing GroupHashes ...",__FUNCTION__,pszName);
+                    // SDL_Log("%s: Name %s exist, clearing GroupHashes ...",__FUNCTION__,pszName);
                     bNameFound = true;
                     uInsertIndex = N;
                 }
@@ -3218,7 +3221,7 @@ int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
                 bHashFound = false;
                 for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
                     if (memcmp(Names.Name[uInsertIndex].GroupHash[H].uHash,puHash,16) == 0) {
-                        SDL_Log("%s: Hash for Name %s already exist.",__FUNCTION__,pszName);
+                        // SDL_Log("%s: Hash for Name %s already exist.",__FUNCTION__,pszName);
                         nErrorCode = 0;
                         bHashFound = true;
                     }
@@ -3227,7 +3230,7 @@ int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
                 if (!bHashFound) {
                     for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
                         if (memcmp(Names.Name[uInsertIndex].GroupHash[H].uHash,"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",16) == 0) {
-                            SDL_Log("%s: name: %s: empty place for new Hash found, inserting new hash ...",__FUNCTION__,pszName);
+                            // SDL_Log("%s: name: %s: empty place for new Hash found, inserting new hash ...",__FUNCTION__,pszName);
                             memcpy(Names.Name[uInsertIndex].GroupHash[H].uHash,puHash,16);
                             Names.Name[uInsertIndex].GroupHash[H].uHandicap = 0;
                             Names.Name[uInsertIndex].GroupHash[H].uGamesPlayed = 0;
@@ -3278,7 +3281,7 @@ int DeleteName(char *pszName) {
             // Prüfen, ob es diesen Namen gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
-                    SDL_Log("%s: Name %s exist, deleting name ...",__FUNCTION__,pszName);
+                    // SDL_Log("%s: Name %s exist, deleting name ...",__FUNCTION__,pszName);
                     bNameFound = true;
                     uDeleteIndex = N;
                 }

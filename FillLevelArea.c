@@ -147,6 +147,6 @@ int FillLevelArea(int nX,int nY,uint16_t uFillElement,uint16_t uGroundElement) {
             }
         }
     }
-    SDL_Log("MaxP = %u",Fillstack.uMaxP);
+    // SDL_Log("MaxP = %u",Fillstack.uMaxP);
     return nErrorCode;
 }

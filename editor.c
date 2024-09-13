@@ -645,7 +645,8 @@ char ge_szElementNames[][64] =
                           "MESSAGE 0, INTERNAL ELEMENT",        // 0X256
                           "TREASURE CHEST 0, INTERNAL ELEMENT", // 0x257
                           "TREASURE CHEST, OPEN, INT. ELEMENT", // 0X258
-                          "SMILEY",                             // 0X259
+                          "DOOR, NO KEY, SECRET",               // 0X259
+                          "SMILEY",                             // 0X25A
                           };
 
 
@@ -694,7 +695,7 @@ uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_WALL_WITH_EMERALD,EMERALD_WALL_WITH_RUBY,EMERALD_WALL_WITH_SAPPHIRE,EMERALD_WALL_WITH_PERL,EMERALD_WALL_WITH_CRYSTAL,EMERALD_WALL_WITH_STONE,EMERALD_WALL_WITH_NUT,EMERALD_WALL_WITH_WHEEL,
                             EMERALD_WALL_WITH_KEY_RED,EMERALD_WALL_WITH_KEY_YELLOW,EMERALD_WALL_WITH_KEY_GREEN,EMERALD_WALL_WITH_KEY_BLUE,EMERALD_WALL_WITH_KEY_WHITE,EMERALD_WALL_WITH_KEY_GENERAL,EMERALD_WALL_WITH_BOMB,EMERALD_WALL_WITH_MEGABOMB,
                             EMERALD_WALL_WITH_DYNAMITE,EMERALD_WALL_WITH_ENDDOOR,EMERALD_WALL_WITH_ENDDOOR_READY,EMERALD_WALL_WITH_MINE_UP,EMERALD_WALL_WITH_BEETLE_UP,EMERALD_WALL_WITH_YAM,EMERALD_WALL_WITH_ALIEN,EMERALD_WALL_WITH_MOLE_UP,
-                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_YELLOW_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_WALL_WITH_SHIELD_COIN,EMERALD_WALL_WITH_SLIME,EMERALD_SPACE,EMERALD_SPACE,EMERALD_SPACE,
+                            EMERALD_WALL_WITH_GREEN_CHEESE,EMERALD_WALL_WITH_YELLOW_CHEESE,EMERALD_WALL_WITH_TIME_COIN,EMERALD_WALL_WITH_SHIELD_COIN,EMERALD_WALL_WITH_SLIME,EMERALD_SPACE,EMERALD_SPACE,EMERALD_DOOR_GREY_NOKEY,
                             EMERALD_INVALID
                             };
 
@@ -851,7 +852,7 @@ Seiteneffekte: Ed.x
 void ClearOldMan(void) {
     uint32_t I;
 
-    for (I = 0; I < Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension; I++) {
+    for (I = 0; I < Ed.uLevel_XY_Dimension; I++) {
         if (Ed.pLevel[I] == EMERALD_MAN) {
             Ed.pLevel[I] = EMERALD_SPACE;
         }
@@ -1233,13 +1234,13 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
         }
         DynStringAdd(XML,"  </yam_explosions>\r\n");
         DynStringAdd(XML,"  <leveldata>");
-        uMaxCompressedSize = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t) * 2 + 16 * KB;
+        uMaxCompressedSize = Ed.uLevel_XY_Dimension * sizeof(uint16_t) * 2 + 16 * KB;
         pcCompressedLevel = malloc(uMaxCompressedSize);
         if (pcCompressedLevel != NULL) {
             // uMaxCompressedSize ist hier noch Eingabeparameter, damit mz_compress2() weiß, wieviel Puffer zum Komprimieren bereit steht
-            nMiniz = mz_compress2(pcCompressedLevel,(mz_ulong*)&uMaxCompressedSize,(uint8_t*)Ed.pLevel,Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t),MZ_UBER_COMPRESSION);
+            nMiniz = mz_compress2(pcCompressedLevel,(mz_ulong*)&uMaxCompressedSize,(uint8_t*)Ed.pLevel,Ed.uLevel_XY_Dimension * sizeof(uint16_t),MZ_UBER_COMPRESSION);
             if (nMiniz == MZ_OK) {
-                SDL_Log("%s:c compressed level size: %u",__FUNCTION__,uMaxCompressedSize);
+                // SDL_Log("%s:c compressed level size: %u",__FUNCTION__,uMaxCompressedSize);
                 pcBase64 = BinToBase64((uint8_t *)pcCompressedLevel,uMaxCompressedSize,&uBase64Len,false);
                 if (pcBase64 != NULL) {
                     DynStringAdd(XML,(char*)pcBase64); // pcBase64 ist 0-terminiert
@@ -1331,6 +1332,7 @@ int CopyPlayfieldValueToEditor(void) {
         Ed.pLevel = Playfield.pLevel;
         Ed.uLevel_X_Dimension = Playfield.uLevel_X_Dimension;
         Ed.uLevel_Y_Dimension = Playfield.uLevel_Y_Dimension;
+        Ed.uLevel_XY_Dimension = Playfield.uLevel_XY_Dimension;
         Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
         Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
         Ed.bLightBarrierRedOn = Playfield.bLightBarrierRedOn;
@@ -1777,7 +1779,7 @@ int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAn
         for (uX = 0; (uX <  Ed.uVisibleX) && (uX < Ed.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
             // Levelindex berechnen
             I = Ed.uUpperLeftLevelIndex + uY * Ed.uLevel_X_Dimension + uX;
-            if (I > ((Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension) - 1)) {
+            if (I > (Ed.uLevel_XY_Dimension - 1)) {
                 //SDL_Log("%s: Warning: Level-Overflow, V:%u   X:%u   Y:%u  T:%u",__FUNCTION__,I,uX,uY,SDL_GetTicks());
                 break;
             }
@@ -3393,7 +3395,6 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                     nErrorCode = -1;
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
-                    SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 }
             }
         }
@@ -3413,7 +3414,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             ChangeTimeScoresValue(nSwitchField,uSwitchFieldOffset);
                         } else if (nSwitchField == 35) {    // Messages 1 - 8
                             Ed.MessageEditor.nEditMessage = uSwitchFieldOffset;
-                            SDL_Log("edit Message %d",Ed.MessageEditor.nEditMessage);
+                            // SDL_Log("edit Message %d",Ed.MessageEditor.nEditMessage);
                             Ed.uMenuState = MENUSTATE_TIME_AND_SCORES_MESSAGE;
                             SetButtonActivity(BUTTONLABEL_EDITOR_TREASURECHESTS,false);
                             SetButtonActivity(BUTTONLABEL_RETURN_TO_LEVEL,false);
@@ -4008,12 +4009,13 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
         (Ed.uTmpLevel_Y_Dimension >= MIN_LEVEL_H) && (Ed.uTmpLevel_Y_Dimension <= MAX_LEVEL_H) ) {
         pLevel = (uint16_t*)malloc(Ed.uTmpLevel_X_Dimension * Ed.uTmpLevel_Y_Dimension * sizeof(uint16_t));
         if (pLevel != NULL) {
-            SDL_Log("malloc successfull for x:%d  y:%d",Ed.uTmpLevel_X_Dimension,Ed.uTmpLevel_Y_Dimension);
+            // SDL_Log("malloc successfull for x:%d  y:%d",Ed.uTmpLevel_X_Dimension,Ed.uTmpLevel_Y_Dimension);
             // Neue Leveldimension setzen
             Ed.uLevel_X_Dimension = Ed.uTmpLevel_X_Dimension;
             Ed.uLevel_Y_Dimension = Ed.uTmpLevel_Y_Dimension;
+            Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
             // Komplettes Level auf EMERALD_SPACE setzen
-            for (I = 0; I < Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension; I++) {
+            for (I = 0; I < Ed.uLevel_XY_Dimension; I++) {
                 pLevel[I] = EMERALD_SPACE;
             }
             if (SetLevelBorder(pLevel,true,true) == 0) { // true = Spielfeld auf EMERALD_SPACE setzen, 2. true = Border aus EMERALD_STEEL
@@ -4026,9 +4028,17 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
                             }
                         }
                     }
+                    // Man auf nächste passende Position setzen
+                    for (I = 0; I < Ed.uLevel_XY_Dimension; I++) {
+                        if ((pLevel[I] == EMERALD_SPACE) || (pLevel[I] == EMERALD_EARTH) || (pLevel[I] == EMERALD_EARTH_INVISIBLE)) {
+                            pLevel[I] = EMERALD_MAN;
+                            break;
+                        }
+                    }
+                } else {
+                    // Einen Man oben links setzen
+                    pLevel[Ed.uLevel_X_Dimension + 1] = EMERALD_MAN;
                 }
-                // Einen Man oben links setzen
-                pLevel[Ed.uLevel_X_Dimension + 1] = EMERALD_MAN;
                 // Wenn alles gut gegangen ist, kann das alte Spielfeld gelöscht werden
                 SAFE_FREE(Ed.pLevel);
                 // dann neues Spielfeld zuweisen
@@ -4052,6 +4062,7 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
         // Bei Fehler alte Leveldaten nicht löschen und alte Level-Dimension setzen
         Ed.uLevel_X_Dimension = uOldX_Dimension;
         Ed.uLevel_Y_Dimension = uOldY_Dimension;
+        Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
         Ed.uTmpLevel_X_Dimension = uOldX_Dimension;
         Ed.uTmpLevel_Y_Dimension = uOldY_Dimension;
     }
@@ -4078,7 +4089,7 @@ int SaveNewMessage(void) {
     nErrorCode = 0;
     if ((Ed.MessageEditor.nEditMessage >= 0) && (Ed.MessageEditor.nEditMessage < EMERALD_MAX_MESSAGES)) {
         nPos = strlen(Ed.MessageEditor.szMessageEditorMem) - 1; // Auf letztes Zeichen des Strings setzen
-        SDL_Log("Save message no. %d   MessageLen: %d",Ed.MessageEditor.nEditMessage,(int)strlen(Ed.MessageEditor.szMessageEditorMem));
+        // SDL_Log("Save message no. %d   MessageLen: %d",Ed.MessageEditor.nEditMessage,(int)strlen(Ed.MessageEditor.szMessageEditorMem));
         if (nPos >= 0) {    // Wenn nPos = 0, dann gibt es ein Zeichen
             // Von hinten Spaces entfernen
             for (nE = nPos; nE >= 0; nE--) {
@@ -4106,7 +4117,7 @@ int SaveNewMessage(void) {
             // String ist leer
             SAFE_FREE(Ed.pMessage[Ed.MessageEditor.nEditMessage]);
         }
-        SDL_Log("Message no. %d saved   MessageLen: %d",Ed.MessageEditor.nEditMessage,(int)strlen(Ed.MessageEditor.szMessageEditorMem));
+        // SDL_Log("Message no. %d saved   MessageLen: %d",Ed.MessageEditor.nEditMessage,(int)strlen(Ed.MessageEditor.szMessageEditorMem));
     }
     Ed.MessageEditor.nEditMessage = -1;
     return nErrorCode;
@@ -4159,7 +4170,8 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
     if ((bNewLevel) && (uXdim >= MIN_LEVEL_W) && (uXdim <= MAX_LEVEL_W) && (uYdim >= MIN_LEVEL_H) && (uYdim <= MAX_LEVEL_H)) {
         Ed.uLevel_X_Dimension = uXdim;
         Ed.uLevel_Y_Dimension = uYdim;
-        Ed.pLevel = (uint16_t*)malloc(Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension * sizeof(uint16_t));
+        Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
+        Ed.pLevel = (uint16_t*)malloc(Ed.uLevel_XY_Dimension * sizeof(uint16_t));
         if (Ed.pLevel != NULL) {
             SetLevelBorder(Ed.pLevel,true,true); // true = Spielfeld auf EMERALD_SPACE setzen, 2. true = Border aus EMERALD_STEEL
             nErrorCode = 0;
@@ -4336,6 +4348,9 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
                 SetButtonActivity(BUTTONLABEL_EDITOR_OPTION_1,true);
                 SetButtonActivity(BUTTONLABEL_EDITOR_OPTION_2,true);
                 SetButtonActivity(BUTTONLABEL_EDITOR_OPTION_3,true);
+                SetButtonActivity(BUTTONLABEL_EDITOR_STD,false);
+                SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,false);
+                SetButtonActivity(BUTTONLABEL_EDITOR_TREASURECHESTS,false);
             } else {
                 Ed.uMenuState = MENUSTATE_LEVEL_STD;
                 SetPanelElements(Ed.uMenuState);
@@ -4621,7 +4636,7 @@ int RenumLevelgroup(uint8_t *pszXml) {
     bool bStartFlag = true;
 
     if (pszXml != NULL) {
-        SDL_Log("%s: Start, input len: %u",__FUNCTION__,(uint32_t)strlen((char*)pszXml));
+        // SDL_Log("%s: Start, input len: %u",__FUNCTION__,(uint32_t)strlen((char*)pszXml));
         // XML zunächst grob prüfen
         puLevelgroupMd5TagStart = (uint8_t*)strstr((char*)pszXml,"<levelgroup_md5_hash>");
         puLastTag = (uint8_t*)strstr((char*)pszXml,"</levelgroup>");     // "Höchster" Pointer
@@ -5009,6 +5024,14 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     bool bColorToggle;
     uint8_t uFontColor;
     char szFullDefaultLevelgroupFilename[EMERALD_MAX_FILENAME_LEN * 2];
+    // Die folgenden Variablen für Doppelclick-Erkennung auf Levelnamen
+    uint32_t uDoubleClickState;
+    uint32_t uLastBeamPosition;
+    uint32_t uLastClickTime;    // Merken nach erstem Klick
+
+    uDoubleClickState = 0;
+    uLastClickTime = 0;
+    uLastBeamPosition = 0xFFFFFFFF;
 
     bColorToggle = false;
     uScrollFastCounter = 0;
@@ -5049,6 +5072,9 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         nButton = HandlePreEditorButtons(nSelectedLevel);
         if ((nButton == 0) && (ManKey.bFire) && (nSelectedBeamPosition != -1)) {
             nButton = 4;    // Feuertaste kann ebenfalls Leveltest aufrufen
+        } else if (uDoubleClickState == 3) {
+            uDoubleClickState = 0;
+            nButton = 5;    // Doppelclick auf Levelname kann ebenfalls Editor aufrufen
         }
         // Für das schnelle Scrollen der Level-Liste
         if ( ((nLastButton == 12) && (nButton == 12)) || ((nLastButton == 11) && (nButton == 11)) ) {
@@ -5062,7 +5088,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    SDL_Log("%s:   create levelgroup",__FUNCTION__);
+                    // SDL_Log("%s:   create levelgroup",__FUNCTION__);
                     DimmMainMenu(pRenderer,false);
                     LevelgroupOperaton_NewGroup();
                     nColorDimm = 0;
@@ -5075,7 +5101,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    SDL_Log("%s:   rename levelgroup",__FUNCTION__);
+                    // SDL_Log("%s:   rename levelgroup",__FUNCTION__);
                     DimmMainMenu(pRenderer,false);
                     LevelgroupOperaton_RenameGroupname(pRenderer);
                     PreparePreEditormenu();
@@ -5088,7 +5114,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    SDL_Log("%s:   set/clr password",__FUNCTION__);
+                    // SDL_Log("%s:   set/clr password",__FUNCTION__);
                     DimmMainMenu(pRenderer,false);
                     nErrorCode = LevelgroupOperaton_Password(pRenderer);
                     PreparePreEditormenu();
@@ -5101,7 +5127,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    SDL_Log("%s:   test level",__FUNCTION__);
+                    // SDL_Log("%s:   test level",__FUNCTION__);
                     DimmMainMenu(pRenderer,false);
                     nErrorCode = RunGame(pRenderer,nSelectedLevel);
                     PreparePreEditormenu();
@@ -5112,7 +5138,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    SDL_Log("%s:   edit level",__FUNCTION__);
+                    // SDL_Log("%s:   edit level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
                     DimmMainMenu(pRenderer,false);
                     // Level-Listenpositrion retten, da diese in LevelgroupOperaton_Edit() initialisiert wird
@@ -5131,7 +5157,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     uModVolume = 0;
                     break;
                 case (6):
-                    SDL_Log("%s:   move level",__FUNCTION__);
+                    // SDL_Log("%s:   move level",__FUNCTION__);
                     if (nMoveState == 0) {
                         nMoveState = 1;
                         nMoveSrcLevel = nSelectedLevel;
@@ -5141,7 +5167,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    SDL_Log("%s:   copy level",__FUNCTION__);
+                    // SDL_Log("%s:   copy level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
                     DimmMainMenu(pRenderer,false);
                     if (Clipboard.pLevelXml != NULL) {
@@ -5161,7 +5187,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
-                    SDL_Log("%s:   delete level",__FUNCTION__);
+                    // SDL_Log("%s:   delete level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
                     DimmMainMenu(pRenderer,false);
                     nErrorCode = LevelgroupOperaton_Delete(nSelectedLevel);
@@ -5174,9 +5200,9 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nSelectedLevel = -1;
                     break;
                 case (9):
-                    SDL_Log("%s:   level to clipboard",__FUNCTION__);
+                    // SDL_Log("%s:   level to clipboard",__FUNCTION__);
                     nErrorCode = PutLevelToClipboard(nSelectedLevel);
-                    ShowClipboard();
+                    // ShowClipboard();
                     nMoveState = 0;
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
@@ -5188,7 +5214,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     DimmMainMenu(pRenderer,false);
-                    SDL_Log("%s:   import diamond caves 3 level",__FUNCTION__);
+                    // SDL_Log("%s:   import diamond caves 3 level",__FUNCTION__);
                     nErrorCode = LevelgroupOperaton_ImportDC3(pRenderer);
                     InitLevelTitleList();
                     PreparePreEditormenu();
@@ -5196,14 +5222,14 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     uModVolume = 0;
                     break;
                 case (11):
-                    SDL_Log("%s:   level list up",__FUNCTION__);
+                    // SDL_Log("%s:   level list up",__FUNCTION__);
                     nScrollLevelTitles = ScrollLevelTitleList(EMERALD_STEEL_ARROW_UP_PRESSED);
                     if ((nScrollLevelTitles != 0)) {
                         nSelectedBeamPosition++;
                     }
                     break;
                 case (12):
-                    SDL_Log("%s:   level list down",__FUNCTION__);
+                    // SDL_Log("%s:   level list down",__FUNCTION__);
                     nScrollLevelTitles = ScrollLevelTitleList(EMERALD_STEEL_ARROW_DOWN_PRESSED);
                     if ((nScrollLevelTitles != 0)) {
                         nSelectedBeamPosition--;
@@ -5221,6 +5247,28 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
             }
         }
         nErrorCode = MenuSelectLevelname(pRenderer,&uBeamPosition);
+        // Dieser Block macht Doppel-Click-Erkennung /////////////////////
+        if (uBeamPosition != 0xFFFFFFFF) {
+            if (uDoubleClickState == 0) {
+                uDoubleClickState = 1;
+                uLastBeamPosition = uBeamPosition;
+                // SDL_Log("%s: set double click state 1",__FUNCTION__);
+            } else if (uDoubleClickState == 2) {
+                if ((SDL_GetTicks() - uLastClickTime < 500) && (uLastBeamPosition == uBeamPosition)) {
+                    // SDL_Log("%s: double click",__FUNCTION__);
+                    uDoubleClickState = 3;
+                } else {
+                    // SDL_Log("%s: reset double click state to 0",__FUNCTION__);
+                    uDoubleClickState = 0;
+                }
+            }
+        } else if (uDoubleClickState == 1) {    // Maustaste nicht gedrückt
+            uLastClickTime = SDL_GetTicks();
+            uDoubleClickState = 2;
+            // SDL_Log("%s: set double click state 2",__FUNCTION__);
+        }
+        //////////////////////////////////////////////////////////////////
+
         if (uBeamPosition != 0xFFFFFFFF) {
             nSelectedBeamPosition = uBeamPosition;
             nSelectedLevel = MainMenu.uLevelTitleList[nSelectedBeamPosition];
@@ -5282,7 +5330,6 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                 bColorToggle = !bColorToggle;
             }
             PrintLittleFont(pRenderer,100,5,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_RELATIVE,1.5);
-
         }
         if (Clipboard.pLevelXml != NULL) {
             strcpy(szText,Clipboard.szLevelTitle);

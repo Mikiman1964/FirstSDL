@@ -39,7 +39,7 @@ void ControlMegaBomb(uint32_t I) {
     } else if (IS_SPACE(uHitCoordinate)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_MEGABOMB);
     } else if (uHitElement == EMERALD_ACIDPOOL) {   // Fällt Mega-Bombe ins Säurebecken?
-        SDL_Log("Mega-Bomb falls in pool");
+        // SDL_Log("Mega-Bomb falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_MEGABOMB;
         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -50,6 +50,7 @@ void ControlMegaBomb(uint32_t I) {
             // Mega-Bombe fällt auf Etwas
             ControlCentralMegaExplosion(I);
             PreparePlaySound(SOUND_EXPLOSION,I);
+            return;
         }
         if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_MEGABOMB) != 0) {
             uFree = GetFreeRollDirections(I);
@@ -65,7 +66,7 @@ void ControlMegaBomb(uint32_t I) {
                     SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MEGABOMB);
                 }
             }
-        // Ab hier prüfen, ob Kristall durch Laufband bewegt werden kann
+        // Ab hier prüfen, ob Megabombe durch Laufband bewegt werden kann
         } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||

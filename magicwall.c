@@ -92,7 +92,7 @@ void ElementGoesMagicWall(uint32_t I, uint32_t uDestElement) {
         Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = uDestElement;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_SAG_OUT_MAGIC_WALL | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
     } else {
-        SDL_Log("%s: Magic wall is not free for element %x with StatusAnim: %x",__FUNCTION__,uDestElement,Playfield.pStatusAnimation[I]);
+        // SDL_Log("%s: Magic wall is not free for element %x with StatusAnim: %x",__FUNCTION__,uDestElement,Playfield.pStatusAnimation[I]);
     }
 }
 
@@ -114,7 +114,7 @@ void ControlMagicWall(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     } else {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;

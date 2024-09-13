@@ -24,6 +24,13 @@ void ControlSlime(uint32_t I) {
     uAnimStatus = Playfield.pStatusAnimation[I] & 0x0000FF00;
     uSelfStatus = Playfield.pStatusAnimation[I] & 0xFF000000;
 
+    // Doppelte Steuerung vermeiden
+    if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
+        Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
+        // SDL_Log("%s: ack double control",__FUNCTION__);
+        return;
+    }
+
     if ( (uSelfStatus == EMERALD_ANIM_BORN1) || (uSelfStatus == EMERALD_ANIM_BORN2) ) {
         // Schleim kann vom Replikator geboren werden, dann hier nichts machen
         return;
@@ -54,7 +61,7 @@ void ControlSlime(uint32_t I) {
                 SlimeDown(I);
             } else {
                 // Ab hier versuchen eine neue Richtung einzuschlagen
-                nRandom = randn(1,6);       // Ergibt Zufallszahl zwischen 1-6  (1 = links, 2 = oben, 3 = rechts, 4 = runter, sonst weiter blockieren)
+                nRandom = randn(1,5);       // Ergibt Zufallszahl zwischen 1-5  (1 = links, 2 = oben, 3 = rechts, 4 = runter, 5 = weiter blockieren)
                 switch (nRandom) {
                     case (1):               // links
                         SlimeLeft(I);
@@ -125,7 +132,7 @@ void SlimeDown(uint32_t I) {
         Playfield.pSlimeElement[I + Playfield.uLevel_X_Dimension] = Playfield.pSlimeElement[I];
         PreparePlaySound(SOUND_SLIME_MOVE,I);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Schleim ins Säurebecken?
-        SDL_Log("Slime falls in pool");
+        // SDL_Log("Slime falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_SLIME;
         PreparePlaySound(SOUND_POOL_BLUB,I);

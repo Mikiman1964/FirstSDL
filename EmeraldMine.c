@@ -4,12 +4,18 @@ TODO
 * Leveleditor
     * Undo für Editor
 
-Für V 1.09
-* Slime
-* Treasure chests
-* slow quicksand
-* message 1 - 8 element visible in level editor
-* new steel elements, new font elements
+Für V 1.10
+* Slime entscheidet Richtung etwas schneller
+* Explosionen mit Slime gefixt
+* Türen und Explosionen werden später gerendert
+* Von Truhen kann alles herunter rollen
+* Fallende Bomben und Megabomben konnten durch Explosionen "gestützt" werden.
+* Levelgruppenname enthält "Paff" den Stofftieraffen, da Unterstrich. Wird jetzt durch Bindestrich ersetzt.
+* Graue Tür ohne Schlüssel
+* Lichtschranken erzeugten Absturz, wenn diese außerhalb des Spielfeldes "strahlen" können.
+* Wenn im Leveleditor die Warnung "Leveldimension geändert" erscheint, werden die Buttons "TEXT", "STD" und "TREASURECHEST" deaktiviert.
+* Bei Leveldimension-Änderung wird Spielfigur sinnvoller gesetzt
+* Doppelklick auf Levelnamen ruft den Editor auf
 */
 
 #include "gfx/textures.h"
@@ -304,7 +310,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         }
         if ((nCheckLevelCount == 0) && (!bPause)) {
             if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= 15)) {
-                SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
+                // SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
                 uKey = ManKey.uLastActiveDirection;
             } else {
                 uKey = ManKey.uDirection;
@@ -365,7 +371,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         }
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
-        if (bDebug) SDL_Delay(100);
+        if (bDebug) SDL_Delay(200);
 
     }
     SDL_ShowCursor(SDL_ENABLE);    // Mauspfeil verstecken
@@ -461,7 +467,7 @@ uint32_t ControlGame(uint32_t uDirection) {
     Playfield.bSwitchRemoteBombIgnition = false;
     Playfield.bRemoteBombMoved = false;
     // Ab hier das Level und den Status für alle Elemente aus voriger Steuerung vorbereiten
-    for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
+    for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
         // Dieser Block sorgt bei bewegten Objekten dafür, dass diese
         // ihren neuen Platz (invalides Feld) einnehmen.
         bSlime = (Playfield.pInvalidElement[I] == EMERALD_SLIME);
@@ -617,6 +623,9 @@ uint32_t ControlGame(uint32_t uDirection) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_BORN2;
         } else if (uCleanStatus == EMERALD_ANIM_BORN2) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+            Playfield.pLastStatusAnimation[I] = EMERALD_ANIM_STAND;
+            Playfield.pLastYamSlimeDirection[I] = EMERALD_LAST_YAM_DIR_BLOCKED;
+            Playfield.pSlimeElement[I] = EMERALD_NONE;
             PreparePlaySound(SOUND_REPLICATOR_PLOP,I);
         }
         // "Selbststeuernde" Animationen und Animationsstatus nicht zurücksetzen,
@@ -637,7 +646,7 @@ uint32_t ControlGame(uint32_t uDirection) {
         ControlManWithDynamiteOn(Playfield.uDynamitePos);
     }
 
-    for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
+    for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
         uLevelElement = Playfield.pLevel[I];
         switch (uLevelElement) {
             case (EMERALD_SLIME):
@@ -1458,6 +1467,16 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_RIGHT] = 0x1FF;              // Alles rollt von Lichtschranken
 	Playfield.uRollUnderground[EMERALD_TIME_COIN] = 0x1FF;                              // Alles rollt von Münzen
 	Playfield.uRollUnderground[EMERALD_SHIELD_COIN] = 0x1FF;                            // Alles rollt von Münzen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_1] = 0x1FF;                        // Alles rollt von Schatztruhen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_2] = 0x1FF;                        // Alles rollt von Schatztruhen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_3] = 0x1FF;                        // Alles rollt von Schatztruhen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_4] = 0x1FF;                        // Alles rollt von Schatztruhen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_5] = 0x1FF;                        // Alles rollt von Schatztruhen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_6] = 0x1FF;                        // Alles rollt von Schatztruhen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_7] = 0x1FF;                        // Alles rollt von Schatztruhen
+	Playfield.uRollUnderground[EMERALD_TREASURECHEST_8] = 0x1FF;                        // Alles rollt von Schatztruhen
+
+
 }
 
 
@@ -1581,7 +1600,7 @@ Seiteneffekte: Playfield.x
 void ControlPreElements(void) {
     uint32_t I;
 
-    for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
+    for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
         if (IS_SPACE(I)) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;     // setzt ggf. EMERALD_ANIM_BLOCK_MAN zurück
         } else if ( (Playfield.pLevel[I] == EMERALD_GREEN_CHEESE_GOES) || (Playfield.pLevel[I] == EMERALD_YELLOW_CHEESE_GOES) ||
@@ -1606,6 +1625,9 @@ void ControlPreElements(void) {
             ControlExplosionToElement(I);
         } else if ((Playfield.pLevel[I] == EMERALD_NUT) && ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_NUT_CRACK2)) {
             Playfield.pLevel[I] = EMERALD_EMERALD;
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        } else if (((Playfield.pLevel[I]) == EMERALD_SLIME) && ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SLIME_CLEAN)) {
+            Playfield.pLevel[I] = EMERALD_SPACE;           // Schleim, der in der 2. Phase in eine Explosion gelaufen ist.
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         }
     }
@@ -1657,7 +1679,7 @@ void PostControlSwitchDoors(void) {
     uint32_t I;
 
     if (Playfield.bSwitchDoorImpluse) {
-        for (I = 0; I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension; I++) {
+        for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
             if (Playfield.pLevel[I] == EMERALD_SWITCHDOOR_CLOSED) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_OPEN;     // Öffnen der Schalttür einleiten
                 PreparePlaySound(SOUND_DOOR_OPEN_CLOSE,I);

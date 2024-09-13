@@ -41,7 +41,7 @@ void ControlBomb(uint32_t I) {
     } else if (IS_SPACE(uHitCoordinate)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_BOMB);
     } else if (Playfield.pLevel[uHitCoordinate] == EMERALD_ACIDPOOL) {   // Fällt Bombe ins Säurebecken?
-        SDL_Log("Bomb falls in pool");
+        // SDL_Log("Bomb falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_BOMB;
         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -52,6 +52,7 @@ void ControlBomb(uint32_t I) {
             // Bombe fällt auf Etwas
             ControlCentralExplosion(I,EMERALD_SPACE);
             PreparePlaySound(SOUND_EXPLOSION,I);
+            return;
         }
         if ((Playfield.uRollUnderground[uHitElement] & EMERALD_CHECKROLL_BOMB) != 0) {
             uFree = GetFreeRollDirections(I);
@@ -113,7 +114,7 @@ void ControlRemoteBomb(uint32_t I) {
             SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_REMOTEBOMB);
             Playfield.bRemoteBombMoved = true;
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt ferngesteuerte Bombe ins Säurebecken?
-            SDL_Log("Remote bomb falls in pool");
+            // SDL_Log("Remote bomb falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pInvalidElement[I] = EMERALD_REMOTEBOMB;
             PreparePlaySound(SOUND_POOL_BLUB,I + Playfield.uLevel_X_Dimension);

@@ -58,7 +58,7 @@ void ControlAlien(uint32_t I) {
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
-                        SDL_Log("Alien kills man -> right");
+                        // SDL_Log("Alien kills man -> right");
                         Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_RIGHT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                         Playfield.pLevel[I + 1] = EMERALD_MAN_DIES;
@@ -82,7 +82,7 @@ void ControlAlien(uint32_t I) {
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
-                        SDL_Log("Alien kills man - > left");
+                        // SDL_Log("Alien kills man - > left");
                         Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_LEFT;
                         Playfield.pLevel[I - 1] = EMERALD_MAN_DIES;
@@ -110,7 +110,7 @@ void ControlAlien(uint32_t I) {
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
-                        SDL_Log("Alien kills man - > down");
+                        // SDL_Log("Alien kills man - > down");
                         Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
@@ -119,7 +119,7 @@ void ControlAlien(uint32_t I) {
                         PreparePlaySound(SOUND_MAN_CRIES,I);
                     }
                 } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Alien ins Säurebecken?
-                        SDL_Log("Alien falls in pool");
+                        // SDL_Log("Alien falls in pool");
                         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
                         Playfield.pInvalidElement[I] = EMERALD_ALIEN;
                         PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -140,7 +140,7 @@ void ControlAlien(uint32_t I) {
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_RIGHT) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_UP) ||
                         (uManSelfStatus == EMERALD_ANIM_MAN_BLOCKED_DOWN)) {
-                        SDL_Log("Alien kills man - > up      man anim: 0x%08X",Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension]);
+                        // SDL_Log("Alien kills man - > up      man anim: 0x%08X",Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension]);
                         Playfield.pLevel[I] = EMERALD_ALIEN_KILLS_MAN;
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MONSTER_KILLS_UP;
                         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_MAN_DIES;
@@ -175,7 +175,7 @@ void ControlAlienKillsMan(uint32_t I) {
     // Doppelte Steuerung vermeiden
     if ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
-        SDL_Log("%s: ack double control",__FUNCTION__);
+        // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     }
     // Ab hier: Nach Tötung des Mans den Alien auf ursprüngliche Man-Position setzen

@@ -126,7 +126,7 @@ void ControlMineDown(uint32_t I) {
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
             SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_MINE_DOWN);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?
-            SDL_Log("Mine falls in pool");
+            // SDL_Log("Mine falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pInvalidElement[I] = EMERALD_MINE_DOWN;
             PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -139,7 +139,7 @@ void ControlMineDown(uint32_t I) {
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
             SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_MINE_DOWN);
         } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?
-            SDL_Log("Mine falls in pool");
+            // SDL_Log("Mine falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pInvalidElement[I] = EMERALD_MINE_DOWN;
             PreparePlaySound(SOUND_POOL_BLUB,I);
@@ -213,7 +213,7 @@ Seiteneffekte: Playfield.x
 void ControlContactMine(uint32_t I) {
     if ( IsContactMineExplode(Playfield.pLevel[I - 1]) || IsContactMineExplode(Playfield.pLevel[I - Playfield.uLevel_X_Dimension]) ||
          IsContactMineExplode(Playfield.pLevel[I + 1]) || IsContactMineExplode(Playfield.pLevel[I + Playfield.uLevel_X_Dimension]) ) {
-        SDL_Log("%s: Contact mine at position %d exploding",__FUNCTION__,I);
+        // SDL_Log("%s: Contact mine at position %d exploding",__FUNCTION__,I);
         ControlCentralExplosion(I,EMERALD_SPACE);
         PreparePlaySound(SOUND_EXPLOSION,I);
     }
@@ -293,22 +293,22 @@ void ControlManWithDynamiteOn(uint32_t I) {
         case (EMERALD_ANIM_DYNAMITE_START):
             Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P1;    // Von Start auf Phase 1 schalten
             PreparePlaySound(SOUND_DYNAMITE,I);
-            SDL_Log("%s: Start to P1",__FUNCTION__);
+            // SDL_Log("%s: Start to P1",__FUNCTION__);
             break;
         case (EMERALD_ANIM_DYNAMITE_ON_P1):
             Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P2;    // Von Phase 1 auf 2 schalten
             PreparePlaySound(SOUND_DYNAMITE,I);
-            SDL_Log("%s: to P2",__FUNCTION__);
+            // SDL_Log("%s: to P2",__FUNCTION__);
             break;
         case (EMERALD_ANIM_DYNAMITE_ON_P2):
             Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P3;    // Von Phase 2 auf 3 schalten
             PreparePlaySound(SOUND_DYNAMITE,I);
-            SDL_Log("%s: to P3",__FUNCTION__);
+            // SDL_Log("%s: to P3",__FUNCTION__);
             break;
         case (EMERALD_ANIM_DYNAMITE_ON_P3):
             Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P4;    // Von Phase 3 auf 4 schalten
             PreparePlaySound(SOUND_DYNAMITE,I);
-            SDL_Log("%s: to P4",__FUNCTION__);
+            // SDL_Log("%s: to P4",__FUNCTION__);
             break;
         case (EMERALD_ANIM_DYNAMITE_ON_P4):
             Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND;

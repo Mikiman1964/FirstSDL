@@ -165,7 +165,7 @@ void ControlMoleDown(uint32_t I) {
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
         PreparePlaySound(SOUND_CHEESE,I);
     } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mole ins Säurebecken?
-        SDL_Log("Mole falls in pool");
+        // SDL_Log("Mole falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_MOLE_DOWN;
         PreparePlaySound(SOUND_POOL_BLUB,I);

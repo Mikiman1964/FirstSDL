@@ -101,7 +101,7 @@ int SearchTeleporter(void) {
     uint16_t uElement;
 
     FreeTeleporterCoordinates();
-    for (I = 0; (I < Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); I++) {
+    for (I = 0; (I < Playfield.uLevel_XY_Dimension) && (nErrorCode == 0); I++) {
         uElement = Playfield.pLevel[I];
         switch (uElement) {
             case(EMERALD_TELEPORTER_RED):
@@ -132,7 +132,7 @@ Seiteneffekte: Playfield.x
 int AddTeleporterCoordinate(uint16_t uTeleporterElement,uint32_t uCoordinate) {
     int nErrorCode;
 
-    if (uCoordinate < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension)) {
+    if (uCoordinate < Playfield.uLevel_XY_Dimension) {
         switch (uTeleporterElement) {
             case(EMERALD_TELEPORTER_RED):
                 Playfield.puTeleporterRedCoordinates = realloc(Playfield.puTeleporterRedCoordinates,(Playfield.uTeleporterRedCounter + 1) * sizeof(uint32_t));
@@ -205,7 +205,7 @@ uint32_t GetDestinationTeleporterCoordinate(uint32_t uSourceCoordinate, uint32_t
     uint32_t uDestinationCoordinate = EMERALD_INVALID_TELEPORTER_COORDINATE;
     int nIndex;
 
-    if (uSourceCoordinate < (Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension)) {
+    if (uSourceCoordinate < Playfield.uLevel_XY_Dimension) {
         switch (Playfield.pLevel[uSourceCoordinate]) {
             case(EMERALD_TELEPORTER_RED):
                 if (Playfield.uTeleporterRedCounter == 2) {

@@ -54,9 +54,9 @@ void DetectJoystickAndGameController(void) {
         }
     }
     Joystick.nActiveJoystickId = -1;
-    SDL_Log("%s: Input devices:   %d",__FUNCTION__,nStickCount);
-    SDL_Log("%s: Joysticks:       %d",__FUNCTION__,Joystick.nCount);
-    SDL_Log("%s: GameControllers: %d",__FUNCTION__,GameController.nCount);
+    // SDL_Log("%s: Input devices:   %d",__FUNCTION__,nStickCount);
+    // SDL_Log("%s: Joysticks:       %d",__FUNCTION__,Joystick.nCount);
+    // SDL_Log("%s: GameControllers: %d",__FUNCTION__,GameController.nCount);
     GameController.uLastDetectTime = SDL_GetTicks();
     Joystick.uLastDetectTime = SDL_GetTicks();
 }
@@ -129,7 +129,7 @@ int OpenJoystickOrGameController(void) {
                 Joystick.nActiveJoystickId = Joystick.ID[Config.uDeviceIndex] ;
                 Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier = SDL_JoystickOpen(Joystick.nActiveJoystickId);
                 if (Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier != NULL) {
-                    SDL_Log("%s: joystick with device id: %d  opened",__FUNCTION__,Joystick.nActiveJoystickId);
+                    // SDL_Log("%s: joystick with device id: %d  opened",__FUNCTION__,Joystick.nActiveJoystickId);
                     nErrorCode = 0;
                 } else {
                     SDL_Log("%s: can not open joystick with device id: %d, error: %s ",__FUNCTION__,Joystick.nActiveJoystickId,SDL_GetError());
@@ -146,7 +146,7 @@ int OpenJoystickOrGameController(void) {
                 GameController.nActiveGameControllerId = GameController.ID[Config.uDeviceIndex] ;
                 GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier = SDL_GameControllerOpen(GameController.nActiveGameControllerId);
                 if (GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier != NULL) {
-                    SDL_Log("%s: gamecontroller with device id: %d  opened",__FUNCTION__,GameController.nActiveGameControllerId);
+                    // SDL_Log("%s: gamecontroller with device id: %d  opened",__FUNCTION__,GameController.nActiveGameControllerId);
                     nErrorCode = 0;
                 } else {
                     SDL_Log("%s: can not open gamecontroller with device id: %d, error: %s ",__FUNCTION__,GameController.nActiveGameControllerId,SDL_GetError());
@@ -158,7 +158,7 @@ int OpenJoystickOrGameController(void) {
             SDL_Log("%s: bad gamecontroller device index %d",__FUNCTION__,Config.uDeviceIndex);
         }
     } else {
-        SDL_Log("%s: no device opened",__FUNCTION__);
+        // SDL_Log("%s: no device opened",__FUNCTION__);
         nErrorCode = 0;                    // Es soll kein Gerät geöffnet werden
     }
     return nErrorCode;
@@ -380,12 +380,12 @@ void CloseJoystickOrGameController(void) {
     if (Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier != NULL) {
          SDL_JoystickClose(Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier);
          Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier = NULL;
-         SDL_Log("Close Joystick with device index: %u",Config.uDeviceIndex);
+         // SDL_Log("Close Joystick with device index: %u",Config.uDeviceIndex);
     }
     if (GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier != NULL) {
         SDL_GameControllerClose(GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier);
         GameController.Value[Config.uDeviceIndex].pActualGameControllerIdentifier = NULL;
-        SDL_Log("Close GameController with device index: %u",Config.uDeviceIndex);
+        // SDL_Log("Close GameController with device index: %u",Config.uDeviceIndex);
     }
     Joystick.uLastDetectTime = SDL_GetTicks();
     GameController.uLastDetectTime = SDL_GetTicks();
@@ -426,6 +426,7 @@ void ShowGameControllerButtons(void) {
             GameController.Value[Config.uDeviceIndex].bBack = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_BACK) == 1);
             GameController.Value[Config.uDeviceIndex].bLeftStick = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_LEFTSTICK) == 1);
             GameController.Value[Config.uDeviceIndex].bRightStick = (SDL_GameControllerGetButton(pHandle,SDL_CONTROLLER_BUTTON_RIGHTSTICK) == 1);
+            /*
             SDL_Log("X:%d Y:%d A:%d B:%d L:%d R:%d U:%d D:%d LSH:%d RSH:%d BU:%d G:%d B:%d LS:%d RS:%d",
                 GameController.Value[Config.uDeviceIndex].bButtonX,
                 GameController.Value[Config.uDeviceIndex].bButtonY,
@@ -443,6 +444,7 @@ void ShowGameControllerButtons(void) {
                 GameController.Value[Config.uDeviceIndex].bLeftStick,
                 GameController.Value[Config.uDeviceIndex].bRightStick
                 );
+            */
         } else {
             SDL_Log("%s: invalid handle",__FUNCTION__);
         }

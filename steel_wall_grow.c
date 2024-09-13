@@ -4,6 +4,9 @@
 
 extern PLAYFIELD Playfield;
 
+
+// Hinweis: Wachsende Mauern und Stahl müssen nicht die Levelgrenzen prüfen, da sie (noch) nicht wie Lichtschranken als Rand-Element eingesetzt werden.
+
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowLeft
 ------------------------------------------------------------------------------

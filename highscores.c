@@ -155,7 +155,7 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) 
             }
         }
     }
-    SDL_Log("%s: Code: %d",__FUNCTION__,nErrorCode);
+    // SDL_Log("%s: Code: %d",__FUNCTION__,nErrorCode);
     return nErrorCode;
 }
 
@@ -206,7 +206,7 @@ int CleanUpHighScoreDir(void) {
                     strcpy(szFilename,EMERALD_HIGHSCORES_DIRECTORYNAME);
                     strcat(szFilename,"/");                                     // Funktioniert auch unter Windows
                     strcat(szFilename,entry->d_name);
-                    SDL_Log("%s: deleting %s ...",__FUNCTION__,entry->d_name);
+                    // SDL_Log("%s: deleting %s ...",__FUNCTION__,entry->d_name);
                     nErrorCode = unlink(szFilename);
                 }
             }

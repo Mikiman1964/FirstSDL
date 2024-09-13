@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1718561205 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\alien.c
+1725798985 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\alien.c
 	<stdio.h>
 	<stdlib.h>
 	"EmeraldMine.h"
@@ -7,7 +7,7 @@
 	"mystd.h"
 	"sound.h"
 
-1723816684 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emeraldmine.h
+1726142000 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emeraldmine.h
 	<SDL2/SDL.h>
 	<stdbool.h>
 
@@ -410,7 +410,7 @@
 1720273049 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\sound.h
 	<SDL2/SDL.h>
 
-1719509886 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\beetle.c
+1725799083 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\beetle.c
 	"EmeraldMine.h"
 	"beetle.h"
 	"drop.h"
@@ -419,7 +419,7 @@
 
 1665051516 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\beetle.h
 
-1718460639 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\bomb.c
+1725801088 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\bomb.c
 	"EmeraldMine.h"
 	"bomb.h"
 	"explosion.h"
@@ -427,7 +427,7 @@
 
 1691506859 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\bomb.h
 
-1720270772 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\crystal.c
+1725799220 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\crystal.c
 	"EmeraldMine.h"
 	"explosion.h"
 	"crystal.h"
@@ -441,7 +441,7 @@
 
 1692707413 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\man.h
 
-1720270793 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emerald.c
+1725799673 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emerald.c
 	"EmeraldMine.h"
 	"emerald.h"
 	"explosion.h"
@@ -467,7 +467,7 @@
 1720278613 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mysdl.h
 	<SDL2/SDL.h>
 
-1723819171 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emeraldmine.c
+1726160536 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emeraldmine.c
 	"gfx/textures.h"
 	<SDL2/SDL.h>
 	<stdio.h>
@@ -553,7 +553,7 @@
 
 1690734626 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\yam.h
 
-1723818782 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\explosion.c
+1725791525 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\explosion.c
 	"EmeraldMine.h"
 	"alien.h"
 	"beetle.h"
@@ -611,11 +611,11 @@
 1683826141 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\copper.h
 	<stdbool.h>
 
-1692700624 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\lightbarrier.c
+1726144811 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\lightbarrier.c
 	"EmeraldMine.h"
 	"lightbarrier.h"
 
-1723818303 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\loadlevel.c
+1726144126 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\loadlevel.c
 	<SDL2/SDL.h>
 	<errno.h>
 	<stdio.h>
@@ -634,12 +634,12 @@
 	"mystd.h"
 	"teleporter.h"
 
-1692647659 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\magicwall.c
+1725800715 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\magicwall.c
 	"EmeraldMine.h"
 	"magicwall.h"
 	"sound.h"
 
-1723570236 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\man.c
+1725800926 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\man.c
 	"config.h"
 	"EmeraldMine.h"
 	"emerald.h"
@@ -654,7 +654,7 @@
 	"stone.h"
 	"teleporter.h"
 
-1723818053 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\editor.c
+1726160536 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\editor.c
 	<SDL2/SDL.h>
 	<ctype.h>
 	<stdio.h>
@@ -677,7 +677,7 @@
 	"mySDL.h"
 	"scroller.h"
 
-1723811516 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\editor.h
+1726144126 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\editor.h
 	<stdbool.h>
 	"EmeraldMine.h"
 	"mySDL.h"
@@ -692,13 +692,13 @@
 	<SDL2/SDL.h>
 	"KeyboardMouse.h"
 
-1718465599 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\megabomb.c
+1725800942 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\megabomb.c
 	"EmeraldMine.h"
 	"explosion.h"
 	"megabomb.h"
 	"sound.h"
 
-1720271983 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mine.c
+1725801014 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mine.c
 	"EmeraldMine.h"
 	"drop.h"
 	"explosion.h"
@@ -715,13 +715,13 @@
 1712235645 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\modplay.h
 	<stdint.h>
 
-1718466287 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mole.c
+1725801037 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mole.c
 	"EmeraldMine.h"
 	"mole.h"
 	"mystd.h"
 	"sound.h"
 
-1723578230 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\main.c
+1725802242 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\main.c
 	"gfx/textures.h"
 	<SDL2/SDL.h>
 	"sdlmixer_SDL_mixer.h"
@@ -744,7 +744,7 @@
 	"levelconverter.h"
 	"scroller.h"
 
-1687600100 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mystd.c
+1725802492 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mystd.c
 	<errno.h>
 	<dirent.h>
 	<stdint.h>
@@ -754,7 +754,7 @@
 	<time.h>
 	"mystd.h"
 
-1720270890 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\nut.c
+1725801182 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\nut.c
 	"EmeraldMine.h"
 	"emerald.h"
 	"explosion.h"
@@ -775,7 +775,7 @@
 	"panel.h"
 	"sound.h"
 
-1720271088 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\perl.c
+1725801307 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\perl.c
 	"EmeraldMine.h"
 	"explosion.h"
 	"magicwall.h"
@@ -788,7 +788,7 @@
 	"replicator.h"
 	"sound.h"
 
-1720271248 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\ruby.c
+1725801532 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\ruby.c
 	"EmeraldMine.h"
 	"explosion.h"
 	"magicwall.h"
@@ -801,7 +801,7 @@
 	"mystd.h"
 	"sand.h"
 
-1720278736 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mysdl.c
+1725802396 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\mysdl.c
 	"gfx/textures.h"
 	<unistd.h>
 	<SDL2/SDL.h>
@@ -826,14 +826,14 @@
 	"saphir.h"
 	"sound.h"
 
-1720084812 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\sound.c
+1725801677 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\sound.c
 	"config.h"
 	"sound.h"
 	"EmeraldMine.h"
 	"mySDL.h"
 	"sdlmixer_SDL_mixer.h"
 
-1723468329 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\stone.c
+1725801861 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\stone.c
 	"EmeraldMine.h"
 	"explosion.h"
 	"magicwall.h"
@@ -842,7 +842,7 @@
 	"sound.h"
 	"stone.h"
 
-1718544928 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\yam.c
+1725801937 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\yam.c
 	"EmeraldMine.h"
 	"mystd.h"
 	"yam.h"
@@ -995,7 +995,7 @@
 1674229896 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\gettextureindexbyelement.h
 	<stdint.h>
 
-1723816618 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\gettextureindexbyelement.c
+1726125414 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\gettextureindexbyelement.c
 	"gfx/textures.h"
 	<stdint.h>
 	"GetTextureIndexByElement.h"
@@ -1004,7 +1004,7 @@
 1723560849 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\renderlevel.h
 	<SDL2/SDL.h>
 
-1723816613 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\renderlevel.c
+1726144126 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\renderlevel.c
 	"gfx/textures.h"
 	"config.h"
 	"EmeraldMine.h"
@@ -1019,13 +1019,13 @@
 
 1674849376 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\filllevelarea.h
 
-1687702557 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\filllevelarea.c
+1725800029 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\filllevelarea.c
 	<stdio.h>
 	"editor.h"
 	"EmeraldMine.h"
 	"FillLevelArea.h"
 
-1720105237 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\smileys.c
+1725802599 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\smileys.c
 	"gfx/textures.h"
 	"config.h"
 	"loadlevel.h"
@@ -1037,7 +1037,7 @@
 	<SDL2/SDL.h>
 	<stdbool.h>
 
-1723556008 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\levelconverter.c
+1726144126 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\levelconverter.c
 	<SDL2/SDL.h>
 	<errno.h>
 	<dirent.h>
@@ -1077,7 +1077,7 @@
 	"loadlevel.h"
 	"mystd.h"
 
-1720293890 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emeraldminemainmenu.c
+1725799911 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\emeraldminemainmenu.c
 	"gfx/textures.h"
 	<ctype.h>
 	<math.h>
@@ -1103,7 +1103,7 @@
 	"loadlevel.h"
 	"mySDL.h"
 
-1691574919 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\highscores.c
+1725800082 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\highscores.c
 	<stdio.h>
 	<unistd.h>
 	<sys/types.h>
@@ -1121,7 +1121,7 @@
 	"mySDL.h"
 	"mystd.h"
 
-1720278756 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\levelgroupoperation.c
+1725986936 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\levelgroupoperation.c
 	"gfx/textures.h"
 	"buttons_checkboxes.h"
 	"editor.h"
@@ -1154,7 +1154,7 @@
 	<utime.h>
 	<utime.h>
 
-1683463281 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\gamecontroller.c
+1725802150 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\gamecontroller.c
 	<SDL2/SDL.h>
 	"config.h"
 	"gamecontroller.h"
@@ -1171,7 +1171,7 @@
 	<stdint.h>
 	"loadlevel.h"
 
-1694089608 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\config.c
+1725799159 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\config.c
 	"config.h"
 	"loadlevel.h"
 	"mySDL.h"
@@ -1714,7 +1714,7 @@
 	"EmeraldMine.h"
 	"steel_wall_grow.h"
 
-1692701998 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\steel_wall_grow.c
+1726150720 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\steel_wall_grow.c
 	"EmeraldMine.h"
 	"sound.h"
 	"steel_wall_grow.h"
@@ -2114,7 +2114,7 @@
 
 1691422517 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\teleporter.h
 
-1692702424 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\teleporter.c
+1726144126 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\teleporter.c
 	<stdio.h>
 	"EmeraldMine.h"
 	"mystd.h"
@@ -2917,7 +2917,7 @@
 
 1718128088 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\slime.h
 
-1723456609 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\slime.c
+1725801641 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\slime.c
 	"EmeraldMine.h"
 	"explosion.h"
 	"mystd.h"
@@ -2928,7 +2928,7 @@
 	<stdint.h>
 	<stdbool.h>
 
-1723311709 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\drop.c
+1725799304 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\drop.c
 	"drop.h"
 	"EmeraldMine.h"
 	"explosion.h"
@@ -2944,7 +2944,7 @@
 
 1720273690 c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\earth.h
 
-1720274687 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\sapphire.c
+1725801591 source:c:\users\mike\documents\projekte\codeblocks_projekte\firstsdl2\sapphire.c
 	"EmeraldMine.h"
 	"explosion.h"
 	"magicwall.h"

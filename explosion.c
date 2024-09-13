@@ -315,7 +315,100 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                             Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_SLIME):
-                            // Schleim wird nicht behandelt, da dieser bereits 16 Pixel in einer Richtung unterwegs war. Rücksetzer ist störend sichtbar
+                            // Schleim muss extra behandelt werden, da dieser, je nach Phase, bereits 16 Pixel animiert wurde. Rücksetzer ist störend sichtbar.
+                            // Der Schleim wird nur dann zurück gesetzt, wenn die ersten 16 Pixel noch nicht animiert wurden, d.h. eines der folgenden Status hat:
+                            // EMERALD_ANIM_SLIME_GO_LEFT_1,  Schleim, bewegt sich nach links, Phase 1
+                            // EMERALD_ANIM_SLIME_GO_UP_1,    Schleim, bewegt sich nach open, Phase 1
+                            // EMERALD_ANIM_SLIME_GO_RIGHT_1, Schleim, bewegt sich nach rechts, Phase 1
+                            // EMERALD_ANIM_SLIME_GO_DOWN_1,  Schleim, bewegt sich nach unten, Phase 1
+                            pFunc = &ControlSlime;
+                            switch (Playfield.pLastStatusAnimation[nCoordinate]) {
+                                case (EMERALD_ANIM_RIGHT):
+                                    if (Playfield.pStatusAnimation[nCoordinate - 1] == EMERALD_ANIM_SLIME_GO_RIGHT_1) {
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        if (I < nCoordinate) {
+                                            Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                            Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                            Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                            Playfield.pStatusAnimation[nCoordinate - 1] = EMERALD_ANIM_RIGHT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_SLIME_CLEAN;
+                                        } else {
+                                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
+                                        }
+                                    } else  {
+                                        // invalides Feld löschen
+                                        Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                        Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                        Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        Playfield.pStatusAnimation[nCoordinate - 1] |= EMERALD_ANIM_SLIME_CLEAN;
+                                    }
+                                    break;
+                                case (EMERALD_ANIM_LEFT):
+                                    if (Playfield.pStatusAnimation[nCoordinate + 1] == EMERALD_ANIM_SLIME_GO_LEFT_1) {
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        if (I < nCoordinate) {
+                                            Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                            Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                            Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                            Playfield.pStatusAnimation[nCoordinate + 1] = EMERALD_ANIM_LEFT | EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_SLIME_CLEAN;
+                                        } else {
+                                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
+                                        }
+                                    } else {
+                                        // invalides Feld löschen
+                                        Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                        Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                        Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        Playfield.pStatusAnimation[nCoordinate + 1] |= EMERALD_ANIM_SLIME_CLEAN;
+                                    }
+                                    break;
+                                case (EMERALD_ANIM_UP):
+                                    if (Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_SLIME_GO_UP_1) {
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        if (I < nCoordinate) {
+                                            Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                            Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                            Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                            Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_UP | EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_SLIME_CLEAN;
+                                        } else {
+                                            SDL_Log("%s: slime earlier: up???",__FUNCTION__);
+                                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
+                                        }
+                                    } else {
+                                        // invalides Feld löschen
+                                        Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                        Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                        Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] |= EMERALD_ANIM_SLIME_CLEAN;
+                                    }
+                                    break;
+                                case (EMERALD_ANIM_DOWN):
+                                    if (Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] == EMERALD_ANIM_SLIME_GO_DOWN_1) {
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        if (I < nCoordinate) {
+                                            SDL_Log("%s: slime later: down???",__FUNCTION__);
+                                            Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                            Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                            Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                            Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN | EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_SLIME_CLEAN;
+                                        } else {
+                                            Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
+                                        }
+                                    } else  {
+                                        // invalides Feld löschen
+                                        Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
+                                        Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
+                                        Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
+                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] |= EMERALD_ANIM_SLIME_CLEAN;
+                                    }
+                                    break;
+                                default:
+                                    SDL_Log("%s: warning, slime has invalid animstatus: %04x",__FUNCTION__,Playfield.pLastStatusAnimation[nCoordinate]);
+                                    break;
+                            }
                             break;
                         case (EMERALD_GREEN_DROP):
                         case (EMERALD_YELLOW_DROP):
@@ -371,6 +464,15 @@ void Pass2InvalidElements(uint32_t uLastStatusAnimation, int nCoordinate, void *
     }
     if (nLastCoordinate != -1) {
         if (Playfield.pLevel[nLastCoordinate] == Playfield.pInvalidElement[nCoordinate]) {
+            // Bombe und Megabombe dürfen beim Fallen nicht neu gesteuert werden, da diese sonst "Pausieren".
+            // Daher an dieser Stelle in entsprechende Explosionen wandeln.
+            if ((Playfield.pLevel[nLastCoordinate] == EMERALD_MEGABOMB) && (uLastStatusAnimation == EMERALD_ANIM_DOWN)) {
+                Playfield.pLevel[nLastCoordinate] = EMERALD_CENTRAL_EXPLOSION_MEGA;
+                pControlFunction = NULL;
+            } else if ((Playfield.pLevel[nLastCoordinate] == EMERALD_BOMB) && (uLastStatusAnimation == EMERALD_ANIM_DOWN)) {
+                Playfield.pLevel[nLastCoordinate] = EMERALD_CENTRAL_EXPLOSION;
+                pControlFunction = NULL;
+            }
             Playfield.pStatusAnimation[nLastCoordinate] = EMERALD_ANIM_STAND;
             Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
             Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
@@ -378,7 +480,7 @@ void Pass2InvalidElements(uint32_t uLastStatusAnimation, int nCoordinate, void *
                 pFunc = pControlFunction;
                 (*pFunc)(nLastCoordinate);
             }
-            Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen.
+            Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen, muss ggf. >NACH< ControlFunction() aufgerufen werden!
         } else {
             SDL_Log("%s[LASTANIMSTATUS:0x%04X]: warning: Element 0x%04X not found. instead element: 0x%04X",
                     __FUNCTION__,uLastStatusAnimation,Playfield.pInvalidElement[nCoordinate],Playfield.pLevel[nLastCoordinate]);
