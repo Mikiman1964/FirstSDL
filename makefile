@@ -14,6 +14,7 @@ $(EXEC): $(OBJS) $(HDRS)
 
 
 tmp/%.o: %.c
+	@mkdir -p tmp
 	@$(CC) $(FLAGS) -c $< -o $@ && echo "tmp/%.o: %.c [OK]  $@"
 
 
