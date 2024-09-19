@@ -2,7 +2,7 @@ CC := gcc
 FLAGS := `sdl2-config --libs --cflags` --std=gnu18 -lm -Wall
 HDRS := $(wildcard *.h)
 SRCS := $(wildcard *.c)
-OBJS := $(SRCS:%.c=tmp/%.o) $(wildcard gfx/*.o) $(wildcard sfx/*.o)
+OBJS := $(SRCS:%.c=tmp/%.o) $(wildcard Gfx/*.o) $(wildcard Sfx/*.o)
 EXEC := bin/Release/FirstSDL2
 
 .PHONY: all
@@ -14,7 +14,6 @@ $(EXEC): $(OBJS) $(HDRS)
 
 
 tmp/%.o: %.c
-	@mkdir -p tmp
 	@$(CC) $(FLAGS) -c $< -o $@ && echo "tmp/%.o: %.c [OK]  $@"
 
 

@@ -1521,7 +1521,6 @@ int SetLevelBorder(uint16_t *pLevel, bool bClear, bool AlwaysSteel) {
     uint32_t I;
     uint32_t X,Y;
 
-
     if (pLevel == NULL) {
         SDL_Log("%s: null pointer found",__FUNCTION__);
         return -1;

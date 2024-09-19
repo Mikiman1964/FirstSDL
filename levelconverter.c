@@ -1238,13 +1238,16 @@ int LevelConverterFromBitap(char *pszFilename) {
         }
     }
     if (nErrorCode == 0) {
+        nErrorCode = AdjustLevelborder();
+    }
+    if (nErrorCode == 0) {
         GetActualTimestamp(szTimestamp);    // Format: YYYYMMDD_HHMMSS
         strcpy(Ed.szLevelTitle,"IMPORT DC3 ");
         strcat(Ed.szLevelTitle,szTimestamp);
         GetLevelAuthorFromFile(Ed.szLevelAuthor);
+        GetLevelTitleFromFilename(pszFilename,Ed.szLevelTitle);
         Ed.uTimeToPlay = 100;
         Ed.uEmeraldsToCollect = 50;
-        Ed.uTimeScoreFactor = 40;
         for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
             Ed.uTreasureChestElement[I] = EMERALD_SPACE;
         }
@@ -1253,6 +1256,156 @@ int LevelConverterFromBitap(char *pszFilename) {
     }
     fclose(Readfile);
     return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           AdjustLevelborder
+------------------------------------------------------------------------------
+Beschreibung: Vergrößert ggf. anhand der Levelrand-Prüfung die Leveldimension.
+              Die hinzugefügten Spalten und Zeilen werden mit EMERALD_STEEL_INVISIBLE belegt
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Seiteneffekte: Ed.x
+------------------------------------------------------------------------------*/
+int AdjustLevelborder(void) {
+    uint16_t *pNewLevel = NULL;
+    int nErrorCode = 0;
+    uint8_t uLevelborderInfo;
+    uint32_t uNew_X_Dimension;
+    uint32_t uNew_Y_Dimension;
+    uint32_t uNewTopLeft_X = 0;         // Neue obere linke Ecke des Levels, X
+    uint32_t uNewTopLeft_Y = 0;         // Neue obere linke Ecke des Levels, Y
+    uint32_t uNewTopLeft_XY = 0;        // Lineare Koordinate im neuen Level
+    uint32_t X,Y,I;
+
+    if ((Ed.pLevel != NULL) && (Ed.uLevel_X_Dimension > 0) && (Ed.uLevel_Y_Dimension > 0)) {
+        uLevelborderInfo = GetLevelborderInfo();
+        // Muss mindestens eine Seite erweitert werden?
+        if (uLevelborderInfo != EMERALD_BORDER_NOSTEEL_NONE) {
+            uNew_X_Dimension = Ed.uLevel_X_Dimension;
+            uNew_Y_Dimension = Ed.uLevel_Y_Dimension;
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_LEFT) {
+                uNew_X_Dimension++;
+                uNewTopLeft_X = 1;
+            }
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_RIGHT) {
+                uNew_X_Dimension++;
+            }
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_TOP) {
+                uNew_Y_Dimension++;
+                uNewTopLeft_Y = 1;
+            }
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_BOTTOM) {
+                uNew_Y_Dimension++;
+            }
+            uNewTopLeft_XY = uNewTopLeft_X + uNewTopLeft_Y * uNew_X_Dimension;
+            // SDL_Log("%s: level dimension must be changed from X(%u) x Y(%u) to X(%u) x Y(%u)",__FUNCTION__,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,uNew_X_Dimension,uNew_Y_Dimension);
+            pNewLevel = malloc(uNew_X_Dimension * uNew_Y_Dimension * sizeof(uint16_t));
+            if (pNewLevel == NULL) {
+                SDL_Log("%s: can not allocate memory for level (%u x %u)",__FUNCTION__,uNew_X_Dimension,uNew_Y_Dimension);
+                return -1;
+            }
+            // Unsichtbaren Stahlrand erzeugen
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_LEFT) {   // Linke Spalte
+                for (Y = 0; (Y < uNew_Y_Dimension); Y++) {
+                    pNewLevel[Y * uNew_X_Dimension] = EMERALD_STEEL_INVISIBLE;
+                }
+            }
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_RIGHT) {  // Rechte Spalte
+                for (Y = 1; (Y <= uNew_Y_Dimension); Y++) {
+                    pNewLevel[Y * uNew_X_Dimension - 1] = EMERALD_STEEL_INVISIBLE;
+                }
+            }
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_TOP) {    // Obere Zeile
+                for (X = 0; X < uNew_X_Dimension; X++) {
+                    pNewLevel[X] = EMERALD_STEEL_INVISIBLE;
+                }
+            }
+            if (uLevelborderInfo & EMERALD_BORDER_NOSTEEL_BOTTOM) { // Untere Zeile
+                for (I = uNew_X_Dimension * (uNew_Y_Dimension - 1); (I < uNew_X_Dimension * uNew_Y_Dimension); I++) {
+                    pNewLevel[I] = EMERALD_STEEL_INVISIBLE;
+                }
+            }
+            // Level-Inhalt in neuen Bereich kopieren
+            for (Y = 0; Y < Ed.uLevel_Y_Dimension; Y++) {
+                for (X = 0; X < Ed.uLevel_X_Dimension; X++) {
+                    // Schreibposition berechnen
+                    I = uNew_X_Dimension * Y + X + uNewTopLeft_XY;
+                    pNewLevel[I] = Ed.pLevel[Ed.uLevel_X_Dimension * Y + X];
+                }
+            }
+            // Alten Levelspeicher freigeben
+            SAFE_FREE(Ed.pLevel);
+            // und neuen Speicher zuweisen
+            Ed.pLevel = pNewLevel;
+            Ed.uLevel_X_Dimension = uNew_X_Dimension;
+            Ed.uLevel_Y_Dimension = uNew_Y_Dimension;
+            Ed.uLevel_XY_Dimension = uNew_X_Dimension * uNew_Y_Dimension;
+            Ed.uTmpLevel_X_Dimension = uNew_X_Dimension;
+            Ed.uTmpLevel_Y_Dimension = uNew_Y_Dimension;
+        }
+    } else {
+        SDL_Log("%s: bad pointer or bad dimension: X(%u)  Y(%u)  level pointer:%p",__FUNCTION__,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,Ed.pLevel);
+        nErrorCode = -1;
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLevelborderInfo
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob sich Nicht-Stahl-Elemente am Levelrand befinden und gibt eine
+              Information über die Ränder zurück.
+              Die Struktur Ed.x muss bereits initialisiert sein.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  uint_8, Bitmaske, beschreibt, welcher Rand keine Nicht-Stahl-Elemente enthält
+               EMERALD_BORDER_NOSTEEL_LEFT | EMERALD_BORDER_NOSTEEL_RIGHT | EMERALD_BORDER_NOSTEEL_TOP | EMERALD_BORDER_NOSTEEL_BOTTOM
+Seiteneffekte: Ed.x
+------------------------------------------------------------------------------*/
+uint8_t GetLevelborderInfo(void) {
+    uint8_t uBorderinfo;
+    uint32_t I;
+
+    uBorderinfo = EMERALD_BORDER_NOSTEEL_NONE;
+    if ((Ed.pLevel != NULL) && (Ed.uLevel_X_Dimension > 0) && (Ed.uLevel_Y_Dimension > 0)) {
+        // Obere Zeile prüfen
+        for (I = 0; I < Ed.uLevel_X_Dimension; I++) {
+            if (!IsSteel(Ed.pLevel[I])) {
+                uBorderinfo |= EMERALD_BORDER_NOSTEEL_TOP;
+                break;
+            }
+        }
+        // Untere Zeile prüfen
+        for (I = Ed.uLevel_X_Dimension * (Ed.uLevel_Y_Dimension - 1); (I < Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension); I++) {
+            if (!IsSteel(Ed.pLevel[I])) {
+                uBorderinfo |= EMERALD_BORDER_NOSTEEL_BOTTOM;
+                break;
+            }
+        }
+        // Linke Spalte prüfen
+        for (I = 0; (I < Ed.uLevel_Y_Dimension); I++) {
+            if (!IsSteel(Ed.pLevel[I * Ed.uLevel_X_Dimension])) {
+                uBorderinfo |= EMERALD_BORDER_NOSTEEL_LEFT;
+                break;
+            }
+        }
+        // Rechte Spalte prüfen
+        for (I = 1; (I <= Ed.uLevel_Y_Dimension); I++) {
+            if (!IsSteel(Ed.pLevel[I * Ed.uLevel_X_Dimension - 1])) {
+                uBorderinfo |= EMERALD_BORDER_NOSTEEL_RIGHT;
+                break;
+            }
+        }
+    }
+    return uBorderinfo;
 }
 
 
@@ -1300,6 +1453,56 @@ int GetLevelAuthorFromFile(char *pszLevelAuthor) {
         }
     }
     SAFE_FREE(pszData);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetLevelTitleFromFilename
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt anhand des Filenamens den Leveltitel.
+
+
+Parameter
+      Eingang: pszFilename, char *, Zeiger auf Filenamen im Format "importdc3/num name.bmp"
+      Ausgang: pszLevelTitle, char *, Zeiger auf mindestens EMERALD_TITLE_LEN + 1 Bytes Speicher für den Level-Titel
+Rückgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung möglich
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle) {
+    char szFilename[EMERALD_MAX_FILENAME_LEN * 2];  // Mit Directory
+    int nErrorCode = -1;
+    uint32_t I;
+    char *pStart;
+    char *pBmp;
+
+    if ((pszFilename != NULL) && (pszLevelTitle != NULL)) {
+        memset(pszLevelTitle,0,EMERALD_TITLE_LEN + 1);
+        strcpy(szFilename,pszFilename);
+        for (I = 0; I < strlen(szFilename); I++) {
+            szFilename[I] = tolower(szFilename[I]);
+        }
+        pStart = strstr(szFilename,EMERALD_IMPORTDC3_DIRECTORYNAME);
+        if (pStart != NULL) {
+             pStart = pStart + strlen(EMERALD_IMPORTDC3_DIRECTORYNAME) + 1;
+             while ((*pStart != 0) && (isdigit(*pStart))) {
+                pStart++;
+             }
+             while ((*pStart != 0) && (*pStart == ' ')) {
+                pStart++;
+             }
+             pBmp = strstr(pStart,".bmp");
+             if (pBmp != NULL) {
+                *pBmp = 0;  // ".bmp" abschneiden
+             }
+             for (I = 0; I < strlen(pStart) && (I < EMERALD_TITLE_LEN); I++) {
+                pszLevelTitle[I] = toupper(pStart[I]);
+             }
+             // SDL_Log("%s: filename: %s ",__FUNCTION__,pStart);
+        } else {
+             SDL_Log("%s: %s not found",__FUNCTION__,EMERALD_IMPORTDC3_DIRECTORYNAME);
+        }
+    }
     return nErrorCode;
 }
 

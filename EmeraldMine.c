@@ -16,6 +16,8 @@ Für V 1.10
 * Wenn im Leveleditor die Warnung "Leveldimension geändert" erscheint, werden die Buttons "TEXT", "STD" und "TREASURECHEST" deaktiviert.
 * Bei Leveldimension-Änderung wird Spielfigur sinnvoller gesetzt
 * Doppelklick auf Levelnamen ruft den Editor auf
+* Levelimporter setzt automatisch Levelränder
+* Wachsender Stahl kann nun als Levelrand verwendet werden.
 */
 
 #include "gfx/textures.h"
@@ -1475,8 +1477,6 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_6] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_7] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_8] = 0x1FF;                        // Alles rollt von Schatztruhen
-
-
 }
 
 
@@ -1764,127 +1764,141 @@ Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 bool IsSteel(uint16_t uElement) {
 
-    return ((uElement == EMERALD_STEEL) ||
-    (uElement == EMERALD_STEEL_ROUND_PIKE) ||
-    (uElement == EMERALD_STEEL_ROUND) ||
-    (uElement == EMERALD_STEEL_WARNING) ||
-    (uElement == EMERALD_STEEL_BIOHAZARD) ||
-    (uElement == EMERALD_STEEL_DEADEND) ||
-    (uElement == EMERALD_STEEL_STOP) ||
-    (uElement == EMERALD_STEEL_PARKING) ||
-    (uElement == EMERALD_STEEL_FORBIDDEN) ||
-    (uElement == EMERALD_STEEL_EXIT) ||
-    (uElement == EMERALD_STEEL_RADIOACTIVE) ||
-    (uElement == EMERALD_STEEL_EXPLOSION) ||
-    (uElement == EMERALD_STEEL_ACID) ||
-    (uElement == EMERALD_STEEL_NOT_ROUND) ||
-    (uElement == EMERALD_STEEL_STRIPE_LEFT_TOP) ||
-    (uElement == EMERALD_STEEL_STRIPE_TOP) ||
-    (uElement == EMERALD_STEEL_STRIPE_RIGHT_TOP) ||
-    (uElement == EMERALD_STEEL_STRIPE_LEFT) ||
-    (uElement == EMERALD_STEEL_STRIPE_RIGHT) ||
-    (uElement == EMERALD_STEEL_STRIPE_LEFT_BOTTOM) ||
-    (uElement == EMERALD_STEEL_STRIPE_BOTTOM) ||
-    (uElement == EMERALD_STEEL_STRIPE_RIGHT_BOTTOM) ||
-    (uElement == EMERALD_STEEL_HEART) ||
-    (uElement == EMERALD_STEEL_PLAYERHEAD) ||
-    (uElement == EMERALD_STEEL_PLAYERHEAD_2) ||
-    (uElement == EMERALD_STEEL_NO_ENTRY) ||
-    (uElement == EMERALD_STEEL_GIVE_WAY) ||
-    (uElement == EMERALD_STEEL_YING) ||
-    (uElement == EMERALD_STEEL_WHEELCHAIR) ||
-    (uElement == EMERALD_STEEL_ARROW_DOWN) ||
-    (uElement == EMERALD_STEEL_ARROW_UP) ||
-    (uElement == EMERALD_STEEL_ARROW_LEFT) ||
-    (uElement == EMERALD_STEEL_ARROW_RIGHT) ||
-    (uElement == EMERALD_STEEL_INVISIBLE) ||
-    (uElement == EMERALD_DOOR_END_NOT_READY_STEEL) ||
-    (uElement == EMERALD_DOOR_END_READY_STEEL) ||
-    (uElement == EMERALD_STEEL_TRASHCAN) ||
-    (uElement == EMERALD_STEEL_JOYSTICK) ||
-    (uElement == EMERALD_STEEL_EDIT_LEVEL) ||
-    (uElement == EMERALD_STEEL_MOVE_LEVEL) ||
-    (uElement == EMERALD_STEEL_COPY_LEVEL) ||
-    (uElement == EMERALD_STEEL_CLIPBOARD_LEVEL) ||
-    (uElement == EMERALD_STEEL_DC3_IMPORT) ||
-    (uElement == EMERALD_STEEL_ADD_LEVELGROUP) ||
-    (uElement == EMERALD_REPLICATOR_RED_TOP_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_RED_TOP_MID) ||
-    (uElement == EMERALD_REPLICATOR_RED_TOP_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_RED_BOTTOM_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_RED_BOTTOM_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_RED_SWITCH) ||
-    (uElement == EMERALD_REPLICATOR_YELLOW_TOP_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_YELLOW_TOP_MID) ||
-    (uElement == EMERALD_REPLICATOR_YELLOW_TOP_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_YELLOW_SWITCH) ||
-    (uElement == EMERALD_MAGIC_WALL_SWITCH) ||
-    (uElement == EMERALD_MAGIC_WALL_STEEL) ||
-    (uElement == EMERALD_LIGHT_SWITCH) ||
-    (uElement == EMERALD_REPLICATOR_GREEN_TOP_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_GREEN_TOP_MID) ||
-    (uElement == EMERALD_REPLICATOR_GREEN_TOP_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_GREEN_SWITCH) ||
-    (uElement == EMERALD_REPLICATOR_BLUE_TOP_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_BLUE_TOP_MID) ||
-    (uElement == EMERALD_REPLICATOR_BLUE_TOP_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT) ||
-    (uElement == EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT) ||
-    (uElement == EMERALD_REPLICATOR_BLUE_SWITCH) ||
-    (uElement == EMERALD_LIGHTBARRIER_RED_UP) ||
-    (uElement == EMERALD_LIGHTBARRIER_RED_DOWN) ||
-    (uElement == EMERALD_LIGHTBARRIER_RED_LEFT) ||
-    (uElement == EMERALD_LIGHTBARRIER_RED_RIGHT) ||
-    (uElement == EMERALD_LIGHTBARRIER_GREEN_UP) ||
-    (uElement == EMERALD_LIGHTBARRIER_GREEN_DOWN) ||
-    (uElement == EMERALD_LIGHTBARRIER_GREEN_LEFT) ||
-    (uElement == EMERALD_LIGHTBARRIER_GREEN_RIGHT) ||
-    (uElement == EMERALD_LIGHTBARRIER_BLUE_UP) ||
-    (uElement == EMERALD_LIGHTBARRIER_BLUE_DOWN) ||
-    (uElement == EMERALD_LIGHTBARRIER_BLUE_LEFT) ||
-    (uElement == EMERALD_LIGHTBARRIER_BLUE_RIGHT) ||
-    (uElement == EMERALD_LIGHTBARRIER_YELLOW_UP) ||
-    (uElement == EMERALD_LIGHTBARRIER_YELLOW_DOWN) ||
-    (uElement == EMERALD_LIGHTBARRIER_YELLOW_LEFT) ||
-    (uElement == EMERALD_LIGHTBARRIER_YELLOW_RIGHT) ||
-    (uElement == EMERALD_LIGHTBARRIER_RED_SWITCH) ||
-    (uElement == EMERALD_LIGHTBARRIER_GREEN_SWITCH) ||
-    (uElement == EMERALD_LIGHTBARRIER_BLUE_SWITCH) ||
-    (uElement == EMERALD_LIGHTBARRIER_YELLOW_SWITCH) ||
-    (uElement == EMERALD_ACIDPOOL_TOP_LEFT) ||
-    (uElement == EMERALD_ACIDPOOL_TOP_RIGHT) ||
-    (uElement == EMERALD_ACIDPOOL_BOTTOM_LEFT) ||
-    (uElement == EMERALD_ACIDPOOL_BOTTOM_MID) ||
-    (uElement == EMERALD_ACIDPOOL_BOTTOM_RIGHT) ||
-    (uElement == EMERALD_WHEEL_TIMEDOOR) ||
-    (uElement == EMERALD_SWITCH_SWITCHDOOR) ||
-    (uElement == EMERALD_CONVEYORBELT_SWITCH_RED) ||
-    (uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) ||
-    (uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) ||
-    (uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) ||
-    (uElement == EMERALD_SWITCH_REMOTEBOMB_UP) ||
-    (uElement == EMERALD_SWITCH_REMOTEBOMB_DOWN) ||
-    (uElement == EMERALD_SWITCH_REMOTEBOMB_LEFT) ||
-    (uElement == EMERALD_SWITCH_REMOTEBOMB_RIGHT) ||
-    (uElement == EMERALD_SWITCH_REMOTEBOMB_IGNITION) ||
-    (uElement == EMERALD_STEEL_MODERN_LEFT_END) ||
-    (uElement == EMERALD_STEEL_MODERN_LEFT_RIGHT) ||
-    (uElement == EMERALD_STEEL_MODERN_RIGHT_END) ||
-    (uElement == EMERALD_STEEL_MODERN_UP_END) ||
-    (uElement == EMERALD_STEEL_MODERN_UP_DOWN) ||
-    (uElement == EMERALD_STEEL_MODERN_DOWN_END) ||
-    (uElement == EMERALD_STEEL_MODERN_MIDDLE) ||
-    ((uElement >= EMERALD_FONT_GREEN_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_GREEN_STEEL_UE)) ||
-    ((uElement >= EMERALD_FONT_BLUE_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_BLUE_STEEL_UE)) ||
-    (uElement == EMERALD_FONT_BLUE_STEEL_DOUBLE_QUOTE) ||
-    (uElement == EMERALD_FONT_GREEN_STEEL_DOUBLE_QUOTE) ||
-    (uElement == EMERALD_FONT_BLUE_STEEL_SEMICOLON) ||
-    (uElement == EMERALD_FONT_GREEN_STEEL_SEMICOLON)
-    );
+    switch (uElement) {
+        case (EMERALD_STEEL):
+        case (EMERALD_STEEL_ROUND_PIKE):
+        case (EMERALD_STEEL_ROUND):
+        case (EMERALD_STEEL_WARNING):
+        case (EMERALD_STEEL_BIOHAZARD):
+        case (EMERALD_STEEL_DEADEND):
+        case (EMERALD_STEEL_STOP):
+        case (EMERALD_STEEL_PARKING):
+        case (EMERALD_STEEL_FORBIDDEN):
+        case (EMERALD_STEEL_EXIT):
+        case (EMERALD_STEEL_RADIOACTIVE):
+        case (EMERALD_STEEL_EXPLOSION):
+        case (EMERALD_STEEL_ACID):
+        case (EMERALD_STEEL_NOT_ROUND):
+        case (EMERALD_STEEL_STRIPE_LEFT_TOP):
+        case (EMERALD_STEEL_STRIPE_TOP):
+        case (EMERALD_STEEL_STRIPE_RIGHT_TOP):
+        case (EMERALD_STEEL_STRIPE_LEFT):
+        case (EMERALD_STEEL_STRIPE_RIGHT):
+        case (EMERALD_STEEL_STRIPE_LEFT_BOTTOM):
+        case (EMERALD_STEEL_STRIPE_BOTTOM):
+        case (EMERALD_STEEL_STRIPE_RIGHT_BOTTOM):
+        case (EMERALD_STEEL_HEART):
+        case (EMERALD_STEEL_PLAYERHEAD):
+        case (EMERALD_STEEL_PLAYERHEAD_2):
+        case (EMERALD_STEEL_NO_ENTRY):
+        case (EMERALD_STEEL_GIVE_WAY):
+        case (EMERALD_STEEL_YING):
+        case (EMERALD_STEEL_WHEELCHAIR):
+        case (EMERALD_STEEL_ARROW_DOWN):
+        case (EMERALD_STEEL_ARROW_UP):
+        case (EMERALD_STEEL_ARROW_LEFT):
+        case (EMERALD_STEEL_ARROW_RIGHT):
+        case (EMERALD_STEEL_INVISIBLE):
+        case (EMERALD_DOOR_END_NOT_READY_STEEL):
+        case (EMERALD_DOOR_END_READY_STEEL):
+        case (EMERALD_STEEL_TRASHCAN):
+        case (EMERALD_STEEL_JOYSTICK):
+        case (EMERALD_STEEL_EDIT_LEVEL):
+        case (EMERALD_STEEL_MOVE_LEVEL):
+        case (EMERALD_STEEL_COPY_LEVEL):
+        case (EMERALD_STEEL_CLIPBOARD_LEVEL):
+        case (EMERALD_STEEL_DC3_IMPORT):
+        case (EMERALD_STEEL_ADD_LEVELGROUP):
+        case (EMERALD_REPLICATOR_RED_TOP_LEFT):
+        case (EMERALD_REPLICATOR_RED_TOP_MID):
+        case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_RED_SWITCH):
+        case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
+        case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
+        case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_YELLOW_SWITCH):
+        case (EMERALD_MAGIC_WALL_SWITCH):
+        case (EMERALD_MAGIC_WALL_STEEL):
+        case (EMERALD_LIGHT_SWITCH):
+        case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
+        case (EMERALD_REPLICATOR_GREEN_TOP_MID):
+        case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_GREEN_SWITCH):
+        case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
+        case (EMERALD_REPLICATOR_BLUE_TOP_MID):
+        case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
+        case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
+        case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
+        case (EMERALD_REPLICATOR_BLUE_SWITCH):
+        case (EMERALD_LIGHTBARRIER_RED_UP):
+        case (EMERALD_LIGHTBARRIER_RED_DOWN):
+        case (EMERALD_LIGHTBARRIER_RED_LEFT):
+        case (EMERALD_LIGHTBARRIER_RED_RIGHT):
+        case (EMERALD_LIGHTBARRIER_GREEN_UP):
+        case (EMERALD_LIGHTBARRIER_GREEN_DOWN):
+        case (EMERALD_LIGHTBARRIER_GREEN_LEFT):
+        case (EMERALD_LIGHTBARRIER_GREEN_RIGHT):
+        case (EMERALD_LIGHTBARRIER_BLUE_UP):
+        case (EMERALD_LIGHTBARRIER_BLUE_DOWN):
+        case (EMERALD_LIGHTBARRIER_BLUE_LEFT):
+        case (EMERALD_LIGHTBARRIER_BLUE_RIGHT):
+        case (EMERALD_LIGHTBARRIER_YELLOW_UP):
+        case (EMERALD_LIGHTBARRIER_YELLOW_DOWN):
+        case (EMERALD_LIGHTBARRIER_YELLOW_LEFT):
+        case (EMERALD_LIGHTBARRIER_YELLOW_RIGHT):
+        case (EMERALD_LIGHTBARRIER_RED_SWITCH):
+        case (EMERALD_LIGHTBARRIER_GREEN_SWITCH):
+        case (EMERALD_LIGHTBARRIER_BLUE_SWITCH):
+        case (EMERALD_LIGHTBARRIER_YELLOW_SWITCH):
+        case (EMERALD_ACIDPOOL_TOP_LEFT):
+        case (EMERALD_ACIDPOOL_TOP_RIGHT):
+        case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
+        case (EMERALD_ACIDPOOL_BOTTOM_MID):
+        case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
+        case (EMERALD_WHEEL_TIMEDOOR):
+        case (EMERALD_SWITCH_SWITCHDOOR):
+        case (EMERALD_CONVEYORBELT_SWITCH_RED):
+        case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
+        case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
+        case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
+        case (EMERALD_SWITCH_REMOTEBOMB_UP):
+        case (EMERALD_SWITCH_REMOTEBOMB_DOWN):
+        case (EMERALD_SWITCH_REMOTEBOMB_LEFT):
+        case (EMERALD_SWITCH_REMOTEBOMB_RIGHT):
+        case (EMERALD_SWITCH_REMOTEBOMB_IGNITION):
+        case (EMERALD_STEEL_MODERN_LEFT_END):
+        case (EMERALD_STEEL_MODERN_LEFT_RIGHT):
+        case (EMERALD_STEEL_MODERN_RIGHT_END):
+        case (EMERALD_STEEL_MODERN_UP_END):
+        case (EMERALD_STEEL_MODERN_UP_DOWN):
+        case (EMERALD_STEEL_MODERN_DOWN_END):
+        case (EMERALD_STEEL_MODERN_MIDDLE):
+        case (EMERALD_FONT_BLUE_STEEL_DOUBLE_QUOTE):
+        case (EMERALD_FONT_GREEN_STEEL_DOUBLE_QUOTE):
+        case (EMERALD_FONT_BLUE_STEEL_SEMICOLON):
+        case (EMERALD_FONT_GREEN_STEEL_SEMICOLON):
+        case (EMERALD_STEEL_GROW_LEFT):
+        case (EMERALD_STEEL_GROW_RIGHT):
+        case (EMERALD_STEEL_GROW_UP):
+        case (EMERALD_STEEL_GROW_DOWN):
+        case (EMERALD_STEEL_GROW_LEFT_RIGHT):
+        case (EMERALD_STEEL_GROW_UP_DOWN):
+        case (EMERALD_STEEL_GROW_ALL):
+            return true;
+        default:
+            if (((uElement >= EMERALD_FONT_GREEN_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_GREEN_STEEL_UE)) ||
+                ((uElement >= EMERALD_FONT_BLUE_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_BLUE_STEEL_UE))) {
+                return true;
+            } else {
+                return false;
+            }
+    }
 }
 
 
