@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<configuration>
+<screen>
+  <!--primary display is num 0, second display 1-->
+  <display_num>0</display_num>
+  <resolution>
+    <x>1400</x>
+    <y>1050</y>
+  </resolution>
+  <fullscreen>0</fullscreen>
+</screen>
+<start_dynamite_with_space>1</start_dynamite_with_space>
+<last_played_levelgroup_md5_hash>188DDBF705D127D8E1D169C226A7DA46</last_played_levelgroup_md5_hash>
+<last_player_name>MIK</last_player_name>
+<editor_zoom>1</editor_zoom>
+<game_music>1</game_music>
+<show_highscores>1</show_highscores>
+<input_device>
+  <!--device_name can be NONE, JOYSTICK or CONTROLLER-->
+  <device_name>NONE</device_name>
+  <device_index>0</device_index>
+  <controller_settings>
+    <!--button_fire can be X, Y, A, or B-->
+    <button_fire>B</button_fire>
+    <!--button_start_dynamite can be X, Y, A, or B-->
+    <button_start_dynamite>Y</button_start_dynamite>
+    <!--button_exit can be X, Y, A, B or N for NONE-->
+    <button_exit>X</button_exit>
+    <!--directions can be DIGITAL, LEFTAXIS or RIGHTAXIS-->
+    <directions>DIGITAL</directions>
+    <!--axis_left_threshold can range from -32768 to 0-->
+    <axis_left_threshold>-29900</axis_left_threshold>
+    <!--axis_right_threshold can range from 0 to 32767-->
+    <axis_right_threshold>30000</axis_right_threshold>
+    <!--axis_up_threshold can range from -32768 to 0-->
+    <axis_up_threshold>-30000</axis_up_threshold>
+    <!--axis_down_threshold can range from 0 to 32767-->
+    <axis_down_threshold>30000</axis_down_threshold>
+  </controller_settings>
+  <joystick_settings>
+    <!--button_fire can be X, Y, A, or B-->
+    <button_fire>A</button_fire>
+    <!--button_start_dynamite can be X, Y, A, or B-->
+    <button_start_dynamite>A</button_start_dynamite>
+    <!--button_exit can be X, Y, A, B or N for NONE-->
+    <button_exit>N</button_exit>
+  </joystick_settings>
+  <keyboard_settings>
+    <!--keyboard values are SDL scancodes-->
+    <left>80</left>
+    <right>79</right>
+    <up>82</up>
+    <down>81</down>
+    <fire>224</fire>
+  </keyboard_settings>
+</input_device>
+</configuration>
