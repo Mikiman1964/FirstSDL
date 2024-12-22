@@ -30,6 +30,7 @@ typedef struct {
 
 // Prototypen zur Steuerung des Mans und Rads
 void ControlManDies(uint32_t I);
+void ControlManWithDynamiteOn(uint32_t I);
 uint32_t ControlMan(uint32_t I, uint32_t uDirection);
 void UpdateManKey(void);
 uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimation);

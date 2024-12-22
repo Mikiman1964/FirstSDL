@@ -634,11 +634,11 @@ char ge_szElementNames[][64] =
                           "STONE S.IN QS,S, INTERNAL ELEMENT",  // 0X24B
                           "STONE S.OUT QS,S, INTERNAL ELEMENT", // 0X24C
                           "STEEL, PLAYER HEAD 2",               // 0X24D
-                          "TREASURE CHEST 1",                   // 0X24E    // Schatztruhen sind
-                          "TREASURE CHEST 2",                   // 0X24F    // noch nicht
-                          "TREASURE CHEST 3",                   // 0X250    // im
-                          "TREASURE CHEST 4",                   // 0X251    // Leveleditor
-                          "TREASURE CHEST 5",                   // 0X252    // auswählbar
+                          "TREASURE CHEST 1",                   // 0X24E
+                          "TREASURE CHEST 2",                   // 0X24F
+                          "TREASURE CHEST 3",                   // 0X250
+                          "TREASURE CHEST 4",                   // 0X251
+                          "TREASURE CHEST 5",                   // 0X252
                           "TREASURE CHEST 6",                   // 0X253
                           "TREASURE CHEST 7",                   // 0X254
                           "TREASURE CHEST 8",                   // 0X255
@@ -646,7 +646,11 @@ char ge_szElementNames[][64] =
                           "TREASURE CHEST 0, INTERNAL ELEMENT", // 0x257
                           "TREASURE CHEST, OPEN, INT. ELEMENT", // 0X258
                           "DOOR, NO KEY, SECRET",               // 0X259
-                          "SMILEY",                             // 0X25A
+                          "STEEL, STRIPE, CORNER LEFT TOP",     // 0X25A // Diese Stahl-Elemente
+                          "STEEL, STRIPE, CORNER RIGHT TOP",    // 0X25B // sind noch nicht
+                          "STEEL, STRIPE, CORNER LEFT BOTTOM",  // 0X25C // im Leveleditor
+                          "STEEL, STRIPE, CORNER RIGHT BOTTOM", // 0X25D // auswählbar, werden aber beim DC3-Import berücksichtigt
+                          "SMILEY",                             // 0X25E
                           };
 
 
@@ -4325,7 +4329,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
         if (IsButtonPressed(BUTTONLABEL_EDITOR_SAVE) && (!Ed.bFoundError)) {
             XML = GetLevelXmlFromEditor();
             Ed.bEditorRun = false;
-        } else if (IsButtonPressed(BUTTONLABEL_EDITOR_QUIT) && (!Ed.bFoundError)) {
+        } else if ( (IsButtonPressed(BUTTONLABEL_EDITOR_QUIT) || (InputStates.bQuit)) && (!Ed.bFoundError) ) {
             Ed.bEditorRun = false;
         } else if (IsButtonPressed(BUTTONLABEL_EDITOR_YAMS)) {
             Ed.uMenuState = MENUSTATE_YAMS;
@@ -5049,14 +5053,18 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1100,742,true,false) != 0) {
         return -1;
     }
+    ImportLevel.uDc3FileCount = 0;
+    if (CheckImportLevelFiles() != 0) {
+        return -1;
+    }
     PreparePreEditormenu();
     sprintf(szFullDefaultLevelgroupFilename,"%s/%s",EMERALD_LEVELGROUPS_DIRECTORYNAME,EMERALD_DEFAULT_LEVELGROUP_FILENAME);
     bWarnDefaultLevelGroup = (strcmp(SelectedLevelgroup.szFilename,szFullDefaultLevelgroupFilename) == 0);
     do {
         UpdateManKey(); // ruft auch UpdateInputStates(); auf
         //printf("x:%u  y:%u   BeamPos: %d\n",InputStates.nMouseXpos,InputStates.nMouseYpos,nSelectedBeamPosition);
-        // Hervorhebung für ausgewähltes Level
-        if ((nSelectedBeamPosition >= 0) && (nSelectedBeamPosition < MAX_LEVELTITLES_IN_LIST)) {
+        // Hervorhebung für ausgewähltes Level: Balken nicht anzeigen, wenn abgedimmt (PrepareExit) wird.
+        if ((nSelectedBeamPosition >= 0) && (nSelectedBeamPosition < MAX_LEVELTITLES_IN_LIST) && (!bPrepareExit)) {
             if (nMoveState == 0) {
                 DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0x20,0x20,0x60,K_RELATIVE);
             } else {

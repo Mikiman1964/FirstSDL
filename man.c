@@ -118,6 +118,63 @@ void ControlManDies(uint32_t I) {
 
 
 /*----------------------------------------------------------------------------
+Name:           ControlManWithDynamiteOn
+------------------------------------------------------------------------------
+Beschreibung: Steuert das Kombi-Element Man/gezündetes Dynamit.
+Parameter
+      Eingang: I, uint32_t, Index im Level
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void ControlManWithDynamiteOn(uint32_t I) {
+    switch (Playfield.uDynamiteStatusAnim) {
+        case (EMERALD_ANIM_DYNAMITE_START):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P1;    // Von Start auf Phase 1 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            // SDL_Log("%s: Start to P1",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P1):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P2;    // Von Phase 1 auf 2 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            // SDL_Log("%s: to P2",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P2):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P3;    // Von Phase 2 auf 3 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            // SDL_Log("%s: to P3",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P3):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_DYNAMITE_ON_P4;    // Von Phase 3 auf 4 schalten
+            PreparePlaySound(SOUND_DYNAMITE,I);
+            // SDL_Log("%s: to P4",__FUNCTION__);
+            break;
+        case (EMERALD_ANIM_DYNAMITE_ON_P4):
+            Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND;
+            Playfield.uDynamitePos = 0xFFFFFFFF;
+            if ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) == I) {   // Ist Man auf selbst gezündeten Dynamit stehen geblieben?
+                if (Playfield.uShieldCoinTimeLeft == 0) {
+                    if (!Playfield.bManDead) { // Doppeltes Sterben/Schreien verhindern
+                      Playfield.bManDead = true;
+                      Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
+                      PreparePlaySound(SOUND_MAN_CRIES,I);
+                    }
+                } else { // Man bleibt am Leben und sprengt einen Kreis um sich herum.
+                    ControlCircleExplosion(I);
+                }
+            }
+            if (!Playfield.bManDead) {
+                PreparePlaySound(SOUND_EXPLOSION,I);
+            }
+            break;
+        default:
+            SDL_Log("%s: Warning, unhandled status: 0x%x",__FUNCTION__,Playfield.pStatusAnimation[I] & 0xFF000000);
+            break;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           ControlMan
 ------------------------------------------------------------------------------
 Beschreibung: Steuert den Man.
@@ -142,9 +199,11 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     }
     if ((!Playfield.bManProtected) && (IsDangerousEnemyAround(I,&uDangerousPos,&uDangerousElement))) {
         if (Playfield.uShieldCoinTimeLeft == 0) {
-            Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
-            PreparePlaySound(SOUND_MAN_CRIES,I);
-            Playfield.bManDead = true;
+            if (!Playfield.bManDead) {  // Doppeltes Sterben/Schreien verhindern
+                Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
+                Playfield.bManDead = true;
+                PreparePlaySound(SOUND_MAN_CRIES,I);
+            }
             return uRetDirection;
         } else {    // Man hat noch Schutzschild aktiv
             if (uDangerousElement == EMERALD_MINE_LEFT) {   // Mine oder Standmine
@@ -2203,8 +2262,8 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
             Playfield.pInvalidElement[uActPos] = EMERALD_MAN;
             PreparePlaySound(SOUND_POOL_BLUB,uActPos);
-            PreparePlaySound(SOUND_MAN_CRIES,uActPos);
             Playfield.bManDead = true;
+            PreparePlaySound(SOUND_MAN_CRIES,uActPos);
             break;
         case (EMERALD_DOOR_END_READY):
         case (EMERALD_DOOR_END_READY_STEEL):

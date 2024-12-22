@@ -2747,6 +2747,10 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_STEEL_STRIPE_LEFT_BOTTOM):
                 case (EMERALD_STEEL_STRIPE_BOTTOM):
                 case (EMERALD_STEEL_STRIPE_RIGHT_BOTTOM):
+                case (EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP):
+                case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP):
+                case (EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM):
+                case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM):
                 case (EMERALD_STEEL_HEART):
                 case (EMERALD_STEEL_PLAYERHEAD):
                 case (EMERALD_STEEL_PLAYERHEAD_2):

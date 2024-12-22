@@ -1179,6 +1179,18 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
         case (EMERALD_STEEL_STRIPE_RIGHT_BOTTOM):
             uTextureIndex = TEX_STEEL_STRIPE_RIGHT_BOTTOM;
             break;
+        case (EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP):
+            uTextureIndex = TEX_STEEL_STRIPE_CORNER_LEFT_TOP;
+            break;
+        case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP):
+            uTextureIndex = TEX_STEEL_STRIPE_CORNER_RIGHT_TOP;
+            break;
+        case (EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM):
+            uTextureIndex = TEX_STEEL_STRIPE_CORNER_LEFT_BOTTOM;
+            break;
+        case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM):
+            uTextureIndex = TEX_STEEL_STRIPE_CORNER_RIGHT_BOTTOM;
+            break;
         case (EMERALD_GREEN_DROP):
             uTextureIndex = TEX_DROP_GREEN;
             break;

@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>TRAINING</groupname>
-<create_timestamp>20240821_203700</create_timestamp>
+<create_timestamp>20241123_212845</create_timestamp>
 <levelcount>65</levelcount>
 <level000>
   <title>FIRST CONTACT</title>
   <author>MIK</author>
-  <version>01.09</version>
+  <version>01.11</version>
   <values>
     <emeralds_to_collect>9985</emeralds_to_collect>
     <score_time_factor>10</score_time_factor>
@@ -36,6 +36,7 @@
     <stoning_slime>0</stoning_slime>
     <timecoin>10</timecoin>
     <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>0</to_play>
@@ -101,6 +102,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1>ICAgICAgICAgICAgICA+IFdFTENPTUUgPAoKSU4gVEhFRVNFIFRSQUlOSU5HIExFVkVMUyBZT1UgV0lMTApMRUFSTiBIT1cgVE8gU1VSVklWRSBNT1JFIENPTVBMSUNBVEVEClNJVFVBVElPTlMuCgpGSVJTVCBUUlkgVE8gUFVTSCBUSEUgU1RPTkUgT05UTyBUSEUKWUFNLgoKVEhFUkUgSVMgQSBTV0lUQ0ggRk9SIEEgVElNRSBET09SIElOClRISVMgUk9PTSAtIFdBUk5JTkc6IFRIRSBET09SIFdJTEwgQkUKT1BFTiBPTkxZIEZPUiBBIENFUlRBSU4gVElNRSAhCgpDT0xMRUNUIEFMTCBESUFNT05EUywgRE9OJ1QgTUlTUyBPTkUgIQoKICAgUFJFU1MgRklSRSBPUiBTUEFDRSBUTyBDT05GSVJNICE=</m1>
     <m2>ICAgICAgWU9VIEFSRSBJTiBBIERBUksgUk9PTSAKICAgICAgV0lUSCBJTlZJU0lCTEUgV0FMTFMuCgogICAgIFVTRSBUSEUgTElHSFRTV0lUQ0hFUyBUTwogICAgICBPVkVSQ09NRSBUSEUgTEFCWVJJTlRILgoKUFJFU1MgRklSRSBPUiBTUEFDRSBUTyBDT05GSVJNICE=</m2>
@@ -9051,5 +9070,5 @@
   <leveldata_md5_hash>DA8A8D8EAC6E5DDD2F1C562C1EAB0C73</leveldata_md5_hash>
 </level064>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>1F635CF76662478D582F86BA513BE0D8</levelgroup_md5_hash>
+<levelgroup_md5_hash>D4CF7B9454E32954FCCBD9FE51B6D1E9</levelgroup_md5_hash>
 </levelgroup>

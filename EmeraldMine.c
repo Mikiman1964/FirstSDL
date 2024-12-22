@@ -4,20 +4,12 @@ TODO
 * Leveleditor
     * Undo für Editor
 
-Für V 1.10
-* Slime entscheidet Richtung etwas schneller
-* Explosionen mit Slime gefixt
-* Türen und Explosionen werden später gerendert
-* Von Truhen kann alles herunter rollen
-* Fallende Bomben und Megabomben konnten durch Explosionen "gestützt" werden.
-* Levelgruppenname enthält "Paff" den Stofftieraffen, da Unterstrich. Wird jetzt durch Bindestrich ersetzt.
-* Graue Tür ohne Schlüssel
-* Lichtschranken erzeugten Absturz, wenn diese außerhalb des Spielfeldes "strahlen" können.
-* Wenn im Leveleditor die Warnung "Leveldimension geändert" erscheint, werden die Buttons "TEXT", "STD" und "TREASURECHEST" deaktiviert.
-* Bei Leveldimension-Änderung wird Spielfigur sinnvoller gesetzt
-* Doppelklick auf Levelnamen ruft den Editor auf
-* Levelimporter setzt automatisch Levelränder
-* Wachsender Stahl kann nun als Levelrand verwendet werden.
+Für V 1.11
+* SDL 2.30.9, SDL 2.30.10 funktioniert im Debug-Modus unter Code:Blocks nicht
+* DC3-Importverzeichnis wird während der Verwendung des Leveleditors alle 3 s aktualisiert
+* Schließen-X funktioniert im Leveleditor jetzt wie Button "Quit"
+* 4 Ecken des markierten Stahls hinzugefügt, werden nur beim DC3-Levelimport verwendet und sind noch nicht im Leveleditor auswählbar
+* Doppeltes Sterben/Schreien und nachträglicher Explosionssound im Zusammenhang mit gezündetem Dynamit gefixt
 */
 
 #include "gfx/textures.h"
@@ -1477,6 +1469,10 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_6] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_7] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_8] = 0x1FF;                        // Alles rollt von Schatztruhen
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
 }
 
 
@@ -1787,6 +1783,10 @@ bool IsSteel(uint16_t uElement) {
         case (EMERALD_STEEL_STRIPE_LEFT_BOTTOM):
         case (EMERALD_STEEL_STRIPE_BOTTOM):
         case (EMERALD_STEEL_STRIPE_RIGHT_BOTTOM):
+        case (EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP):
+        case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP):
+        case (EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM):
+        case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM):
         case (EMERALD_STEEL_HEART):
         case (EMERALD_STEEL_PLAYERHEAD):
         case (EMERALD_STEEL_PLAYERHEAD_2):
@@ -1918,9 +1918,7 @@ int CheckGameDirectorys(void) {
 
     if (CheckHighScoresDir() == 0) {
         if (CheckAndCreateDir(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
-            if (CheckAndCreateDir(EMERALD_LEVELGROUPS_DIRECTORYNAME) == 0) {
-                nErrorCode = CheckImportLevelFiles();
-            }
+            nErrorCode = CheckAndCreateDir(EMERALD_LEVELGROUPS_DIRECTORYNAME);
         }
     }
     if (nErrorCode != 0) {

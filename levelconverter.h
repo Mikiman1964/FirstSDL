@@ -67,4 +67,12 @@ uint16_t GetElementByMD5(char *szMd5);
 
 int CheckImportLevelFiles(void);
 int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount);
+
+void CheckDC3ImportDirectoryThread(void);
+int StartCheckDC3ImportDirectoryThread(void);
+int CloseCheckDC3ImportDirectoryThread(void);
+
+
+
+
 #endif // LEVELCONVERTER_H_INCLUDED

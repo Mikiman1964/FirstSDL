@@ -7,6 +7,7 @@
 #include "mySDL.h"
 #include "mystd.h"
 #include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
+#include "levelconverter.h"
 #include "RenderLevel.h"
 
 int g_nGfxCount = 0;         // gefundenen Grafiken

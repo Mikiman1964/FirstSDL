@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "editor.h"
 #include "EmeraldMine.h"
+#include "EmeraldMineMainMenu.h"
 #include "KeyboardMouse.h"
 #include "levelconverter.h"
 #include "loadlevel.h"
@@ -19,6 +20,7 @@ IMPORTLEVEL ImportLevel;
 LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
 extern ED Ed;
 extern INPUTSTATES InputStates;
+extern MAINMENU MainMenu;
 
 char g_szDC3_MD5[][33] =
     {
@@ -562,6 +564,10 @@ char g_szDC3_MD5[][33] =
         "406288FB66F424C94E35D8AFC5C2184A",        // EMERALD_TREASURECHEST_7
         "1D9A7A29523C52B5D7A5041B96BE36F0",        // EMERALD_TREASURECHEST_8
         "8BBE85CD2BC5679732A37A24815DE7CA",        // EMERALD_DOOR_GREY_NOKEY
+        "82FB99CA778F4365A9C03F0A50078A69",        // EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM
+        "4C1503D2147818B765E3A3402927F670",        // EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM
+        "915464E7AAB28A0593FE21C121B09463",        // EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP
+        "66B0C730BD560B2C4744707F73C825FD",        // EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",        // ENDE der MD5-Liste
     };
 
@@ -1106,6 +1112,10 @@ uint16_t g_DC3_Elements[] = {
         ,EMERALD_TREASURECHEST_7
         ,EMERALD_TREASURECHEST_8
         ,EMERALD_DOOR_GREY_NOKEY
+        ,EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM
+        ,EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM
+        ,EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP
+        ,EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP
 };
 
 
@@ -1227,8 +1237,8 @@ int LevelConverterFromBitap(char *pszFilename) {
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = uLevelElement;
             } else {
                 SDL_Log("%s: Warning: hash (%s) not found for element at position X:%u  Y:%u",__FUNCTION__,szMD5String,X,Y);
-                // WriteFile("hashes.txt",szMD5String,32,true);
-                // WriteFile("hashes.txt","\r\n",2,true);
+                //WriteFile("hashes.txt",szMD5String,32,true);
+                //WriteFile("hashes.txt","\r\n",2,true);
 
                 //Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_FONT_BLUE_STEEL_QUESTION_MARK;
@@ -1743,11 +1753,120 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: ImportLevel.x
+Seiteneffekte: ImportLevel.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int CheckImportLevelFiles(void) {
-    ImportLevel.uDc3FileCount = 0;
-    return  GetLevelFileList(EMERALD_IMPORTDC3_DIRECTORYNAME,"BMP",(LEVELFILESLIST*)&Dc3LevelFileList,&ImportLevel.uDc3FileCount);
+    uint32_t I;
+    uint32_t uFileCount;    // Zugriff sollte atomar (Thread) sein
+
+    if (GetLevelFileList(EMERALD_IMPORTDC3_DIRECTORYNAME,"BMP",(LEVELFILESLIST*)&Dc3LevelFileList,&uFileCount) == 0) {
+        ImportLevel.uDc3FileCount = uFileCount; // Zugriff sollte atomar (Thread) sein
+        // Filelisten für Level-Import (DC3) initialisieren
+        memset(MainMenu.uImportFileListDc3,0xFF,sizeof(MainMenu.uImportFileListDc3));
+        for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDc3FileCount); I++) {
+            MainMenu.uImportFileListDc3[I] = I;
+        }
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+
+// Ab hier der Thread, der das DC3-Import-Verzeichnis überwacht
+SDL_Thread *g_pCheckDC3ImportDirectoryThreadHandle = NULL;
+bool g_CheckDC3ImportDirectoryThreadRunning = false;
+bool g_CheckDC3ImportDirectoryThreadExit = true;
+
+
+/*----------------------------------------------------------------------------
+Name:           CheckDC3ImportDirectoryThread
+------------------------------------------------------------------------------
+Beschreibung: Thread, der alle 3000 ms das DC3-Importverzeichnis aktualisiert.
+              Der Thread wird durch die Funktion StartCheckDC3ImportDirectoryThread() gestartet.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
+------------------------------------------------------------------------------*/
+void CheckDC3ImportDirectoryThread(void) {
+    uint32_t uTicks;
+
+    uTicks = SDL_GetTicks();
+    g_CheckDC3ImportDirectoryThreadRunning = true;
+    g_CheckDC3ImportDirectoryThreadExit = false;
+    while (g_CheckDC3ImportDirectoryThreadRunning) {
+        if ((SDL_GetTicks() - uTicks) >= 3000) {
+            CheckImportLevelFiles();
+            uTicks = SDL_GetTicks();
+        }
+        SDL_Delay(200);
+    }
+    g_CheckDC3ImportDirectoryThreadExit = true;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           StartCheckDC3ImportDirectoryThread
+------------------------------------------------------------------------------
+Beschreibung: Startet den Thread CheckDC3ImportDirectoryThread.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = OK, sonst Fehler durch Timeout bzw. bei Thread-Erstellung
+Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
+------------------------------------------------------------------------------*/
+int StartCheckDC3ImportDirectoryThread(void) {
+    int nErrorCode;
+
+    if (!g_CheckDC3ImportDirectoryThreadExit) {
+        nErrorCode = CloseCheckDC3ImportDirectoryThread();
+    } else {
+        nErrorCode = 0;
+    }
+    if (nErrorCode == 0) {
+        g_pCheckDC3ImportDirectoryThreadHandle = SDL_CreateThread((SDL_ThreadFunction)&CheckDC3ImportDirectoryThread,"CheckDC3ImportDirectory",NULL);
+        if (g_pCheckDC3ImportDirectoryThreadHandle != NULL) {
+            // SDL_Log("WorkThread sucessfully started");
+            SDL_DetachThread(g_pCheckDC3ImportDirectoryThreadHandle);  // Damit beim Beenden des Threads keine weiteren Schritte notwendig sind
+        } else {
+            SDL_Log("%s: SDL_CreateThread failed: %s",__FUNCTION__,SDL_GetError());
+            g_CheckDC3ImportDirectoryThreadRunning = false;
+            g_CheckDC3ImportDirectoryThreadExit = true;
+            nErrorCode = -1;
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CloseCheckDC3ImportDirectoryThread
+------------------------------------------------------------------------------
+Beschreibung: Beendet den Thread CheckDC3ImportDirectoryThread.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  int, 0 = OK, sonst Fehler durch Timeout
+Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
+------------------------------------------------------------------------------*/
+int CloseCheckDC3ImportDirectoryThread(void) {
+    int nErrorCode;
+    uint32_t uTimeout;
+
+    g_CheckDC3ImportDirectoryThreadRunning = false; // Thread stoppen
+    uTimeout = SDL_GetTicks();                      // und auf Beendigung warten
+    while ((!g_CheckDC3ImportDirectoryThreadExit) && (SDL_GetTicks() - uTimeout < 5000)) {
+        SDL_Delay(30);
+    }
+    if (g_CheckDC3ImportDirectoryThreadExit) {
+        nErrorCode = 0;
+    } else {
+        nErrorCode = -1;
+        SDL_Log("%s: TIMEOUT",__FUNCTION__);
+    }
+    return nErrorCode;
 }
 
 
@@ -1761,7 +1880,7 @@ Parameter
                pszFileExtension, char *, Zeiger auf Datei-Extension
                     (nur 3-stellig und ohne Punkt oder NULL)
       Ausgang: pLevelFileList, LEVELFILESLIST *, Zeiger auf zu befüllende Fileliste
-               puFileCount, uint32_t *, Zeiger auf Anzahl Files
+               puFileCount, uint32_t *, Zeiger auf Anzahl Files, Zugriff sollte atomar (Thread) sein
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
@@ -1777,6 +1896,7 @@ int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESL
     char szFileExtension[8];
 
     if ( (pszDirectoryName == NULL) || (pLevelFileList == NULL) || (puFileCount == NULL) ) {
+        SDL_Log("%s: bad pointer",__FUNCTION__);
         return nErrorCode;
     }
     memset(szFileExtensionFilter,0,sizeof(szFileExtensionFilter));
@@ -1828,7 +1948,7 @@ int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESL
             }
         }
         // SDL_Log("%s: found %d files in directory %s",__FUNCTION__,I,pszDirectoryName);
-        *puFileCount = I;
+        *puFileCount = I;   // Zugriff sollte atomar (Thread) sein
         closedir(dir);
     }
     return nErrorCode;

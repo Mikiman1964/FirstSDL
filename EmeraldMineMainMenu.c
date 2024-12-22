@@ -911,12 +911,6 @@ void InitLists(void) {
     }
     // Level-Titel-Liste initialisieren
     InitLevelTitleList();
-
-    // Filelisten für Level-Import (DC3) initialisieren
-    memset(MainMenu.uImportFileListDc3,0xFF,sizeof(MainMenu.uImportFileListDc3));
-    for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDc3FileCount); I++) {
-        MainMenu.uImportFileListDc3[I] = I;
-    }
 }
 
 
@@ -1635,10 +1629,12 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
                                     SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-                                    memset(&Actualplayer,0,sizeof(Actualplayer));
                                     // Welchen Grund hatte das Zurücksetzen des aktuellen Spielers?
                                     // Grund: Die alten Spielerdaten (vor Leveleditor-Aufruf) stehen dann im Menü.
+                                    memset(&Actualplayer,0,sizeof(Actualplayer));
+                                    StartCheckDC3ImportDirectoryThread();   // Startet Thread, der das DC3-Import-Verzeichnis überwacht
                                     nErrorCode = PreEditorMenu(pRenderer);
+                                    CloseCheckDC3ImportDirectoryThread();  // Thread wieder beenden
                                     if (nErrorCode == 0) {
                                         // Eine ggf. geänderte Levelgruppe nun mit Highscorefile ausstatten
                                         nErrorCode = SelectAlternativeLevelgroup(Config.uLevelgroupMd5Hash,true);

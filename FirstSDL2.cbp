@@ -34,15 +34,15 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="../SDL2-2.28.5/x86_64-w64-mingw32/include" />
-			<Add directory="../SDL2-2.28.5/x86_64-w64-mingw32/include/SDL2" />
+			<Add directory="../SDL2-2.30.9/x86_64-w64-mingw32/include" />
+			<Add directory="../SDL2-2.30.9/x86_64-w64-mingw32/include/SDL2" />
 		</Compiler>
 		<Linker>
-			<Add option="Gfx/*.o" />
-			<Add option="Sfx/*.o" />
+			<Add option="gfx/*.o" />
+			<Add option="sfx/*.o" />
 			<Add library="SDL2main" />
 			<Add library="SDL2" />
-			<Add directory="../SDL2-2.28.5/x86_64-w64-mingw32/lib" />
+			<Add directory="../SDL2-2.30.9/x86_64-w64-mingw32/lib" />
 		</Linker>
 		<Unit filename="EmeraldMine.c">
 			<Option compilerVar="CC" />

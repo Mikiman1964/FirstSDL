@@ -4,13 +4,13 @@
   <!--primary display is num 0, second display 1-->
   <display_num>0</display_num>
   <resolution>
-    <x>1280</x>
-    <y>960</y>
+    <x>1920</x>
+    <y>1080</y>
   </resolution>
   <fullscreen>0</fullscreen>
 </screen>
 <start_dynamite_with_space>1</start_dynamite_with_space>
-<last_played_levelgroup_md5_hash>3D1E1DA48A96565E3A5C0B0114AD4D03</last_played_levelgroup_md5_hash>
+<last_played_levelgroup_md5_hash>F15B02A16EE11C9FB068D106B0D834C7</last_played_levelgroup_md5_hash>
 <last_player_name>MIK</last_player_name>
 <editor_zoom>1</editor_zoom>
 <game_music>1</game_music>
