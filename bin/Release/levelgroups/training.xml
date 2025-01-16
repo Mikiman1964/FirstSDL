@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>TRAINING</groupname>
-<create_timestamp>20241123_212845</create_timestamp>
+<create_timestamp>20250116_212300</create_timestamp>
 <levelcount>65</levelcount>
 <level000>
   <title>FIRST CONTACT</title>
@@ -9070,5 +9070,5 @@
   <leveldata_md5_hash>DA8A8D8EAC6E5DDD2F1C562C1EAB0C73</leveldata_md5_hash>
 </level064>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>D4CF7B9454E32954FCCBD9FE51B6D1E9</levelgroup_md5_hash>
+<levelgroup_md5_hash>67E8F3E6934EB1C0D31D54410949D8ED</levelgroup_md5_hash>
 </levelgroup>

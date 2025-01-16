@@ -2461,7 +2461,7 @@ int GetLevelgroupFiles(void) {
                                             }
                                         }
                                     }
-                                    SAFE_FREE(xml);
+                                    ezxml_free(xml);
                                 }
                             }
                         }
@@ -2623,7 +2623,7 @@ int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
                         nErrorCode = -1;
                     }
                 }
-                SAFE_FREE(xml);
+                ezxml_free(xml);
             } else {
                 SDL_Log("%s: can not parse xml file %s",__FUNCTION__,LevelgroupFiles[uLevelgroupIndex].szFilename);
             }

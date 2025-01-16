@@ -212,5 +212,6 @@ int CleanUpHighScoreDir(void) {
             }
         }
     }
+    closedir(dir);
     return nErrorCode;
 }

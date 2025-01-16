@@ -4188,9 +4188,13 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
                 nErrorCode = 0;
             }
             // Playfield.pLevel darf hier nicht freigegeben werden, da dieser Pointer sich in Ed.pLevel befindet
+            SAFE_FREE(Playfield.pPipeLevel);
             SAFE_FREE(Playfield.pInvalidElement);
+            SAFE_FREE(Playfield.pSlimeElement);
             SAFE_FREE(Playfield.pStatusAnimation);
+            SAFE_FREE(Playfield.pLastStatusAnimation);
             SAFE_FREE(Playfield.pPostAnimation);
+            SAFE_FREE(Playfield.pLastYamSlimeDirection);
         } else {
             SDL_Log("%s: InitialisePlayfield() failed",__FUNCTION__);
             return -1;

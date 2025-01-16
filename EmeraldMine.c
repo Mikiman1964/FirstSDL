@@ -6,7 +6,6 @@ TODO
 * Auf doppelte Spielgeschwindigkeit umschaltbar
 * Höhere Y-Auflösung für Hauptmenü und Levelliste nutzen
 * SDL_SetWindowDisplayMode() anwenden, um sicher zu sellen, dass richtige Framerate läuft
-* Mit Valgrind auf Speicherlecks prüfen
 
 Für V 1.11
 * SDL 2.30.11
@@ -19,6 +18,9 @@ Für V 1.11
 * Musik-Player kann auch "xm Extended module"  abspielen
 * Falscher/unnötiger Aufruf von SDL_RenderPresent() in ShowButtons()
 * Framerate wird auf ca. 125 frames/sec begrenzt
+* Memory leaks in InitEditor() gefixt:    Playfield.pPipeLevel, Playfield.pSlimeElement, Playfield.pLastStatusAnimation, Playfield.pLastYamSlimeDirection
+* Memory leak in CleanUpHighScoreDir() gefixt: closedir() vergessen
+* Viele Speicherlecks im Zusammenhang mit ezxml_parse_str() gefixt. Der Speicher muss über ezxml_free(xml) freigegeben werden.
 */
 
 #include "gfx/textures.h"

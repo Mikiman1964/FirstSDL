@@ -466,7 +466,7 @@ int ReadConfigFile(void) {
             nErrorCode = -2;    // Programmende
         }
     }
-    SAFE_FREE(xml);
+    ezxml_free(xml);
     SAFE_FREE(pXml);
     if (nErrorCode == 0) {
         nErrorCode = WriteConfigFile(); // ggf. angepasste Auflösung schreiben
