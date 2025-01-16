@@ -7,15 +7,15 @@ extern PLAYFIELD Playfield;
 /*----------------------------------------------------------------------------
 Name:           CheckRunningMagicWall
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob MagicWall angehalten werden muss, da Zeit abgelaufen.
+Beschreibung: PrÃ¼ft, ob MagicWall angehalten werden muss, da Zeit abgelaufen.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckRunningMagicWall(void) {
-    if (Playfield.bMagicWallRunning) {          // Läuft bereits Magic Wall?
+    if (Playfield.bMagicWallRunning) {          // LÃ¤uft bereits Magic Wall?
         if (Playfield.uTimeMagicWallLeft > 0) {
             Playfield.uTimeMagicWallLeft--;
         }
@@ -30,11 +30,11 @@ void CheckRunningMagicWall(void) {
 /*----------------------------------------------------------------------------
 Name:           CheckLight
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob Licht wieder ausgeschaltet werden muss, da Zeit abgelaufen.
+Beschreibung: PrÃ¼ft, ob Licht wieder ausgeschaltet werden muss, da Zeit abgelaufen.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckLight(void) {
@@ -53,15 +53,15 @@ void CheckLight(void) {
 /*----------------------------------------------------------------------------
 Name:           CheckTimeDoorOpen
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob Zeit-Tür wieder geschlossen werden muss, da Zeit abgelaufen.
+Beschreibung: PrÃ¼ft, ob Zeit-TÃ¼r wieder geschlossen werden muss, da Zeit abgelaufen.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckTimeDoorOpen(void) {
-    if (Playfield.uTimeDoorTimeLeft > 0) {          // Noch Zeit übrig ?
+    if (Playfield.uTimeDoorTimeLeft > 0) {          // Noch Zeit Ã¼brig ?
         Playfield.uTimeDoorTimeLeft--;
     }
 }
@@ -70,20 +70,20 @@ void CheckTimeDoorOpen(void) {
 /*----------------------------------------------------------------------------
 Name:           ElementGoesMagicWall
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob unter der Magic Wall frei ist. Wenn ja, wird dort ein
-              neues temporäres Element (EMERALD_INVALID->Zielelement) entstehen.
+Beschreibung: PrÃ¼ft, ob unter der Magic Wall frei ist. Wenn ja, wird dort ein
+              neues temporÃ¤res Element (EMERALD_INVALID->Zielelement) entstehen.
 Parameter
       Eingang: I, uint32_t, aktuelle Position des Elements, das in Magic Wall eintaucht
                DestElement, uint32_t, Zielelement, z.B. EMERALD_EMERALD
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ElementGoesMagicWall(uint32_t I, uint32_t uDestElement) {
     if (IS_SPACE(I + 2 * Playfield.uLevel_X_Dimension)) {
-        // neuen Platz mit ungültigem Element besetzen
+        // neuen Platz mit ungÃ¼ltigem Element besetzen
         Playfield.pLevel[I + 2 * Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+        // Damit ungÃ¼ltiges Feld spÃ¤ter auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I + 2 * Playfield.uLevel_X_Dimension] = uDestElement;
         Playfield.pStatusAnimation[I + 2 * Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP_DOUBLESPEED;
         // Aktuelles Element auf Animation "unten"
@@ -100,11 +100,11 @@ void ElementGoesMagicWall(uint32_t I, uint32_t uDestElement) {
 /*----------------------------------------------------------------------------
 Name:           ControlMagicWall
 ------------------------------------------------------------------------------
-Beschreibung: Setzt die Magic Wall nach Erzeugung eines gewandelten Elements zurück.
+Beschreibung: Setzt die Magic Wall nach Erzeugung eines gewandelten Elements zurÃ¼ck.
 Parameter
       Eingang: I, uint32_t, aktuelle Position des Elements, das aus Magic Wall kommt
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMagicWall(uint32_t I) {

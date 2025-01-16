@@ -7,18 +7,18 @@
 #define IS_SPACE(x)  ((Playfield.pLevel[x] == EMERALD_SPACE) && (Playfield.pPipeLevel[x] == EMERALD_SPACE))
 
 #define MIN_LEVEL_W                                 4             // Minumum 4 Elemente in der Breite
-#define MIN_LEVEL_H                                 3             // Minumum 3 Elemente in der Höhe
+#define MIN_LEVEL_H                                 3             // Minumum 3 Elemente in der HÃ¶he
 #define MAX_LEVEL_W                                 1000          // Maximum Elemente in der Breite
-#define MAX_LEVEL_H                                 1000          // Maximum Elemente in der Höhe
+#define MAX_LEVEL_H                                 1000          // Maximum Elemente in der HÃ¶he
 
 #define PANEL_H                                     32            // Spiel-Anzeige (Time, Score usw.)
 
 #define EMERALD_VERSION                             "01.11"       // Version
 
-#define EMERALD_VERSION_LEN                         5             // Maximale Versionslänge, z.B "01.00"
-#define EMERALD_TITLE_LEN                           32            // Maximale Titellänge
-#define EMERALD_AUTHOR_LEN                          32            // Maximale Autorlänge
-#define EMERALD_MD5_STRING_LEN                      32            // MD5-Stringlänge
+#define EMERALD_VERSION_LEN                         5             // Maximale VersionslÃ¤nge, z.B "01.00"
+#define EMERALD_TITLE_LEN                           32            // Maximale TitellÃ¤nge
+#define EMERALD_AUTHOR_LEN                          32            // Maximale AutorlÃ¤nge
+#define EMERALD_MD5_STRING_LEN                      32            // MD5-StringlÃ¤nge
 #define EMERALD_MAX_YAM_EXPLOSIONS                  100           // Maximale Anzahl an verschiedenen YAM-Explosionen
 
 // Level-Elemente
@@ -35,30 +35,30 @@
 #define EMERALD_MINE_DOWN                           0x000A        // Mine runter
 #define EMERALD_MINE_LEFT                           0x000B        // Mine links
 #define EMERALD_LIGHTBARRIER_RED_SWITCH             0x000C        // Lichtschranke, rot, Schalter
-#define EMERALD_LIGHTBARRIER_GREEN_SWITCH           0x000D        // Lichtschranke, grün, Schalter
+#define EMERALD_LIGHTBARRIER_GREEN_SWITCH           0x000D        // Lichtschranke, grÃ¼n, Schalter
 #define EMERALD_LIGHTBARRIER_BLUE_SWITCH            0x000E        // Lichtschranke, blue, Schalter
 #define EMERALD_LIGHTBARRIER_YELLOW_SWITCH          0x000F        // Lichtschranke, gelb, Schalter
 #define EMERALD_BOMB                                0x0010        // Bombe
 #define EMERALD_CRYSTAL                             0x0011        // Kristall
 #define EMERALD_EMERALD                             0x0012        // Emerald
 #define EMERALD_RUBY                                0x0013        // Rubin
-#define EMERALD_BEETLE_UP                           0x0014        // Käfer hoch
-#define EMERALD_BEETLE_RIGHT                        0x0015        // Käfer rechts
-#define EMERALD_BEETLE_DOWN                         0x0016        // Käfer runter
-#define EMERALD_BEETLE_LEFT                         0x0017        // Käfer links
+#define EMERALD_BEETLE_UP                           0x0014        // KÃ¤fer hoch
+#define EMERALD_BEETLE_RIGHT                        0x0015        // KÃ¤fer rechts
+#define EMERALD_BEETLE_DOWN                         0x0016        // KÃ¤fer runter
+#define EMERALD_BEETLE_LEFT                         0x0017        // KÃ¤fer links
 #define EMERALD_REPLICATOR_RED_TOP_LEFT             0x0018        // Replikator rot, oben links
 #define EMERALD_REPLICATOR_RED_TOP_MID              0x0019        // Replikator rot, oben mitte
 #define EMERALD_REPLICATOR_RED_TOP_RIGHT            0x001A        // Replikator rot, oben rechts
 #define EMERALD_REPLICATOR_RED_BOTTOM_LEFT          0x001B        // Replikator rot, unten links
 #define EMERALD_REPLICATOR_RED_BOTTOM_RIGHT         0x001C        // Replikator rot, unten rechts
-#define EMERALD_REPLICATOR_RED_SWITCH               0x001D        // Schalter für roten Replikator
+#define EMERALD_REPLICATOR_RED_SWITCH               0x001D        // Schalter fÃ¼r roten Replikator
 #define EMERALD_REPLICATOR_YELLOW_TOP_LEFT          0x001E        // Replikator gelb, oben links
 #define EMERALD_REPLICATOR_YELLOW_TOP_MID           0x001F        // Replikator gelb, oben mitte
 #define EMERALD_REPLICATOR_YELLOW_TOP_RIGHT         0x0020        // Replikator gelb, oben rechts
 #define EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT       0x0021        // Replikator gelb, unten links
 #define EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT      0x0022        // Replikator gelb, unten rechts
-#define EMERALD_REPLICATOR_YELLOW_SWITCH            0x0023        // Schalter für gelben Replikator
-#define EMERALD_TIME_COIN                           0x0024        // Zeitmünze
+#define EMERALD_REPLICATOR_YELLOW_SWITCH            0x0023        // Schalter fÃ¼r gelben Replikator
+#define EMERALD_TIME_COIN                           0x0024        // ZeitmÃ¼nze
 #define EMERALD_NUT                                 0x0025        // Nuss
 #define EMERALD_ALIEN                               0x0026        // Alien
 #define EMERALD_YAM                                 0x0027        // Yam
@@ -66,32 +66,32 @@
 #define EMERALD_MAGIC_WALL_SWITCH                   0x0029        // Magische Mauer, Schalter
 #define EMERALD_MAGIC_WALL_STEEL                    0x002A        // magische Mauer aus Stahl
 #define EMERALD_EARTH_MOLE                          0x002B        // Erde, der durch Maufwurf entsteht
-#define EMERALD_GREEN_CHEESE_GOES                   0x002C        // Grüner Käse löst sich auf
+#define EMERALD_GREEN_CHEESE_GOES                   0x002C        // GrÃ¼ner KÃ¤se lÃ¶st sich auf
 #define EMERALD_LIGHT_SWITCH                        0x002D        // Lichtschalter
-#define EMERALD_REPLICATOR_GREEN_TOP_LEFT           0x002E        // Replikator grün, oben links
-#define EMERALD_REPLICATOR_GREEN_TOP_MID            0x002F        // Replikator grün, oben mitte
-#define EMERALD_REPLICATOR_GREEN_TOP_RIGHT          0x0030        // Replikator grün, oben rechts
-#define EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT        0x0031        // Replikator grün, unten links
-#define EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT       0x0032        // Replikator grün, unten rechts
-#define EMERALD_REPLICATOR_GREEN_SWITCH             0x0033        // Schalter für grünen Replikator
+#define EMERALD_REPLICATOR_GREEN_TOP_LEFT           0x002E        // Replikator grÃ¼n, oben links
+#define EMERALD_REPLICATOR_GREEN_TOP_MID            0x002F        // Replikator grÃ¼n, oben mitte
+#define EMERALD_REPLICATOR_GREEN_TOP_RIGHT          0x0030        // Replikator grÃ¼n, oben rechts
+#define EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT        0x0031        // Replikator grÃ¼n, unten links
+#define EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT       0x0032        // Replikator grÃ¼n, unten rechts
+#define EMERALD_REPLICATOR_GREEN_SWITCH             0x0033        // Schalter fÃ¼r grÃ¼nen Replikator
 #define EMERALD_REPLICATOR_BLUE_TOP_LEFT            0x0034        // Replikator blau, oben links
 #define EMERALD_REPLICATOR_BLUE_TOP_MID             0x0035        // Replikator blau, oben mitte
 #define EMERALD_REPLICATOR_BLUE_TOP_RIGHT           0x0036        // Replikator blau, oben rechts
 #define EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT         0x0037        // Replikator blau, unten links
 #define EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT        0x0038        // Replikator blau, unten rechts
-#define EMERALD_REPLICATOR_BLUE_SWITCH              0x0039        // Schalter für blauen Replikator
+#define EMERALD_REPLICATOR_BLUE_SWITCH              0x0039        // Schalter fÃ¼r blauen Replikator
 #define EMERALD_DYNAMITE_OFF                        0x003A        // Dynamit aus
 #define EMERALD_DYNAMITE_ON                         0x003B        // Dynamit an
-#define EMERALD_DOOR_RED_WOOD                       0x003C        // rote Holz-Tür
-#define EMERALD_DOOR_YELLOW_WOOD                    0x003D        // gelbe Holz-Tür
-#define EMERALD_DOOR_BLUE_WOOD                      0x003E        // blaue Holz-Tür
-#define EMERALD_DOOR_GREEN_WOOD                     0x003F        // grüne Holz-Tür
+#define EMERALD_DOOR_RED_WOOD                       0x003C        // rote Holz-TÃ¼r
+#define EMERALD_DOOR_YELLOW_WOOD                    0x003D        // gelbe Holz-TÃ¼r
+#define EMERALD_DOOR_BLUE_WOOD                      0x003E        // blaue Holz-TÃ¼r
+#define EMERALD_DOOR_GREEN_WOOD                     0x003F        // grÃ¼ne Holz-TÃ¼r
 #define EMERALD_MAN                                 0x0040        // Man
 #define EMERALD_MESSAGE_1                           0x0041        // Briefumschlag 1, Die Message-Elemente
-#define EMERALD_MESSAGE_2                           0x0042        // Briefumschlag 2, müssen aufsteigend und
-#define EMERALD_MESSAGE_3                           0x0043        // Briefumschlag 3, ohne Lücken aufgezählt werden,
+#define EMERALD_MESSAGE_2                           0x0042        // Briefumschlag 2, mÃ¼ssen aufsteigend und
+#define EMERALD_MESSAGE_3                           0x0043        // Briefumschlag 3, ohne LÃ¼cken aufgezÃ¤hlt werden,
 #define EMERALD_MESSAGE_4                           0x0044        // Briefumschlag 4, da im Quelltext dieser Bereich
-#define EMERALD_MESSAGE_5                           0x0045        // Briefumschlag 5, geprüft wird.
+#define EMERALD_MESSAGE_5                           0x0045        // Briefumschlag 5, geprÃ¼ft wird.
 #define EMERALD_MESSAGE_6                           0x0046        // Briefumschlag 6
 #define EMERALD_MESSAGE_7                           0x0047        // Briefumschlag 7
 #define EMERALD_MESSAGE_8                           0x0048        // Briefumschlag 8
@@ -99,10 +99,10 @@
 #define EMERALD_LIGHTBARRIER_RED_DOWN               0x004A        // Lichtschranke aus, rot, unten
 #define EMERALD_LIGHTBARRIER_RED_LEFT               0x004B        // Lichtschranke aus, rot, links
 #define EMERALD_LIGHTBARRIER_RED_RIGHT              0x004C        // Lichtschranke aus, rot, rechts
-#define EMERALD_LIGHTBARRIER_GREEN_UP               0x004D        // Lichtschranke aus, grün, oben
-#define EMERALD_LIGHTBARRIER_GREEN_DOWN             0x004E        // Lichtschranke aus, grün, unten
-#define EMERALD_LIGHTBARRIER_GREEN_LEFT             0x004F        // Lichtschranke aus, grün, links
-#define EMERALD_LIGHTBARRIER_GREEN_RIGHT            0x0050        // Lichtschranke aus, grün, rechts
+#define EMERALD_LIGHTBARRIER_GREEN_UP               0x004D        // Lichtschranke aus, grÃ¼n, oben
+#define EMERALD_LIGHTBARRIER_GREEN_DOWN             0x004E        // Lichtschranke aus, grÃ¼n, unten
+#define EMERALD_LIGHTBARRIER_GREEN_LEFT             0x004F        // Lichtschranke aus, grÃ¼n, links
+#define EMERALD_LIGHTBARRIER_GREEN_RIGHT            0x0050        // Lichtschranke aus, grÃ¼n, rechts
 #define EMERALD_LIGHTBARRIER_BLUE_UP                0x0051        // Lichtschranke aus, blau, oben
 #define EMERALD_LIGHTBARRIER_BLUE_DOWN              0x0052        // Lichtschranke aus, blau, unten
 #define EMERALD_LIGHTBARRIER_BLUE_LEFT              0x0053        // Lichtschranke aus, blau, links
@@ -113,76 +113,76 @@
 #define EMERALD_LIGHTBARRIER_YELLOW_RIGHT           0x0058        // Lichtschranke an, gelb, rechts
 #define EMERALD_BEAM_RED_VERTICAL                   0x0059        // Lichtstrahl, rot, vertikal
 #define EMERALD_BEAM_RED_HORIZONTAL                 0x005A        // Lichtstrahl, rot, horizontal
-#define EMERALD_BEAM_GREEN_VERTICAL                 0x005B        // Lichtstrahl, grün, vertikal
-#define EMERALD_BEAM_GREEN_HORIZONTAL               0x005C        // Lichtstrahl, grün, horizontal
+#define EMERALD_BEAM_GREEN_VERTICAL                 0x005B        // Lichtstrahl, grÃ¼n, vertikal
+#define EMERALD_BEAM_GREEN_HORIZONTAL               0x005C        // Lichtstrahl, grÃ¼n, horizontal
 #define EMERALD_BEAM_BLUE_VERTICAL                  0x005D        // Lichtstrahl, blau, vertikal
 #define EMERALD_BEAM_BLUE_HORIZONTAL                0x005E        // Lichtstrahl, blau, horizontal
 #define EMERALD_BEAM_YELLOW_VERTICAL                0x005F        // Lichtstrahl, gelb, vertikal
 #define EMERALD_BEAM_YELLOW_HORIZONTAL              0x0060        // Lichtstrahl, gelb, horizontal
 #define EMERALD_BEAM_CROSS                          0x0061        // Lichtstrahl, Kreuz
-#define EMERALD_DOOR_EMERALD                        0x0062        // Einen Emerald mehr zu sammeln beim Durchgang durch diese Tür
-#define EMERALD_DOOR_MULTICOLOR                     0x0063        // Bunte Tür, ein Schlüssel reicht
-#define EMERALD_DOOR_ONLY_UP_STEEL                  0x0064        // Tür, nur nach oben passierbar
-#define EMERALD_DOOR_ONLY_DOWN_STEEL                0x0065        // Tür, nur nach unten passierbar
-#define EMERALD_DOOR_ONLY_LEFT_STEEL                0x0066        // Tür, nur nach links passierbar
-#define EMERALD_DOOR_ONLY_RIGHT_STEEL               0x0067        // Tür, nur nach rechts passierbar
-#define EMERALD_WHEEL_TIMEDOOR                      0x0068        // Rad für Zeit-Tür
-#define EMERALD_DOOR_TIME                           0x0069        // Zeit-Tür
-#define EMERALD_SWITCHDOOR_OPEN                     0x006A        // Schalttür auf
-#define EMERALD_SWITCHDOOR_CLOSED                   0x006B        // Schalttür geschlossen
-#define EMERALD_SWITCH_SWITCHDOOR                   0x006C        // Schalter für Schalttür
-#define EMERALD_DOOR_END_NOT_READY_STEEL            0x006D        // Endtür aus Stahl, nicht blinkend
-#define EMERALD_DOOR_END_READY_STEEL                0x006E        // Endtür aus Stahl, blinkend
-#define EMERALD_KEY_WHITE                           0x006F        // weißer Schlüssel
-#define EMERALD_DOOR_WHITE                          0x0070        // weiße Tür
-#define EMERALD_DOOR_GREY_WHITE                     0x0071        // weiße Geheimtür
-#define EMERALD_DOOR_WHITE_WOOD                     0x0072        // weiße Holztür
-#define EMERALD_KEY_GENERAL                         0x0073        // General-Schlüssel
+#define EMERALD_DOOR_EMERALD                        0x0062        // Einen Emerald mehr zu sammeln beim Durchgang durch diese TÃ¼r
+#define EMERALD_DOOR_MULTICOLOR                     0x0063        // Bunte TÃ¼r, ein SchlÃ¼ssel reicht
+#define EMERALD_DOOR_ONLY_UP_STEEL                  0x0064        // TÃ¼r, nur nach oben passierbar
+#define EMERALD_DOOR_ONLY_DOWN_STEEL                0x0065        // TÃ¼r, nur nach unten passierbar
+#define EMERALD_DOOR_ONLY_LEFT_STEEL                0x0066        // TÃ¼r, nur nach links passierbar
+#define EMERALD_DOOR_ONLY_RIGHT_STEEL               0x0067        // TÃ¼r, nur nach rechts passierbar
+#define EMERALD_WHEEL_TIMEDOOR                      0x0068        // Rad fÃ¼r Zeit-TÃ¼r
+#define EMERALD_DOOR_TIME                           0x0069        // Zeit-TÃ¼r
+#define EMERALD_SWITCHDOOR_OPEN                     0x006A        // SchalttÃ¼r auf
+#define EMERALD_SWITCHDOOR_CLOSED                   0x006B        // SchalttÃ¼r geschlossen
+#define EMERALD_SWITCH_SWITCHDOOR                   0x006C        // Schalter fÃ¼r SchalttÃ¼r
+#define EMERALD_DOOR_END_NOT_READY_STEEL            0x006D        // EndtÃ¼r aus Stahl, nicht blinkend
+#define EMERALD_DOOR_END_READY_STEEL                0x006E        // EndtÃ¼r aus Stahl, blinkend
+#define EMERALD_KEY_WHITE                           0x006F        // weiÃŸer SchlÃ¼ssel
+#define EMERALD_DOOR_WHITE                          0x0070        // weiÃŸe TÃ¼r
+#define EMERALD_DOOR_GREY_WHITE                     0x0071        // weiÃŸe GeheimtÃ¼r
+#define EMERALD_DOOR_WHITE_WOOD                     0x0072        // weiÃŸe HolztÃ¼r
+#define EMERALD_KEY_GENERAL                         0x0073        // General-SchlÃ¼ssel
 #define EMERALD_MEGABOMB                            0x0074        // Mega-Bombe
 #define EMERALD_WALL_WITH_EMERALD                   0x0075        // Mauer mit Emerald
 #define EMERALD_WALL_WITH_RUBY                      0x0076        // Mauer mit Rubin
 #define EMERALD_WALL_WITH_SAPPHIRE                  0x0077        // Mauer mit Saphir
 #define EMERALD_WALL_WITH_PERL                      0x0078        // Mauer mit Perle
-#define EMERALD_ACIDPOOL_DESTROY                    0x0079        // Objekt läuft ins Säurebecken -> Objekt löst sich selbst auf
-#define EMERALD_ACIDPOOL_TOP_LEFT                   0x007A        // Säurebecken, oben links
-#define EMERALD_ACIDPOOL_TOP_MID                    0x007B        // Säurebecken, oben mitte (aktives Feld)
-#define EMERALD_ACIDPOOL                            0x007B        // Säurebecken, oben mitte (aktives Feld)
-#define EMERALD_ACIDPOOL_TOP_RIGHT                  0x007C        // Säurebecken, oben rechts
-#define EMERALD_ACIDPOOL_BOTTOM_LEFT                0x007D        // Säurebecken, unten links
-#define EMERALD_ACIDPOOL_BOTTOM_MID                 0x007E        // Säurebecken, unten mitte
-#define EMERALD_ACIDPOOL_BOTTOM_RIGHT               0x007F        // Säurebecken, unten rechts
+#define EMERALD_ACIDPOOL_DESTROY                    0x0079        // Objekt lÃ¤uft ins SÃ¤urebecken -> Objekt lÃ¶st sich selbst auf
+#define EMERALD_ACIDPOOL_TOP_LEFT                   0x007A        // SÃ¤urebecken, oben links
+#define EMERALD_ACIDPOOL_TOP_MID                    0x007B        // SÃ¤urebecken, oben mitte (aktives Feld)
+#define EMERALD_ACIDPOOL                            0x007B        // SÃ¤urebecken, oben mitte (aktives Feld)
+#define EMERALD_ACIDPOOL_TOP_RIGHT                  0x007C        // SÃ¤urebecken, oben rechts
+#define EMERALD_ACIDPOOL_BOTTOM_LEFT                0x007D        // SÃ¤urebecken, unten links
+#define EMERALD_ACIDPOOL_BOTTOM_MID                 0x007E        // SÃ¤urebecken, unten mitte
+#define EMERALD_ACIDPOOL_BOTTOM_RIGHT               0x007F        // SÃ¤urebecken, unten rechts
 #define EMERALD_SPACE                               0x0080        // Space
 #define EMERALD_WALL_ROUND                          0x0081        // Mauer, rund
 #define EMERALD_EARTH                               0x0082        // Erde
 #define EMERALD_STEEL                               0x0083        // Stahl
 #define EMERALD_WALL_CORNERED                       0x0084        // Mauer, eckig
-#define EMERALD_KEY_RED                             0x0085        // roter Schlüssel
-#define EMERALD_KEY_YELLOW                          0x0086        // gelber Schlüssel
-#define EMERALD_KEY_BLUE                            0x0087        // blauer Schlüssel
-#define EMERALD_KEY_GREEN                           0x0088        // grüner Schlüssel
-#define EMERALD_DOOR_RED                            0x0089        // rote Tür
-#define EMERALD_DOOR_YELLOW                         0x008A        // gelbe Tür
-#define EMERALD_DOOR_BLUE                           0x008B        // blaue Tür
-#define EMERALD_DOOR_GREEN                          0x008C        // grüne Tür
+#define EMERALD_KEY_RED                             0x0085        // roter SchlÃ¼ssel
+#define EMERALD_KEY_YELLOW                          0x0086        // gelber SchlÃ¼ssel
+#define EMERALD_KEY_BLUE                            0x0087        // blauer SchlÃ¼ssel
+#define EMERALD_KEY_GREEN                           0x0088        // grÃ¼ner SchlÃ¼ssel
+#define EMERALD_DOOR_RED                            0x0089        // rote TÃ¼r
+#define EMERALD_DOOR_YELLOW                         0x008A        // gelbe TÃ¼r
+#define EMERALD_DOOR_BLUE                           0x008B        // blaue TÃ¼r
+#define EMERALD_DOOR_GREEN                          0x008C        // grÃ¼ne TÃ¼r
 #define EMERALD_HAMMER                              0x008D        // Hammer
-#define EMERALD_DOOR_GREY_RED                       0x008E        // rote Geheimtür
-#define EMERALD_DOOR_GREY_YELLOW                    0x008F        // gelbe Geheimtür
-#define EMERALD_DOOR_GREY_BLUE                      0x0090        // blaue Geheimtür
-#define EMERALD_DOOR_GREY_GREEN                     0x0091        // grüne Geheimtür
+#define EMERALD_DOOR_GREY_RED                       0x008E        // rote GeheimtÃ¼r
+#define EMERALD_DOOR_GREY_YELLOW                    0x008F        // gelbe GeheimtÃ¼r
+#define EMERALD_DOOR_GREY_BLUE                      0x0090        // blaue GeheimtÃ¼r
+#define EMERALD_DOOR_GREY_GREEN                     0x0091        // grÃ¼ne GeheimtÃ¼r
 #define EMERALD_MAGIC_WALL                          0x0092        // magische Mauer
 #define EMERALD_WHEEL                               0x0093        // Rad
 #define EMERALD_QUICKSAND                           0x0094        // Treibsand ohne Stein
 #define EMERALD_QUICKSAND_STONE                     0x0095        // Treibsand mit Stein
 #define EMERALD_STONE_SINK                          0x0096        // Stein versinkt in Treibsand
 #define EMERALD_STONE_SAG                           0x0097        // Stein sackt aus Treibsand
-#define EMERALD_DOOR_END_NOT_READY                  0x0098        // Endtür, nicht blinkend
-#define EMERALD_GREEN_DROP_COMES                    0x0099        // grüner Tropfen, der zu Käse werden kann
-#define EMERALD_GREEN_DROP                          0x009A        // grüner Tropfen, der zu Käse werden kann
-#define EMERALD_GREEN_CHEESE                        0x009B        // grüner Käse, der sich über Tropfen ausbreiten kann
+#define EMERALD_DOOR_END_NOT_READY                  0x0098        // EndtÃ¼r, nicht blinkend
+#define EMERALD_GREEN_DROP_COMES                    0x0099        // grÃ¼ner Tropfen, der zu KÃ¤se werden kann
+#define EMERALD_GREEN_DROP                          0x009A        // grÃ¼ner Tropfen, der zu KÃ¤se werden kann
+#define EMERALD_GREEN_CHEESE                        0x009B        // grÃ¼ner KÃ¤se, der sich Ã¼ber Tropfen ausbreiten kann
 #define EMERALD_EXPLOSION_TO_ELEMENT_1              0x009C        // Explosion wandelt sich in Element, Phase 1
 #define EMERALD_EXPLOSION_TO_ELEMENT_2              0x009D        // Explosion wandelt sich in Element, Phase 2
 #define EMERALD_WALL_ROUND_PIKE                     0x009E        // Mauer, rund, mit Spitze
-#define EMERALD_DOOR_END_READY                      0x009F        // Endtür, blinkend
+#define EMERALD_DOOR_END_READY                      0x009F        // EndtÃ¼r, blinkend
 #define EMERALD_STEEL_ROUND_PIKE                    0x00A0	      // Stahl, rund, mit Spitze
 #define EMERALD_STEEL_ROUND                         0x00A1	      // Stahl, rund
 #define EMERALD_STEEL_WARNING                       0x00A2	      // Stahl, Achtung
@@ -192,9 +192,9 @@
 #define EMERALD_STEEL_PARKING                       0x00A6	      // Stahl, Parkplatz
 #define EMERALD_STEEL_FORBIDDEN                     0x00A7	      // Stahl, Einbahn
 #define EMERALD_STEEL_EXIT                          0x00A8	      // Stahl, Ausgang
-#define EMERALD_STEEL_RADIOACTIVE                   0x00A9	      // Stahl, Radioaktivität
+#define EMERALD_STEEL_RADIOACTIVE                   0x00A9	      // Stahl, RadioaktivitÃ¤t
 #define EMERALD_STEEL_EXPLOSION                     0x00AA	      // Stahl, Explosion
-#define EMERALD_STEEL_ACID                          0x00AB	      // Stahl, Säure
+#define EMERALD_STEEL_ACID                          0x00AB	      // Stahl, SÃ¤ure
 #define EMERALD_STEEL_NOT_ROUND                     0x00AC	      // Stahl, nicht rund
 #define EMERALD_WALL_NOT_ROUND                      0x00AD	      // Mauer, nicht rund
 #define EMERALD_STEEL_STRIPE_LEFT_TOP               0x00AE	      // Stahl, Markierung, links oben
@@ -208,7 +208,7 @@
 #define EMERALD_STEEL_HEART                         0x00B6        // Stahl, Herz
 #define EMERALD_STEEL_PLAYERHEAD                    0x00B7        // Stahl, Spielerkopf
 #define EMERALD_STEEL_NO_ENTRY                      0x00B8        // Stahl, Einfahrt verboten
-#define EMERALD_STEEL_GIVE_WAY                      0x00B9        // Stahl, Vorfahrt gewähren
+#define EMERALD_STEEL_GIVE_WAY                      0x00B9        // Stahl, Vorfahrt gewÃ¤hren
 #define EMERALD_STEEL_YING                          0x00BA        // Stahl, Ying
 #define EMERALD_STEEL_WHEELCHAIR                    0x00BB        // Stahl, Rollstuhl
 #define EMERALD_STEEL_ARROW_DOWN                    0x00BC        // Stahl, Pfeil runter
@@ -218,24 +218,24 @@
 #define EMERALD_STEEL_INVISIBLE                     0x00C0        // Stahl, unsichtbar / beleuchtet
 #define EMERALD_WALL_INVISIBLE                      0x00C1        // Mauer, unsichtbar / beleuchtet
 #define EMERALD_WALL_WITH_CRYSTAL                   0x00C2        // Mauer mit Kristall
-#define EMERALD_WALL_WITH_KEY_RED                   0x00C3        // Mauer mit rotem Schlüssel
-#define EMERALD_WALL_WITH_KEY_GREEN                 0x00C4        // Mauer mit grünem Schlüssel
-#define EMERALD_WALL_WITH_KEY_BLUE                  0x00C5        // Mauer mit blauem Schlüssel
-#define EMERALD_WALL_WITH_KEY_YELLOW                0x00C6        // Mauer mit gelbem Schlüssel
-#define EMERALD_WALL_WITH_KEY_WHITE                 0x00C7        // Mauer mit weißem Schlüssel
-#define EMERALD_WALL_WITH_KEY_GENERAL               0x00C8        // Mauer mit Generalschlüssel
+#define EMERALD_WALL_WITH_KEY_RED                   0x00C3        // Mauer mit rotem SchlÃ¼ssel
+#define EMERALD_WALL_WITH_KEY_GREEN                 0x00C4        // Mauer mit grÃ¼nem SchlÃ¼ssel
+#define EMERALD_WALL_WITH_KEY_BLUE                  0x00C5        // Mauer mit blauem SchlÃ¼ssel
+#define EMERALD_WALL_WITH_KEY_YELLOW                0x00C6        // Mauer mit gelbem SchlÃ¼ssel
+#define EMERALD_WALL_WITH_KEY_WHITE                 0x00C7        // Mauer mit weiÃŸem SchlÃ¼ssel
+#define EMERALD_WALL_WITH_KEY_GENERAL               0x00C8        // Mauer mit GeneralschlÃ¼ssel
 #define EMERALD_WALL_WITH_BOMB                      0x00C9        // Mauer mit Bombe
 #define EMERALD_WALL_WITH_MEGABOMB                  0x00CA        // Mauer mit Mega-Bombe
 #define EMERALD_WALL_WITH_STONE                     0x00CB        // Mauer mit Stein
 #define EMERALD_WALL_WITH_NUT                       0x00CC        // Mauer mit Nuss
 #define EMERALD_WALL_WITH_WHEEL                     0x00CD        // Mauer mit Wagenrad
 #define EMERALD_WALL_WITH_DYNAMITE                  0x00CE        // Mauer mit Dynamit
-#define EMERALD_WALL_WITH_ENDDOOR                   0x00CF        // Mauer mit Endtür
-#define EMERALD_WALL_WITH_ENDDOOR_READY             0x00D0        // Mauer mit Endtür, blinkend
+#define EMERALD_WALL_WITH_ENDDOOR                   0x00CF        // Mauer mit EndtÃ¼r
+#define EMERALD_WALL_WITH_ENDDOOR_READY             0x00D0        // Mauer mit EndtÃ¼r, blinkend
 #define EMERALD_WALL_WITH_MINE_UP                   0x00D1        // Mauer mit Mine hoch
 #define EMERALD_WALL_WITH_MOLE_UP                   0x00D2        // Mauer mit Maulwurf hoch
-#define EMERALD_WALL_WITH_GREEN_CHEESE              0x00D3        // Mauer mit grünem Käse
-#define EMERALD_WALL_WITH_BEETLE_UP                 0x00D4        // Mauer mit Käfer hoch
+#define EMERALD_WALL_WITH_GREEN_CHEESE              0x00D3        // Mauer mit grÃ¼nem KÃ¤se
+#define EMERALD_WALL_WITH_BEETLE_UP                 0x00D4        // Mauer mit KÃ¤fer hoch
 #define EMERALD_WALL_WITH_YAM                       0x00D5        // Mauer mit Yam
 #define EMERALD_WALL_WITH_ALIEN                     0x00D6        // Mauer mit Alien
 #define EMERALD_FONT_BLUE_EXCLAMATION               0x0100        // !
@@ -264,7 +264,7 @@
 #define EMERALD_FONT_BLUE_DOUBLE_DOT                0x0117        // :
 #define EMERALD_FONT_BLUE_PLATE                     0x0118        // Plate
 #define EMERALD_FONT_BLUE_ARROW_LEFT                0x0119        // Pfeil links
-#define EMERALD_FONT_PAFF                           0x011A        // Paff, der Stofftieraffe: War dumm das hier einzubauen, da nun Zeichensätze unterschiedlich sind
+#define EMERALD_FONT_PAFF                           0x011A        // Paff, der Stofftieraffe: War dumm das hier einzubauen, da nun ZeichensÃ¤tze unterschiedlich sind
 #define EMERALD_FONT_BLUE_QUESTION_MARK             0x011B        // ?
 #define EMERALD_FONT_BLUE_A                         0x011C        // A
 #define EMERALD_FONT_BLUE_B                         0x011D        // B
@@ -292,9 +292,9 @@
 #define EMERALD_FONT_BLUE_X                         0x0133        // X
 #define EMERALD_FONT_BLUE_Y                         0x0134        // Y
 #define EMERALD_FONT_BLUE_Z                         0x0135        // Z
-#define EMERALD_FONT_BLUE_AE                        0x0136        // Ä
-#define EMERALD_FONT_BLUE_OE                        0x0137        // Ö
-#define EMERALD_FONT_BLUE_UE                        0x0138        // Ü
+#define EMERALD_FONT_BLUE_AE                        0x0136        // Ã„
+#define EMERALD_FONT_BLUE_OE                        0x0137        // Ã–
+#define EMERALD_FONT_BLUE_UE                        0x0138        // Ãœ
 #define EMERALD_FONT_BLUE_STEEL_EXCLAMATION         0x0139        // !, Ab hier blauer Zeichensatz in Stahl
 #define EMERALD_FONT_BLUE_STEEL_ARROW_RIGHT         0x013A        // Pfeil rechts
 #define EMERALD_FONT_BLUE_STEEL_ARROW_UP            0x013B        // Pfeil hoch
@@ -348,10 +348,10 @@
 #define EMERALD_FONT_BLUE_STEEL_X                   0x016B        // X
 #define EMERALD_FONT_BLUE_STEEL_Y                   0x016C        // Y
 #define EMERALD_FONT_BLUE_STEEL_Z                   0x016D        // Z
-#define EMERALD_FONT_BLUE_STEEL_AE                  0x016E        // Ä
-#define EMERALD_FONT_BLUE_STEEL_OE                  0x016F        // Ö
-#define EMERALD_FONT_BLUE_STEEL_UE                  0x0170        // Ü
-#define EMERALD_FONT_GREEN_EXCLAMATION              0x0171        // !, Ab hier grüner Zeichensatz
+#define EMERALD_FONT_BLUE_STEEL_AE                  0x016E        // Ã„
+#define EMERALD_FONT_BLUE_STEEL_OE                  0x016F        // Ã–
+#define EMERALD_FONT_BLUE_STEEL_UE                  0x0170        // Ãœ
+#define EMERALD_FONT_GREEN_EXCLAMATION              0x0171        // !, Ab hier grÃ¼ner Zeichensatz
 #define EMERALD_FONT_GREEN_ARROW_RIGHT              0x0172        // Pfeil rechts
 #define EMERALD_FONT_GREEN_ARROW_UP                 0x0173        // Pfeil hoch
 #define EMERALD_FONT_GREEN_ARROW_DOWN               0x0174        // Pfeil runter
@@ -404,10 +404,10 @@
 #define EMERALD_FONT_GREEN_X                        0x01A3        // X
 #define EMERALD_FONT_GREEN_Y                        0x01A4        // Y
 #define EMERALD_FONT_GREEN_Z                        0x01A5        // Z
-#define EMERALD_FONT_GREEN_AE                       0x01A6        // Ä
-#define EMERALD_FONT_GREEN_OE                       0x01A7        // Ö
-#define EMERALD_FONT_GREEN_UE                       0x01A8        // Ü
-#define EMERALD_FONT_GREEN_STEEL_EXCLAMATION        0x01A9        // !, Ab hier grüner Zeichensatz in Stahl
+#define EMERALD_FONT_GREEN_AE                       0x01A6        // Ã„
+#define EMERALD_FONT_GREEN_OE                       0x01A7        // Ã–
+#define EMERALD_FONT_GREEN_UE                       0x01A8        // Ãœ
+#define EMERALD_FONT_GREEN_STEEL_EXCLAMATION        0x01A9        // !, Ab hier grÃ¼ner Zeichensatz in Stahl
 #define EMERALD_FONT_GREEN_STEEL_ARROW_RIGHT        0x01AA        // Pfeil rechts
 #define EMERALD_FONT_GREEN_STEEL_ARROW_UP           0x01AB        // Pfeil hoch
 #define EMERALD_FONT_GREEN_STEEL_ARROW_DOWN         0x01AC        // Pfeil runter
@@ -460,17 +460,17 @@
 #define EMERALD_FONT_GREEN_STEEL_X                  0x01DB        // X
 #define EMERALD_FONT_GREEN_STEEL_Y                  0x01DC        // Y
 #define EMERALD_FONT_GREEN_STEEL_Z                  0x01DD        // Z
-#define EMERALD_FONT_GREEN_STEEL_AE                 0x01DE        // Ä
-#define EMERALD_FONT_GREEN_STEEL_OE                 0x01DF        // Ö
-#define EMERALD_FONT_GREEN_STEEL_UE                 0x01E0        // Ü
+#define EMERALD_FONT_GREEN_STEEL_AE                 0x01DE        // Ã„
+#define EMERALD_FONT_GREEN_STEEL_OE                 0x01DF        // Ã–
+#define EMERALD_FONT_GREEN_STEEL_UE                 0x01E0        // Ãœ
 #define EMERALD_CENTRAL_EXPLOSION                   0x01E1        // Mittelpunkt einer (Bomben)-Explosion
 #define EMERALD_CENTRAL_EXPLOSION_MEGA              0x01E2        // Mittelpunkt einer Mega-Bomben-Explosion
-#define EMERALD_CENTRAL_EXPLOSION_BEETLE            0x01E3        // Mittelpunkt einer Käferexplosion
+#define EMERALD_CENTRAL_EXPLOSION_BEETLE            0x01E3        // Mittelpunkt einer KÃ¤ferexplosion
 #define EMERALD_MAN_DIES                            0x01E4        // Man stirbt
-#define EMERALD_ALIEN_KILLS_MAN                     0x01E5        // Alien tötet Man
-#define EMERALD_YAM_KILLS_MAN                       0x01E6        // Yam tötet Man
-#define EMERALD_WALL_WITH_TIME_COIN                 0x01E7        // Mauer mit Zeitmünze
-#define EMERALD_STEEL_TRASHCAN                      0x01E8        // Stahl Mülleimer
+#define EMERALD_ALIEN_KILLS_MAN                     0x01E5        // Alien tÃ¶tet Man
+#define EMERALD_YAM_KILLS_MAN                       0x01E6        // Yam tÃ¶tet Man
+#define EMERALD_WALL_WITH_TIME_COIN                 0x01E7        // Mauer mit ZeitmÃ¼nze
+#define EMERALD_STEEL_TRASHCAN                      0x01E8        // Stahl MÃ¼lleimer
 #define EMERALD_STEEL_JOYSTICK                      0x01E9        // Stahl Joystick
 #define EMERALD_STEEL_EDIT_LEVEL                    0x01EA        // Stahl Level editieren
 #define EMERALD_STEEL_MOVE_LEVEL                    0x01EB        // Stahl Level verschieben
@@ -480,14 +480,14 @@
 #define EMERALD_STEEL_DC3_IMPORT                    0x01EF        // Stahl DC3 (Diamond Caves 3)-Level-Import
 #define EMERALD_STEEL_RENAME_LEVELGROUP             0x01F0        // Stahl Levelgruppe umbenennen
 #define EMERALD_STEEL_PASSWORD                      0x01F1        // Stahl Passwort
-#define EMERALD_GRASS                               0x01F2        // Gras, kann sich ähnlich wie grüner Käse ausbreiten
+#define EMERALD_GRASS                               0x01F2        // Gras, kann sich Ã¤hnlich wie grÃ¼ner KÃ¤se ausbreiten
 #define EMERALD_GRASS_COMES                         0x01F3        // Gras, welches gerade entsteht
 #define EMERALD_MINE_EARTH                          0x01F4        // Kontakt-Mine
 #define EMERALD_EARTH_INVISIBLE                     0x01F5        // unsichtbare Erde
 #define EMERALD_CONVEYORBELT_RED                    0x01F6        // Laufband, rot
 #define EMERALD_CONVEYORBELT_SWITCH_RED             0x01F7        // Laufband-Schalter, rot
-#define EMERALD_CONVEYORBELT_GREEN                  0x01F8        // Laufband, grün
-#define EMERALD_CONVEYORBELT_SWITCH_GREEN           0x01F9        // Laufband-Schalter, grün
+#define EMERALD_CONVEYORBELT_GREEN                  0x01F8        // Laufband, grÃ¼n
+#define EMERALD_CONVEYORBELT_SWITCH_GREEN           0x01F9        // Laufband-Schalter, grÃ¼n
 #define EMERALD_CONVEYORBELT_BLUE                   0x01FA        // Laufband, blau
 #define EMERALD_CONVEYORBELT_SWITCH_BLUE            0x01FB        // Laufband-Schalter, blau
 #define EMERALD_CONVEYORBELT_YELLOW                 0x01FC        // Laufband, gelb
@@ -496,41 +496,41 @@
 #define EMERALD_LEVELEDITOR_MESSAGE_2_4             0x01FF        // Leveleditor-Message 2/4, wenn fenster zu klein
 #define EMERALD_LEVELEDITOR_MESSAGE_3_4             0x0200        // Leveleditor-Message 3/4, wenn fenster zu klein
 #define EMERALD_LEVELEDITOR_MESSAGE_4_4             0x0201        // Leveleditor-Message 4/4, wenn fenster zu klein
-#define EMERALD_STEEL_GROW_LEFT                     0x0202        // Stahl, wächst links
-#define EMERALD_STEEL_GROW_RIGHT                    0x0203        // Stahl, wächst rechts
-#define EMERALD_STEEL_GROW_UP                       0x0204        // Stahl, wächst hoch
-#define EMERALD_STEEL_GROW_DOWN                     0x0205        // Stahl, wächst runter
-#define EMERALD_STEEL_GROW_LEFT_RIGHT               0x0206        // Stahl, wächst links und rechts
-#define EMERALD_STEEL_GROW_UP_DOWN                  0x0207        // Stahl, wächst hoch und runter
-#define EMERALD_STEEL_GROW_ALL                      0x0208        // Stahl, wächst in alle Richtungen
+#define EMERALD_STEEL_GROW_LEFT                     0x0202        // Stahl, wÃ¤chst links
+#define EMERALD_STEEL_GROW_RIGHT                    0x0203        // Stahl, wÃ¤chst rechts
+#define EMERALD_STEEL_GROW_UP                       0x0204        // Stahl, wÃ¤chst hoch
+#define EMERALD_STEEL_GROW_DOWN                     0x0205        // Stahl, wÃ¤chst runter
+#define EMERALD_STEEL_GROW_LEFT_RIGHT               0x0206        // Stahl, wÃ¤chst links und rechts
+#define EMERALD_STEEL_GROW_UP_DOWN                  0x0207        // Stahl, wÃ¤chst hoch und runter
+#define EMERALD_STEEL_GROW_ALL                      0x0208        // Stahl, wÃ¤chst in alle Richtungen
 #define EMERALD_STEEL_GROWING_LEFT                  0x0209        // Neuer links wachsender Stahl
 #define EMERALD_STEEL_GROWING_RIGHT                 0x020A        // Neuer rechts wachsender Stahl
 #define EMERALD_STEEL_GROWING_UP                    0x020B        // Neuer hoch wachsender Stahl
 #define EMERALD_STEEL_GROWING_DOWN                  0x020C        // Neuer runter wachsender Stahl
-#define EMERALD_WALL_GROW_LEFT                      0x020D        // Mauer, wächst links
-#define EMERALD_WALL_GROW_RIGHT                     0x020E        // Mauer, wächst rechts
-#define EMERALD_WALL_GROW_UP                        0x020F        // Mauer, wächst hoch
-#define EMERALD_WALL_GROW_DOWN                      0x0210        // Mauer, wächst runter
-#define EMERALD_WALL_GROW_LEFT_RIGHT                0x0211        // Mauer, wächst links und rechts
-#define EMERALD_WALL_GROW_UP_DOWN                   0x0212        // Mauer, wächst hoch und runter
-#define EMERALD_WALL_GROW_ALL                       0x0213        // Mauer, wächst in alle Richtungen
+#define EMERALD_WALL_GROW_LEFT                      0x020D        // Mauer, wÃ¤chst links
+#define EMERALD_WALL_GROW_RIGHT                     0x020E        // Mauer, wÃ¤chst rechts
+#define EMERALD_WALL_GROW_UP                        0x020F        // Mauer, wÃ¤chst hoch
+#define EMERALD_WALL_GROW_DOWN                      0x0210        // Mauer, wÃ¤chst runter
+#define EMERALD_WALL_GROW_LEFT_RIGHT                0x0211        // Mauer, wÃ¤chst links und rechts
+#define EMERALD_WALL_GROW_UP_DOWN                   0x0212        // Mauer, wÃ¤chst hoch und runter
+#define EMERALD_WALL_GROW_ALL                       0x0213        // Mauer, wÃ¤chst in alle Richtungen
 #define EMERALD_WALL_GROWING_LEFT                   0x0214        // Neue links wachsende Mauer
 #define EMERALD_WALL_GROWING_RIGHT                  0x0215        // Neue rechts wachsende Mauer
 #define EMERALD_WALL_GROWING_UP                     0x0216        // Neue hoch wachsende Mauer
 #define EMERALD_WALL_GROWING_DOWN                   0x0217        // Neue runter wachsende Mauer
-#define EMERALD_DOOR_ONLY_UP_WALL                   0x0218        // Tür, nur nach oben passierbar, sprengbar
-#define EMERALD_DOOR_ONLY_DOWN_WALL                 0x0219        // Tür, nur nach unten passierbar, sprengbar
-#define EMERALD_DOOR_ONLY_LEFT_WALL                 0x021A        // Tür, nur nach links passierbar, sprengbar
-#define EMERALD_DOOR_ONLY_RIGHT_WALL                0x021B        // Tür, nur nach rechts passierbar, sprengbar
+#define EMERALD_DOOR_ONLY_UP_WALL                   0x0218        // TÃ¼r, nur nach oben passierbar, sprengbar
+#define EMERALD_DOOR_ONLY_DOWN_WALL                 0x0219        // TÃ¼r, nur nach unten passierbar, sprengbar
+#define EMERALD_DOOR_ONLY_LEFT_WALL                 0x021A        // TÃ¼r, nur nach links passierbar, sprengbar
+#define EMERALD_DOOR_ONLY_RIGHT_WALL                0x021B        // TÃ¼r, nur nach rechts passierbar, sprengbar
 #define EMERALD_TELEPORTER_RED                      0x021C        // Teleporter, rot
 #define EMERALD_TELEPORTER_YELLOW                   0x021D        // Teleporter, gelb
-#define EMERALD_TELEPORTER_GREEN                    0x021E        // Teleporter, grün
+#define EMERALD_TELEPORTER_GREEN                    0x021E        // Teleporter, grÃ¼n
 #define EMERALD_TELEPORTER_BLUE                     0x021F        // Teleporter, blau
 #define EMERALD_SWITCH_REMOTEBOMB_UP                0x0220        // ferngesteuerte Bombe, Schalter hoch
 #define EMERALD_SWITCH_REMOTEBOMB_DOWN              0x0221        // ferngesteuerte Bombe, Schalter runter
 #define EMERALD_SWITCH_REMOTEBOMB_LEFT              0x0222        // ferngesteuerte Bombe, Schalter links
 #define EMERALD_SWITCH_REMOTEBOMB_RIGHT             0x0223        // ferngesteuerte Bombe, Schalter rechts
-#define EMERALD_SWITCH_REMOTEBOMB_IGNITION          0x0224        // ferngesteuerte Bombe, Schalter Zündung
+#define EMERALD_SWITCH_REMOTEBOMB_IGNITION          0x0224        // ferngesteuerte Bombe, Schalter ZÃ¼ndung
 #define EMERALD_REMOTEBOMB                          0x0225        // ferngesteuerte Bombe
 #define EMERALD_STEEL_MODERN_LEFT_END               0x0226        // Stahl, modern, linkes Ende
 #define EMERALD_STEEL_MODERN_LEFT_RIGHT             0x0227        // Stahl, modern, links/rechts
@@ -539,24 +539,24 @@
 #define EMERALD_STEEL_MODERN_UP_DOWN                0x022A        // Stahl, modern, oben/unten
 #define EMERALD_STEEL_MODERN_DOWN_END               0x022B        // Stahl, modern, unteres Ende
 #define EMERALD_STEEL_MODERN_MIDDLE                 0x022C        // Stahl, modern, Mittelteil
-#define EMERALD_PIPE_UP_DOWN                        0x022D        // Röhre, oben+unten
-#define EMERALD_PIPE_LEFT_RIGHT                     0x022E        // Röhre, links+rechts
-#define EMERALD_PIPE_LEFT_UP                        0x022F        // Röhre, links+oben
-#define EMERALD_PIPE_LEFT_DOWN                      0x0230        // Röhre, links+unten
-#define EMERALD_PIPE_RIGHT_UP                       0x0231        // Röhre, rechts+oben
-#define EMERALD_PIPE_RIGHT_DOWN                     0x0232        // Röhre, rechts+unten
-#define EMERALD_PIPE_LEFT_UP_DOWN                   0x0233        // Röhre, links+oben+unten
-#define EMERALD_PIPE_RIGHT_UP_DOWN                  0x0234        // Röhre, rechts+oben+unten
-#define EMERALD_PIPE_LEFT_RIGHT_UP                  0x0235        // Röhre, links+rechts+oben
-#define EMERALD_PIPE_LEFT_RIGHT_DOWN                0x0236        // Röhre, links+rechts+unten
-#define EMERALD_PIPE_LEFT_RIGHT_UP_DOWN             0x0237        // Röhre, links+rechts+oben+unten
-#define EMERALD_SHIELD_COIN                         0x0238        // Schildmünze
-#define EMERALD_YELLOW_CHEESE_GOES                  0x0239        // Gelber Käse löst sich auf, int. Element
-#define EMERALD_YELLOW_DROP_COMES                   0x023A        // Gelber Tropfen, der zu Käse werden kann, int. Element
-#define EMERALD_YELLOW_DROP                         0x023B        // Gelber Tropfen, der zu Käse werden kann
-#define EMERALD_YELLOW_CHEESE                       0x023C        // Gelber Käse, der sich über Tropfen ausbreiten kann
-#define EMERALD_WALL_WITH_YELLOW_CHEESE             0x023D        // Mauer mit gelbem Käse
-#define EMERALD_WALL_WITH_SHIELD_COIN               0x023E        // Mauer mit Schildmünze
+#define EMERALD_PIPE_UP_DOWN                        0x022D        // RÃ¶hre, oben+unten
+#define EMERALD_PIPE_LEFT_RIGHT                     0x022E        // RÃ¶hre, links+rechts
+#define EMERALD_PIPE_LEFT_UP                        0x022F        // RÃ¶hre, links+oben
+#define EMERALD_PIPE_LEFT_DOWN                      0x0230        // RÃ¶hre, links+unten
+#define EMERALD_PIPE_RIGHT_UP                       0x0231        // RÃ¶hre, rechts+oben
+#define EMERALD_PIPE_RIGHT_DOWN                     0x0232        // RÃ¶hre, rechts+unten
+#define EMERALD_PIPE_LEFT_UP_DOWN                   0x0233        // RÃ¶hre, links+oben+unten
+#define EMERALD_PIPE_RIGHT_UP_DOWN                  0x0234        // RÃ¶hre, rechts+oben+unten
+#define EMERALD_PIPE_LEFT_RIGHT_UP                  0x0235        // RÃ¶hre, links+rechts+oben
+#define EMERALD_PIPE_LEFT_RIGHT_DOWN                0x0236        // RÃ¶hre, links+rechts+unten
+#define EMERALD_PIPE_LEFT_RIGHT_UP_DOWN             0x0237        // RÃ¶hre, links+rechts+oben+unten
+#define EMERALD_SHIELD_COIN                         0x0238        // SchildmÃ¼nze
+#define EMERALD_YELLOW_CHEESE_GOES                  0x0239        // Gelber KÃ¤se lÃ¶st sich auf, int. Element
+#define EMERALD_YELLOW_DROP_COMES                   0x023A        // Gelber Tropfen, der zu KÃ¤se werden kann, int. Element
+#define EMERALD_YELLOW_DROP                         0x023B        // Gelber Tropfen, der zu KÃ¤se werden kann
+#define EMERALD_YELLOW_CHEESE                       0x023C        // Gelber KÃ¤se, der sich Ã¼ber Tropfen ausbreiten kann
+#define EMERALD_WALL_WITH_YELLOW_CHEESE             0x023D        // Mauer mit gelbem KÃ¤se
+#define EMERALD_WALL_WITH_SHIELD_COIN               0x023E        // Mauer mit SchildmÃ¼nze
 #define EMERALD_SLIME                               0x023F        // Schleim
 #define EMERALD_WALL_WITH_SLIME                     0x0240        // Mauer mit Schleim
 #define EMERALD_FONT_BLUE_SEMICOLON                 0x0241        // ;
@@ -572,38 +572,38 @@
 #define EMERALD_STONE_SINK_SLOW                     0x024B        // Stein versinkt in langsamen Treibsand
 #define EMERALD_STONE_SAG_SLOW                      0x024C        // Stein sackt aus langsamen Treibsand
 #define EMERALD_STEEL_PLAYERHEAD_2                  0x024D        // Stahl, Spielerkopf 2
-#define EMERALD_TREASURECHEST_1                     0x024E        // Schatztruhe 1       Die Treasurechest-Elemente müssen aufsteigend
-#define EMERALD_TREASURECHEST_2                     0x024F        // Schatztruhe 2       und ohne Lücken aufgezählt werden,
-#define EMERALD_TREASURECHEST_3                     0x0250        // Schatztruhe 3       da im Quelltext dieser Bereich geprüft wird.
+#define EMERALD_TREASURECHEST_1                     0x024E        // Schatztruhe 1       Die Treasurechest-Elemente mÃ¼ssen aufsteigend
+#define EMERALD_TREASURECHEST_2                     0x024F        // Schatztruhe 2       und ohne LÃ¼cken aufgezÃ¤hlt werden,
+#define EMERALD_TREASURECHEST_3                     0x0250        // Schatztruhe 3       da im Quelltext dieser Bereich geprÃ¼ft wird.
 #define EMERALD_TREASURECHEST_4                     0x0251        // Schatztruhe 4
 #define EMERALD_TREASURECHEST_5                     0x0252        // Schatztruhe 5
 #define EMERALD_TREASURECHEST_7                     0x0254        // Schatztruhe 7
 #define EMERALD_TREASURECHEST_6                     0x0253        // Schatztruhe 6
 #define EMERALD_TREASURECHEST_8                     0x0255        // Schatztruhe 8
-#define EMERALD_MESSAGE_0                           0x0256        // Dummy-Element für Editor
-#define EMERALD_TREASURECHEST_0                     0x0257        // Dummy-Element für Editor, geschlossene Schatztruhe (ohne Zahl)
-#define EMERALD_TREASURECHEST_OPEN                  0x0258        // Dummy-Element für Editor, geöffnete Schatztruhe (ohne Zahl)
-#define EMERALD_DOOR_GREY_NOKEY                     0x0259        // Geheimtür ohne Schlüssel
+#define EMERALD_MESSAGE_0                           0x0256        // Dummy-Element fÃ¼r Editor
+#define EMERALD_TREASURECHEST_0                     0x0257        // Dummy-Element fÃ¼r Editor, geschlossene Schatztruhe (ohne Zahl)
+#define EMERALD_TREASURECHEST_OPEN                  0x0258        // Dummy-Element fÃ¼r Editor, geÃ¶ffnete Schatztruhe (ohne Zahl)
+#define EMERALD_DOOR_GREY_NOKEY                     0x0259        // GeheimtÃ¼r ohne SchlÃ¼ssel
 #define EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP        0x025A	      // Stahl, Ecke, Markierung, links oben
 #define EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP       0x025B	      // Stahl, Ecke, Markierung, rechts oben
 #define EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM     0x025C	      // Stahl, Ecke, Markierung, links unten
 #define EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM    0x025D	      // Stahl, Ecke, Markierung, rechts unten
 
-#define EMERALD_SMILEY                              0x025E        // nicht für das Spiel
+#define EMERALD_SMILEY                              0x025E        // nicht fÃ¼r das Spiel
 
-#define EMERALD_MAX_ELEMENT                         0x025E        // hier immer das letzte Element eintragen (für ControlExplosionToElement())
-#define EMERALD_INVALID                             0xFFFF        // ungültiges Element
+#define EMERALD_MAX_ELEMENT                         0x025E        // hier immer das letzte Element eintragen (fÃ¼r ControlExplosionToElement())
+#define EMERALD_INVALID                             0xFFFF        // ungÃ¼ltiges Element
 
-#define EMERALD_FONT_BLUE                           0x00          // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)
+#define EMERALD_FONT_BLUE                           0x00          // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grÃ¼n)
 #define EMERALD_FONT_BLUE_STEEL                     0x01
 #define EMERALD_FONT_GREEN                          0x10
 #define EMERALD_FONT_GREEN_STEEL                    0x11
 
-// Status der Laufbänder
+// Status der LaufbÃ¤nder
 #define EMERALD_CONVEYBELT_OFF                      0
 #define EMERALD_CONVEYBELT_LEFT                     1
 #define EMERALD_CONVEYBELT_RIGHT                    2
-// Schalt-Richtungen für Laufband-Umschalter
+// Schalt-Richtungen fÃ¼r Laufband-Umschalter
 #define EMERALD_CONVEYBELT_TO_LEFT                  0
 #define EMERALD_CONVEYBELT_TO_RIGHT                 1
 
@@ -626,27 +626,27 @@
 #define EMERALD_ANIM_RIGHT_DOUBLESPEED              0x00000E00    // rechts, doppelte Geschwindigkeit
 #define EMERALD_ANIM_DOWN_DOUBLESPEED               0x00000F00    // runter, doppelte Geschwindigkeit
 #define EMERALD_ANIM_LEFT_DOUBLESPEED               0x00001000    // links, doppelte Geschwindigkeit
-#define EMERALD_ANIM_MOLE_STAND                     0x00001100    // Mole "läuft" auf der Stelle
-#define EMERALD_STATUS_DOOR_OPEN                    0x00001200    // Schalt- und Zeit-Tür ist offen
-#define EMERALD_STATUS_DOOR_CLOSE                   0x00001300    // Schalt- und Zeit-Tür ist geschlossen
-#define EMERALD_ANIM_EARTH_0                        0x00001400    // Erd-Ränder 0 / F
+#define EMERALD_ANIM_MOLE_STAND                     0x00001100    // Mole "lÃ¤uft" auf der Stelle
+#define EMERALD_STATUS_DOOR_OPEN                    0x00001200    // Schalt- und Zeit-TÃ¼r ist offen
+#define EMERALD_STATUS_DOOR_CLOSE                   0x00001300    // Schalt- und Zeit-TÃ¼r ist geschlossen
+#define EMERALD_ANIM_EARTH_0                        0x00001400    // Erd-RÃ¤nder 0 / F
 // Elemente zwischen 0x00001400 und 0x00002300 sind entsprechend besetzt
-#define EMERALD_ANIM_EARTH_F                        0x00002300    // Erd-Ränder F / F
+#define EMERALD_ANIM_EARTH_F                        0x00002300    // Erd-RÃ¤nder F / F
 
 #define EMERALD_ANIM_SLIME_GO_LEFT_1                0x00002400    // Schleim, bewegt sich nach links, Phase 1
 #define EMERALD_ANIM_SLIME_GO_UP_1                  0x00002500    // Schleim, bewegt sich nach open, Phase 1
 #define EMERALD_ANIM_SLIME_GO_RIGHT_1               0x00002600    // Schleim, bewegt sich nach rechts, Phase 1
 #define EMERALD_ANIM_SLIME_GO_DOWN_1                0x00002700    // Schleim, bewegt sich nach unten, Phase 1
 
-#define EMERALD_ANIM_CLEAN_UP                       0x00010000    // über dem invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_RIGHT                    0x00020000    // rechts neben invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_DOWN                     0x00030000    // unter dem invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_LEFT                     0x00040000    // links neben invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_UP_DOUBLESPEED           0x00050000    // 2 Felder über dem invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_RIGHT_DOUBLESPEED        0x00060000    // 2 Felder rechts neben invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_DOWN_DOUBLESPEED         0x00070000    // 2 Felder unter dem invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_LEFT_DOUBLESPEED         0x00080000    // 2 Felder links neben invaliden Feld löschen
-#define EMERALD_ANIM_CLEAN_NOTHING                  0x00090000    // Gar nichts löschen/setzen, wird z.B. für grünen Tropfen in Phase 1 benötigt
+#define EMERALD_ANIM_CLEAN_UP                       0x00010000    // Ã¼ber dem invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_RIGHT                    0x00020000    // rechts neben invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_DOWN                     0x00030000    // unter dem invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_LEFT                     0x00040000    // links neben invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_UP_DOUBLESPEED           0x00050000    // 2 Felder Ã¼ber dem invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_RIGHT_DOUBLESPEED        0x00060000    // 2 Felder rechts neben invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_DOWN_DOUBLESPEED         0x00070000    // 2 Felder unter dem invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_LEFT_DOUBLESPEED         0x00080000    // 2 Felder links neben invaliden Feld lÃ¶schen
+#define EMERALD_ANIM_CLEAN_NOTHING                  0x00090000    // Gar nichts lÃ¶schen/setzen, wird z.B. fÃ¼r grÃ¼nen Tropfen in Phase 1 benÃ¶tigt
 
 #define EMERALD_ANIM_AVOID_DOUBLE_CONTROL           0x00800000    // Element nicht doppelt steuern (Element wird z.B. I + X gesetzt und durch ControlGame(I) nachgesteuet)
 
@@ -658,17 +658,17 @@
 #define EMERALD_LAST_YAM_DIR_DOWN                   3             // runter
 #define EMERALD_LAST_YAM_DIR_LEFT                   4             // links
 
-// "Selbststeuernde" Zustände                                     // Diese Zustände müssen vom Element selbst zurückgesetzt werden
-#define EMERALD_NO_ADDITIONAL_ANIMSTATUS            0x00000000    // kein zusätzlicher Status
-#define EMERALD_ANIM_LOST_GUIDE                     0x01000000    // Mine oder Käfer haben Führung verloren
+// "Selbststeuernde" ZustÃ¤nde                                     // Diese ZustÃ¤nde mÃ¼ssen vom Element selbst zurÃ¼ckgesetzt werden
+#define EMERALD_NO_ADDITIONAL_ANIMSTATUS            0x00000000    // kein zusÃ¤tzlicher Status
+#define EMERALD_ANIM_LOST_GUIDE                     0x01000000    // Mine oder KÃ¤fer haben FÃ¼hrung verloren
 #define EMERALD_ANIM_ALIEN_MOVED                    0x02000000    // Alien hat sich im letzten Schritt bewegt -> soll keine Doppelbewegungen machen
 #define EMERALD_ANIM_WHEEL_RUN                      0x03000000    // Rad soll bewegt werden
-#define EMERALD_ANIM_BORN1                          0x04000000    // Replikator erzeugt neues Element über
+#define EMERALD_ANIM_BORN1                          0x04000000    // Replikator erzeugt neues Element Ã¼ber
 #define EMERALD_ANIM_BORN2                          0x05000000    // 2 Steuerungsphasen -> halbe Geschwindigekit
-#define EMERALD_ANIM_KEY_RED_SHRINK                 0x06000000    // roter Schlüssel wird keiner
-#define EMERALD_ANIM_KEY_GREEN_SHRINK               0x07000000    // grüner Schlüssel wird keiner
-#define EMERALD_ANIM_KEY_BLUE_SHRINK                0x08000000    // blauer Schlüssel wird keiner
-#define EMERALD_ANIM_KEY_YELLOW_SHRINK              0x09000000    // gelber Schlüssel wird keiner
+#define EMERALD_ANIM_KEY_RED_SHRINK                 0x06000000    // roter SchlÃ¼ssel wird keiner
+#define EMERALD_ANIM_KEY_GREEN_SHRINK               0x07000000    // grÃ¼ner SchlÃ¼ssel wird keiner
+#define EMERALD_ANIM_KEY_BLUE_SHRINK                0x08000000    // blauer SchlÃ¼ssel wird keiner
+#define EMERALD_ANIM_KEY_YELLOW_SHRINK              0x09000000    // gelber SchlÃ¼ssel wird keiner
 #define EMERALD_ANIM_EARTH_SHRINK                   0x0A000000    // Erde verschwindet
 #define EMERALD_ANIM_DOWN_SELF                      0x0B000000    // Bewegung war nach unten (selbststeuernd)
 #define EMERALD_ANIM_EMERALD_SHRINK                 0x0C000000    // Emerald wird kleiner
@@ -693,44 +693,44 @@
 #define EMERALD_ANIM_RUBY_SHRINK                    0x1F000000    // Rubin wird kleiner
 #define EMERALD_ANIM_PERL_SHRINK                    0x20000000    // Perle wird kleiner
 #define EMERALD_ANIM_CRYSTAL_SHRINK                 0x21000000    // Kristall wird kleiner
-#define EMERALD_ANIM_TIME_COIN_SHRINK               0x22000000    // Zeitmünze wird kleiner
+#define EMERALD_ANIM_TIME_COIN_SHRINK               0x22000000    // ZeitmÃ¼nze wird kleiner
 #define EMERALD_ANIM_HAMMER_SHRINK                  0x23000000    // Hammer wird kleiner
 #define EMERALD_ANIM_DYNAMITE_SHRINK                0x24000000    // Dynamit wird kleiner
 #define EMERALD_ANIM_MESSAGE_SHRINK                 0x25000000    // Briefumschlag wird kleiner
-#define EMERALD_ANIM_DROP_1                         0x26000000    // grüner/gelber Tropfen, Phase 1
-#define EMERALD_ANIM_DROP_2                         0x27000000    // grüner/gelber Tropfen, Phase 2
+#define EMERALD_ANIM_DROP_1                         0x26000000    // grÃ¼ner/gelber Tropfen, Phase 1
+#define EMERALD_ANIM_DROP_2                         0x27000000    // grÃ¼ner/gelber Tropfen, Phase 2
 #define EMERALD_ANIM_PERL_BREAK                     0x28000000    // Perle zerbricht
 #define EMERALD_ANIM_BLOCKED_MOLE_SPIN_RIGHT        0x29000000    // Blockierter Maulwurf drehte zuletzt nach rechts
 #define EMERALD_ANIM_BLOCKED_MOLE_SPIN_LEFT         0x2A000000    // Blockierter Maulwurf drehte zuletzt nach links
-#define EMERALD_ANIM_DOOR_OPEN                      0x2B000000    // Schalt- und Zeit-Tür wird geöffnet
-#define EMERALD_ANIM_DOOR_CLOSE                     0x2C000000    // Schalt- und Zeit-Tür wird geschlossen
-#define EMERALD_ANIM_KEY_WHITE_SHRINK               0x2D000000    // weißer Schlüssel wird keiner
-#define EMERALD_ANIM_KEY_GENERAL_SHRINK             0x2E000000    // General-Schlüssel wird keiner
+#define EMERALD_ANIM_DOOR_OPEN                      0x2B000000    // Schalt- und Zeit-TÃ¼r wird geÃ¶ffnet
+#define EMERALD_ANIM_DOOR_CLOSE                     0x2C000000    // Schalt- und Zeit-TÃ¼r wird geschlossen
+#define EMERALD_ANIM_KEY_WHITE_SHRINK               0x2D000000    // weiÃŸer SchlÃ¼ssel wird keiner
+#define EMERALD_ANIM_KEY_GENERAL_SHRINK             0x2E000000    // General-SchlÃ¼ssel wird keiner
 #define EMERALD_ANIM_BLOCK_MAN                      0x2F000000    // Diese Animation blockiert Man, wird i.d.R. dem Element EMERALD_SPACE gegeben
-#define EMERALD_ANIM_MOLE_GOES_ACID                 0x30000000    // Mole fällt ins Säurebecken und muss beim Sterben noch Erde über dem Becken erzeugen
-#define EMERALD_ANIM_MAN_GOES_ENDDOOR               0x31000000    // Man geht in eine Endtür
-#define EMERALD_ANIM_DOOR_READY_SHRINK              0x32000000    // Endtür verschwindet
-#define EMERALD_ANIM_DYNAMITE_START                 0x33000000    // Dynamit wird aktiv durch manuelle Zündung (Man)
+#define EMERALD_ANIM_MOLE_GOES_ACID                 0x30000000    // Mole fÃ¤llt ins SÃ¤urebecken und muss beim Sterben noch Erde Ã¼ber dem Becken erzeugen
+#define EMERALD_ANIM_MAN_GOES_ENDDOOR               0x31000000    // Man geht in eine EndtÃ¼r
+#define EMERALD_ANIM_DOOR_READY_SHRINK              0x32000000    // EndtÃ¼r verschwindet
+#define EMERALD_ANIM_DYNAMITE_START                 0x33000000    // Dynamit wird aktiv durch manuelle ZÃ¼ndung (Man)
 #define EMERALD_ANIM_DYNAMITE_ON_P1                 0x34000000    // Dynamit aktiv, Phase 1
 #define EMERALD_ANIM_DYNAMITE_ON_P2                 0x35000000    // Dynamit aktiv, Phase 2
 #define EMERALD_ANIM_DYNAMITE_ON_P3                 0x36000000    // Dynamit aktiv, Phase 3
 #define EMERALD_ANIM_DYNAMITE_ON_P4                 0x37000000    // Dynamit aktiv, Phase 4
 #define EMERALD_ANIM_MAN_DIES_P1                    0x38000000    // Man stirbt, Phase 1
 #define EMERALD_ANIM_MAN_DIES_P2                    0x39000000    // Man stirbt, Phase 1
-#define EMERALD_ANIM_MONSTER_KILLS_UP               0x3A000000    // Monster (Alien oder Yam) tötet nach oben
-#define EMERALD_ANIM_MONSTER_KILLS_LEFT             0x3B000000    // Monster (Alien oder Yam) tötet nach links
-#define EMERALD_ANIM_MONSTER_KILLS_RIGHT            0x3C000000    // Monster (Alien oder Yam) tötet nach rechts
-#define EMERALD_ANIM_MONSTER_KILLS_DOWN             0x3D000000    // Monster (Alien oder Yam) tötet nach unten
+#define EMERALD_ANIM_MONSTER_KILLS_UP               0x3A000000    // Monster (Alien oder Yam) tÃ¶tet nach oben
+#define EMERALD_ANIM_MONSTER_KILLS_LEFT             0x3B000000    // Monster (Alien oder Yam) tÃ¶tet nach links
+#define EMERALD_ANIM_MONSTER_KILLS_RIGHT            0x3C000000    // Monster (Alien oder Yam) tÃ¶tet nach rechts
+#define EMERALD_ANIM_MONSTER_KILLS_DOWN             0x3D000000    // Monster (Alien oder Yam) tÃ¶tet nach unten
 #define EMERALD_ANIM_YAM_WAS_BLOCKED                0x3E000000    // Yam war in der letzten Control-Phase blockiert
-#define EMERALD_ANIM_MINE_WILL_EXPLODE              0x3F000000    // Mine wird nächste Kontrollrunde sprengen
-#define EMERALD_ANIM_BEETLE_WILL_EXPLODE            0x40000000    // Käfer wird nächste Kontrollrunde sprengen
+#define EMERALD_ANIM_MINE_WILL_EXPLODE              0x3F000000    // Mine wird nÃ¤chste Kontrollrunde sprengen
+#define EMERALD_ANIM_BEETLE_WILL_EXPLODE            0x40000000    // KÃ¤fer wird nÃ¤chste Kontrollrunde sprengen
 #define EMERALD_ANIM_GRASS_SHRINK                   0x41000000    // Gras verschwindet
 #define EMERALD_ANIM_EARTH_INVISIBLE_SHRINK         0x42000000    // unsichtbare Erde verschwindet
-#define EMERALD_ANIM_MAN_BLOCKED_LEFT               0x43000000    // Man will nach links, ist aber blockiert (Türen, Teleporter)
-#define EMERALD_ANIM_MAN_BLOCKED_UP                 0x44000000    // Man will nach oben, ist aber blockiert (Türen, Teleporter)
-#define EMERALD_ANIM_MAN_BLOCKED_RIGHT              0x45000000    // Man will nach rechts, ist aber blockiert (Türen, Teleporter)
-#define EMERALD_ANIM_MAN_BLOCKED_DOWN               0x46000000    // Man will nach unten, ist aber blockiert (Türen, Teleporter)
-#define EMERALD_ANIM_SHIELD_COIN_SHRINK             0x47000000    // Schildmünze wird kleiner
+#define EMERALD_ANIM_MAN_BLOCKED_LEFT               0x43000000    // Man will nach links, ist aber blockiert (TÃ¼ren, Teleporter)
+#define EMERALD_ANIM_MAN_BLOCKED_UP                 0x44000000    // Man will nach oben, ist aber blockiert (TÃ¼ren, Teleporter)
+#define EMERALD_ANIM_MAN_BLOCKED_RIGHT              0x45000000    // Man will nach rechts, ist aber blockiert (TÃ¼ren, Teleporter)
+#define EMERALD_ANIM_MAN_BLOCKED_DOWN               0x46000000    // Man will nach unten, ist aber blockiert (TÃ¼ren, Teleporter)
+#define EMERALD_ANIM_SHIELD_COIN_SHRINK             0x47000000    // SchildmÃ¼nze wird kleiner
 #define EMERALD_ANIM_YAM_WAS_BLOCKED_EATEN          0x48000000    // Yam war in der letzten Control-Phase blockiert, da er gefressen hat
 #define EMERALD_ANIM_SLIME_STAND_PHASE1             0x49000000    // Schleim blockiert in Phase 1 (horizontal zusammenziehen)
 #define EMERALD_ANIM_SLIME_STAND_PHASE2             0x4A000000    // Schleim blockiert in Phase 2 (horizontal ausdehnen)
@@ -770,8 +770,8 @@
 typedef struct {
     // Datentypen sind hier etwas geiziger ausgelegt, sollten aber immer noch locker ausreichen
     uint16_t        uTextureIndex;                              // Start-Texture zur Animation
-    uint16_t        uX;                                         // X-Koordinate, wo Post-Animation durchgeführt werden soll.
-    uint16_t        uY;                                         // Y-Koordinate, wo Post-Animation durchgeführt werden soll.
+    uint16_t        uX;                                         // X-Koordinate, wo Post-Animation durchgefÃ¼hrt werden soll.
+    uint16_t        uY;                                         // Y-Koordinate, wo Post-Animation durchgefÃ¼hrt werden soll.
     bool            bFlipVertical;                              // Texture vertikal spiegeln
     bool            bFlipHorizontal;                            // Texture horizontal spiegeln
 } POSTANIMATION;
@@ -786,7 +786,7 @@ typedef struct {
     uint16_t        *pLevel;
     uint16_t        *pPipeLevel;
     uint32_t        *pStatusAnimation;
-    uint32_t        *pLastStatusAnimation;                      // Wird für Explosionen benötigt, damit entsprechende Felder auf Space gesetzt werden können
+    uint32_t        *pLastStatusAnimation;                      // Wird fÃ¼r Explosionen benÃ¶tigt, damit entsprechende Felder auf Space gesetzt werden kÃ¶nnen
     POSTANIMATION   *pPostAnimation;
     uint32_t        uRollUnderground[65536];                    // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
     uint16_t        *pInvalidElement;
@@ -794,10 +794,10 @@ typedef struct {
     uint8_t         *pLastYamSlimeDirection;
     int             nCentralExplosionCoordinates[8];            // Koordinaten um Zentrum einer 3x3-Explosion
     int             nCentralMegaExplosionCoordinates[20];       // Koordinaten um Zentrum einer Mega-Explosion
-    int             nCheckReplicatorForYamExplosionTop[5];      // Für Yam-Explosion mit Replikator (obere Hälfte)
-    int             nCheckReplicatorForYamExplosionButtom[5];   // Für Yam-Explosion mit Replikator (untere Hälfte)
-    int             nCheckAcidPoolForYamExplosionTop[6];        // Für Yam-Explosion mit Säurebecken (obere Hälfte)
-    int             nCheckAcidPoolForYamExplosionButtom[6];     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
+    int             nCheckReplicatorForYamExplosionTop[5];      // FÃ¼r Yam-Explosion mit Replikator (obere HÃ¤lfte)
+    int             nCheckReplicatorForYamExplosionButtom[5];   // FÃ¼r Yam-Explosion mit Replikator (untere HÃ¤lfte)
+    int             nCheckAcidPoolForYamExplosionTop[6];        // FÃ¼r Yam-Explosion mit SÃ¤urebecken (obere HÃ¤lfte)
+    int             nCheckAcidPoolForYamExplosionButtom[6];     // FÃ¼r Yam-Explosion mit SÃ¤urebecken (untere HÃ¤lfte)
     bool            bUnlimtedTime;                              // keine Zeitbegrenzung
     bool            bInitOK;
     bool            bReadyToGo;                                 // Man hat genug Diamanten eingesammelt
@@ -813,14 +813,14 @@ typedef struct {
     bool            bPushStone;                                 // wenn true, kann Man sofort (Stone, Nut, Bomb) schieben
     bool            bManDead;
     bool            bWellDone;                                  // Level wurde geschafft
-    bool            bManProtected;                              // Man ist in Röhre geschützt
+    bool            bManProtected;                              // Man ist in RÃ¶hre geschÃ¼tzt
     bool            bLightBarrierRedOn;
     bool            bLightBarrierGreenOn;
     bool            bLightBarrierBlueOn;
     bool            bLightBarrierYellowOn;
-    bool            bTimeDoorOpen;                              // Für Zeit-Tür
-    bool            bSwitchDoorState;                           // Für Schaltertür, true = umgeschaltet
-    bool            bSwitchDoorImpluse;                         // Für Schaltertür
+    bool            bTimeDoorOpen;                              // FÃ¼r Zeit-TÃ¼r
+    bool            bSwitchDoorState;                           // FÃ¼r SchaltertÃ¼r, true = umgeschaltet
+    bool            bSwitchDoorImpluse;                         // FÃ¼r SchaltertÃ¼r
     bool            bSwitchRemoteBombLeft;
     bool            bSwitchRemoteBombRight;
     bool            bSwitchRemoteBombDown;
@@ -846,10 +846,10 @@ typedef struct {
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
     char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "DER BUNKER"
     char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "MIKIMAN"
-    char            szMd5String[EMERALD_MD5_STRING_LEN + 1];    // MD5-Prüfsumme als String für komprimierte Leveldaten, d.h. ohne Header
+    char            szMd5String[EMERALD_MD5_STRING_LEN + 1];    // MD5-PrÃ¼fsumme als String fÃ¼r komprimierte Leveldaten, d.h. ohne Header
     char            *pMessage[EMERALD_MAX_MESSAGES];            // 8 Nachrichtentexte
     uint16_t        uTreasureChestElement[EMERALD_MAX_TREASURECHESTS];
-    bool            bTreasureChestWarn[EMERALD_MAX_TREASURECHESTS]; // Warnt den Spieler davor, dass in der Truhe etwas Gefährliches sein könnte
+    bool            bTreasureChestWarn[EMERALD_MAX_TREASURECHESTS]; // Warnt den Spieler davor, dass in der Truhe etwas GefÃ¤hrliches sein kÃ¶nnte
     uint32_t        uScoreEmerald;
     uint32_t        uScoreRuby;
     uint32_t        uScoreSaphir;
@@ -874,22 +874,22 @@ typedef struct {
     uint32_t        uYellowCheeseSpreadSpeed;
     uint32_t        uGrassSpreadSpeed;
     uint32_t        uTimeToPlay;
-    uint32_t        uAdditonalTimeCoinTime;                     // zusätzliche Zeit durch Zeitmünze
+    uint32_t        uAdditonalTimeCoinTime;                     // zusÃ¤tzliche Zeit durch ZeitmÃ¼nze
     uint32_t        uTimeWheelRotation;
-    uint32_t        uTimeWheelRotationLeft;                     // Verbleibende Zeit für Wheel-Rotation
+    uint32_t        uTimeWheelRotationLeft;                     // Verbleibende Zeit fÃ¼r Wheel-Rotation
     uint32_t        uTimeDoorTime;
     uint32_t        uTimeDoorTimeLeft;
     uint32_t        uShieldCoinTime;
-    uint32_t        uShieldCoinTimeLeft;                        // Verbleibende Zeit für Schild
-    uint32_t        uWheelRunningXpos;                          // nur gültig, wenn bWheelRunning = true
-    uint32_t        uWheelRunningYpos;                          // nur gültig, wenn bWheelRunning = true
+    uint32_t        uShieldCoinTimeLeft;                        // Verbleibende Zeit fÃ¼r Schild
+    uint32_t        uWheelRunningXpos;                          // nur gÃ¼ltig, wenn bWheelRunning = true
+    uint32_t        uWheelRunningYpos;                          // nur gÃ¼ltig, wenn bWheelRunning = true
     uint32_t        uTimeMagicWall;
-    uint32_t        uTimeMagicWallLeft;                         // Verbleibende Zeit für Magic-Wall
+    uint32_t        uTimeMagicWallLeft;                         // Verbleibende Zeit fÃ¼r Magic-Wall
     uint32_t        uTimeLight;
-    uint32_t        uTimeLightLeft;                             // Verbleibende Zeit für Licht
+    uint32_t        uTimeLightLeft;                             // Verbleibende Zeit fÃ¼r Licht
     uint32_t        uDynamiteCount;                             // Anzahl Dynamits, die der Man hat
     uint32_t        uHammerCount;                               // Anzahl Hammer, die der Man hat
-    uint32_t        uWhiteKeyCount;                             // Anzahl der weißen Schlüssel, die der Man hat
+    uint32_t        uWhiteKeyCount;                             // Anzahl der weiÃŸen SchlÃ¼ssel, die der Man hat
     uint32_t        uLevel_X_Dimension;
     uint32_t        uLevel_Y_Dimension;
     uint32_t        uLevel_XY_Dimension;                        // X * Y
@@ -901,17 +901,17 @@ typedef struct {
     uint32_t        uVisibleCenterX;                            // Zentrum X des sichtbaren Bereichs (ohne unteres Panel)
     uint32_t        uVisibleCenterY;                            // Zentrum X des sichtbaren Bereichs (ohne unteres Panel)
     uint32_t        uShiftLevelXpix;                            // Anzahl Pixel, die das Level nach rechts geshiftet wird, da es kleiner bzw. gleich der Anzeigebreite ist
-    uint32_t        uShiftLevelYpix;                            // Anzahl Pixel, die das Level nach unten geshiftet wird, da es kleiner bzw. gleich der Anzeigehöhe ist
-    int             nMaxXpos;                                   // Für maximale X-Positionierung
-    int             nMaxYpos;                                   // Für maximale Y-Positionierung
+    uint32_t        uShiftLevelYpix;                            // Anzahl Pixel, die das Level nach unten geshiftet wird, da es kleiner bzw. gleich der AnzeigehÃ¶he ist
+    int             nMaxXpos;                                   // FÃ¼r maximale X-Positionierung
+    int             nMaxYpos;                                   // FÃ¼r maximale Y-Positionierung
     uint32_t        uManXpos;                                   // X-Element-Position des Man
     uint32_t        uManYpos;                                   // Y-Element-Position des Man
-    uint32_t        uFrameCounter;                              // Bildzähler
+    uint32_t        uFrameCounter;                              // BildzÃ¤hler
     uint32_t        uShowMessageNo;                             // Nachricht Nr. x zeigen, 0 = keine Nachricht
     uint32_t        uMaxYamExplosionIndex;                      // Max. Yam-Explosions-Index in diesem Level
     uint32_t        uYamExplosion;                              // Aktuelle YAM-Explosion
-    uint32_t        uDynamitePos;                               // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung
-    uint32_t        uDynamiteStatusAnim;                        // Status/Animation für manuell gezündetes Dynamit
+    uint32_t        uDynamitePos;                               // lineare Koordinate des manuell gezÃ¼ndeten Dynamits durch den Man, 0xFFFFFFFF = keine ZÃ¼ndung
+    uint32_t        uDynamiteStatusAnim;                        // Status/Animation fÃ¼r manuell gezÃ¼ndetes Dynamit
     uint32_t        uPlayTimeStart;                             // Zeitpunkt, wann Level gestartet wurde
     uint32_t        uPlayTimeEnd;                               // Zeitpunkt, wann Level beendet wurde
     YAMEXPLOSION    YamExplosions[EMERALD_MAX_YAM_EXPLOSIONS];
@@ -919,8 +919,8 @@ typedef struct {
     uint32_t        *puTeleporterRedCoordinates;                // lineare Koordinaten, rote Teleporter
     uint32_t        uTeleporterYellowCounter;                   // Anzahl gelber Teleporter
     uint32_t        *puTeleporterYellowCoordinates;             // lineare Koordinaten, gelbe Teleporter
-    uint32_t        uTeleporterGreenCounter;                    // Anzahl grüner Teleporter
-    uint32_t        *puTeleporterGreenCoordinates;              // lineare Koordinaten, grüne Teleporter
+    uint32_t        uTeleporterGreenCounter;                    // Anzahl grÃ¼ner Teleporter
+    uint32_t        *puTeleporterGreenCoordinates;              // lineare Koordinaten, grÃ¼ne Teleporter
     uint32_t        uTeleporterBlueCounter;                     // Anzahl blauer Teleporter
     uint32_t        *puTeleporterBlueCoordinates;               // lineare Koordinaten, blaue Teleporter
 } PLAYFIELD;

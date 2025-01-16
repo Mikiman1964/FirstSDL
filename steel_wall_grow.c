@@ -7,11 +7,11 @@ extern PLAYFIELD Playfield;
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowLeft
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert Stahl, der sich nach links ausbreiten möchte.
+Beschreibung:   Steuert Stahl, der sich nach links ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowLeft(uint32_t I) {
@@ -31,7 +31,7 @@ Beschreibung:   Steuert Stahl, der sich gerade nach links ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowingLeft(uint32_t I) {
@@ -44,11 +44,11 @@ void ControlSteelGrowingLeft(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowRight
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert Stahl, der sich nach rechts ausbreiten möchte.
+Beschreibung:   Steuert Stahl, der sich nach rechts ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowRight(uint32_t I) {
@@ -69,7 +69,7 @@ Beschreibung:   Steuert Stahl, der sich gerade nach rechts ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowingRight(uint32_t I) {
@@ -87,11 +87,11 @@ void ControlSteelGrowingRight(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowUp
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert Stahl, der sich nach oben ausbreiten möchte.
+Beschreibung:   Steuert Stahl, der sich nach oben ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowUp(uint32_t I) {
@@ -112,7 +112,7 @@ Beschreibung:   Steuert Stahl, der sich gerade nach oben ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowingUp(uint32_t I) {
@@ -125,11 +125,11 @@ void ControlSteelGrowingUp(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowDown
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert Stahl, der sich nach unten ausbreiten möchte.
+Beschreibung:   Steuert Stahl, der sich nach unten ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowDown(uint32_t I) {
@@ -154,7 +154,7 @@ Beschreibung:   Steuert Stahl, der sich gerade nach unten ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowingDown(uint32_t I) {
@@ -172,11 +172,11 @@ void ControlSteelGrowingDown(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowLeftRight
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert Stahl, der sich nach links und rechts ausbreiten möchte.
+Beschreibung:   Steuert Stahl, der sich nach links und rechts ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowLeftRight(uint32_t I) {
@@ -188,11 +188,11 @@ void ControlSteelGrowLeftRight(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowUpDown
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert Stahl, der sich nach oben und unten ausbreiten möchte.
+Beschreibung:   Steuert Stahl, der sich nach oben und unten ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowUpDown(uint32_t I) {
@@ -204,11 +204,11 @@ void ControlSteelGrowUpDown(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlSteelGrowAllDirections
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert Stahl, der sich in alle Richtungen ausbreiten möchte.
+Beschreibung:   Steuert Stahl, der sich in alle Richtungen ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void ControlSteelGrowAllDirections(uint32_t I) {
@@ -225,11 +225,11 @@ void ControlSteelGrowAllDirections(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlWallGrowLeft
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert eine Mauer, der sich nach links ausbreiten möchte.
+Beschreibung:   Steuert eine Mauer, der sich nach links ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowLeft(uint32_t I) {
@@ -248,7 +248,7 @@ Beschreibung:   Steuert eine Mauer, der sich gerade nach links ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowingLeft(uint32_t I) {
@@ -261,11 +261,11 @@ void ControlWallGrowingLeft(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlWallGrowRight
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert eine Mauer, der sich nach rechts ausbreiten möchte.
+Beschreibung:   Steuert eine Mauer, der sich nach rechts ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowRight(uint32_t I) {
@@ -284,7 +284,7 @@ Beschreibung:   Steuert eine Mauer, der sich gerade nach rechts ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowingRight(uint32_t I) {
@@ -302,11 +302,11 @@ void ControlWallGrowingRight(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlWallGrowUp
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert eine Mauer, der sich nach oben ausbreiten möchte.
+Beschreibung:   Steuert eine Mauer, der sich nach oben ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowUp(uint32_t I) {
@@ -325,7 +325,7 @@ Beschreibung:   Steuert eine Mauer, der sich gerade nach oben ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowingUp(uint32_t I) {
@@ -338,11 +338,11 @@ void ControlWallGrowingUp(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlWallGrowDown
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert eine Mauer, der sich nach unten ausbreiten möchte.
+Beschreibung:   Steuert eine Mauer, der sich nach unten ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowDown(uint32_t I) {
@@ -365,7 +365,7 @@ Beschreibung:   Steuert eine Mauer, der sich gerade nach unten ausbreitet.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWallGrowingDown(uint32_t I) {
@@ -383,11 +383,11 @@ void ControlWallGrowingDown(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlWallGrowLeftRight
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert eine Mauer, die sich nach links und rechts ausbreiten möchte.
+Beschreibung:   Steuert eine Mauer, die sich nach links und rechts ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void ControlWallGrowLeftRight(uint32_t I) {
@@ -399,11 +399,11 @@ void ControlWallGrowLeftRight(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlWallGrowUpDown
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert eine mauer, die sich nach oben und unten ausbreiten möchte.
+Beschreibung:   Steuert eine mauer, die sich nach oben und unten ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void ControlWallGrowUpDown(uint32_t I) {
@@ -415,11 +415,11 @@ void ControlWallGrowUpDown(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlWallGrowAllDirections
 ------------------------------------------------------------------------------
-Beschreibung:   Steuert eine Mauer, die sich in alle Richtungen ausbreiten möchte.
+Beschreibung:   Steuert eine Mauer, die sich in alle Richtungen ausbreiten mÃ¶chte.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void ControlWallGrowAllDirections(uint32_t I) {

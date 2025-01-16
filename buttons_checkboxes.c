@@ -6,8 +6,8 @@ CHECKBOX *Checkboxes[MAX_CHECKBOXES];
 BUTTON Buttons[MAX_BUTTONS];
 extern INPUTSTATES InputStates;
 extern uint8_t g_uIntensityProzent;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uXoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
 
 
 /*----------------------------------------------------------------------------
@@ -18,7 +18,7 @@ Beschreibung: Initialisiert die Checkboxen. Wird einmalig
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Checkboxes[]
 ------------------------------------------------------------------------------*/
 void InitCheckboxes(void) {
@@ -45,7 +45,7 @@ Parameter
                bRadio, bool, true = Checkbox hat Radiobutton-Verhalten (optisch)
                bUse, bool, true = Checkbox ist sichtbar und verwendbar, sonst versteckt und inaktiv
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[]
 ------------------------------------------------------------------------------*/
 int RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int nXpos, int nYpos, bool bRadio, bool bUse) {
@@ -89,7 +89,7 @@ Beschreibung: De-Registriert eine Checkbox zur Freigabe.
 Parameter
       Eingang: pCheckbox, CHECKBOX *, Zeiger auf Checkbox-Struktur
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[]
 ------------------------------------------------------------------------------*/
 int DeRegisterCheckbox(CHECKBOX *pCheckbox) {
@@ -119,7 +119,7 @@ Parameter
                nDimm, int, Helligkeit der Checkboxen
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[], InputStates.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute) {
@@ -152,7 +152,7 @@ int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute) {
             if (pC->bUse) {
                 Rect.x = pC->nXpos + uXoffs;
                 Rect.y = pC->nYpos + uYoffs;
-                bOldPressed = pC->bPressed;    // Bisheriger gedrückter Zustand
+                bOldPressed = pC->bPressed;    // Bisheriger gedrÃ¼ckter Zustand
                 nErrorCode = -1;
                 if (SDL_SetRenderDrawColor(pRenderer,0,(255 * nDimm) / 100,0,255) == 0) {
                     if (SDL_RenderDrawRect(pRenderer,&Rect) == 0) {
@@ -207,7 +207,7 @@ Beschreibung: Initialisiert die Buttons. Wird einmalig
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 void InitButtons(void) {
@@ -231,7 +231,7 @@ Beschreibung: Gibt alle erzeugten Buttons wieder frei.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 void FreeAllButtons(void) {
@@ -257,7 +257,7 @@ Beschreibung: Gibt einen bestimmten Button wieder frei.
 Parameter
       Eingang: pszlabel, char *, Zeiger auf Label des Buttons
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 void FreeButton(char *pszLabel) {
@@ -291,7 +291,7 @@ Beschreibung: Ermittelt den Array-Index einen Buttons anhand des Button-Labels.
 Parameter
       Eingang: pszlabel, char *, Zeiger auf Label des Buttons
       Ausgang: -
-Rückgabewert:  Array-Index, -1 = nicht gefunden
+RÃ¼ckgabewert:  Array-Index, -1 = nicht gefunden
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 int GetButtonIndex(char *pszLabel) {
@@ -317,13 +317,13 @@ int GetButtonIndex(char *pszLabel) {
 /*----------------------------------------------------------------------------
 Name:           GetFreeButtonIndex
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt den Array-Index des nächsten freien Buttons.
+Beschreibung: Ermittelt den Array-Index des nÃ¤chsten freien Buttons.
               ACHTUNG: Diese Funktion sollte nur innerhalb des Button-Moduls verwendet
               werden.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  Array-Index des freien Platzes, -1 = keinen freien Platz gefunden
+RÃ¼ckgabewert:  Array-Index des freien Platzes, -1 = keinen freien Platz gefunden
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 int GetFreeButtonIndex(void) {
@@ -345,16 +345,16 @@ int GetFreeButtonIndex(void) {
 /*----------------------------------------------------------------------------
 Name:           CreateButton
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt einen Button für den Editor.
+Beschreibung: Erzeugt einen Button.
 Parameter
-      Eingang: pszLabel, char *, Zeiger auf gewünschtes Button-Label
+      Eingang: pszLabel, char *, Zeiger auf gewÃ¼nschtes Button-Label
                pszText, char*, Zeiger auf Buttontext
                uXpos, int32_t, X-Position des Buttons
                uYpos, int32_t, X-Position des Buttons
                bActive, bool, true = Button ist aktiv und wird angezeigt
                bWaitRelease, bool, true = wartet solange, bis Button losgelassen wird
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease) {
@@ -368,7 +368,7 @@ int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bo
             if (nButtonIndex == -1) {                   // -1 = nicht gefunden, d.h. alles OK
                 nButtonIndex = GetFreeButtonIndex();
                 if (nButtonIndex != -1) {
-                    // Speicher für Label und Buttontext erzeugen
+                    // Speicher fÃ¼r Label und Buttontext erzeugen
                     Buttons[nButtonIndex].pszLabel = malloc(strlen(pszLabel) + 1);
                     Buttons[nButtonIndex].pszText = malloc(strlen(pszText) + 1);
                     if ((Buttons[nButtonIndex].pszLabel != NULL) && (Buttons[nButtonIndex].pszText != NULL)) {
@@ -411,7 +411,7 @@ Parameter
       Eingang: pszLabel, char *, Zeiger auf Label des Buttons
                bActive, bool, true = Button wird aktiv geschaltet, sonst deaktiviert
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 int SetButtonActivity(char *pszLabel, bool bActive) {
@@ -444,10 +444,10 @@ Name:           SetButtonPosition
 Beschreibung:  Setzt die Position eines Buttons.
 Parameter
       Eingang: pszLabel, char *, Zeiger auf Label des Buttons
-               uXpos, uint32_t, X-Position für Button
-               uYpos, uint32_t, Y-Position für Button
+               uXpos, uint32_t, X-Position fÃ¼r Button
+               uYpos, uint32_t, Y-Position fÃ¼r Button
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 int SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos) {
@@ -483,7 +483,7 @@ Beschreibung: Zeigt alle erzeugten und aktiven Buttons an. Funktion muss in
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int ShowButtons(SDL_Renderer *pRenderer) {
@@ -508,35 +508,35 @@ int ShowButtons(SDL_Renderer *pRenderer) {
             bButtonArea = ((InputStates.nMouseXpos_Relative >= uXpos) && (InputStates.nMouseXpos_Relative <= (uXpos + uButtonW)) &&
                            (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
             if  (InputStates.bLeftMouseButton && bButtonArea) {
-                // Buttonfläche erzeugen
+                // ButtonflÃ¤che erzeugen
                 Buttons[I].bPressed = true;
                 nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
                 nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
                 ShowOtherButtons(pRenderer);
-                SDL_RenderPresent(pRenderer);   // Renderer anzeigen
+                // SDL_RenderPresent(pRenderer);   // Renderer anzeigen
                 if (Buttons[I].bWaitRelease) {
                     WaitNoKey();
                 }
-                // Falls Maus vom Button gezogen wurde, während die linke Maustaste gedrückt wurde
+                // Falls Maus vom Button gezogen wurde, wÃ¤hrend die linke Maustaste gedrÃ¼ckt wurde
                 Buttons[I].bPressed = ((InputStates.nMouseXpos_Relative >= uXpos) && (InputStates.nMouseXpos_Relative <= (uXpos + uButtonW)) &&
                                        (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
             } else {
-                // Buttonfläche erzeugen
+                // ButtonflÃ¤che erzeugen
                 nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
             }
-            // Weißer Button-Rand oben und links zeichnen
-            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            // WeiÃŸer Button-Rand oben und links zeichnen
+            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + ge_uYoffs); // oben
             SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // links
             // Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // rechts
-            SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
+            SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurÃ¼cksetzen
             nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
         }
     }
@@ -547,11 +547,11 @@ int ShowButtons(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           ShowOtherButtons
 ------------------------------------------------------------------------------
-Beschreibung: Zeigt alle erzeugten und aktiven Buttons während einer Haltephase (WaitNoKey) an.
+Beschreibung: Zeigt alle erzeugten und aktiven Buttons wÃ¤hrend einer Haltephase (WaitNoKey) an.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int ShowOtherButtons(SDL_Renderer *pRenderer) {
@@ -566,26 +566,26 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
     fIntensityProzent = (float)g_uIntensityProzent / 100;
     nErrorCode = 0;
     for (I = 0; (I < MAX_BUTTONS) && (nErrorCode == 0); I++) {
-        if ((Buttons[I].pszLabel != NULL) && (Buttons[I].pszText != NULL) && (Buttons[I].bActive) && (!Buttons[I].bPressed)) { // Nicht den gedrückten Button anzeigen
+        if ((Buttons[I].pszLabel != NULL) && (Buttons[I].pszText != NULL) && (Buttons[I].bActive) && (!Buttons[I].bPressed)) { // Nicht den gedrÃ¼ckten Button anzeigen
             uXpos = Buttons[I].uXpos;
             uYpos = Buttons[I].uYpos;
             uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W;
             uButtonH = BUTTON_H;
-            // Buttonfläche erzeugen
+            // ButtonflÃ¤che erzeugen
             nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
-            // Weißer Button-Rand oben und links zeichnen
-            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            // WeiÃŸer Button-Rand oben und links zeichnen
+            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + ge_uYoffs); // oben
             SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // links
             // Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Line setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // unten
             SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // rechts
-            SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
+            SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurÃ¼cksetzen
             nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
         }
     }
@@ -596,11 +596,11 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           IsButtonPressed
 ------------------------------------------------------------------------------
-Beschreibung:  Prüft, ob ein Button gedrückt ist.
+Beschreibung:  PrÃ¼ft, ob ein Button gedrÃ¼ckt ist.
 Parameter
       Eingang: pszLabel, char *, Zeiger auf Label des Buttons
       Ausgang: -
-Rückgabewert:  bool, true = Button gedrückt, sonst nicht bzw. Fehler
+RÃ¼ckgabewert:  bool, true = Button gedrÃ¼ckt, sonst nicht bzw. Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 bool IsButtonPressed(char *pszLabel) {

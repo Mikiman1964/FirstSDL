@@ -7,7 +7,7 @@ extern PLAYFIELD Playfield;
 uint8_t ge_uBeamColors[] = {
 //                            R    G    B
                             0xFF,0x00,0x00,         // rot
-                            0x00,0xEF,0x00,         // grün
+                            0x00,0xEF,0x00,         // grÃ¼n
                             0x0A,0x5A,0xFF,         // blau
                             0xFF,0xFF,0x00          // gelb
                             };
@@ -20,7 +20,7 @@ Beschreibung: Wandelt alle Lichtstrahlen in Space um;
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CleanLightBarriers(void) {
@@ -42,7 +42,7 @@ Beschreibung: Steuert die Lichtschranken.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlLightBarriers(void) {
@@ -144,7 +144,7 @@ Parameter
       Eingang: I, uint32_t, Index im Level
                uColor, uint32_t, Farbe der Lichtschranke, siehe lightbarrier.h
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBarrierUp(uint32_t I, uint32_t uColor) {
@@ -191,7 +191,7 @@ Parameter
       Eingang: I, uint32_t, Index im Level
                uColor, uint32_t, Farbe der Lichtschranke, siehe lightbarrier.h
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBarrierDown(uint32_t I, uint32_t uColor) {
@@ -232,7 +232,7 @@ Parameter
       Eingang: I, uint32_t, Index im Level
                uColor, uint32_t, Farbe der Lichtschranke, siehe lightbarrier.h
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBarrierLeft(uint32_t I, uint32_t uColor) {
@@ -279,7 +279,7 @@ Parameter
       Eingang: I, uint32_t, Index im Level
                uColor, uint32_t, Farbe der Lichtschranke, siehe lightbarrier.h
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBarrierRight(uint32_t I, uint32_t uColor) {
@@ -315,16 +315,16 @@ void ControlBarrierRight(uint32_t I, uint32_t uColor) {
 /*----------------------------------------------------------------------------
 Name:           HandleBeam
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob an der Position I der eigene Lichtstrahl fortgesetzt werden kann.
-              Fall ja, wird die Position mit uOwnElement besetzt und die Funktion gibt > 0 zurück.
+Beschreibung: PrÃ¼ft, ob an der Position I der eigene Lichtstrahl fortgesetzt werden kann.
+              Fall ja, wird die Position mit uOwnElement besetzt und die Funktion gibt > 0 zurÃ¼ck.
               Ist an dieser Stelle bereits ein Lichtstrahl wird dort ein Lichtkreuz gesetzt und
-              ebenfalls > 0 zurückgegeben.
+              ebenfalls > 0 zurÃ¼ckgegeben.
 Parameter
-      Eingang: I, uint32_t, lineare Position, die im Level geprüft/gesetzt werden soll
+      Eingang: I, uint32_t, lineare Position, die im Level geprÃ¼ft/gesetzt werden soll
                uOwnElement, uint16_t, Element, das fortgesetzt werden soll.
                uColor, uint32_t, Farbe des Lichtstrahls, der fortgesetzt werden soll (siehe lightbarrier.h)
       Ausgang: -
-Rückgabewert:  uint32_t, >0 = Strahl konnte weitergeführt werden, 0 = Strahl konnte nicht weitergeführt werden.
+RÃ¼ckgabewert:  uint32_t, >0 = Strahl konnte weitergefÃ¼hrt werden, 0 = Strahl konnte nicht weitergefÃ¼hrt werden.
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 uint32_t HandleBeam(uint32_t I, uint16_t uOwnElement,uint32_t uOwnColor) {

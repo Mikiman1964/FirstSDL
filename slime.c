@@ -13,7 +13,7 @@ Beschreibung: Steuert Schleim.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSlime(uint32_t I) {
@@ -115,14 +115,14 @@ Beschreibung: Schleim geht nach unten.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SlimeDown(uint32_t I) {
     if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
-        // neuen Platz mit ungültigem Element besetzen
+        // neuen Platz mit ungÃ¼ltigem Element besetzen
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+        // Damit ungÃ¼ltiges Feld spÃ¤ter auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = EMERALD_SLIME;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_NOTHING;
         Playfield.pLastStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN;
@@ -131,7 +131,7 @@ void SlimeDown(uint32_t I) {
         Playfield.pLastYamSlimeDirection[I] = EMERALD_LAST_YAM_DIR_DOWN;
         Playfield.pSlimeElement[I + Playfield.uLevel_X_Dimension] = Playfield.pSlimeElement[I];
         PreparePlaySound(SOUND_SLIME_MOVE,I);
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Schleim ins Säurebecken?
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Schleim ins SÃ¤urebecken?
         // SDL_Log("Slime falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_SLIME;
@@ -153,14 +153,14 @@ Beschreibung: Schleim geht nach oben.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SlimeUp(uint32_t I) {
     if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {   // Ist nach oben frei?
-        // neuen Platz mit ungültigem Element besetzen
+        // neuen Platz mit ungÃ¼ltigem Element besetzen
         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+        // Damit ungÃ¼ltiges Feld spÃ¤ter auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I - Playfield.uLevel_X_Dimension] = EMERALD_SLIME;
         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_NOTHING;
         Playfield.pLastStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_UP;
@@ -185,14 +185,14 @@ Beschreibung: Schleim geht nach rechts.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SlimeRight(uint32_t I) {
     if (IS_SPACE(I + 1)) {   // Ist nach rechts frei?
-        // neuen Platz mit ungültigem Element besetzen
+        // neuen Platz mit ungÃ¼ltigem Element besetzen
         Playfield.pLevel[I + 1] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+        // Damit ungÃ¼ltiges Feld spÃ¤ter auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I + 1] = EMERALD_SLIME;
         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_CLEAN_NOTHING;
         Playfield.pLastStatusAnimation[I + 1] = EMERALD_ANIM_RIGHT;
@@ -217,14 +217,14 @@ Beschreibung: Schleim geht nach links.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SlimeLeft(uint32_t I) {
     if (IS_SPACE(I - 1)) {   // Ist nach links frei?
-        // neuen Platz mit ungültigem Element besetzen
+        // neuen Platz mit ungÃ¼ltigem Element besetzen
         Playfield.pLevel[I - 1] = EMERALD_INVALID;
-        // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+        // Damit ungÃ¼ltiges Feld spÃ¤ter auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I - 1] = EMERALD_SLIME;
         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_CLEAN_NOTHING;
         Playfield.pLastStatusAnimation[I - 1] = EMERALD_ANIM_LEFT;
@@ -245,12 +245,12 @@ void SlimeLeft(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           IsSlimeEatElement
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob es sich bei dem angegebenen Element, um ein "essbares"
-              Element für den Schleim handelt.
+Beschreibung: PrÃ¼ft, ob es sich bei dem angegebenen Element, um ein "essbares"
+              Element fÃ¼r den Schleim handelt.
 Parameter
-      Eingang: uElement, uint16_t, Element, dass geprüft werden soll
+      Eingang: uElement, uint16_t, Element, dass geprÃ¼ft werden soll
       Ausgang: -
-Rückgabewert:  bool, true = Element ist durch Schleim essbar,
+RÃ¼ckgabewert:  bool, true = Element ist durch Schleim essbar,
                      false = Element kann nicht durch Schleim gegessen werden
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
@@ -280,14 +280,14 @@ bool IsSlimeEatElement(uint16_t uElement) {
 /*----------------------------------------------------------------------------
 Name:           HandleSlimeEat
 ------------------------------------------------------------------------------
-Beschreibung: Falls der Schleim auf etwas "Essbares" läuft, wird in dieser Funktion
-              der Fressvorgang durchgeführt und das Element entfernt.
+Beschreibung: Falls der Schleim auf etwas "Essbares" lÃ¤uft, wird in dieser Funktion
+              der Fressvorgang durchgefÃ¼hrt und das Element entfernt.
 
 Parameter
       Eingang: I, uint32_t, Index im Level
-               uAnimation, uint32_t, in diese Richtung wird gefressen, z.B. EMERALD_ANIM_LEFT für links
+               uAnimation, uint32_t, in diese Richtung wird gefressen, z.B. EMERALD_ANIM_LEFT fÃ¼r links
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void HandleSlimeEat(uint32_t I, uint32_t uAnimation) {
@@ -318,7 +318,7 @@ void HandleSlimeEat(uint32_t I, uint32_t uAnimation) {
             SDL_Log("%s: invalid animation (0x%x)",__FUNCTION__,uAnimation);
             break;
     }
-    // gültige Animation und vorher noch nichts gefressen?
+    // gÃ¼ltige Animation und vorher noch nichts gefressen?
     if ((uDestCoord != 0xFFFFFFFF) && (Playfield.pSlimeElement[I] == EMERALD_NONE)) {
         uShrinkAnimation = GetShrinkByElement(Playfield.pLevel[uDestCoord]);
         bEat = ((uShrinkAnimation != EMERALD_NO_ADDITIONAL_ANIMSTATUS) &&
@@ -344,9 +344,9 @@ Name:           GetShrinkByElement
 Beschreibung: Ermittelt anhand eines Elements die entsprechende "Schrumpf"-Animation.
 
 Parameter
-      Eingang: uElement, uint16_t, Element, für das die Shrink-Animation ermittelt werden soll.
+      Eingang: uElement, uint16_t, Element, fÃ¼r das die Shrink-Animation ermittelt werden soll.
       Ausgang: -
-Rückgabewert:  uint32_t, Shrink-Animation
+RÃ¼ckgabewert:  uint32_t, Shrink-Animation
                EMERALD_NO_ADDITIONAL_ANIMSTATUS = Shrink-Animation konnte nicht ermittelt werden
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
@@ -411,14 +411,14 @@ uint32_t GetShrinkByElement(uint16_t uElement) {
 /*----------------------------------------------------------------------------
 Name:           ControlSlimeExplosion
 ------------------------------------------------------------------------------
-Beschreibung: Schleim wird durch einen Stein getroffen. Diese Funktion lässt dann
+Beschreibung: Schleim wird durch einen Stein getroffen. Diese Funktion lÃ¤sst dann
               eine normale 3x3 Explosion oder eine 3x3 Explosion mit mittigem Objekt
-              entstehen, in Abhängigkeit, ob der Schleim etwas gefressen hatte.
+              entstehen, in AbhÃ¤ngigkeit, ob der Schleim etwas gefressen hatte.
 
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSlimeExplosion(uint32_t I) {

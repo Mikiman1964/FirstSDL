@@ -27,8 +27,8 @@ void PrintSDLVersion(void);
 
 SDL_DisplayMode ge_DisplayMode;
 SDL_Window *ge_pWindow = NULL;
-uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+uint32_t ge_uXoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
+uint32_t ge_uYoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
 
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
@@ -50,10 +50,10 @@ int main(int argc, char *argv[]) {
     // # = Man
     //  _ = Paff
     // & = Smiley
-    // | = Ö
-    // { = Ä
-    // } = Ü
-    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - DECEMBER 2024. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    // | = Ã–
+    // { = Ã„
+    // } = Ãœ
+    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - JANUARY 2025. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS15, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
@@ -83,7 +83,6 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     int nMenuChoose;
     uint32_t uCopperTimer;
     bool bCopperScoll = false;
-    uint8_t uModVolume = 100;
     uint8_t uAsteroidsGfx = 0;
     uint8_t uBallonsGfx = 0;
 
@@ -92,7 +91,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     ge_uYoffs = 0;
     ge_pWindow = NULL;
     InitXorShift();
-    if (ReadConfigFile() != 0) {            // Konfigurationsfile wird für Fenstergröße bzw. Bildschirmauflösung früh eingelesen.
+    if (ReadConfigFile() != 0) {            // Konfigurationsfile wird fÃ¼r FenstergrÃ¶ÃŸe bzw. BildschirmauflÃ¶sung frÃ¼h eingelesen.
         return -1;
     }
     if (CheckGameDirectorys() != 0) {
@@ -124,13 +123,13 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     }
     DetectJoystickAndGameController();
     OpenJoystickOrGameController();
-    pRenderer = CreateRenderer(ge_pWindow);        // Renderer für erzeugtes Fenster erstellen
+    pRenderer = CreateRenderer(ge_pWindow);        // Renderer fÃ¼r erzeugtes Fenster erstellen
     if (pRenderer == NULL) {
         RestoreDesktop();
         return -1;
     }
 
-    // Audiostruktur initialisieren und Audiodevice öffnen. darf erst nach InitSDL_Window() aufgerufen werden
+    // Audiostruktur initialisieren und Audiodevice Ã¶ffnen. darf erst nach InitSDL_Window() aufgerufen werden
     if (InitAudioplayerStruct() != 0) {
         RestoreDesktop();
         return -1;
@@ -139,21 +138,20 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         RestoreDesktop();
         return -1;
     }
-    // Renderer mit schwarz löschen
+    // Renderer mit schwarz lÃ¶schen
     SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(pRenderer);
-    SDL_RenderPresent(pRenderer);
-    if (LoadTextures(pRenderer) != 0) {         // Für alle Bitmaps Texturen erzeugen
+    RenderPresentAndClear(pRenderer);
+    if (LoadTextures(pRenderer) != 0) {         // FÃ¼r alle Bitmaps Texturen erzeugen
         RestoreDesktop();
         return -1;
     }
-    nMenuChoose = Menu(pRenderer);              // Demomenü aufrufen
+    nMenuChoose = Menu(pRenderer);              // DemomenÃ¼ aufrufen
     if ((nMenuChoose == 3) || (nMenuChoose == -1)) {
         RestoreDesktop();
         return nMenuChoose;
     }
     if (nMenuChoose == 1) {
-        return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop();
+        return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-HauptmenÃ¼ mit Spiel, macht selbst RestoreDesktop() und rÃ¤umt Speicher auf;
     }
     // Ab hier SDL2-Demo
     if (SetModMusic(3) != 0) {        // Mit MOD 3 class_cracktro#15 starten
@@ -191,7 +189,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     bRun = true;
     bPrepareExit = false;
     while (bRun) {
-        UpdateInputStates();            // Zustände für Maus und Tastatur auffrischen
+        UpdateInputStates();            // ZustÃ¤nde fÃ¼r Maus und Tastatur auffrischen
         if ((InputStates.bQuit) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bLeftMouseButton)) {
             bPrepareExit = true;
         } else if (InputStates.nMouseWheelY > 0) {  // scroll up
@@ -214,7 +212,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         // Texture Asteroids/Ballons/Smileys toggeln
         if (InputStates.pKeyboardArray[SDL_SCANCODE_A]) {
             if (SDL_GetTicks() - uLastKeyTime > 200) {
-                uAsteroidsGfx++;                        // Möglich ist 0 = Asteroide, 1 = Ballons, 2 = Smileys
+                uAsteroidsGfx++;                        // MÃ¶glich ist 0 = Asteroide, 1 = Ballons, 2 = Smileys
                 if (uAsteroidsGfx > 2) {
                     uAsteroidsGfx = 0;
                 }
@@ -224,26 +222,12 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         // Mittlere Ballon-Grafik  Asteroids/Ballons/Smileys toggeln
         if (InputStates.pKeyboardArray[SDL_SCANCODE_B]) {
             if (SDL_GetTicks() - uLastKeyTime > 200) {
-                uBallonsGfx++;                        // Möglich ist 0 = Ballons, 1 = Asteroid, 2 = Smileys
+                uBallonsGfx++;                        // MÃ¶glich ist 0 = Ballons, 1 = Asteroid, 2 = Smileys
                 if (uBallonsGfx > 2) {
                     uBallonsGfx = 0;
                 }
             }
             uLastKeyTime = SDL_GetTicks();
-        }
-        if (InputStates.pKeyboardArray[SDL_SCANCODE_KP_PLUS]) {
-            if (uModVolume < 100) {
-                uModVolume++;
-                SetModVolume(uModVolume);
-            }
-            // SDL_Log("plus, V:%u",uModVolume);
-        }
-        if (InputStates.pKeyboardArray[SDL_SCANCODE_KP_MINUS]) {
-            if (uModVolume > 0) {
-                uModVolume--;
-                SetModVolume(uModVolume);
-            }
-            // SDL_Log("minus, V:%u",uModVolume);
         }
 
         DoCopper(pRenderer,bCopperScoll);
@@ -276,7 +260,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         Scroller2.nYpos = ((Config.uResY - FONT_H) / 2) + (int)fSin2;
 
         // Scroller3 mit Sinus-Verlauf
-        // Steigungsumkehr des sinus 3 für Scroller 3 erkennen -> Steigung für Sinus ist erste Ableitung, also Cosinus
+        // Steigungsumkehr des sinus 3 fÃ¼r Scroller 3 erkennen -> Steigung fÃ¼r Sinus ist erste Ableitung, also Cosinus
         // hier ist fWinkel3 noch der bisherige Wert
         fScroller3AlteSteigung = cos(fAngle3);
         fAngle3 = fAngle3 + 0.02;
@@ -298,7 +282,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
             }
         }
         // Ballons anzeigen
-        DestR_Ballon.x = Config.uResX / 2 - nBallonSize / 2;    // Position muss abhängig von Größe
+        DestR_Ballon.x = Config.uResX / 2 - nBallonSize / 2;    // Position muss abhÃ¤ngig von GrÃ¶ÃŸe
         DestR_Ballon.y = Config.uResY / 2 - nBallonSize / 2;    // sein, damit mittig angezeigt wird
         DestR_Ballon.w = nBallonSize; //360;
         DestR_Ballon.h = nBallonSize; // 360;
@@ -319,16 +303,13 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         if ((bScroller2Started) && (nBallonSize < 360)) {
                 nBallonSize++;
         }
-
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+        RenderPresentAndClear(pRenderer);   // Renderer anzeigen, lÃ¤sst Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         if (bPrepareExit) {
             nBallonSize = nBallonSize + 16; // Ballons bis fast zum Platzen aufblasen
             if (nBallonSize > 1600) {
                 bRun = false;
             }
         }
-
         // MOD wechseln
         CheckMusicSwitch(InputStates.pKeyboardArray);
         if (Audioplayer.nNextMusicIndex != 0) {
@@ -336,7 +317,6 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
                 if (SetModMusic(Audioplayer.nNextMusicIndex) != 0) {
                     return -1;
                 }
-                uModVolume = 100;
             }
         } else  {
             PlayMusic(true);
@@ -346,10 +326,8 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     RestoreDesktop();
     SDL_CloseAudioDevice(Audioplayer.audio_device);
     SAFE_FREE(Audioplayer.pTheMusic);
-
     FreeWavChunks();
     Mix_CloseAudio();
-
     FreeTextures();
     FreeScroller(&Scroller1);
     FreeScroller(&Scroller2);
@@ -369,7 +347,7 @@ Beschreibung: Gibt die SDL-Version aus (Header und Library)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void PrintSDLVersion(void) {

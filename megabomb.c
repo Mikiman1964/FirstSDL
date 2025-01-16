@@ -12,11 +12,11 @@ Beschreibung: Steuert eine Mega-Bombe.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMegaBomb(uint32_t I) {
-    uint8_t uFree;  // Richtung, in die Mega-Bombe rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+    uint8_t uFree;  // Richtung, in die Mega-Bombe rollen kÃ¶nnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
     uint16_t uHitElement;       // Element, welches getroffen wird
     uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
@@ -38,16 +38,16 @@ void ControlMegaBomb(uint32_t I) {
         return;
     } else if (IS_SPACE(uHitCoordinate)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_MEGABOMB);
-    } else if (uHitElement == EMERALD_ACIDPOOL) {   // Fällt Mega-Bombe ins Säurebecken?
+    } else if (uHitElement == EMERALD_ACIDPOOL) {   // FÃ¤llt Mega-Bombe ins SÃ¤urebecken?
         // SDL_Log("Mega-Bomb falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_MEGABOMB;
         PreparePlaySound(SOUND_POOL_BLUB,I);
         return;
     } else {                            // Unten ist nicht frei
-        // Mega-Bombe bleibt zunächst auf Platz liegen
+        // Mega-Bombe bleibt zunÃ¤chst auf Platz liegen
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
-            // Mega-Bombe fällt auf Etwas
+            // Mega-Bombe fÃ¤llt auf Etwas
             ControlCentralMegaExplosion(I);
             PreparePlaySound(SOUND_EXPLOSION,I);
             return;
@@ -66,7 +66,7 @@ void ControlMegaBomb(uint32_t I) {
                     SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MEGABOMB);
                 }
             }
-        // Ab hier prüfen, ob Megabombe durch Laufband bewegt werden kann
+        // Ab hier prÃ¼fen, ob Megabombe durch Laufband bewegt werden kann
         } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||

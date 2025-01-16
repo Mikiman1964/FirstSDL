@@ -24,4 +24,3 @@ clean clear:
 	@rm -f bin/Release/FirstSDL2 && echo "[CL]  out/"
 	@rm -f tmp/* && echo "[CL]  tmp/"
 
-

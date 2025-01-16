@@ -13,12 +13,12 @@ extern CONFIG Config;
 /*----------------------------------------------------------------------------
 Name:           InitAsteroidLayer
 ------------------------------------------------------------------------------
-Beschreibung: Grundinitialiserung für die Asteroiden-Layer, muss einmalig (in main)
+Beschreibung: Grundinitialiserung fÃ¼r die Asteroiden-Layer, muss einmalig (in main)
               aufgerufen werden.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS]
 ------------------------------------------------------------------------------*/
 void InitAsteroidLayer(void) {
@@ -28,7 +28,7 @@ void InitAsteroidLayer(void) {
     for (nLayer = 0; nLayer < MAX_ASTEROIDLAYERS; nLayer++) {
         AsteroidLayer[nLayer].nCount = 0;      // Anzahl Asteroiden
         for (nAsteroid = 0; nAsteroid < MAX_ASTEROIDS; nAsteroid++) {
-            AsteroidLayer[nLayer].Asteroid[nAsteroid].dAngleRotate = 0;     // Drehwinkel für Rotation
+            AsteroidLayer[nLayer].Asteroid[nAsteroid].dAngleRotate = 0;     // Drehwinkel fÃ¼r Rotation
             AsteroidLayer[nLayer].Asteroid[nAsteroid].dRotationSpeed = 0;   // Drehgeschwindigkeit
             AsteroidLayer[nLayer].Asteroid[nAsteroid].nXpos = 0;            // Aktuelle X-Position
             AsteroidLayer[nLayer].Asteroid[nAsteroid].nYpos = 0;            // Aktuelle Y-Position
@@ -36,34 +36,34 @@ void InitAsteroidLayer(void) {
             AsteroidLayer[nLayer].Asteroid[nAsteroid].nYdeflection = 0;     // Aktuelle Y-Position
             AsteroidLayer[nLayer].Asteroid[nAsteroid].nXmaxDeflection = 0;  // Maximale X-Ablenkung
             AsteroidLayer[nLayer].Asteroid[nAsteroid].nYmaxDeflection = 0;  // Maximale Y-Ablenkung
-            AsteroidLayer[nLayer].Asteroid[nAsteroid].fXangle = 0;          // Winkel für X-Ablenkung
-            AsteroidLayer[nLayer].Asteroid[nAsteroid].fYangle = 0;          // Winkel für X-Ablenkung
-            AsteroidLayer[nLayer].Asteroid[nAsteroid].fXangleSpeed = 0;     // Winkelgeschwindigkeit für X-Ablenkung
-            AsteroidLayer[nLayer].Asteroid[nAsteroid].fYangleSpeed = 0;     // Winkelgeschwindigkeit für Y-Ablenkung
+            AsteroidLayer[nLayer].Asteroid[nAsteroid].fXangle = 0;          // Winkel fÃ¼r X-Ablenkung
+            AsteroidLayer[nLayer].Asteroid[nAsteroid].fYangle = 0;          // Winkel fÃ¼r X-Ablenkung
+            AsteroidLayer[nLayer].Asteroid[nAsteroid].fXangleSpeed = 0;     // Winkelgeschwindigkeit fÃ¼r X-Ablenkung
+            AsteroidLayer[nLayer].Asteroid[nAsteroid].fYangleSpeed = 0;     // Winkelgeschwindigkeit fÃ¼r Y-Ablenkung
             AsteroidLayer[nLayer].Asteroid[nAsteroid].bReady = true;        // Asteroid ist am Zielort angekommen und kann neu geladen werden
             AsteroidLayer[nLayer].uLastCountIncreased = SDL_GetTicks();
             switch(nLayer) {
                 case(0):
                     AsteroidLayer[nLayer].nMaxCount = 40;                   // Maximale Anzahl Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nWidth = 50;  // Breite des Asteroiden
-                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 50; // Höhe des Asteroiden
+                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 50; // HÃ¶he des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nSpeed = 1;   // Geschwindigkeit
                     break;
                 case(1):
                     AsteroidLayer[nLayer].nMaxCount = 16;                    // Maximale Anzahl Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nWidth = 100; // Breite des Asteroiden
-                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 100; // Höhe des Asteroiden
+                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 100; // HÃ¶he des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nSpeed = 2;   // Geschwindigkeit
                     break;
                 case(2):
                     AsteroidLayer[nLayer].nMaxCount = 6;                    // Maximale Anzahl Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nWidth = 200; // Breite des Asteroiden
-                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 200;// Höhe des Asteroiden
+                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 200;// HÃ¶he des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nSpeed = 3;   // Geschwindigkeit
                     break;
                 default:
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nWidth = 25;  // Breite des Asteroiden
-                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 25; // Höhe des Asteroiden
+                    AsteroidLayer[nLayer].Asteroid[nAsteroid].nHeight = 25; // HÃ¶he des Asteroiden
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nSpeed = 1;   // Geschwindigkeit
                     break;
             }
@@ -75,24 +75,24 @@ void InitAsteroidLayer(void) {
 /*----------------------------------------------------------------------------
 Name:           SetAsteroidDeflection
 ------------------------------------------------------------------------------
-Beschreibung: Setzt die Sinus-Ablenkung für einen Asteroiden
+Beschreibung: Setzt die Sinus-Ablenkung fÃ¼r einen Asteroiden
 Parameter
       Eingang: nLayer, int, Asteroidenlayer 0 bis MAX_ASTEROIDLAYERS
                nAsteroid, int, Asteroid 0 bis MAX_ASTEROIDS
-               fXangleSpeed, float, Winkelgeschwindigkeit für X-Ablenkung
-               fYangleSpeed, float, Winkelgeschwindigkeit für Y-Ablenkung
+               fXangleSpeed, float, Winkelgeschwindigkeit fÃ¼r X-Ablenkung
+               fYangleSpeed, float, Winkelgeschwindigkeit fÃ¼r Y-Ablenkung
                nXmaxDeflection, int, Maximale X-Ablenkung
                nYmaxDeflection, int, Maximale Y-Ablenkung
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS]
 ------------------------------------------------------------------------------*/
 int SetAsteroidDeflection(int nLayer, int nAsteroid, float fXangleSpeed, float fYangleSpeed, int nXmaxDeflection, int nYmaxDeflection) {
     if ( (nLayer >= 0) && (nLayer < MAX_ASTEROIDLAYERS) && (nAsteroid >= 0) && (nAsteroid < MAX_ASTEROIDS) ) {
         AsteroidLayer[nLayer].Asteroid[nAsteroid].nXmaxDeflection = nXmaxDeflection;    // Maximale X-Ablenkung
         AsteroidLayer[nLayer].Asteroid[nAsteroid].nYmaxDeflection = nYmaxDeflection;    // Maximale Y-Ablenkung
-        AsteroidLayer[nLayer].Asteroid[nAsteroid].fXangleSpeed = fXangleSpeed;          // Winkelgeschwindigkeit für X-Ablenkung
-        AsteroidLayer[nLayer].Asteroid[nAsteroid].fYangleSpeed = fYangleSpeed;          // Winkelgeschwindigkeit für Y-Ablenkung
+        AsteroidLayer[nLayer].Asteroid[nAsteroid].fXangleSpeed = fXangleSpeed;          // Winkelgeschwindigkeit fÃ¼r X-Ablenkung
+        AsteroidLayer[nLayer].Asteroid[nAsteroid].fYangleSpeed = fYangleSpeed;          // Winkelgeschwindigkeit fÃ¼r Y-Ablenkung
         return 0;
     } else {
         return -1;
@@ -103,11 +103,11 @@ int SetAsteroidDeflection(int nLayer, int nAsteroid, float fXangleSpeed, float f
 /*----------------------------------------------------------------------------
 Name:           SwitchDrunkenAsteroids
 ------------------------------------------------------------------------------
-Beschreibung: Setzt die Sinus-Ablenkung für einen Asteroiden
+Beschreibung: Setzt die Sinus-Ablenkung fÃ¼r einen Asteroiden
 Parameter
       Eingang: bOn, bool, (De)aktiviert bei allen Asteroiden den Drunkenmodus
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS]
 ------------------------------------------------------------------------------*/
 int SwitchDrunkenAsteroids(bool bOn) {
@@ -138,7 +138,7 @@ Parameter
                pAsteroidTexture, SDL_Texture *, Zeiger auf Texture des Asteroiden
 
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS],Config.x
 ------------------------------------------------------------------------------*/
 int MoveAsteroids(SDL_Renderer *pRenderer,SDL_Texture *pAsteroidTexture) {
@@ -151,9 +151,9 @@ int MoveAsteroids(SDL_Renderer *pRenderer,SDL_Texture *pAsteroidTexture) {
         for (nAsteroid = 0; nAsteroid < AsteroidLayer[nLayer].nCount; nAsteroid++) {
             if (AsteroidLayer[nLayer].Asteroid[nAsteroid].bReady == true) {
                 // Asteroid neu starten
-                // Zunächst festlegen, ob Asteroid ganz links oder unten starten soll
+                // ZunÃ¤chst festlegen, ob Asteroid ganz links oder unten starten soll
                 if ((rand() & 1) == 0) {
-                    // Bei geraden Zahl ganz links, wir benötigen eine Zufallszahl für Y-Start
+                    // Bei geraden Zahl ganz links, wir benÃ¶tigen eine Zufallszahl fÃ¼r Y-Start
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nXpos = -400;
                     AsteroidLayer[nLayer].Asteroid[nAsteroid].nYpos = (int)randn(0,Config.uResY + 400);
                     //SDL_Log("new asteroid ---> left   at  x:%d   y:%d",AsteroidLayer[nLayer].Asteroid[nAsteroid].nXpos,AsteroidLayer[nLayer].Asteroid[nAsteroid].nYpos);

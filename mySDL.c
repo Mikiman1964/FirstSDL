@@ -6,13 +6,14 @@
 #include "miniz.h"
 #include "mySDL.h"
 #include "mystd.h"
-#include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
+#include "externalpointer.h" // fÃ¼r die einzubindenen Objektdateien (Grafiken, Sounds)
 #include "levelconverter.h"
 #include "RenderLevel.h"
 
 int g_nGfxCount = 0;         // gefundenen Grafiken
 uint8_t g_uIntensityProzent = 100;
-SDL_Texture **g_pTextures;   // Pointer Array für Texturen
+uint32_t g_LastRenderTicks;
+SDL_Texture **g_pTextures;   // Pointer Array fÃ¼r Texturen
 USABLEDISPLAYMODES UsableDisplayModes;
 SHOWABLEDISPLAYMODES ShowableDisplayModes;
 
@@ -21,8 +22,8 @@ extern SDL_Window *ge_pWindow;
 extern uint8_t _binary_gfx_compressed_bin_start;extern uint8_t _binary_gfx_compressed_bin_end;
 extern uint32_t Gfx[];
 extern CONFIG Config;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uXoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           InitSDL_Window
@@ -30,10 +31,10 @@ Name:           InitSDL_Window
 Beschreibung: Initialisiert die SDL-Umgebung und erzeugt ein Fenster.
 Parameter
       Eingang: nWindowW, int, Breite des Fensters in Pixeln
-               nWindowH, int, Höhe des Fensters in Pixeln
-               pszWindowTitle, const char *, Zeiger auf Text für Fenster-Titel
+               nWindowH, int, HÃ¶he des Fensters in Pixeln
+               pszWindowTitle, const char *, Zeiger auf Text fÃ¼r Fenster-Titel
       Ausgang: -
-Rückgabewert:  SDL_Window * , Zeiger auf Fenster-Handle, NULL = Fehler
+RÃ¼ckgabewert:  SDL_Window * , Zeiger auf Fenster-Handle, NULL = Fehler
 Seiteneffekte: ShowableDisplayModes.x, Config.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitle) {
@@ -42,8 +43,8 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0) {
         if (GetDesktopDisplayMode() == 0) { // Stellt auch die Anzahl der Displays fest und das zu verwendene Display (Config.uDisplayUse)
             if (GetUsableDisplayModes(Config.uDisplayUse) == 0) {
-                // Falls die Konfigurationsdatei von einem anderen Rechner übernommen wurde, kann es sein, dass die eingestellte Fenstergröße,
-                // die maximal Unterstützte überschreitet.
+                // Falls die Konfigurationsdatei von einem anderen Rechner Ã¼bernommen wurde, kann es sein, dass die eingestellte FenstergrÃ¶ÃŸe,
+                // die maximal UnterstÃ¼tzte Ã¼berschreitet.
                 if ((nWindowW > ShowableDisplayModes.nW[0]) || (nWindowH > ShowableDisplayModes.nH[0])) {
                     SDL_Log("%s: adjust config resolution from %u x %u to %u x %u",__FUNCTION__,nWindowW,nWindowH,ShowableDisplayModes.nW[0],ShowableDisplayModes.nH[0]);
                     // korrigieren
@@ -59,8 +60,8 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
                 }
                 pWindow = SDL_CreateWindow(
                           pszWindowTitle,             // window title
-                          SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewählt
-                          SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewählt
+                          SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewÃ¤hlt
+                          SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewÃ¤hlt
                           nWindowW,                   // width, in pixels
                           nWindowH,                   // height, in pixels
                           0                           // Flags
@@ -85,12 +86,12 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
 Name:           GetDesktopDisplayMode
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt den aktuellen Desktop-Anzeigemodus und die Fensterposition.
-              Das Modus wird in ge_DisplayMode zurückgegeben.
-              Zusätzlich wird die Anzahl der verfügbaren Displays ermittelt
+              Das Modus wird in ge_DisplayMode zurÃ¼ckgegeben.
+              ZusÃ¤tzlich wird die Anzahl der verfÃ¼gbaren Displays ermittelt
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Modus konnte ermittelt werden, sonst nicht
+RÃ¼ckgabewert:  int, 0 = Modus konnte ermittelt werden, sonst nicht
 Seiteneffekte: ge_DisplayMode, Config.x
 ------------------------------------------------------------------------------*/
 int GetDesktopDisplayMode(void) {
@@ -103,7 +104,7 @@ int GetDesktopDisplayMode(void) {
     if (nDisplays >= 1) {
         if (Config.uDisplay > (nDisplays - 1)) {
             Config.uDisplayUse = nDisplays - 1;
-            if (Config.uDisplayUse > 1) {   // Es wird primary (0) und secondary (1) Display unterstützt
+            if (Config.uDisplayUse > 1) {   // Es wird primary (0) und secondary (1) Display unterstÃ¼tzt
                 Config.uDisplayUse = 1;
             }
             // SDL_Log("%s: display: %u is not available ... use display: %u",__FUNCTION__,Config.uDisplay,Config.uDisplayUse);
@@ -130,13 +131,13 @@ int GetDesktopDisplayMode(void) {
 /*----------------------------------------------------------------------------
 Name:           RestoreDesktop
 ------------------------------------------------------------------------------
-Beschreibung: Stellt die ursprüngliche Desktop-Auflösung wieder her.
+Beschreibung: Stellt die ursprÃ¼ngliche Desktop-AuflÃ¶sung wieder her.
               Unter Ubuntu 16.04 (vielleicht auch bei anderen Linuxen) ist es wichtig, nach
-              Ausschalten des Fullscreens wieder die ursprüngliche Desktop-Auflösung herzustellen.
+              Ausschalten des Fullscreens wieder die ursprÃ¼ngliche Desktop-AuflÃ¶sung herzustellen.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: ge_pWindow, ge_DisplayMode
 ------------------------------------------------------------------------------*/
 void RestoreDesktop(void) {
@@ -153,10 +154,10 @@ Beschreibung: Zentriert das Fenster (ge_pWindow) auf dem Desktop.
 
 Parameter
       Eingang: uWidth, uint32_t, Fensterbreite
-               uHeight, uint32_t, Fensterhöhe
+               uHeight, uint32_t, FensterhÃ¶he
       Ausgang: -
-Rückgabewert:  -
-Seiteneffekte: ge_pWindow, ge_DisplayMode (Desktop-Größe)
+RÃ¼ckgabewert:  -
+Seiteneffekte: ge_pWindow, ge_DisplayMode (Desktop-GrÃ¶ÃŸe)
 ------------------------------------------------------------------------------*/
 int CenterWindow(uint32_t uWidth, uint32_t uHeight) {
     int nErrorCode = -1;
@@ -197,7 +198,7 @@ Beschreibung: Ermittelt alle nutzbaren/brauchbaren Display-Einstellungen.
 Parameter
       Eingang: uDisplay, uint32_t, Display (0 = primary oder 1 = secondary), welches genutzt werden soll
       Ausgang: -
-Rückgabewert:  int , 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = Alles OK, sonst Fehler
 Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x
 ------------------------------------------------------------------------------*/
 int GetUsableDisplayModes(uint32_t uDisplay) {
@@ -228,7 +229,7 @@ int GetUsableDisplayModes(uint32_t uDisplay) {
             UsableDisplayModes.nDisplayModeCount++;
         }
     }
-    // Bis hier ist alles gut gegangen -> ShowableDisplayModes.x befüllen
+    // Bis hier ist alles gut gegangen -> ShowableDisplayModes.x befÃ¼llen
     //SDL_Log("%s: usable display modes: %d",__FUNCTION__,UsableDisplayModes.nDisplayModeCount);
     /*
     for (int I = 0; I < UsableDisplayModes.nDisplayModeCount; I++) {
@@ -254,17 +255,17 @@ int GetUsableDisplayModes(uint32_t uDisplay) {
 Name:           GetShowableDisplayModes
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt aus den nutzbaren/brauchbaren Display-Einstellungen
-              eine Anzeigeliste. Ggf. müssen einige Displaymodes verworfen
-              werden, da die Anzeigeliste z.Z. begrenzt ist. (22 Einträge)
+              eine Anzeigeliste. Ggf. mÃ¼ssen einige Displaymodes verworfen
+              werden, da die Anzeigeliste z.Z. begrenzt ist. (22 EintrÃ¤ge)
 
               Vor Aufruf dieser Funktion muss das Video-Subsystem (SDL_Init)
               bereits initialisiert und die Struktur
               UsableDisplayModes.x durch die Funktion GetUsableDisplayModes()
-              befüllt worden sein.
+              befÃ¼llt worden sein.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = Alles OK, sonst Fehler
 Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x
 ------------------------------------------------------------------------------*/
 int GetShowableDisplayModes(void) {
@@ -278,7 +279,7 @@ int GetShowableDisplayModes(void) {
 
     if (UsableDisplayModes.nDisplayModeCount > 0) {
         nErrorCode = 0;
-        // Können alle brauchbaren Modi in die Anzeigeliste übernommen werden?
+        // KÃ¶nnen alle brauchbaren Modi in die Anzeigeliste Ã¼bernommen werden?
         if (UsableDisplayModes.nDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES) {
             ShowableDisplayModes.nDisplayModeCount = 0;
             for (I = 0; I < UsableDisplayModes.nDisplayModeCount; I++) {
@@ -290,12 +291,12 @@ int GetShowableDisplayModes(void) {
         } else {
             ShowableDisplayModes.nW[0] = UsableDisplayModes.nW[0];
             ShowableDisplayModes.nH[0] = UsableDisplayModes.nH[0];
-            ShowableDisplayModes.nModeIndex[0] = UsableDisplayModes.nModeIndex[0];  // Displaymode mit der höchsten Auflösung übernehmen
+            ShowableDisplayModes.nModeIndex[0] = UsableDisplayModes.nModeIndex[0];  // Displaymode mit der hÃ¶chsten AuflÃ¶sung Ã¼bernehmen
             ShowableDisplayModes.nDisplayModeCount = 1;
             nToChoose = MAX_SHOWABLE_DISPLAYMODES - 2;
             nDistance = (UsableDisplayModes.nDisplayModeCount - 2) / nToChoose;
-            I = 1;  // Index für Usable
-            S = 1;  // Index für Showable
+            I = 1;  // Index fÃ¼r Usable
+            S = 1;  // Index fÃ¼r Showable
             while ((nToChoose > 0) && (S < MAX_SHOWABLE_DISPLAYMODES) && (I < MAX_USABLE_DISPLAYMODES)) {
                 nW = UsableDisplayModes.nW[I];
                 nH = UsableDisplayModes.nH[I];
@@ -308,15 +309,15 @@ int GetShowableDisplayModes(void) {
                 nToChoose--;
             }
             if (S < MAX_SHOWABLE_DISPLAYMODES) {
-                ShowableDisplayModes.nW[S] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nH[S] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nModeIndex[S] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
+                ShowableDisplayModes.nW[S] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten AuflÃ¶sung Ã¼bernehmen
+                ShowableDisplayModes.nH[S] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten AuflÃ¶sung Ã¼bernehmen
+                ShowableDisplayModes.nModeIndex[S] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten AuflÃ¶sung Ã¼bernehmen
                 ShowableDisplayModes.nDisplayModeCount++;
             } else {
-                ShowableDisplayModes.nW[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nH[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nModeIndex[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                // Letzter Eintrag wird überschrieben, daher ShowableDisplayModes.nDisplayModeCount nicht erhöhen
+                ShowableDisplayModes.nW[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten AuflÃ¶sung Ã¼bernehmen
+                ShowableDisplayModes.nH[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten AuflÃ¶sung Ã¼bernehmen
+                ShowableDisplayModes.nModeIndex[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten AuflÃ¶sung Ã¼bernehmen
+                // Letzter Eintrag wird Ã¼berschrieben, daher ShowableDisplayModes.nDisplayModeCount nicht erhÃ¶hen
             }
         }
     }
@@ -327,11 +328,11 @@ int GetShowableDisplayModes(void) {
 /*----------------------------------------------------------------------------
 Name:           CreateRenderer
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt einen Renderer für ein bestimmtes Fenster.
+Beschreibung: Erzeugt einen Renderer fÃ¼r ein bestimmtes Fenster.
 Parameter
       Eingang: pWindow, SDL_Window, Zeiger auf Fenster-Handle
       Ausgang: -
-Rückgabewert:  SDL_Renderer *, Zeiger auf neuen Renderer, NULL = Fehler
+RÃ¼ckgabewert:  SDL_Renderer *, Zeiger auf neuen Renderer, NULL = Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 SDL_Renderer *CreateRenderer(SDL_Window * pWindow) {
@@ -340,11 +341,11 @@ SDL_Renderer *CreateRenderer(SDL_Window * pWindow) {
     pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (pRenderer != NULL) {
         // Set the blend mode used for drawing operations (Fill and Line).
-        // Anmerkung: Der eingestellte Modus wirkt nur auf Flächen (Fill) oder Linien (Line), die auf
-        // bestehende Grafiken drüber gemalt werden. Da die Copper-Linien (siehe copper.c und main.c) ganz
+        // Anmerkung: Der eingestellte Modus wirkt nur auf FlÃ¤chen (Fill) oder Linien (Line), die auf
+        // bestehende Grafiken drÃ¼ber gemalt werden. Da die Copper-Linien (siehe copper.c und main.c) ganz
         // "unten" liegen, hat der BlendMode dort keinen Einfluss.
-        // Falls das Setzen des BlendModes fehlt schlägt, wird trotzdem weiter gemacht.
-        // Mögliche Blendmodi:
+        // Falls das Setzen des BlendModes fehlt schlÃ¤gt, wird trotzdem weiter gemacht.
+        // MÃ¶gliche Blendmodi:
         // SDL_BLENDMODE_NONE
         // SDL_BLENDMODE_BLEND
         // SDL_BLENDMODE_ADD
@@ -360,6 +361,41 @@ SDL_Renderer *CreateRenderer(SDL_Window * pWindow) {
 
 
 /*----------------------------------------------------------------------------
+Name:           RenderPresentAndClear
+------------------------------------------------------------------------------
+Beschreibung: Zeigt den Inhalt des Renderers an und lÃ¶scht diesen anschlieÃŸend.
+              Wenn der Renderer mit dem Flag SDL_RENDERER_PRESENTVSYNC erstellt
+              wurde, so synchronisiert diese Funktion den Programmablauf mit
+              der Bildschirmwiederholfrequenz (default 60 Hz).
+              Sollte die Bildschirmwiederholfrquenz deutlich zu hoch sein (> 125 Hz),
+              bzw. VSYNC nicht funktionieren, dann wartet die Funktion hier eine
+              entsprechende Zeit ab und begrenzt auf 8 ms = 125 frames/sec.
+              Wegen g_LastRenderTicks wÃ¤re die Funktion nicht threadsicher!
+
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Ausgang: -
+      RÃ¼ckgabewert:   int, 0 = alles OK, -1 = Fehler
+Seiteneffekte: g_LastRenderTicks
+------------------------------------------------------------------------------*/
+int RenderPresentAndClear(SDL_Renderer *pRenderer) {   // Renderer anzeigen, lÃ¤sst Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+    uint32_t uDiffTicks;    // Differenz zwischen aktuellem und letzten Aufruf in Ticks
+    uint32_t uTicks;
+
+    uTicks = SDL_GetTicks();
+    uDiffTicks = uTicks - g_LastRenderTicks;
+
+    if (uDiffTicks < 8) {   // Kann auch durch Verschieben des Fensters auftreten
+        SDL_Delay(8 - uDiffTicks);
+        // SDL_Log("%s:DiffTicks: %u",__FUNCTION__,uDiffTicks);
+    }
+    g_LastRenderTicks = uTicks;
+    SDL_RenderPresent(pRenderer);       // Renderer anzeigen, lÃ¤sst Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen, hat keinen RÃ¼ckgabewert
+    return SDL_RenderClear(pRenderer);  // Renderer fÃ¼r nÃ¤chstes Frame lÃ¶schen
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           GetTextureByIndex
 ------------------------------------------------------------------------------
 Beschreibung: Holt den Pointer eines bereits erzeugten Texture anhand
@@ -370,7 +406,7 @@ Beschreibung: Holt den Pointer eines bereits erzeugten Texture anhand
 Parameter
       Eingang: Index, int, Index
       Ausgang: -
-      Rückgabewert:   SDL_Texture *, NULL = Fehler, sonst Zeiger auf Texture
+      RÃ¼ckgabewert:   SDL_Texture *, NULL = Fehler, sonst Zeiger auf Texture
 Seiteneffekte:  g_pTextures[], g_nGfxCount
 ------------------------------------------------------------------------------*/
 SDL_Texture *GetTextureByIndex(int nIndex) {
@@ -385,18 +421,18 @@ SDL_Texture *GetTextureByIndex(int nIndex) {
 /*----------------------------------------------------------------------------
 Name:           LoadTextures
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt für allen Grafiken die Textures.
+Beschreibung: Erzeugt fÃ¼r allen Grafiken die Textures.
 
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-      Rückgabewert:   int, 0 = alles OK, -1 = Fehler
+      RÃ¼ckgabewert:   int, 0 = alles OK, -1 = Fehler
 Seiteneffekte:  Gfx[], g_pTextures, g_nGfxCount
 ------------------------------------------------------------------------------*/
 int LoadTextures(SDL_Renderer *pRenderer) {
     int nCount;                 // Anzahl vorhandener Grafiken
     int nI;
-    int nGfxSize;               // Größe der Bitmap in Bytes
+    int nGfxSize;               // GrÃ¶ÃŸe der Bitmap in Bytes
     int nErrorCode;
     bool bFound;
     bool bOK;
@@ -404,7 +440,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
     uint8_t *pStartGfx;         // Start-Pointer der Einzelgrafik
     void *pTextures = NULL;
     uint32_t uOffset;           // Offset innerhalb des Grafikpaketes, wo Grafik zu finden ist
-    uint32_t uLen;              // Länge der Einzelgrafik
+    uint32_t uLen;              // LÃ¤nge der Einzelgrafik
     uint32_t uCompressedSize;
     uint32_t uUnCompressedSize;
     SDL_RWops* pSDLStreamPointer; // Zeigt auf Grafikanfang
@@ -414,7 +450,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
     int nMiniz;
 
     pStartCompressedGfx = &_binary_gfx_compressed_bin_start;
-    uCompressedSize = &_binary_gfx_compressed_bin_end - &_binary_gfx_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
+    uCompressedSize = &_binary_gfx_compressed_bin_end - &_binary_gfx_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte GrÃ¶ÃŸe eingetragen wurde
     // SDL_Log("%s: compressed gfx packet size: %u",__FUNCTION__,uCompressedSize);
     uUnCompressedSize = *(uint32_t*)pStartCompressedGfx;
     // SDL_Log("%s: gfx packet size: %d Bytes / compressed: %d Bytes",__FUNCTION__,uUnCompressedSize,uCompressedSize);
@@ -429,7 +465,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
         SAFE_FREE(pStartGfxPacket);
         return -1;
     }
-    // Zunächst zählen, wieviele Grafiken vorhanden sind
+    // ZunÃ¤chst zÃ¤hlen, wieviele Grafiken vorhanden sind
     nErrorCode = -1;
     nCount = 0;
     nI = 0;
@@ -447,7 +483,7 @@ int LoadTextures(SDL_Renderer *pRenderer) {
     bOK = (nCount > 0);
     if (bOK) {
         // SDL_Log("%s: found %d gfx.",__FUNCTION__,nCount);
-        // Speicher für Texturen erzeugen
+        // Speicher fÃ¼r Texturen erzeugen
         pTextures = malloc(sizeof(SDL_Texture*) * nCount);
         if (pTextures == NULL) {
           bOK = false;
@@ -460,14 +496,14 @@ int LoadTextures(SDL_Renderer *pRenderer) {
                 pStartGfx = pStartGfxPacket + Gfx[nI * 2 + 0];  // Offset innerhalb des Paketes dazu addieren
                 nGfxSize = Gfx[nI * 2 + 1];
                 //SDL_Log("%s: nI = %d   nGfxSize: %d",__FUNCTION__,nI,nGfxSize);
-                pSDLStreamPointer = SDL_RWFromMem((void*)pStartGfx,nGfxSize);// Erzeugt SDL-Speicherstruktur für Speicher (Stream)
+                pSDLStreamPointer = SDL_RWFromMem((void*)pStartGfx,nGfxSize);// Erzeugt SDL-Speicherstruktur fÃ¼r Speicher (Stream)
                 if (pSDLStreamPointer != NULL) {
-                    pSurface = SDL_LoadBMP_RW(pSDLStreamPointer,1);              // Surface aus Stream erzeugen, gibt Speicher für Stream frei
+                    pSurface = SDL_LoadBMP_RW(pSDLStreamPointer,1);              // Surface aus Stream erzeugen, gibt Speicher fÃ¼r Stream frei
                     if (pSurface != NULL) {
                         if (SDL_SetColorKey(pSurface, SDL_TRUE, SDL_MapRGB(pSurface->format,255,0,255)) == 0) { // violett als transparent
                             pTexture = SDL_CreateTextureFromSurface(pRenderer,pSurface);   // Texture aus Surface erzeugen
                             g_pTextures[nI] = pTexture;
-                            SDL_FreeSurface(pSurface);  // Surface wird nicht mehr benötigt
+                            SDL_FreeSurface(pSurface);  // Surface wird nicht mehr benÃ¶tigt
                             if (pTexture == NULL) {
                               SDL_Log("%s: SDL_CreateTextureFromSurface() failed: %s   nI = %d",__FUNCTION__,SDL_GetError(),nI);
                               bOK = false;
@@ -511,12 +547,12 @@ Parameter
                nXpos, int, X-Position im Render wo Texture positioniert werden soll
                nYpos, int, Y-Position im Render wo Texture positioniert werden soll
                uTextureW, uint32_t, Breite der Texture
-               uTextureH, uint32_t, Höhe der Texture
+               uTextureH, uint32_t, HÃ¶he der Texture
                fScaleW, float, Breiten-Skalierung
-               fScaleH, float, Höhen-Skalierung
+               fScaleH, float, HÃ¶hen-Skalierung
                fAngle, float, Rotationswinkel in Grad
       Ausgang: -
-      Rückgabewert:   int, 0 = alles OK, -1 = Fehler
+      RÃ¼ckgabewert:   int, 0 = alles OK, -1 = Fehler
 Seiteneffekte:  -
 ------------------------------------------------------------------------------*/
 int CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int nXpos, int nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle) {
@@ -538,20 +574,20 @@ int CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int nXpos, int 
 /*----------------------------------------------------------------------------
 Name:           CopyColorRect
 ------------------------------------------------------------------------------
-Beschreibung: Kopiert eine gefülltes Rechteck  in den Renderer.
+Beschreibung: Kopiert eine gefÃ¼lltes Rechteck  in den Renderer.
 
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               nRed, int, Rotanteil für Rechteck (0 - 255)
-               nGreen, int, Grünanteil für Rechteck (0 - 255)
-               nBlue, int, Blauanteil für Rechteck (0 - 255)
+               nRed, int, Rotanteil fÃ¼r Rechteck (0 - 255)
+               nGreen, int, GrÃ¼nanteil fÃ¼r Rechteck (0 - 255)
+               nBlue, int, Blauanteil fÃ¼r Rechteck (0 - 255)
                nXpos, int, X-Position im Render wo Rechteck positioniert werden soll
                nYpos, int, Y-Position im Render wo Rechteck positioniert werden soll
                uW, uint32_t, Breite des Rechtecks in Pixeln
-               uH, uint32_t, Höhe des Rechtecks in Pixeln
+               uH, uint32_t, HÃ¶he des Rechtecks in Pixeln
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
-      Rückgabewert:   int, 0 = alles OK, sonst Fehler
+      RÃ¼ckgabewert:   int, 0 = alles OK, sonst Fehler
 Seiteneffekte:  ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH, bool bAbsolute) {
@@ -567,7 +603,7 @@ int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int 
     }
     rect.w = uW;
     rect.h = uH;
-    if (SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0){  // Farbe für Rechteck setzen
+    if (SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0){  // Farbe fÃ¼r Rechteck setzen
         if (SDL_RenderFillRect(pRenderer,&rect) != 0) {
             nErrorCode = -1;
             SDL_Log("%s: SDL_RenderFillRect() failed: %s",__FUNCTION__,SDL_GetError());
@@ -579,7 +615,7 @@ int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int 
         SDL_Log("%s: SDL_SetRenderDrawColor() failed: %s",__FUNCTION__,SDL_GetError());
     }
 
-    // Anschließend wieder auf schwarz stellen
+    // AnschlieÃŸend wieder auf schwarz stellen
     if (nErrorCode == 0) {
         if (SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE) != 0) {
             nErrorCode = -1;
@@ -598,7 +634,7 @@ Beschreibung: Gibt die modulglobalen Texturen frei.
 Parameter
       Eingang: -
       Ausgang: -
-      Rückgabewert: -
+      RÃ¼ckgabewert: -
 Seiteneffekte:  g_pTextures, g_nGfxCount
 ------------------------------------------------------------------------------*/
 void FreeTextures(void) {
@@ -622,9 +658,9 @@ Name:           SetAllTextureColors
 Beschreibung: Die Helligkeit aller vorhandenen Texturen kann festgelegt werden.
 
 Parameter
-      Eingang: uIntensityProzent, uint8_t, 0 bis 100 % für Helligkeit
+      Eingang: uIntensityProzent, uint8_t, 0 bis 100 % fÃ¼r Helligkeit
       Ausgang: -
-      Rückgabewert: 0 = OK, sonst Fehler
+      RÃ¼ckgabewert: 0 = OK, sonst Fehler
 Seiteneffekte: g_nGfxCount, g_uIntensityProzent
 ------------------------------------------------------------------------------*/
 int SetAllTextureColors(uint8_t uIntensityProzent) {
@@ -652,8 +688,8 @@ int SetAllTextureColors(uint8_t uIntensityProzent) {
 Name:           PrintLittleFont
 ------------------------------------------------------------------------------
 Beschreibung: Schreibt einen Text mit dem "kleinen Zeichensatz" in den Renderer.
-              Die Funktion berücksichtigt auch Zeilenumbrüche mit "\n".
-              Der Zeichensatz besitzt nur Großbuchstaben, Kleinbuchstaben werden
+              Die Funktion berÃ¼cksichtigt auch ZeilenumbrÃ¼che mit "\n".
+              Der Zeichensatz besitzt nur GroÃŸbuchstaben, Kleinbuchstaben werden
               daher gewandelt.
 
 Parameter
@@ -667,13 +703,13 @@ Parameter
                         3 = LittleFont_Black.bmp
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
-               fSizeFactor, float, Vergrößerung- bzw. Verkleinerungsfaktor
+               fSizeFactor, float, VergrÃ¶ÃŸerung- bzw. Verkleinerungsfaktor
       Ausgang: -
-      Rückgabewert: 0 = OK, sonst Fehler
+      RÃ¼ckgabewert: 0 = OK, sonst Fehler
 Seiteneffekte: ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText, bool bAbsolute, float fSizeFactor) {
-    // Der komplette Zeichensatz liegt in Texture 347 vor. Für ein Darstellung eines Zeichens, muss die "richtige" Stelle ausgewählt werden.
+    // Der komplette Zeichensatz liegt in Texture 347 vor. FÃ¼r ein Darstellung eines Zeichens, muss die "richtige" Stelle ausgewÃ¤hlt werden.
     // Der Zeichensatz ist so aufgebaut, dass alle vorhandenen Zeichen in einer Zeile vorliegen.
     int nErrorCode;
     uint32_t I;                         // Index auf Text
@@ -756,7 +792,7 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
                 }
-                // X-Position für nächstes Zeichen erhöhen
+                // X-Position fÃ¼r nÃ¤chstes Zeichen erhÃ¶hen
                 nPrintXpos = nPrintXpos + uFontW * fSizeFactor;
             }
             I++;
@@ -772,15 +808,15 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
 /*----------------------------------------------------------------------------
 Name:           GetMessageWindowSize
 ------------------------------------------------------------------------------
-Beschreibung: Berechnet anhand eines Textes die Fenstergröße (Breite u. Höhe)
-              Die Funktion berücksichtigt auch Zeilenumbrüche mit "\n".
+Beschreibung: Berechnet anhand eines Textes die FenstergrÃ¶ÃŸe (Breite u. HÃ¶he)
+              Die Funktion berÃ¼cksichtigt auch ZeilenumbrÃ¼che mit "\n".
 
 Parameter
       Eingang: pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
       Ausgang: puWinW, uint32_t *, Fensterbreite in Elementen
-               puWinH, uint32_t *, Fensterhöhe in Elementen
+               puWinH, uint32_t *, FensterhÃ¶he in Elementen
                puLines, uint32_t *, Anzahl Text-Zeilen
-      Rückgabewert: -
+      RÃ¼ckgabewert: -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, char *pszText) {
@@ -826,7 +862,7 @@ void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, 
     if ( ((uXmax * FONT_LITTLE_W) % (FONT_W / 2)) != 0) {
         uWinW++;
     }
-    uWinW = uWinW + 3;  // Seitenstücke dazu
+    uWinW = uWinW + 3;  // SeitenstÃ¼cke dazu
     if ( ((uWinH * FONT_LITTLE_H) % (FONT_H / 2)) == 0) {
         uWinH = ((uWinH * FONT_LITTLE_H) / (FONT_H / 2));
     } else {
@@ -841,25 +877,25 @@ void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, 
 Name:           CreateMessageWindow
 ------------------------------------------------------------------------------
 Beschreibung: Erzeugt ein Fenster mit Text.
-              Die Funktion berücksichtigt auch Zeilenumbrüche mit "\n".
-              Der Zeichensatz besitzt nur Großbuchstaben, Kleinbuchstaben werden
+              Die Funktion berÃ¼cksichtigt auch ZeilenumbrÃ¼che mit "\n".
+              Der Zeichensatz besitzt nur GroÃŸbuchstaben, Kleinbuchstaben werden
               daher gewandelt.
 
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                nXpos, int, Start-X-Position der oberen linke Ecke des Fensters, -1 = auf Fenster horizontal zentrieren
                nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes, -1 = auf Fenster vertikal zentrieren
-               uColor, uint32_t, Farbe des Zeichensatzes, wird noch nicht berücksichtigt
+               uColor, uint32_t, Farbe des Zeichensatzes, wird noch nicht berÃ¼cksichtigt
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
       Ausgang: -
-      Rückgabewert: 0 = OK, sonst Fehler
+      RÃ¼ckgabewert: 0 = OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText) {
     int nErrorCode;
     uint32_t X,Y;
-    uint32_t uWinW;                     // benötigte Fensterbreite in Elementen
-    uint32_t uWinH;                     // benötigte Fensterhöhe in Elementen
+    uint32_t uWinW;                     // benÃ¶tigte Fensterbreite in Elementen
+    uint32_t uWinH;                     // benÃ¶tigte FensterhÃ¶he in Elementen
     SDL_Rect DestR;                     // Zielbereich, zum Kopieren in den Renderer
     uint32_t uTextureIndex;
     uint32_t uLines;
@@ -900,7 +936,7 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
         }
         nPrintXpos = nXpos;
         nPrintYpos = nPrintYpos + FONT_H / 2;
-        // Seitenwände des Fensters zeichnen
+        // SeitenwÃ¤nde des Fensters zeichnen
         for (Y = 0; Y < uWinH && (nErrorCode == 0); Y++) {
             DestR.x = nPrintXpos;
             DestR.y = nPrintYpos;
@@ -941,12 +977,12 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
             nPrintXpos = nPrintXpos + FONT_W / 2;
         }
         if (nErrorCode == 0) {
-            // Fensterfläche ausfüllen
+            // FensterflÃ¤che ausfÃ¼llen
             DestR.x = nXpos + FONT_W / 2;
             DestR.y = nYpos + FONT_H / 2;
             DestR.w = (uWinW - 2) * FONT_W / 2;
             DestR.h = uWinH * FONT_H / 2;
-            SDL_SetRenderDrawColor(pRenderer,0x20,0x20,0xF0,0xC0);  // dunkelblaue, halbtransparente Fensterfläche
+            SDL_SetRenderDrawColor(pRenderer,0x20,0x20,0xF0,0xC0);  // dunkelblaue, halbtransparente FensterflÃ¤che
             nErrorCode = SDL_RenderFillRect(pRenderer,&DestR);
             if (nErrorCode == 0) {
                 nXoffset = ((uWinH * (FONT_H / 2)) - (uLines * FONT_LITTLE_H)) / 2;
@@ -968,20 +1004,20 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
 /*----------------------------------------------------------------------------
 Name:           DrawBeam
 ------------------------------------------------------------------------------
-Beschreibung: Zeichnet ein Rechteck / einen Balken für die Levelgruppen- und Namen-Auswahl.
+Beschreibung: Zeichnet ein Rechteck / einen Balken fÃ¼r die Levelgruppen- und Namen-Auswahl.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uXpos, uint32_t, X-Position für Balken
-               uYpos, uint32_t, Y-Position für Balken
+               uXpos, uint32_t, X-Position fÃ¼r Balken
+               uYpos, uint32_t, Y-Position fÃ¼r Balken
                uWidth, uint32_t, Breite des Balkens
-               uHeight, uint32_t, Höhe des Balkens
-               uRed, uint8_t, Rot-Anteil für Farbe des Balkens
-               uGreen, uint8_t, Grün-Anteil für Farbe des Balkens
-               uBlue, uint8_t, Blau-Anteil für Farbe des Balkens
+               uHeight, uint32_t, HÃ¶he des Balkens
+               uRed, uint8_t, Rot-Anteil fÃ¼r Farbe des Balkens
+               uGreen, uint8_t, GrÃ¼n-Anteil fÃ¼r Farbe des Balkens
+               uBlue, uint8_t, Blau-Anteil fÃ¼r Farbe des Balkens
                uTransp, uint8_t, Transparenz der Farbe
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute) {
@@ -998,7 +1034,7 @@ int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uW
     }
     DestR.w = uWidth;
     DestR.h = uHeight;
-    if (SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uTransp) == 0) {   // dunkelblaue, halbtransparente Fensterfläche
+    if (SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uTransp) == 0) {   // dunkelblaue, halbtransparente FensterflÃ¤che
         if (SDL_RenderFillRect(pRenderer,&DestR) == 0) {
             nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
         }
@@ -1013,16 +1049,16 @@ Name:           DrawGrid
 Beschreibung: Zeichnet ein Kreuzgitter mit anzugebender Farbe und Zeilen-/Spaltenabstand.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uXpos, uint32_t, X-Position für Gitter
-               uYpos, uint32_t, Y-Position für Gitter
+               uXpos, uint32_t, X-Position fÃ¼r Gitter
+               uYpos, uint32_t, Y-Position fÃ¼r Gitter
                uWidth, uint32_t, Breite des Gitters
-               uHeight, uint32_t, Höhe des Gitters
-               uRed, uint8_t, Rot-Anteil für Farbe des Gitters
-               uGreen, uint8_t, Grün-Anteil für Farbe des Gitters
-               uBlue, uint8_t, Blau-Anteil für Farbe des Gitters
+               uHeight, uint32_t, HÃ¶he des Gitters
+               uRed, uint8_t, Rot-Anteil fÃ¼r Farbe des Gitters
+               uGreen, uint8_t, GrÃ¼n-Anteil fÃ¼r Farbe des Gitters
+               uBlue, uint8_t, Blau-Anteil fÃ¼r Farbe des Gitters
                uGridSpace, uint32_t, Zeilen- und Spaltenabstand der Gitter-Linien
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace) {

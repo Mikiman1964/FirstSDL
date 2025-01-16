@@ -13,19 +13,17 @@
 #define     PIPE_FREE_UP                   0x02
 #define     PIPE_FREE_DOWN                 0x03
 
-
-
 typedef struct {
     uint32_t uDirection;
     uint32_t uLastDirection;                // letzte Richtung
     bool bFire;
-    bool bExit;                             // nur über GameController
-    uint32_t uFireCount;                    // Für Zündung von Dynamit.
+    bool bExit;                             // nur Ã¼ber GameController
+    uint32_t uFireCount;                    // FÃ¼r ZÃ¼ndung von Dynamit.
     uint32_t uLastActiveDirection;          // letzte aktive Richtung, die bestand
-    uint32_t uLastDirectionFrameCount;      // Frame, an dem zuletzt eine neue Richtungsauslösung erfolgte
-    uint32_t uLastNoDirectionFrameCount;    // Frame, an dem zuletzt eine Richtungsauslösung beendet wurde
-    uint32_t uLastFireFrameCount;           // Frame, an dem zuletzt eine Firebutton-Auslösung erkannt wurde
-    uint32_t uLastSwitchFrameCount;         // Letzte-Richtung-Frame, an dem Man einen Schalter umgelegt hat (Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird)
+    uint32_t uLastDirectionFrameCount;      // Frame, an dem zuletzt eine neue RichtungsauslÃ¶sung erfolgte
+    uint32_t uLastNoDirectionFrameCount;    // Frame, an dem zuletzt eine RichtungsauslÃ¶sung beendet wurde
+    uint32_t uLastFireFrameCount;           // Frame, an dem zuletzt eine Firebutton-AuslÃ¶sung erkannt wurde
+    uint32_t uLastSwitchFrameCount;         // Letzte-Richtung-Frame, an dem Man einen Schalter umgelegt hat (Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird)
 } MANKEY;
 
 // Prototypen zur Steuerung des Mans und Rads

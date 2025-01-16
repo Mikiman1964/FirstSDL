@@ -14,11 +14,11 @@ Beschreibung: Steuert einen Kristall.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCrystal(uint32_t I) {
-    uint8_t uFree;  // Richtung, in die Kristall rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+    uint8_t uFree;  // Richtung, in die Kristall rollen kÃ¶nnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
     uint16_t uHitElement;       // Element, welches getroffen wird
     uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
@@ -39,14 +39,14 @@ void ControlCrystal(uint32_t I) {
         return;
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_CRYSTAL);
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Kristall ins Säurebecken?
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Kristall ins SÃ¤urebecken?
         // SDL_Log("Crystal falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_CRYSTAL;
         PreparePlaySound(SOUND_POOL_BLUB,I);
         return;
     } else {                            // Unten ist nicht frei
-        // Kristall bleibt zunächst auf Platz liegen
+        // Kristall bleibt zunÃ¤chst auf Platz liegen
         uHitCoordinate = I + Playfield.uLevel_X_Dimension;
         uHitElement = Playfield.pLevel[uHitCoordinate];
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
@@ -97,7 +97,7 @@ void ControlCrystal(uint32_t I) {
                     SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_CRYSTAL);
                 }
             }
-        // Ab hier prüfen, ob Kristall durch Laufband bewegt werden kann
+        // Ab hier prÃ¼fen, ob Kristall durch Laufband bewegt werden kann
         } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||

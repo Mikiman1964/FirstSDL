@@ -449,17 +449,17 @@ uint32_t g_uScanCodes[] = {
 
 
 INPUTSTATES InputStates;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uXoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           InitInputStates
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Eingangsgeräte (Keyboard / Maus)
+Beschreibung: Initialisiert die EingangsgerÃ¤te (Keyboard / Maus)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = alles OK, sonst Fehler 
 Seiteneffekte: InputsStates.x
 ------------------------------------------------------------------------------*/
 int InitInputStates(void) {
@@ -477,11 +477,11 @@ int InitInputStates(void) {
 /*----------------------------------------------------------------------------
 Name:           UpdateInputStates
 ------------------------------------------------------------------------------
-Beschreibung: Holt neue Zustände von den Eingangsgeräten (Keyboard / Maus)
+Beschreibung: Holt neue ZustÃ¤nde von den EingangsgerÃ¤ten (Keyboard / Maus)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: InputStates.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 void UpdateInputStates(void) {
@@ -491,7 +491,7 @@ void UpdateInputStates(void) {
     InputStates.nMouseWheelY = 0;
     InputStates.uLastKey0 = 0;
     InputStates.uLastKey1 = 0;
-    while (SDL_PollEvent(&Event) != 0) {                    // Macht Update für Keyboard und Maus
+    while (SDL_PollEvent(&Event) != 0) {                    // Macht Update fÃ¼r Keyboard und Maus
         InputStates.bQuit = (Event.type == SDL_QUIT);
         if (Event.type == SDL_MOUSEWHEEL) {
             InputStates.nMouseWheelY = Event.wheel.y;
@@ -515,12 +515,12 @@ void UpdateInputStates(void) {
 /*----------------------------------------------------------------------------
 Name:           GetKey
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob eine bestimmte Taste gedrückt ist und gibt den Key-Code zurück.
-              Der Keycode passt zum "kleinen grünen" Zeichensatz.
+Beschreibung: PrÃ¼ft, ob eine bestimmte Taste gedrÃ¼ckt ist und gibt den Key-Code zurÃ¼ck.
+              Der Keycode passt zum "kleinen grÃ¼nen" Zeichensatz.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint32_t, 0 = keine Taste gedrückt, sonst Key-Code
+RÃ¼ckgabewert:  uint32_t, 0 = keine Taste gedrÃ¼ckt, sonst Key-Code
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
 uint32_t GetKey(void) {
@@ -538,15 +538,15 @@ uint32_t GetKey(void) {
         }
     } else if (InputStates.uLastKey0 == 0xFFFFFFC3) {
         // Umlaute abfragen
-        if ((InputStates.uLastKey1 == 0xFFFFFFB6) || (InputStates.uLastKey1 == 0xFFFFFF96)) { // ö oder Ö
+        if ((InputStates.uLastKey1 == 0xFFFFFFB6) || (InputStates.uLastKey1 == 0xFFFFFF96)) { // Ã¶ oder Ã–
             uKey = 98;
-        } else if ((InputStates.uLastKey1 == 0xFFFFFFA4) || (InputStates.uLastKey1 == 0xFFFFFF84)) { // ä oder Ä
+        } else if ((InputStates.uLastKey1 == 0xFFFFFFA4) || (InputStates.uLastKey1 == 0xFFFFFF84)) { // Ã¤ oder Ã„
             uKey = 97;
-        } else if ((InputStates.uLastKey1 == 0xFFFFFFBC) || (InputStates.uLastKey1 == 0xFFFFFF9C)) { // ü oder Ü
+        } else if ((InputStates.uLastKey1 == 0xFFFFFFBC) || (InputStates.uLastKey1 == 0xFFFFFF9C)) { // Ã¼ oder Ãœ
             uKey = 99;
         }
     } else if ((InputStates.uLastKey0 == 0xFFFFFFC2) && (InputStates.uLastKey1 == 0xFFFFFFB0))  {
-        // Gradzeichen °
+        // Gradzeichen Â°
         uKey = 100;
     }
    InputStates.uLastKey0 = 0;
@@ -558,12 +558,12 @@ uint32_t GetKey(void) {
 /*----------------------------------------------------------------------------
 Name:           FilterBigFontKey
 ------------------------------------------------------------------------------
-Beschreibung: Filtert einen Tastencode, der aus GetKey() stammt, für den
+Beschreibung: Filtert einen Tastencode, der aus GetKey() stammt, fÃ¼r den
               Spiel-Zeichensatz (EMERALD_FONT_xxx)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint32_t, Tastencode für Spielzeichensatz, 0 = kein geeigneter Code
+RÃ¼ckgabewert:  uint32_t, Tastencode fÃ¼r Spielzeichensatz, 0 = kein geeigneter Code
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
 uint32_t FilterBigFontKey(uint32_t uKey) {
@@ -573,7 +573,7 @@ uint32_t FilterBigFontKey(uint32_t uKey) {
            (uKey == 32)                  ||         // SPACE
            (uKey == 33)                  ||         // !
           ((uKey >= 39) && (uKey <= 58)) ||         // ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 :
-           // Auskommentiert: Könnte Probleme mit XML-Tags machen
+           // Auskommentiert: KÃ¶nnte Probleme mit XML-Tags machen
            //(uKey == 60)                  ||         // <--
            //(uKey == 62)                  ||         // -->
            (uKey == 63)                  ) {        // ?
@@ -590,7 +590,7 @@ Beschreibung: Wartet darauf, dass eine bestimmte Taste los gelassen wird.
 Parameter
       Eingang: Scancode, SDL_Scancode, Taste, auf die gewartet werden soll.
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
 void WaitNoSpecialKey(SDL_Scancode ScanCode) {
@@ -613,7 +613,7 @@ Beschreibung: Wartet darauf, dass folgende Tasten nicht mehr aktiv sind.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
 void WaitNoKey(void) {
@@ -644,15 +644,15 @@ void WaitNoKey(void) {
 /*----------------------------------------------------------------------------
 Name:           GetScancodeIndex
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt anhand einer gedrückten Taste den ScanCodeIndex. Dieser
+Beschreibung: Ermittelt anhand einer gedrÃ¼ckten Taste den ScanCodeIndex. Dieser
               Index ist ein Zeiger auf die Arrays g_ScanCodeNames[] und g_uScanCodes[].
               Mit Hilfe dieses Index kann der SDL_ScanCode und dessen Name ermittelt werden.
-              Hinweis: Funktion unterstützt nur eine gedrückte Taste (die erste Gefundene
-              wird zurückgegeben).
+              Hinweis: Funktion unterstÃ¼tzt nur eine gedrÃ¼ckte Taste (die erste Gefundene
+              wird zurÃ¼ckgegeben).
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, ScanCodeIndex, -1 = keine Taste gedrückt, sonst Index
+RÃ¼ckgabewert:  int, ScanCodeIndex, -1 = keine Taste gedrÃ¼ckt, sonst Index
 Seiteneffekte: InputStates.x, g_uScanCodes[]
 ------------------------------------------------------------------------------*/
 int GetScancodeIndex() {
@@ -672,13 +672,13 @@ int GetScancodeIndex() {
 /*----------------------------------------------------------------------------
 Name:           GetSdlScanCodeNameIndex
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt anhand eines SDL_ScanCodes den zugehörigen Namen.
-              Es wird ein Index zurückgegeben, mit dem über das Array g_ScanCodeNames[]
+Beschreibung: Ermittelt anhand eines SDL_ScanCodes den zugehÃ¶rigen Namen.
+              Es wird ein Index zurÃ¼ckgegeben, mit dem Ã¼ber das Array g_ScanCodeNames[]
               der Name ermittelt werden kann.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, ScanCodeIndex, -1 = kein gültiger Index
+RÃ¼ckgabewert:  int, ScanCodeIndex, -1 = kein gÃ¼ltiger Index
 Seiteneffekte: InputStates.x, g_uScanCodes[]
 ------------------------------------------------------------------------------*/
 int GetSdlScanCodeNameIndex(uint32_t uSDL_ScanCode) {

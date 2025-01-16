@@ -15,11 +15,11 @@ Beschreibung: Steuert einen Stein.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlStone(uint32_t I) {
-    uint8_t uFree;              // Richtung, in die Stone rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+    uint8_t uFree;              // Richtung, in die Stone rollen kÃ¶nnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
     uint16_t uHitElement;       // Element, welches getroffen wird
     uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
@@ -50,14 +50,14 @@ void ControlStone(uint32_t I) {
         return;
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_STONE);
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Stein ins Säurebecken?
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Stein ins SÃ¤urebecken?
         // SDL_Log("Stone falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_STONE;
         PreparePlaySound(SOUND_POOL_BLUB,I + Playfield.uLevel_X_Dimension);
         return;
      } else {                            // Unten ist nicht frei
-        // Stone bleibt zunächst auf Platz liegen
+        // Stone bleibt zunÃ¤chst auf Platz liegen
         uHitCoordinate = I + Playfield.uLevel_X_Dimension;
         uHitElement = Playfield.pLevel[uHitCoordinate];
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {  // Stein noch in Bewegung
@@ -98,11 +98,11 @@ void ControlStone(uint32_t I) {
                     break;
                 case (EMERALD_SAPPHIRE):
                     // SDL_Log("Stone hit sapphire");
-                    if (Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_SAPPHIRE_SHRINK) { // Könnte auch gerade von Man aufgenommen worden sein
+                    if (Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_SAPPHIRE_SHRINK) { // KÃ¶nnte auch gerade von Man aufgenommen worden sein
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                         PreparePlaySound(SOUND_STONE_FALL,I);
                     } else {
-                        // ursprüngliche Stone-Position mit Space besetzen
+                        // ursprÃ¼ngliche Stone-Position mit Space besetzen
                         Playfield.pLevel[I] = EMERALD_SPACE;
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                         // Stone auf neue Position setzen
@@ -110,7 +110,7 @@ void ControlStone(uint32_t I) {
                         Playfield.pStatusAnimation[uHitCoordinate] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_DOWN | EMERALD_ANIM_SAPPHIRE_SQUEAK;
                         PreparePlaySound(SOUND_SQUEAK,uHitCoordinate);
                     }
-                    return;     // Stone wurde bereits vollständig gesteuert, daher hier beenden
+                    return;     // Stone wurde bereits vollstÃ¤ndig gesteuert, daher hier beenden
                     break;
                 case (EMERALD_QUICKSAND):
                     // SDL_Log("Stone hit empty quicksand");
@@ -184,7 +184,7 @@ void ControlStone(uint32_t I) {
                     break;
                 case (EMERALD_PERL):
                     // SDL_Log("Stone hit perl");
-                    if (Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_PERL_SHRINK) { // Könnte auch gerade von Man aufgenommen worden sein
+                    if (Playfield.pStatusAnimation[uHitCoordinate] == EMERALD_ANIM_PERL_SHRINK) { // KÃ¶nnte auch gerade von Man aufgenommen worden sein
                         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                         PreparePlaySound(SOUND_STONE_FALL,I);
                     } else {
@@ -196,7 +196,7 @@ void ControlStone(uint32_t I) {
                 case (EMERALD_YAM):
                     // SDL_Log("Stone hit yam, YamExplosion (%u)/MaxYamExplosionIndex(%u)",Playfield.uYamExplosion,Playfield.uMaxYamExplosionIndex);
                     Playfield.uTotalScore = Playfield.uTotalScore + Playfield.uScoreStoningYam;
-                    ControlCentralYamExplosion(uHitCoordinate); // Yam-Explosion mit aktuellem Wer 'Playfield.uYamExplosion' durchführen
+                    ControlCentralYamExplosion(uHitCoordinate); // Yam-Explosion mit aktuellem Wer 'Playfield.uYamExplosion' durchfÃ¼hren
                     Playfield.uYamExplosion++;
                     if (Playfield.uYamExplosion > Playfield.uMaxYamExplosionIndex) {
                         Playfield.uYamExplosion = 0;
@@ -246,7 +246,7 @@ void ControlStone(uint32_t I) {
                     SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_STONE);
                 }
             }
-        // Ab hier prüfen, ob Stein durch Laufband bewegt werden kann
+        // Ab hier prÃ¼fen, ob Stein durch Laufband bewegt werden kann
         } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||
@@ -271,7 +271,7 @@ Beschreibung: Steuert einen versinkenden Stein in den Treibsand.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlStoneSink(uint32_t I) {
@@ -289,11 +289,11 @@ void ControlStoneSink(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlStoneSag
 ------------------------------------------------------------------------------
-Beschreibung: Steuert einen durchsackenden Stein, der den Treibsand verlässt.
+Beschreibung: Steuert einen durchsackenden Stein, der den Treibsand verlÃ¤sst.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlStoneSag(uint32_t I) {
@@ -315,11 +315,11 @@ void ControlStoneSag(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlQuicksandStone
 ------------------------------------------------------------------------------
-Beschreibung: Steuert Treibsand, der einen Stein enthält.
+Beschreibung: Steuert Treibsand, der einen Stein enthÃ¤lt.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlQuicksandStone(uint32_t I) {
@@ -384,7 +384,7 @@ Beschreibung: Steuert einen versinkenden Stein in den langsamen Treibsand.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlStoneSinkSlow(uint32_t I) {
@@ -406,11 +406,11 @@ void ControlStoneSinkSlow(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlStoneSagSlow
 ------------------------------------------------------------------------------
-Beschreibung: Steuert einen durchsackenden Stein, der den langsamen Treibsand verlässt.
+Beschreibung: Steuert einen durchsackenden Stein, der den langsamen Treibsand verlÃ¤sst.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlStoneSagSlow(uint32_t I) {
@@ -438,11 +438,11 @@ void ControlStoneSagSlow(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlQuicksandStoneSlow
 ------------------------------------------------------------------------------
-Beschreibung: Steuert langsamen Treibsand, der einen Stein enthält.
+Beschreibung: Steuert langsamen Treibsand, der einen Stein enthÃ¤lt.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlQuicksandStoneSlow(uint32_t I) {

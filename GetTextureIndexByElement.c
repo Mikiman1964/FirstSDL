@@ -16,8 +16,8 @@ Parameter
       Eingang: uElement, uint16_t, Element, z.B. EMERALD_MINE_RIGHT
                nAnimationCount, int, Animationsschritt
       Ausgang: pfAngle, float *, Winkel, darf NULL sein
-Rückgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
-                SPACE (EMERALD_SPACE) zurückgegeben.
+RÃ¼ckgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
+                SPACE (EMERALD_SPACE) zurÃ¼ckgegeben.
 Seiteneffekte: Playfield.x, ge_ExitDoorSequence[]
 ------------------------------------------------------------------------------*/
 uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *pfAngle) {
@@ -730,13 +730,13 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = TEX_QUICKSAND;
             break;
         case (EMERALD_QUICKSAND_STONE):
-            uTextureIndex = TEX_QUICKSAND_STONE;                // Für Editor
+            uTextureIndex = TEX_QUICKSAND_STONE;                // FÃ¼r Editor
             break;
         case (EMERALD_QUICKSAND_SLOW):
             uTextureIndex = TEX_QUICKSAND_SLOW;
             break;
         case (EMERALD_QUICKSAND_STONE_SLOW):
-            uTextureIndex = TEX_QUICKSAND_SLOW_STONE;           // Für Editor
+            uTextureIndex = TEX_QUICKSAND_SLOW_STONE;           // FÃ¼r Editor
             break;
         case (EMERALD_WALL_WITH_CRYSTAL):
             uTextureIndex = TEX_WALL_CRYSTAL;
@@ -1098,7 +1098,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
                 uTextureIndex = TEX_YAM_MOVE_6 + 5 - K;        // 366 - 362
             }
             break;
-        case (EMERALD_MESSAGE_0):                   // Dummy-Element für Editor
+        case (EMERALD_MESSAGE_0):                   // Dummy-Element fÃ¼r Editor
             uTextureIndex = TEX_MESSAGE;
             break;
         case (EMERALD_MESSAGE_1):
@@ -1258,10 +1258,10 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = TEX_SAPPHIRE_1 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 9; // Saphir fallend
             break;
         case (EMERALD_TIME_COIN):
-            uTextureIndex = TEX_COIN_TIME_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Zeitmünze, drehend
+            uTextureIndex = TEX_COIN_TIME_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // ZeitmÃ¼nze, drehend
             break;
         case (EMERALD_SHIELD_COIN):
-            uTextureIndex = TEX_COIN_SHIELD_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Schildmünze, drehend
+            uTextureIndex = TEX_COIN_SHIELD_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // SchildmÃ¼nze, drehend
             break;
         case (EMERALD_HAMMER):
             uTextureIndex = TEX_HAMMER;                            // Hammer
@@ -1279,7 +1279,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             if ((nAnimationCount >= 4) && (nAnimationCount <= 11)) {
                 uTextureIndex = TEX_ALIEN_MOVE_1;                        // Alien geht 1
             } else {
-                uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, Flügel voll ausgebreitet
+                uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, FlÃ¼gel voll ausgebreitet
             }
             break;
         case (EMERALD_MOLE_UP):
@@ -1332,19 +1332,19 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             break;
         case (EMERALD_BEETLE_UP):
             fAngle = 90;
-            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
             break;
         case (EMERALD_BEETLE_RIGHT):
             fAngle = 180;
-            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
             break;
         case (EMERALD_BEETLE_DOWN):
             fAngle = 270;
-            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
             break;
         case (EMERALD_BEETLE_LEFT):
             fAngle = 0;
-            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
             break;
         case (EMERALD_SLIME):
             uTextureIndex = TEX_SLIME;   // Schleim
@@ -1356,39 +1356,39 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = TEX_STEEL;     // Stahl
             break;
         case (EMERALD_KEY_RED):
-            uTextureIndex = TEX_KEY_RED;     // roter Schlüssel
+            uTextureIndex = TEX_KEY_RED;     // roter SchlÃ¼ssel
             break;
         case (EMERALD_KEY_YELLOW):
-            uTextureIndex = TEX_KEY_YELLOW;    // gelber Schlüssel
+            uTextureIndex = TEX_KEY_YELLOW;    // gelber SchlÃ¼ssel
             break;
         case (EMERALD_KEY_BLUE):
-            uTextureIndex = TEX_KEY_BLUE;    // blauer Schlüssel
+            uTextureIndex = TEX_KEY_BLUE;    // blauer SchlÃ¼ssel
             break;
         case (EMERALD_KEY_GREEN):
-            uTextureIndex = TEX_KEY_GREEN;     // grüner Schlüssel
+            uTextureIndex = TEX_KEY_GREEN;     // grÃ¼ner SchlÃ¼ssel
             break;
         case (EMERALD_DOOR_RED):
-            uTextureIndex = TEX_DOOR_RED;     // rote Tür
+            uTextureIndex = TEX_DOOR_RED;     // rote TÃ¼r
             break;
         case (EMERALD_DOOR_YELLOW):
-            uTextureIndex = TEX_DOOR_YELLOW;     // gelbe Tür
+            uTextureIndex = TEX_DOOR_YELLOW;     // gelbe TÃ¼r
             break;
         case (EMERALD_DOOR_BLUE):
-            uTextureIndex = TEX_DOOR_BLUE;     // blaue Tür
+            uTextureIndex = TEX_DOOR_BLUE;     // blaue TÃ¼r
             break;
         case (EMERALD_DOOR_GREEN):
-            uTextureIndex = TEX_DOOR_GREEN;     // grüne Tür
+            uTextureIndex = TEX_DOOR_GREEN;     // grÃ¼ne TÃ¼r
             break;
-        case (EMERALD_DOOR_RED_WOOD):     // rote Holztür
+        case (EMERALD_DOOR_RED_WOOD):     // rote HolztÃ¼r
             uTextureIndex = TEX_DOOR_RED_WOOD;
             break;
-        case (EMERALD_DOOR_YELLOW_WOOD):  // gelbe Holztür
+        case (EMERALD_DOOR_YELLOW_WOOD):  // gelbe HolztÃ¼r
             uTextureIndex = TEX_DOOR_YELLOW_WOOD;
             break;
-        case (EMERALD_DOOR_BLUE_WOOD):    // blaue Holztür
+        case (EMERALD_DOOR_BLUE_WOOD):    // blaue HolztÃ¼r
             uTextureIndex = TEX_DOOR_BLUE_WOOD;
             break;
-        case (EMERALD_DOOR_GREEN_WOOD):   // grüne Holztür
+        case (EMERALD_DOOR_GREEN_WOOD):   // grÃ¼ne HolztÃ¼r
             uTextureIndex = TEX_DOOR_GREEN_WOOD;
             break;
         case (EMERALD_MAN):
@@ -1471,7 +1471,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = TEX_ACID_LEFT_TOP;
             break;
         case (EMERALD_ACIDPOOL_TOP_MID):
-            uTextureIndex = TEX_ACID_1 + (Playfield.uFrameCounter / 13) % 4;  // Säurebecken, oben mitte (aktives Feld), verlangsamte Animation (13 Frames für eine Animations-Phase)
+            uTextureIndex = TEX_ACID_1 + (Playfield.uFrameCounter / 13) % 4;  // SÃ¤urebecken, oben mitte (aktives Feld), verlangsamte Animation (13 Frames fÃ¼r eine Animations-Phase)
             break;
         case (EMERALD_ACIDPOOL_TOP_RIGHT):
             uTextureIndex = TEX_ACID_RIGHT_TOP;
@@ -1510,16 +1510,16 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = TEX_WHEEL;
             fAngle = nAnimationCount * 11;
             break;
-        case (EMERALD_DOOR_GREY_RED):            // Für Editor
+        case (EMERALD_DOOR_GREY_RED):            // FÃ¼r Editor
             uTextureIndex = TEX_DOOR_GREY_RED;
             break;
-        case (EMERALD_DOOR_GREY_GREEN):         // Für Editor
+        case (EMERALD_DOOR_GREY_GREEN):         // FÃ¼r Editor
             uTextureIndex = TEX_DOOR_GREY_GREEN;
             break;
-        case (EMERALD_DOOR_GREY_BLUE):         // Für Editor
+        case (EMERALD_DOOR_GREY_BLUE):         // FÃ¼r Editor
             uTextureIndex = TEX_DOOR_GREY_BLUE;
             break;
-        case (EMERALD_DOOR_GREY_YELLOW):         // Für Editor
+        case (EMERALD_DOOR_GREY_YELLOW):         // FÃ¼r Editor
             uTextureIndex = TEX_DOOR_GREY_YELLOW;
             break;
         case (EMERALD_DOOR_GREY_NOKEY):
@@ -1541,13 +1541,13 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = TEX_DOOR_EXIT;
             break;
         case (EMERALD_DOOR_END_READY):
-            uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Endtür, blinkend
+            uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // EndtÃ¼r, blinkend
             break;
         case (EMERALD_DOOR_END_NOT_READY_STEEL):
             uTextureIndex = TEX_DOOR_EXIT_STEEL;
             break;
         case (EMERALD_DOOR_END_READY_STEEL):
-            uTextureIndex = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-Endtür, blinkend
+            uTextureIndex = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-EndtÃ¼r, blinkend
             break;
         case (EMERALD_WALL_ROUND_PIKE):
             uTextureIndex = TEX_WALL_ROUND_PIKE;
@@ -1667,7 +1667,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *p
             uTextureIndex = TEX_TELEPORTER_YELLOW_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, gelb
             break;
         case (EMERALD_TELEPORTER_GREEN):
-            uTextureIndex = TEX_TELEPORTER_GREEN_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grün
+            uTextureIndex = TEX_TELEPORTER_GREEN_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grÃ¼n
             break;
         case (EMERALD_TELEPORTER_BLUE):
             uTextureIndex = TEX_TELEPORTER_BLUE_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, blau

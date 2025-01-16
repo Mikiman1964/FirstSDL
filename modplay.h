@@ -2,22 +2,32 @@
 #define MODPLAY_H_INCLUDED
 
 #include <stdint.h>
+#include "xm.h"
 
-#define SAMPLERATE 44100
-#define AUDIO_BUFFERSIZE 4096               // Puffer reciht f�r (4096 / 44100) * 1000 = ca. 90 ms
+#define SAMPLERATE                  44100
+#define AUDIO_BUFFERSIZE            8192                // Puffer reicht für ((8192 / 44100) * 1000) / 2 = ca. 90 ms, durch 2, da Puffer für beide Kanäle
 
-#define MAX_MUSICINDEX   10                 // Anzahl der verf�gbaren Musikst�cke
+#define MAX_MUSICINDEX              11                  // Anzahl der verfügbaren Musikstücke
+
+#define MODULE_TYPE_UNKNOWN         0                   // unbekannter Modultyp
+#define MODULE_TYPE_MOD             1                   // MOD
+#define MODULE_TYPE_XM              2                   // XM (Extended Module)
+
+
 
 typedef struct {
     SDL_AudioDeviceID audio_device;
     SDL_AudioSpec sdl_audio;
-    short audiobuffer[AUDIO_BUFFERSIZE * 2]; // 2 channels
+    short audiobuffer[AUDIO_BUFFERSIZE];    // Puffer für beide Kanäle
+    float xm_audiobuffer[AUDIO_BUFFERSIZE]; // Zwischenpuffer für Extended Module
     uint8_t *pMusicStart;
     uint8_t *pMusicEnd;
     int nMusicSize;
     int nMusicIndex;
     int nNextMusicIndex;                    // wird nur in main() zum Umschalten der Musik verwendet
-    uint8_t *pTheMusic;                     //  Zeiger auf Kopie, da durch das Abspielen die Daten ver�ndert werden
+    uint8_t *pTheMusic;                     // Zeiger auf Kopie, da durch das Abspielen die Daten verändert werden
+    xm_context_t *pCtxXm;                   // Context für XM-Player
+    int nModulType;                         // Modul-Typ (MOD, XM) oder unbekannt
 }AUDIOPLAYER;
 
 typedef struct {

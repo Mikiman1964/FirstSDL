@@ -26,7 +26,6 @@
 
 #define MENUSTATE_MAX                           (MENUSTATE_TREASURECHESTS_TEXT + 1)
 
-
 #define BUTTONLABEL_EDITOR_SAVE                 "EDITOR_LEVEL_SAVE"
 #define BUTTONLABEL_EDITOR_QUIT                 "EDITOR_QUIT"
 #define BUTTONLABEL_EDITOR_YAMS                 "EDITOR_YAMS"
@@ -51,16 +50,16 @@
 
 
 typedef struct {
-    int             nEditMessage;                               // -1 = ungültig, sonst 0 bis EMERALD_MAX_MESSAGES - 1
-    uint32_t        uMessageLen;                                // Länge der aktuellen Nachricht
-    char            szMessageEditorMem[EDITOR_MEM_SIZE];        // Speicher für Message-Editor.
-    char            cCharAtCursor;                              // Zeichen, das für Cursor zwischengespeichert werden muss;
+    int             nEditMessage;                               // -1 = ungÃ¼ltig, sonst 0 bis EMERALD_MAX_MESSAGES - 1
+    uint32_t        uMessageLen;                                // LÃ¤nge der aktuellen Nachricht
+    char            szMessageEditorMem[EDITOR_MEM_SIZE];        // Speicher fÃ¼r Message-Editor.
+    char            cCharAtCursor;                              // Zeichen, das fÃ¼r Cursor zwischengespeichert werden muss;
     uint32_t        uCursorPos;                                 // Cursorposition
     uint32_t        uCursorFlashSpeedFrames;                    // Nach X Frames wird Cursor umgeschaltet
-    uint32_t        uFrameCounter;                              // Bildzähler
+    uint32_t        uFrameCounter;                              // BildzÃ¤hler
     uint32_t        uLastToggleCursorFrame;                     // Letztes Frame, bei dem Cursor umgeschaltet wurde
     bool            bCursor;                                    // Cursor statt Zeichen wird angezeigt
-    bool            bInsert;                                    // Einfüge-Modus vs. Überschreib-Modus
+    bool            bInsert;                                    // EinfÃ¼ge-Modus vs. Ãœberschreib-Modus
 } MESSAGEEDITOR;
 
 
@@ -81,38 +80,38 @@ typedef struct {
 typedef struct {
     // Editor
     bool            bEditorRun;
-    bool            bFoundError;                                // Ein Levelfehler (Man fehlt, unvollständiger Replikator, unvollständiges Säurebecken) wurde gefunden
+    bool            bFoundError;                                // Ein Levelfehler (Man fehlt, unvollstÃ¤ndiger Replikator, unvollstÃ¤ndiges SÃ¤urebecken) wurde gefunden
     bool            bHalfSize;
     uint32_t        uPanelXpos;                                 // X-Positionierung des Panels im Editor
     uint32_t        uPanelYpos;                                 // Y-Positionierung des Panels im Editor
     uint32_t        uPanelW;                                    // Breite des Panels im Editor
-    uint32_t        uPanelH;                                    // Höhe des Panels im Editor
+    uint32_t        uPanelH;                                    // HÃ¶he des Panels im Editor
     uint32_t        uVisibleY;
     uint32_t        uVisibleX;
     uint32_t        uVisibleCenterY;
     uint32_t        uVisibleCenterX;
     uint32_t        uShiftLevelXpix;                            // Anzahl Pixel, die das Level nach rechts geshiftet wird, da es kleiner bzw. gleich der Anzeigebreite ist
-    uint32_t        uShiftLevelYpix;                            // Anzahl Pixel, die das Level nach unten geshiftet wird, da es kleiner bzw. gleich der Anzeigehöhe ist
+    uint32_t        uShiftLevelYpix;                            // Anzahl Pixel, die das Level nach unten geshiftet wird, da es kleiner bzw. gleich der AnzeigehÃ¶he ist
     uint32_t        uUpperLeftLevelIndex;                       // oberstes linkes Element, welches entweder komplett oder dessen untere rechte Ecke noch gerade sichtbar ist
-    uint16_t        uSelectedElementLeft[MENUSTATE_MAX];        // Ausgewähltes Element, linke Maustaste
-    uint16_t        uSelectedElementMiddle[MENUSTATE_MAX];      // Ausgewähltes Element, mittlere Maustaste
-    uint16_t        uSelectedElementRight[MENUSTATE_MAX];       // Ausgewähltes Element, rechte Maustaste
+    uint16_t        uSelectedElementLeft[MENUSTATE_MAX];        // AusgewÃ¤hltes Element, linke Maustaste
+    uint16_t        uSelectedElementMiddle[MENUSTATE_MAX];      // AusgewÃ¤hltes Element, mittlere Maustaste
+    uint16_t        uSelectedElementRight[MENUSTATE_MAX];       // AusgewÃ¤hltes Element, rechte Maustaste
     uint32_t        uScrollPixelX;                              // Scrollt bei Tastendruck x Pixel horizontal
     uint32_t        uScrollPixelFastX;                          // Scrollt bei Tastendruck x Pixel horizontal in hoher Geschwindigkeit
     uint32_t        uScrollPixelY;                              // Scrollt bei Tastendruck x Pixel vertikal
     uint32_t        uScrollPixelFastY;                          // Scrollt bei Tastendruck x Pixel vertikal in hoher Geschwindigkeit
     uint32_t        uFont_W;
     uint32_t        uFont_H;
-    int             nMaxXpos;                                   // Für maximale X-Positionierung
-    int             nMaxYpos;                                   // Für maximale Y-Positionierung
+    int             nMaxXpos;                                   // FÃ¼r maximale X-Positionierung
+    int             nMaxYpos;                                   // FÃ¼r maximale Y-Positionierung
     int             nXpos;                                      // Aktuelle X-Positionierung
     int             nYpos;                                      // Aktuelle Y-Positionierung
     int             nMinXLevel;                                 // Minimale X-Position innerhalb des Levela
     int             nMaxXLevel;                                 // Maximale X-Position innerhalb des Levela
     int             nMinYLevel;                                 // Minimale Y-Position innerhalb des Levela
     int             nMaxYLevel;                                 // Maximale Y-Position innerhalb des Levela
-    uint32_t        uFrameCounter;                              // Bildzähler
-    uint32_t        uMenuState;                                 // Menü-Status, siehe oben
+    uint32_t        uFrameCounter;                              // BildzÃ¤hler
+    uint32_t        uMenuState;                                 // MenÃ¼-Status, siehe oben
     MESSAGEEDITOR   MessageEditor;                              // Nachrichten-Editor
     // Leveldaten
     uint16_t        *pLevel;
@@ -146,7 +145,7 @@ typedef struct {
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
     char            *pMessage[EMERALD_MAX_MESSAGES];            // 8 Nachrichtentexte
     uint16_t        uTreasureChestElement[EMERALD_MAX_TREASURECHESTS];
-    bool            bTreasureChestWarn[EMERALD_MAX_TREASURECHESTS]; // Warnt den Spieler davor, dass in der Truhe etwas Gefährliches sein könnte
+    bool            bTreasureChestWarn[EMERALD_MAX_TREASURECHESTS]; // Warnt den Spieler davor, dass in der Truhe etwas GefÃ¤hrliches sein kÃ¶nnte
     uint32_t        uScoreEmerald;
     uint32_t        uScoreRuby;
     uint32_t        uScoreSaphir;
@@ -171,7 +170,7 @@ typedef struct {
     uint32_t        uYellowCheeseSpreadSpeed;
     uint32_t        uGrassSpreadSpeed;
     uint32_t        uTimeToPlay;
-    uint32_t        uAdditonalTimeCoinTime;                     // zusätzliche Zeit durch Zeitmünze
+    uint32_t        uAdditonalTimeCoinTime;                     // zusÃ¤tzliche Zeit durch ZeitmÃ¼nze
     uint32_t        uTimeWheelRotation;
     uint32_t        uTimeDoorTime;
     uint32_t        uTimeMagicWall;
@@ -179,10 +178,10 @@ typedef struct {
     uint32_t        uTimeLight;
     uint32_t        uDynamiteCount;                             // Anzahl Dynamits, die der Man hat
     uint32_t        uHammerCount;                               // Anzahl Hammer, die der Man hat
-    uint32_t        uWhiteKeyCount;                             // Anzahl der weißen Schlüssel, die der Man hat
+    uint32_t        uWhiteKeyCount;                             // Anzahl der weiÃŸen SchlÃ¼ssel, die der Man hat
     uint32_t        uMaxYamExplosionIndex;                      // Max. Yam-Explosions-Index in diesem Level
     YAMEXPLOSION    YamExplosions[EMERALD_MAX_YAM_EXPLOSIONS];
-    YAM_COORDS      YamCoords[EMERALD_MAX_YAM_EXPLOSIONS];      // Koordinaten für Kästchen des YAM-Editors
+    YAM_COORDS      YamCoords[EMERALD_MAX_YAM_EXPLOSIONS];      // Koordinaten fÃ¼r KÃ¤stchen des YAM-Editors
 } ED;
 
 

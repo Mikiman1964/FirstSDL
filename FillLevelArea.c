@@ -13,11 +13,11 @@ extern ED Ed;
 /*----------------------------------------------------------------------------
 Name:           InitFillStack
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert den Fillstack für die Level-Füllroutine.
+Beschreibung: Initialisiert den Fillstack fÃ¼r die Level-FÃ¼llroutine.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Fillstack.x
 ------------------------------------------------------------------------------*/
 void InitFillStack(void) {
@@ -34,7 +34,7 @@ Parameter
       Eingang: nX, int, X-Position
                nY, int, Y-Position
       Ausgang: -
-Rückgabewert:  0 = OK, sonst Fehler
+RÃ¼ckgabewert:  0 = OK, sonst Fehler
 Seiteneffekte: Fillstack.x
 ------------------------------------------------------------------------------*/
 int PushFillstack(int nX, int nY) {
@@ -61,7 +61,7 @@ Parameter
       Eingang: pnX, int *, X-Position
                pnY, int *, Y-Position
       Ausgang: -
-Rückgabewert:  0 = OK, sonst Fehler
+RÃ¼ckgabewert:  0 = OK, sonst Fehler
 Seiteneffekte: Fillstack.x
 ------------------------------------------------------------------------------*/
 int PopFillstack(int *pnX, int *pnY) {
@@ -80,7 +80,7 @@ int PopFillstack(int *pnX, int *pnY) {
 /*----------------------------------------------------------------------------
 Name:           FillLevelArea
 ------------------------------------------------------------------------------
-Beschreibung: Füllt einen (begrenzten) Levelbereich mit einem bestimmten Element.
+Beschreibung: FÃ¼llt einen (begrenzten) Levelbereich mit einem bestimmten Element.
               Die Routine bzw. Idee stammt von: https://dev.to/codeguppy/flood-fill-recursion-or-no-recursion-3fop
                     // Flood fill algorithm implemented with a stack on the heap
                     // This algorithm will also work with big size matrixes
@@ -110,9 +110,9 @@ Beschreibung: Füllt einen (begrenzten) Levelbereich mit einem bestimmten Element
 Parameter
       Eingang: nX, int, X-Position im Level
                nY, int, Y-Position im Level
-               uFillElement, uint16_t, Element, mit dem gefüllt werden soll
+               uFillElement, uint16_t, Element, mit dem gefÃ¼llt werden soll
                uGroundElement, uint16_t, Grund-Element, dass ersetzt werden soll
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 int FillLevelArea(int nX,int nY,uint16_t uFillElement,uint16_t uGroundElement) {

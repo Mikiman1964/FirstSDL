@@ -26,7 +26,7 @@ Parameter
                fXfreq, float, X-Frequenz der Sinusfrequenz
                fYfreq, float, Y-Frequenz der Sinusfrequenz
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont) {
@@ -35,10 +35,10 @@ int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXSta
 
     if ( (pScroller != NULL) && (pszScrolltext != NULL) && ((uXEnd - uXStart) > FONT_W) ) {
         memset(pScroller,0,sizeof(SCROLLER));
-        pScroller->uScrollerBufferLen = (((uXEnd - uXStart) / FONT_W) + 1); // + 1, für den rechten unsichtbaren Rand
+        pScroller->uScrollerBufferLen = (((uXEnd - uXStart) / FONT_W) + 1); // + 1, fÃ¼r den rechten unsichtbaren Rand
         pScroller->uXStart = uXStart;
         pScroller->uXEnd = uXEnd;
-        //pScroller->uScrollerBufferLen = ((Config.uResX / FONT_W) + 1); // + 1, für den rechten unsichtbaren Rand
+        //pScroller->uScrollerBufferLen = ((Config.uResX / FONT_W) + 1); // + 1, fÃ¼r den rechten unsichtbaren Rand
         pScroller->puBuffer = malloc(pScroller->uScrollerBufferLen * sizeof(uint8_t));  // uScrollerBufferLen Elemente
         pScroller->pfAngles = malloc(pScroller->uScrollerBufferLen * sizeof(float));    // uScrollerBufferLen Elemente
         if ((pScroller->puBuffer != NULL) && (pScroller->pfAngles != NULL)) {
@@ -47,7 +47,7 @@ int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXSta
             if (uScrollSpeedPixel > FONT_W) {
                 uScrollSpeedPixel = FONT_W;
             }
-            // Falls gewünschte Scroll-Geschwindigkeit kein Vielfaches von FONT_W ist, dann an nächst schneller Geschwindigkeit anpassen
+            // Falls gewÃ¼nschte Scroll-Geschwindigkeit kein Vielfaches von FONT_W ist, dann an nÃ¤chst schneller Geschwindigkeit anpassen
             while (FONT_W % uScrollSpeedPixel != 0) {
                 uScrollSpeedPixel++;
             }
@@ -56,7 +56,7 @@ int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXSta
             pScroller->uScrolltextPointer = 0;      // Auf Zeichenkettenanfang setzen
             pScroller->pszScrolltext = pszScrolltext;
             for (I = 0; I < pScroller->uScrollerBufferLen; I++) {
-                pScroller->pfAngles[I] = 0;         // Alle Winkel auf 0°
+                pScroller->pfAngles[I] = 0;         // Alle Winkel auf 0Â°
                 pScroller->puBuffer[I] = 0x20;      // Alle Pufferzeichen auf Space
             }
             pScroller->fXfreq = fXfreq;
@@ -81,11 +81,11 @@ int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXSta
 /*----------------------------------------------------------------------------
 Name:           FreeScroller
 ------------------------------------------------------------------------------
-Beschreibung: Gibt allozierten Speicher für den Scroller wieder frei.
+Beschreibung: Gibt allozierten Speicher fÃ¼r den Scroller wieder frei.
 Parameter
       Eingang: pScroller, SCROLLER *, Zeiger auf Scroller-Struktur
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void FreeScroller(SCROLLER *pScroller) {
@@ -97,12 +97,12 @@ void FreeScroller(SCROLLER *pScroller) {
 /*----------------------------------------------------------------------------
 Name:           DoScroller
 ------------------------------------------------------------------------------
-Beschreibung: Führt den entsprechenden Scroller aus, der in der Struktur pScroller hinterlegt wurde.
+Beschreibung: FÃ¼hrt den entsprechenden Scroller aus, der in der Struktur pScroller hinterlegt wurde.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                pScroller, SCROLLER *, Zeiger auf Scroller-Struktur
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
@@ -122,7 +122,7 @@ int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
             newchar = pScroller->pszScrolltext[0];
         }
         pScroller->uScrolltextPointer++;
-        // Scroll-Puffer mit entsprechenden Winkeln nach links kopieren und neues Zeichen ganz rechts einfügen
+        // Scroll-Puffer mit entsprechenden Winkeln nach links kopieren und neues Zeichen ganz rechts einfÃ¼gen
         for (I = 0; I < pScroller->uScrollerBufferLen - 1; I++) {
             pScroller->puBuffer[I] = pScroller->puBuffer[I + 1];
             pScroller->pfAngles[I] = pScroller->pfAngles[I + 1];

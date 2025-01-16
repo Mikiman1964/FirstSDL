@@ -22,12 +22,12 @@ extern CONFIG Config;
 /*----------------------------------------------------------------------------
 Name:           UpdateManKey
 ------------------------------------------------------------------------------
-Beschreibung: Frischt die Tastaturabfrage für den Man auf.
+Beschreibung: Frischt die Tastaturabfrage fÃ¼r den Man auf.
               Ergebnisse werden in der Struktur ManKey.x abgelegt.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: ManKey.x, InputStates.x, PLayfield.x, Config.x
 ------------------------------------------------------------------------------*/
 void UpdateManKey() {
@@ -48,7 +48,7 @@ void UpdateManKey() {
         }
         ManKey.bFire = ManDirections.bFire;
         if (ManDirections.bExit) {
-            ManKey.bExit = true;    // wird in RunGame() bestätigt
+            ManKey.bExit = true;    // wird in RunGame() bestÃ¤tigt
         }
         if (((ManDirections.bDynamite) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])) && (!Playfield.bManProtected)) {
             ManKey.uFireCount++;
@@ -70,7 +70,7 @@ void UpdateManKey() {
             ManKey.uDirection = MANKEY_NONE;
         }
         ManKey.bFire = (InputStates.pKeyboardArray[Config.uKeyboardScancodeFire]);
-        // Zündung des Dynamits mit Feuertaste oder Space
+        // ZÃ¼ndung des Dynamits mit Feuertaste oder Space
         if ( (((ManKey.bFire) && (!Config.bStartDynamiteWithSpace)) || ((InputStates.pKeyboardArray [SDL_SCANCODE_SPACE]) && (Config.bStartDynamiteWithSpace)))  && (Playfield.uDynamitePos == 0xFFFFFFFF) && (ManKey.uDirection == MANKEY_NONE) && (!Playfield.bManProtected) ) {
             ManKey.uFireCount++;
             //SDL_Log("FireCount: %u",ManKey.uFireCount);
@@ -100,7 +100,7 @@ Beschreibung: Steuert den sterbenden Man.
 Parameter
       Eingang: I, uint32_t, Index im Level (lineare Man-Koordinate)
       Ausgang: -
-Rückgabewert:  Richtung, in die Man gelaufen ist als Animation
+RÃ¼ckgabewert:  Richtung, in die Man gelaufen ist als Animation
 Seiteneffekte: Playfield.x, Mankey.x
 ------------------------------------------------------------------------------*/
 void ControlManDies(uint32_t I) {
@@ -120,11 +120,11 @@ void ControlManDies(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlManWithDynamiteOn
 ------------------------------------------------------------------------------
-Beschreibung: Steuert das Kombi-Element Man/gezündetes Dynamit.
+Beschreibung: Steuert das Kombi-Element Man/gezÃ¼ndetes Dynamit.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlManWithDynamiteOn(uint32_t I) {
@@ -152,7 +152,7 @@ void ControlManWithDynamiteOn(uint32_t I) {
         case (EMERALD_ANIM_DYNAMITE_ON_P4):
             Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND;
             Playfield.uDynamitePos = 0xFFFFFFFF;
-            if ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) == I) {   // Ist Man auf selbst gezündeten Dynamit stehen geblieben?
+            if ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) == I) {   // Ist Man auf selbst gezÃ¼ndeten Dynamit stehen geblieben?
                 if (Playfield.uShieldCoinTimeLeft == 0) {
                     if (!Playfield.bManDead) { // Doppeltes Sterben/Schreien verhindern
                       Playfield.bManDead = true;
@@ -180,9 +180,9 @@ Name:           ControlMan
 Beschreibung: Steuert den Man.
 Parameter
       Eingang: I, uint32_t, Index im Level (lineare Man-Koordinate)
-               uDirection, uint32_t, Richtung, in die Man laufen möchte
+               uDirection, uint32_t, Richtung, in die Man laufen mÃ¶chte
       Ausgang: -
-Rückgabewert:  Richtung, in die Man gelaufen ist als Animation
+RÃ¼ckgabewert:  Richtung, in die Man gelaufen ist als Animation
 Seiteneffekte: Playfield.x, ManKey.x, Config.x
 ------------------------------------------------------------------------------*/
 uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
@@ -213,7 +213,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
             }
         }
     }
-    if ((ManKey.uFireCount > (4 * 16)) && (Playfield.uDynamiteCount > 0)) { // Bei 6 zündet das Dynamit
+    if ((ManKey.uFireCount > (4 * 16)) && (Playfield.uDynamiteCount > 0)) { // Bei 6 zÃ¼ndet das Dynamit
         Playfield.uDynamiteCount--;
         ManKey.uFireCount = 0;
         Playfield.uDynamitePos = I;
@@ -233,15 +233,15 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        // Befindet sich Man in einer Röhre?
+                        // Befindet sich Man in einer RÃ¶hre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
-                            // Kann er diese in die gewünschte Richtung verlassen?
+                            // Kann er diese in die gewÃ¼nschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_UP)) {
                                 // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
-                        // Versucht Man eine Röhre zu betreten?
+                        // Versucht Man eine RÃ¶hre zu betreten?
                         if (Playfield.pPipeLevel[I - Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {
                             if (IsPipeWalkable(I - Playfield.uLevel_X_Dimension,PIPE_FREE_DOWN)) {
                                 ManGoUp(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
@@ -270,15 +270,15 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        // Befindet sich Man in einer Röhre?
+                        // Befindet sich Man in einer RÃ¶hre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
-                            // Kann er diese in die gewünschte Richtung verlassen?
+                            // Kann er diese in die gewÃ¼nschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_RIGHT)) {
                                 // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
-                        // Versucht Man eine Röhre zu betreten?
+                        // Versucht Man eine RÃ¶hre zu betreten?
                         if (Playfield.pPipeLevel[I + 1] != EMERALD_SPACE) {
                             if (IsPipeWalkable(I + 1,PIPE_FREE_LEFT)) {
                                 ManGoRight(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
@@ -307,15 +307,15 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        // Befindet sich Man in einer Röhre?
+                        // Befindet sich Man in einer RÃ¶hre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
-                            // Kann er diese in die gewünschte Richtung verlassen?
+                            // Kann er diese in die gewÃ¼nschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_DOWN)) {
                                 // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
-                        // Versucht Man eine Röhre zu betreten?
+                        // Versucht Man eine RÃ¶hre zu betreten?
                         if (Playfield.pPipeLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_SPACE) {
                             if (IsPipeWalkable(I + Playfield.uLevel_X_Dimension,PIPE_FREE_UP)) {
                                 ManGoDown(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
@@ -344,15 +344,15 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                             // SDL_Log("%s: Man is blocked!",__FUNCTION__);
                             return uRetDirection;
                         }
-                        // Befindet sich Man in einer Röhre?
+                        // Befindet sich Man in einer RÃ¶hre?
                         if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
-                            // Kann er diese in die gewünschte Richtung verlassen?
+                            // Kann er diese in die gewÃ¼nschte Richtung verlassen?
                             if (!IsPipeWalkable(I,PIPE_FREE_LEFT)) {
                                 // SDL_Log("%s: Man is blocked in pipe!",__FUNCTION__);
                                 return uRetDirection;
                             }
                         }
-                        // Versucht Man eine Röhre zu betreten?
+                        // Versucht Man eine RÃ¶hre zu betreten?
                         if (Playfield.pPipeLevel[I - 1] != EMERALD_SPACE) {
                             if (IsPipeWalkable(I - 1,PIPE_FREE_RIGHT)) {
                                 ManGoLeft(I,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_STANDARD_SPEED);
@@ -376,15 +376,15 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
                 break;
         }
     } else {
-        if (!Playfield.bWellDone) { // Nur Tötung einleiten, wenn Spiel noch nicht gewonnen
+        if (!Playfield.bWellDone) { // Nur TÃ¶tung einleiten, wenn Spiel noch nicht gewonnen
             Playfield.bManDead = true;
             PreparePlaySound(SOUND_MAN_CRIES,I);
             Playfield.pLevel[I] = EMERALD_MAN_DIES;
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_AVOID_DOUBLE_CONTROL | EMERALD_ANIM_MAN_DIES_P1;
         }
     }
-    if ((Playfield.uDynamitePos != 0xFFFFFFFF) && ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) != Playfield.uDynamitePos)) {   // Steht Man nicht mehr selbst gezündeten Dynamit?
-        // Da wo der man vorher mit Dynamit stand jetzt ein gezündetes Dynamit setzen
+    if ((Playfield.uDynamitePos != 0xFFFFFFFF) && ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) != Playfield.uDynamitePos)) {   // Steht Man nicht mehr selbst gezÃ¼ndeten Dynamit?
+        // Da wo der man vorher mit Dynamit stand jetzt ein gezÃ¼ndetes Dynamit setzen
         Playfield.pLevel[Playfield.uDynamitePos] = EMERALD_DYNAMITE_ON;
         Playfield.pStatusAnimation[Playfield.uDynamitePos] = Playfield.uDynamiteStatusAnim;
     }
@@ -395,18 +395,18 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
 /*----------------------------------------------------------------------------
 Name:           ManTouchElement
 ------------------------------------------------------------------------------
-Beschreibung: Man berührt bzw. will auf ein Element zulaufen.
+Beschreibung: Man berÃ¼hrt bzw. will auf ein Element zulaufen.
 Parameter
       Eingang: uActPos, uint32_t, aktuelle Position des Man
-               uTouchPos, uint32_t, Position die berührt bzw. angelaufen wird
-               uAnimation, uint32_t, gewünschte Animation des Man
+               uTouchPos, uint32_t, Position die berÃ¼hrt bzw. angelaufen wird
+               uAnimation, uint32_t, gewÃ¼nschte Animation des Man
       Ausgang: -
-Rückgabewert:  uint32_t, tatsächlich ausgeführte Animation des Man
+RÃ¼ckgabewert:  uint32_t, tatsÃ¤chlich ausgefÃ¼hrte Animation des Man
 Seiteneffekte: Playfield.x, ge_szElementNames[], ge_DisplayMode.refresh_rate,
                ManKey.x
 ------------------------------------------------------------------------------*/
 uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimation) {
-    uint32_t uElement;      // Element, dass Man berührt bzw. anläuft
+    uint32_t uElement;      // Element, dass Man berÃ¼hrt bzw. anlÃ¤uft
     uint32_t uRetAnimation;
     uint32_t uTouchStatus;
     uint32_t uTeleporterCoordinate;
@@ -419,9 +419,9 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         // SDL_Log("%s: element '%s' is born!",__FUNCTION__,ge_szElementNames[uElement]);
         return uRetAnimation;
     }
-    // Befindet sich Man in einer Röhre?
+    // Befindet sich Man in einer RÃ¶hre?
     if (Playfield.pPipeLevel[uActPos] != EMERALD_SPACE) {
-        // Kann er diese in die gewünschte Richtung verlassen bzw. agieren?
+        // Kann er diese in die gewÃ¼nschte Richtung verlassen bzw. agieren?
         switch (uAnimation) {
             case (EMERALD_ANIM_LEFT):
                 if (!IsPipeWalkable(uActPos,PIPE_FREE_LEFT)) {
@@ -454,7 +454,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 if (uAnimation == EMERALD_ANIM_RIGHT) {
                     Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_MAN_PUSH_RIGHT;  // Falls Man gegen einen blockierten Gegenstand schiebt (durchdrehende Beine)
                     if ((IS_SPACE(uTouchPos + 1)) && Playfield.bPushStone && (uTouchStatus != EMERALD_ANIM_DOWN_SELF)) {
-                        // ursprüngliche Man-Position mit Space besetzen
+                        // ursprÃ¼ngliche Man-Position mit Space besetzen
                         Playfield.pLevel[uActPos] = EMERALD_SPACE;
                         Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
                         // Man auf neue Position setzen
@@ -471,7 +471,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 } else if (uAnimation == EMERALD_ANIM_LEFT) {
                     Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_MAN_PUSH_LEFT; // Falls Man gegen einen blockierten Gegenstand schiebt (durchdrehende Beine)
                     if ((IS_SPACE(uTouchPos - 1)) && Playfield.bPushStone) {
-                        // ursprüngliche Man-Position mit Space besetzen
+                        // ursprÃ¼ngliche Man-Position mit Space besetzen
                         Playfield.pLevel[uActPos] = EMERALD_SPACE;
                         Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
                         // Man auf neue Position setzen
@@ -500,7 +500,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                         if ((IS_SPACE(uTouchPos + 1)) && Playfield.bPushStone && (uTouchStatus != EMERALD_ANIM_DOWN_SELF)) {
                             Playfield.pLevel[uTouchPos] = EMERALD_STONE;
                             Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_STAND;
-                            // ursprüngliche Man-Position mit Space besetzen
+                            // ursprÃ¼ngliche Man-Position mit Space besetzen
                             Playfield.pLevel[uActPos] = EMERALD_SPACE;
                             Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
                             // Man auf neue Position setzen
@@ -519,7 +519,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                         if ((IS_SPACE(uTouchPos - 1)) && Playfield.bPushStone) {
                             Playfield.pLevel[uTouchPos] = EMERALD_STONE;
                             Playfield.pStatusAnimation[uTouchPos] = EMERALD_ANIM_STAND;
-                            // ursprüngliche Man-Position mit Space besetzen
+                            // ursprÃ¼ngliche Man-Position mit Space besetzen
                             Playfield.pLevel[uActPos] = EMERALD_SPACE;
                             Playfield.pStatusAnimation[uActPos] = EMERALD_ANIM_STAND;
                             // Man auf neue Position setzen
@@ -543,7 +543,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             SetManArm(uActPos,uAnimation);
             break;
         case (EMERALD_WHEEL_TIMEDOOR):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.uTimeDoorTimeLeft =  Playfield.uTimeDoorTime;
                 if (Playfield.uTimeDoorTime > 0) {
                     Playfield.bTimeDoorOpen = true;
@@ -554,7 +554,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_RED):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 switch (Playfield.uConveybeltRedState) {
                     case (EMERALD_CONVEYBELT_LEFT):
                     case (EMERALD_CONVEYBELT_RIGHT):
@@ -576,7 +576,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 switch (Playfield.uConveybeltGreenState) {
                     case (EMERALD_CONVEYBELT_LEFT):
                     case (EMERALD_CONVEYBELT_RIGHT):
@@ -598,7 +598,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 switch (Playfield.uConveybeltBlueState) {
                     case (EMERALD_CONVEYBELT_LEFT):
                     case (EMERALD_CONVEYBELT_RIGHT):
@@ -620,7 +620,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 switch (Playfield.uConveybeltYellowState) {
                     case (EMERALD_CONVEYBELT_LEFT):
                     case (EMERALD_CONVEYBELT_RIGHT):
@@ -642,7 +642,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_LIGHT_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.uTimeLightLeft = Playfield.uTimeLight;
                 if (Playfield.uTimeLight > 0) {
                     Playfield.bLightOn = true;
@@ -669,7 +669,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             SetManArm(uActPos,uAnimation);
             break;
         case (EMERALD_SWITCH_REMOTEBOMB_IGNITION):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bSwitchRemoteBombIgnition = true;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -677,7 +677,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_SWITCH_SWITCHDOOR):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bSwitchDoorImpluse = true;
                 Playfield.bSwitchDoorState = !Playfield.bSwitchDoorState;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
@@ -686,9 +686,9 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_MAGIC_WALL_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 if (!Playfield.bMagicWallRunning) {
-                    Playfield.bMagicWallWasOn = false;  // Magic Wall zurücksetzen
+                    Playfield.bMagicWallWasOn = false;  // Magic Wall zurÃ¼cksetzen
                 }
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -696,7 +696,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_LIGHTBARRIER_RED_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bLightBarrierRedOn = !Playfield.bLightBarrierRedOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -704,7 +704,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_LIGHTBARRIER_YELLOW_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bLightBarrierYellowOn = !Playfield.bLightBarrierYellowOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -712,7 +712,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_LIGHTBARRIER_GREEN_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bLightBarrierGreenOn = !Playfield.bLightBarrierGreenOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -720,7 +720,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_LIGHTBARRIER_BLUE_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bLightBarrierBlueOn = !Playfield.bLightBarrierBlueOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -728,7 +728,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_REPLICATOR_RED_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bReplicatorRedOn = !Playfield.bReplicatorRedOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -736,7 +736,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_REPLICATOR_YELLOW_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bReplicatorYellowOn = !Playfield.bReplicatorYellowOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -744,7 +744,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_REPLICATOR_GREEN_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bReplicatorGreenOn = !Playfield.bReplicatorGreenOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -752,7 +752,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_REPLICATOR_BLUE_SWITCH):
-            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
+            if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter lÃ¤nger durchgehend gedrÃ¼ckt wird
                 Playfield.bReplicatorBlueOn = !Playfield.bReplicatorBlueOn;
                 ManKey.uLastSwitchFrameCount = ManKey.uLastDirectionFrameCount;
                 SetManArm(uActPos,uAnimation);
@@ -1564,7 +1564,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_EARTH):
-            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Erde-Rand-Status muss gelöscht werden
+            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Erde-Rand-Status muss gelÃ¶scht werden
             ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_DIG_EARTH,uTouchPos);
             switch (uAnimation) {
@@ -1607,7 +1607,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             }
             break;
         case (EMERALD_EARTH_INVISIBLE):
-            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Erde-Rand-Status muss gelöscht werden
+            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Erde-Rand-Status muss gelÃ¶scht werden
             ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_DIG_EARTH,uTouchPos);
             switch (uAnimation) {
@@ -1655,14 +1655,14 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 SetManArm(uActPos,uAnimation);
                 Playfield.pLevel[uTouchPos] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                 Playfield.pStatusAnimation[uTouchPos] = EMERALD_SPACE;
-            } else {                                                    // Man läuft auf Sandmine und löst Explosion aus
+            } else {                                                    // Man lÃ¤uft auf Sandmine und lÃ¶st Explosion aus
                 ControlCentralExplosion(uTouchPos,EMERALD_SPACE);
             }
             PreparePlaySound(SOUND_EXPLOSION,uTouchPos);
             break;
         case (EMERALD_GRASS):
         case (EMERALD_GRASS_COMES):
-            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Gras-Rand-Status muss gelöscht werden
+            Playfield.pStatusAnimation[uTouchPos] = 0x00;       // Entsprechender Gras-Rand-Status muss gelÃ¶scht werden
             ManKey.uFireCount = 0;
             PreparePlaySound(SOUND_DIG_EARTH,uTouchPos);
             switch (uAnimation) {
@@ -2227,7 +2227,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 }
                 PreparePlaySound(SOUND_EXPLOSION,uTouchPos);
             } else {
-                // Einbahnstraßentüren (soft) können durchlaufen und mit Hammer gesprengt werden, daher dieser Extrazweig
+                // EinbahnstraÃŸentÃ¼ren (soft) kÃ¶nnen durchlaufen und mit Hammer gesprengt werden, daher dieser Extrazweig
                 switch (uElement) {
                     case (EMERALD_DOOR_ONLY_UP_WALL):
                         if ((uAnimation == EMERALD_ANIM_UP) && (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) && (!ManKey.bFire)) {
@@ -2289,7 +2289,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 Playfield.pLevel[uActPos] = EMERALD_SPACE;  // Man in Space wandeln
                 PreparePlaySound(SOUND_ENDDOOR,uActPos);
                 Playfield.bWellDone = true;
-                // Zusätzlicher Score: (Restzeit * Timefaktor) / 10: siehe DC3
+                // ZusÃ¤tzlicher Score: (Restzeit * Timefaktor) / 10: siehe DC3
                 Playfield.uTotalScore = Playfield.uTotalScore + (Playfield.uTimeToPlay * Playfield.uTimeScoreFactor) / (ge_DisplayMode.refresh_rate * 10);
                 // Falls Score > 9999, wird das in ShowPanel() korrigiert
             }
@@ -2311,14 +2311,14 @@ Name:           ManGoDown
 Beschreibung: Man geht nach unten.
 Parameter
       Eingang: I, uint32_t, Index im Level (lineare Man-Koordinate)
-               uAdditionalAnimStatus, uint32_t, zusätzlicher Animations-Status
-               bDoubleSpeed, bool, true = Man läuft doppelte Geschwindigkeit
+               uAdditionalAnimStatus, uint32_t, zusÃ¤tzlicher Animations-Status
+               bDoubleSpeed, bool, true = Man lÃ¤uft doppelte Geschwindigkeit
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ManGoDown(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed) {
-    // ursprüngliche Man-Position mit Space besetzen
+    // ursprÃ¼ngliche Man-Position mit Space besetzen
     Playfield.pLevel[I] = EMERALD_SPACE;
     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     if (bDoubleSpeed) {
@@ -2343,14 +2343,14 @@ Name:           ManGoUp
 Beschreibung: Man geht nach oben.
 Parameter
       Eingang: I, uint32_t, Index im Level (lineare Man-Koordinate)
-               uAdditionalAnimStatus, uint32_t, zusätzlicher Animations-Status
-               bDoubleSpeed, bool, true = Man läuft doppelte Geschwindigkeit
+               uAdditionalAnimStatus, uint32_t, zusÃ¤tzlicher Animations-Status
+               bDoubleSpeed, bool, true = Man lÃ¤uft doppelte Geschwindigkeit
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ManGoUp(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed) {
-    // ursprüngliche Man-Position mit Space besetzen
+    // ursprÃ¼ngliche Man-Position mit Space besetzen
     Playfield.pLevel[I] = EMERALD_SPACE;
     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     if (bDoubleSpeed) {
@@ -2375,14 +2375,14 @@ Name:           ManGoRight
 Beschreibung: Man geht nach rechts.
 Parameter
       Eingang: I, uint32_t, Index im Level (lineare Man-Koordinate)
-               uAdditionalAnimStatus, uint32_t, zusätzlicher Animations-Status
-               bDoubleSpeed, bool, true = Man läuft doppelte Geschwindigkeit
+               uAdditionalAnimStatus, uint32_t, zusÃ¤tzlicher Animations-Status
+               bDoubleSpeed, bool, true = Man lÃ¤uft doppelte Geschwindigkeit
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ManGoRight(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed) {
-    // ursprüngliche Man-Position mit Space besetzen
+    // ursprÃ¼ngliche Man-Position mit Space besetzen
     Playfield.pLevel[I] = EMERALD_SPACE;
     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     if (bDoubleSpeed) {
@@ -2407,14 +2407,14 @@ Name:           ManGoLeft
 Beschreibung: Man geht nach links.
 Parameter
       Eingang: I, uint32_t, Index im Level (lineare Man-Koordinate)
-               uAdditionalAnimStatus, uint32_t, zusätzlicher Animations-Status
-               bDoubleSpeed, bool, true = Man läuft doppelte Geschwindigkeit
+               uAdditionalAnimStatus, uint32_t, zusÃ¤tzlicher Animations-Status
+               bDoubleSpeed, bool, true = Man lÃ¤uft doppelte Geschwindigkeit
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ManGoLeft(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed) {
-    // ursprüngliche Man-Position mit Space besetzen
+    // ursprÃ¼ngliche Man-Position mit Space besetzen
     Playfield.pLevel[I] = EMERALD_SPACE;
     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     if (bDoubleSpeed) {
@@ -2436,17 +2436,17 @@ void ManGoLeft(uint32_t I, uint32_t uAdditionalAnimStatus, bool bDoubleSpeed) {
 /*----------------------------------------------------------------------------
 Name:           ControlWheels
 ------------------------------------------------------------------------------
-Beschreibung: Steuert die Räder.
+Beschreibung: Steuert die RÃ¤der.
 Parameter
-      Eingang: I, uint32_t, Rad, das vom Man gedrückt wurde
+      Eingang: I, uint32_t, Rad, das vom Man gedrÃ¼ckt wurde
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlWheels(uint32_t I) {
     uint32_t uWheelposRunning;              // lineare Kooridnate des laufenden Rades
 
-    if (Playfield.bWheelRunning) {          // Läuft bereits ein Rad ?
+    if (Playfield.bWheelRunning) {          // LÃ¤uft bereits ein Rad ?
         uWheelposRunning = Playfield.uWheelRunningYpos * Playfield.uLevel_X_Dimension + Playfield.uWheelRunningXpos;
         Playfield.pStatusAnimation[uWheelposRunning] = EMERALD_ANIM_STAND;    // Voriges Rad stoppen
     }
@@ -2468,13 +2468,13 @@ Beschreibung: Steuert laufendes Rad.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckRunningWheel(void) {
     uint32_t uWheelposRunning;              // lineare Kooridnate des laufenden Rades
 
-    if (Playfield.bWheelRunning) {          // Läuft bereits ein Rad ?
+    if (Playfield.bWheelRunning) {          // LÃ¤uft bereits ein Rad ?
         if (Playfield.uTimeWheelRotationLeft > 0) {
             Playfield.uTimeWheelRotationLeft--;
         }
@@ -2494,11 +2494,11 @@ void CheckRunningWheel(void) {
 Name:           SetManArm
 ------------------------------------------------------------------------------
 Beschreibung: Falls der Man etwas mit der Firetaste aufnimmt oder einen Schalter/ein Rad
-              betätigt, wird hier die "richtige" Armbewegung gesetzt.
+              betÃ¤tigt, wird hier die "richtige" Armbewegung gesetzt.
 Parameter
       Eingang: I, uint32_t, aktuelle Position des Man
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetManArm(uint32_t I,uint32_t uAnimation) {
@@ -2522,11 +2522,11 @@ void SetManArm(uint32_t I,uint32_t uAnimation) {
 /*----------------------------------------------------------------------------
 Name:           ControlEnddoorReady
 ------------------------------------------------------------------------------
-Beschreibung: Steuert die blinkende Endtür, wenn der Man hineinläuft
+Beschreibung: Steuert die blinkende EndtÃ¼r, wenn der Man hineinlÃ¤uft
 Parameter
-      Eingang: I, uint32_t, aktuelle Position der Tür.
+      Eingang: I, uint32_t, aktuelle Position der TÃ¼r.
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlEnddoorReady(uint32_t I) {
@@ -2549,11 +2549,11 @@ void ControlEnddoorReady(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlEnddoorReadySteel
 ------------------------------------------------------------------------------
-Beschreibung: Steuert die blinkende Stahl-Endtür, wenn der Man hineinläuft
+Beschreibung: Steuert die blinkende Stahl-EndtÃ¼r, wenn der Man hineinlÃ¤uft
 Parameter
-      Eingang: I, uint32_t, aktuelle Position der Tür.
+      Eingang: I, uint32_t, aktuelle Position der TÃ¼r.
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlEnddoorReadySteel(uint32_t I) {
@@ -2582,7 +2582,7 @@ Parameter
                uDestTeleporterCoordinate, uint32_t, lineare Koordinate des Ziel-Teleporters
                uAnimation, uint32_t, Richtung des Mans durch den Teleporter
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ManGoTeleporter(uint32_t uActCoordinate, uint32_t uDestTeleporterCoordinate, uint32_t uAnimation) {
@@ -2591,28 +2591,28 @@ void ManGoTeleporter(uint32_t uActCoordinate, uint32_t uDestTeleporterCoordinate
 
     switch (uAnimation) {
         case (EMERALD_ANIM_UP):
-            // ursprüngliche Man-Position mit Space besetzen
+            // ursprÃ¼ngliche Man-Position mit Space besetzen
             Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
             Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
             uDestManCoordinate = uDestTeleporterCoordinate - Playfield.uLevel_X_Dimension;
             bMoved = true;
             break;
         case (EMERALD_ANIM_DOWN):
-            // ursprüngliche Man-Position mit Space besetzen
+            // ursprÃ¼ngliche Man-Position mit Space besetzen
             Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
             Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
             uDestManCoordinate = uDestTeleporterCoordinate + Playfield.uLevel_X_Dimension;
             bMoved = true;
             break;
         case (EMERALD_ANIM_LEFT):
-            // ursprüngliche Man-Position mit Space besetzen
+            // ursprÃ¼ngliche Man-Position mit Space besetzen
             Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
             Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
             uDestManCoordinate = uDestTeleporterCoordinate - 1;
             bMoved = true;
             break;
         case (EMERALD_ANIM_RIGHT):
-            // ursprüngliche Man-Position mit Space besetzen
+            // ursprÃ¼ngliche Man-Position mit Space besetzen
             Playfield.pLevel[uActCoordinate] = EMERALD_SPACE;
             Playfield.pStatusAnimation[uActCoordinate] = EMERALD_ANIM_STAND;
             uDestManCoordinate = uDestTeleporterCoordinate + 1;
@@ -2645,12 +2645,12 @@ void ManGoTeleporter(uint32_t uActCoordinate, uint32_t uDestTeleporterCoordinate
 /*----------------------------------------------------------------------------
 Name:           IsPipeWalkable
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Röhren-Element zu einer bestimmten Seite frei/begehbar ist.
+Beschreibung: PrÃ¼ft, ob ein RÃ¶hren-Element zu einer bestimmten Seite frei/begehbar ist.
 Parameter
-      Eingang: I, uint32_t, lineare Koordinate des Röhren-Elements
-               uDSide, uint32_t, Seite, die geprüft werden soll
+      Eingang: I, uint32_t, lineare Koordinate des RÃ¶hren-Elements
+               uDSide, uint32_t, Seite, die geprÃ¼ft werden soll
       Ausgang: -
-Rückgabewert:  bool, true = frei/begehbar, sonst nicht
+RÃ¼ckgabewert:  bool, true = frei/begehbar, sonst nicht
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsPipeWalkable(uint32_t I, uint32_t uSide) {

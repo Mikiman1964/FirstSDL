@@ -9,9 +9,9 @@
 typedef struct
 {
   uint32_t uXStart;             // Horizontaler Start und
-  uint32_t uXEnd;               // Ende für Scroller
-  uint32_t uScrollerBufferLen;  // ((WINDOW_W / FONT_W) + 1)   // + 1, für den rechten unsichtbaren Rand
-  bool bChangeScrollPixel;      // Anzahl Scrollpixel soll geändert werden
+  uint32_t uXEnd;               // Ende fÃ¼r Scroller
+  uint32_t uScrollerBufferLen;  // ((WINDOW_W / FONT_W) + 1)   // + 1, fÃ¼r den rechten unsichtbaren Rand
+  bool bChangeScrollPixel;      // Anzahl Scrollpixel soll geÃ¤ndert werden
   uint32_t uScrolledPixel;      // Anzahl Pixel, die nach neuem Buchstaben gescrollt wurden (0 - FONT_W)
   uint32_t uScrollSpeedPixel;   // Anzahl Pixel / Scroll-Schritt
   uint8_t *pszScrolltext;       // Zeiger auf Scrolltext

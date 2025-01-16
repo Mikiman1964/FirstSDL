@@ -11,7 +11,7 @@ Beschreibung: Steuert den roten Repliktor
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlRedReplicator(uint32_t I) {
@@ -32,7 +32,7 @@ Beschreibung: Steuert den gelben Repliktor
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlYellowReplicator(uint32_t I) {
@@ -49,15 +49,15 @@ void ControlYellowReplicator(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlGreenReplicator
 ------------------------------------------------------------------------------
-Beschreibung: Steuert den grünen Repliktor
+Beschreibung: Steuert den grÃ¼nen Repliktor
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlGreenReplicator(uint32_t I) {
-    if (Playfield.bReplicatorGreenOn) {          // Laufen die grünen Replikatoren?
+    if (Playfield.bReplicatorGreenOn) {          // Laufen die grÃ¼nen Replikatoren?
         PreparePlaySound(SOUND_REPLICATOR,I);
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist der Replikator frei?
             Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = Playfield.uReplicatorGreenObject;
@@ -74,7 +74,7 @@ Beschreibung: Steuert den blauen Repliktor
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlBlueReplicator(uint32_t I) {

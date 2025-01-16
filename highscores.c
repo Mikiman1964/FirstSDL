@@ -16,12 +16,12 @@ extern LEVELGROUPFILE LevelgroupFiles[EMERALD_MAX_LEVELGROUPFILES];
 /*----------------------------------------------------------------------------
 Name:           CheckHighScoresDir
 ------------------------------------------------------------------------------
-Beschreibung: Pr¸ft das Highscores-Directory und legt dieses an, falls es nicht existiert.
+Beschreibung: Pr√ºft das Highscores-Directory und legt dieses an, falls es nicht existiert.
 Parameter
       Eingang: -
       Ausgang: -
 
-R¸ckgabewert:  int, 0 = kein Fehler, sonst Fehler
+R√ºckgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int CheckHighScoresDir(void) {
@@ -32,12 +32,12 @@ int CheckHighScoresDir(void) {
 /*----------------------------------------------------------------------------
 Name:           WriteHighScoreFile
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt ein Highscore-File f¸r eine levelgruppe.
+Beschreibung: Erzeugt ein Highscore-File f√ºr eine levelgruppe.
 Parameter
       Eingang: puLevelgroupHash, uint8_t *, Zeiger auf Levelgruppenhash (16 Bytes)
       Ausgang: -
 
-R¸ckgabewert:  int, 0 = kein Fehler, sonst Fehler
+R√ºckgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: HighscoreFile.x
 ------------------------------------------------------------------------------*/
 int WriteHighScoreFile(uint8_t *puLevelgroupHash) {
@@ -63,12 +63,12 @@ int WriteHighScoreFile(uint8_t *puLevelgroupHash) {
 Name:           ReadHighScoreFile
 ------------------------------------------------------------------------------
 Beschreibung: Liest die Highscore-Datei einer Levelgruppe. Falls ein Lesen nicht
-              mˆglich ist, wird eine neue Leere angelegt.
+              m√∂glich ist, wird eine neue Leere angelegt.
 Parameter
       Eingang: puLevelgroupHash, uint8_t *, Zeiger auf Levelgruppenhash (16 Bytes)
       Ausgang: -
 
-R¸ckgabewert:  int, 0 = kein Fehler, sonst Fehler
+R√ºckgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: HighscoreFile.x
 ------------------------------------------------------------------------------*/
 int ReadHighScoreFile(uint8_t *puLevelgroupHash) {
@@ -103,7 +103,7 @@ int ReadHighScoreFile(uint8_t *puLevelgroupHash) {
 /*----------------------------------------------------------------------------
 Name:           InsertScore
 ------------------------------------------------------------------------------
-Beschreibung: F¸gt einen Score ggf. in die Highscoreliste ein, wenn dieser
+Beschreibung: F√ºgt einen Score ggf. in die Highscoreliste ein, wenn dieser
               ausreichend hoch ist.
 
 Parameter
@@ -113,7 +113,7 @@ Parameter
                bWellDone, bool, true = Level wurde geschafft
       Ausgang: -
 
-R¸ckgabewert:  int, >= 0 = Alles OK, Neuer Highscore auf Index X
+R√ºckgabewert:  int, >= 0 = Alles OK, Neuer Highscore auf Index X
                     -1 = Fehler
                     -2 = Alles OK, kein neuer Highscore
 Seiteneffekte: HighscoreFile.x
@@ -128,7 +128,7 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) 
     S = 0;
     if ((pszName != NULL) && (uLevel < EMERALD_MAX_LEVELCOUNT)) {
         if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
-            // Die TopTwenty sind absteigend sortiert -> Pr¸fen, wo der aktuelle Score eingef¸gt werden kann
+            // Die TopTwenty sind absteigend sortiert -> Pr√ºfen, wo der aktuelle Score eingef√ºgt werden kann
             bIndexFound =  false;
             for (I = 0; (I < EMERALD_HIGHSCORE_LISTLEN) && (!bIndexFound); I++) {
                 if (uScore >= HighscoreFile.TopTwenty[uLevel].uHighScore[I]) {
@@ -138,7 +138,7 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) 
             }
             if (bIndexFound) {
                 nErrorCode = (int)S;
-                // Verschiebung durchf¸hren
+                // Verschiebung durchf√ºhren
                 for ( (I = EMERALD_HIGHSCORE_LISTLEN - 1); I > S; I--) {
                     HighscoreFile.TopTwenty[uLevel].uHighScore[I] = HighscoreFile.TopTwenty[uLevel].uHighScore[I - 1];
                     strcpy(HighscoreFile.TopTwenty[uLevel].szTopTwenty[I],HighscoreFile.TopTwenty[uLevel].szTopTwenty[I - 1]);
@@ -150,7 +150,7 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) 
                 }
                 strcpy(HighscoreFile.TopTwenty[uLevel].szTopTwenty[S],pszName);
             } else {
-                // Es reichte nicht f¸r einen neuen Highscore -> nichts machen
+                // Es reichte nicht f√ºr einen neuen Highscore -> nichts machen
                 nErrorCode = -2;
             }
         }
@@ -163,13 +163,13 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) 
 /*----------------------------------------------------------------------------
 Name:           CleanUpHighScoreDir
 ------------------------------------------------------------------------------
-Beschreibung: Lˆscht Highscore-Dateien, f¸r die es keine Levelgruppe (mehr) gibt.
-              Die verf¸gbaren Levelgroupfiles m¸ssen bereits zur Verf¸gung stehen,
+Beschreibung: L√∂scht Highscore-Dateien, f√ºr die es keine Levelgruppe (mehr) gibt.
+              Die verf√ºgbaren Levelgroupfiles m√ºssen bereits zur Verf√ºgung stehen,
               d.h. die Funktion GetLevelgroupFiles() wurde erfolgreich aufgerufen.
 Parameter
       Eingang: -
       Ausgang: -
-R¸ckgabewert:  int, 0 = Alles OK, sonst Fehler
+R√ºckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles.x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 int CleanUpHighScoreDir(void) {
@@ -192,12 +192,12 @@ int CleanUpHighScoreDir(void) {
     while (((entry = readdir(dir)) != NULL) && (nErrorCode == 0) ) {
         FilenameLen = strlen(entry->d_name);
         if (FilenameLen == 41) {
-            // Nur Dateien der folgenden Form pr¸fen: high_16228DC49F7E51AFA051D6FFCF13AD02.dat  5 + 32 + 4 = 41 Zeichen
+            // Nur Dateien der folgenden Form pr√ºfen: high_16228DC49F7E51AFA051D6FFCF13AD02.dat  5 + 32 + 4 = 41 Zeichen
             if ((memcmp(entry->d_name + FilenameLen - 4,EMERALD_HIGHSCORES_FILENAME_EXTENSION,4) == 0)  && (memcmp(entry->d_name,EMERALD_HIGHSCORES_FILENAME,5) == 0)) {
                 memset(szHiscoreMD5Hash,0,sizeof(szHiscoreMD5Hash));
                 memcpy(szHiscoreMD5Hash,entry->d_name + 5,32);
                 GetMd5HashFromString(szHiscoreMD5Hash,uHiscoreMD5Hash);
-                // Pr¸fen, ob der Hash in den Levelgruppen zu finden ist
+                // Pr√ºfen, ob der Hash in den Levelgruppen zu finden ist
                 bActive = false;
                 for (I = 0; (I < g_LevelgroupFilesCount) && (!bActive); I++) {
                     bActive = (memcmp(uHiscoreMD5Hash,LevelgroupFiles[I].uMd5Hash,16) == 0);

@@ -10,19 +10,19 @@
 typedef struct {
     int nSpeed;             // Geschwindigkeit des Astroiden
     int nXpos;              // Aktuelle X-Position
-    int nXdeflection;       // Zusätzliche X-Ablenkung
-    int nYdeflection;       // Zusätzliche Y-Ablenkung
+    int nXdeflection;       // ZusÃ¤tzliche X-Ablenkung
+    int nYdeflection;       // ZusÃ¤tzliche Y-Ablenkung
     int nXmaxDeflection;    // Maximale X-Ablenkung
     int nYmaxDeflection;    // Maximale Y-Ablenkung
     int nYpos;              // Aktuelle Y-Position
-    double dAngleRotate;    // Drehwinkel für Rotation
+    double dAngleRotate;    // Drehwinkel fÃ¼r Rotation
     double dRotationSpeed;  // Drehgeschwindigkeit
-    float fXangle;          // Winkel für X-Ablenkung
-    float fYangle;          // Winkel für Y-Ablenkung
-    float fXangleSpeed;     // Winkelgeschwindigkeit für X-Ablenkung
-    float fYangleSpeed;     // Winkelgeschwindigkeit für Y-Ablenkung
+    float fXangle;          // Winkel fÃ¼r X-Ablenkung
+    float fYangle;          // Winkel fÃ¼r Y-Ablenkung
+    float fXangleSpeed;     // Winkelgeschwindigkeit fÃ¼r X-Ablenkung
+    float fYangleSpeed;     // Winkelgeschwindigkeit fÃ¼r Y-Ablenkung
     int nWidth;             // Breite des Asteroiden
-    int nHeight;            // Höhe des Asteroiden
+    int nHeight;            // HÃ¶he des Asteroiden
     bool bReady;            // Asteroid ist am Zielort angekommen und kann neu geladen werden
 } ASTEROID;
 

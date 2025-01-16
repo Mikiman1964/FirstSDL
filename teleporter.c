@@ -12,7 +12,7 @@ Name:           PrintTeleporters
 Beschreibung: Zeigt die Anzahl und Koordinaten der Teleporter an.
 Parameter
       Eingang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void PrintTeleporters(void) {
@@ -40,13 +40,13 @@ void PrintTeleporters(void) {
 /*----------------------------------------------------------------------------
 Name:           InitTeleporter
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Werte für die Teleporter in der Struktur Playfield.x.
+Beschreibung: Initialisiert die Werte fÃ¼r die Teleporter in der Struktur Playfield.x.
               Diese Funktion wird einmalig aus EmeraldMineMainMenu()
               aufgerufen.
 
 Parameter
       Eingang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void InitTeleporter(void) {
@@ -54,8 +54,8 @@ void InitTeleporter(void) {
     Playfield.puTeleporterRedCoordinates = NULL;              // lineare Koordinaten, rote Teleporter
     Playfield.uTeleporterYellowCounter = 0;                   // Anzahl gelber Teleporter
     Playfield.puTeleporterYellowCoordinates = NULL;           // lineare Koordinaten, gelbe Teleporter
-    Playfield.uTeleporterGreenCounter = 0;                    // Anzahl grüner Teleporter
-    Playfield.puTeleporterGreenCoordinates = NULL;            // lineare Koordinaten, grüne Teleporter
+    Playfield.uTeleporterGreenCounter = 0;                    // Anzahl grÃ¼ner Teleporter
+    Playfield.puTeleporterGreenCoordinates = NULL;            // lineare Koordinaten, grÃ¼ne Teleporter
     Playfield.uTeleporterBlueCounter = 0;                     // Anzahl blauer Teleporter
     Playfield.puTeleporterBlueCoordinates = NULL;             // lineare Koordinaten, blaue Teleporter
 }
@@ -64,11 +64,11 @@ void InitTeleporter(void) {
 /*----------------------------------------------------------------------------
 Name:           FreeTeleporterCoordinates
 ------------------------------------------------------------------------------
-Beschreibung: Gibt den Speicher für alle Teleporter-Koordinaten wieder frei und
+Beschreibung: Gibt den Speicher fÃ¼r alle Teleporter-Koordinaten wieder frei und
               setzt die Anzahl der Teleporter auf 0.
 Parameter
       Eingang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void FreeTeleporterCoordinates(void) {
@@ -76,8 +76,8 @@ void FreeTeleporterCoordinates(void) {
     SAFE_FREE(Playfield.puTeleporterRedCoordinates);          // lineare Koordinaten, rote Teleporter
     Playfield.uTeleporterYellowCounter = 0;                   // Anzahl gelber Teleporter
     SAFE_FREE(Playfield.puTeleporterYellowCoordinates);       // lineare Koordinaten, gelbe Teleporter
-    Playfield.uTeleporterGreenCounter = 0;                    // Anzahl grüner Teleporter
-    SAFE_FREE(Playfield.puTeleporterGreenCoordinates);        // lineare Koordinaten, grüne Teleporter
+    Playfield.uTeleporterGreenCounter = 0;                    // Anzahl grÃ¼ner Teleporter
+    SAFE_FREE(Playfield.puTeleporterGreenCoordinates);        // lineare Koordinaten, grÃ¼ne Teleporter
     Playfield.uTeleporterBlueCounter = 0;                     // Anzahl blauer Teleporter
     SAFE_FREE(Playfield.puTeleporterBlueCoordinates);         // lineare Koordinaten, blaue Teleporter
 }
@@ -86,13 +86,13 @@ void FreeTeleporterCoordinates(void) {
 /*----------------------------------------------------------------------------
 Name:           SearchTeleporter
 ------------------------------------------------------------------------------
-Beschreibung: Sucht und zählt im Spielfeld die Teleporter und legt die Koordinaten
+Beschreibung: Sucht und zÃ¤hlt im Spielfeld die Teleporter und legt die Koordinaten
               in der Struktur Playfield.x ab.
               Die Struktur Playfield.x muss hierzu bereits ein initialisiertes
               Spielfeld enthalten und die Level-Dimension muss bekannt sein.
 Parameter
       Eingang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int SearchTeleporter(void) {
@@ -119,14 +119,14 @@ int SearchTeleporter(void) {
 /*----------------------------------------------------------------------------
 Name:           AddTeleporterCoordinate
 ------------------------------------------------------------------------------
-Beschreibung: Fügt eine neue Koordinate für einen Teleporter hinzu.
+Beschreibung: FÃ¼gt eine neue Koordinate fÃ¼r einen Teleporter hinzu.
 Parameter
       Eingang: uTeleporterElement, uint16_t, Teleporter
                     EMERALD_TELEPORTER_RED,
                     EMERALD_TELEPORTER_YELLOW,
                     EMERALD_TELEPORTER_GREEN,
                     EMERALD_TELEPORTER_BLUE
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int AddTeleporterCoordinate(uint16_t uTeleporterElement,uint32_t uCoordinate) {
@@ -197,8 +197,8 @@ Beschreibung: Ermittelt anhand einer Teleporter-Quell-Koordinate eine Teleporter
               Auf der Quell-Koordinate muss sich ein Teleporter befinden.
 Parameter
       Eingang: uSourceCoordinate, uint32_t, lineare Quell-Teleporter-Koordinate
-               uAnimation, uint32_t, gewünschte Richtung des Man
-Rückgabewert:  uint32_t, Teleporter-Ziel-Koordinate, ansonsten EMERALD_INVALID_TELEPORTER_COORDINATE
+               uAnimation, uint32_t, gewÃ¼nschte Richtung des Man
+RÃ¼ckgabewert:  uint32_t, Teleporter-Ziel-Koordinate, ansonsten EMERALD_INVALID_TELEPORTER_COORDINATE
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint32_t GetDestinationTeleporterCoordinate(uint32_t uSourceCoordinate, uint32_t uAnimation) {
@@ -266,10 +266,10 @@ uint32_t GetDestinationTeleporterCoordinate(uint32_t uSourceCoordinate, uint32_t
         }
     }
     if (uDestinationCoordinate != EMERALD_INVALID_TELEPORTER_COORDINATE) {
-        // Ziel-Teleporter konnte gewählt werden -> jetzt prüfen, ob Feld neben Teleporter frei ist
+        // Ziel-Teleporter konnte gewÃ¤hlt werden -> jetzt prÃ¼fen, ob Feld neben Teleporter frei ist
         switch (uAnimation) {
             case (EMERALD_ANIM_UP):
-                // Ist über Ziel-Teleporter besetzt?
+                // Ist Ã¼ber Ziel-Teleporter besetzt?
                 if (!IS_SPACE(uDestinationCoordinate - Playfield.uLevel_X_Dimension)) {
                     uDestinationCoordinate = EMERALD_INVALID_TELEPORTER_COORDINATE;
                 }

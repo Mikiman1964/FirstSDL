@@ -16,7 +16,7 @@ typedef struct {
     int nMouseYpos_Absolute;        // Absolute Maus Y-Position
     int nMouseXpos_Relative;        // Relative Maus X-Position
     int nMouseYpos_Relative;        // Relative Maus Y-Position
-    bool bQuit;                     // Fensterkreuz gedrückt
+    bool bQuit;                     // Fensterkreuz gedrÃ¼ckt
 } INPUTSTATES;
 
 

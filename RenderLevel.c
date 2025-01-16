@@ -16,7 +16,7 @@ extern CONFIG Config;
 uint8_t g_uCheeseRandom[MAX_CHEESE_RANDOM_NUMBERS];
 uint8_t ge_ExitDoorSequence[8] = {0,1,2,3,4,3,2,1};
 uint32_t g_TreasureChestTicks = 0; // Zum Animieren der Schatztruhen
-uint32_t g_TreasureChestOpenTicks = 0; // Zum Öffnen der Schatztruhen
+uint32_t g_TreasureChestOpenTicks = 0; // Zum Ã–ffnen der Schatztruhen
 bool g_bTreasureChestOpen = false;
 
 
@@ -30,7 +30,7 @@ Beschreibung: Setzt die Variable g_TreasureChestTicks auf den aktuellen
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: g_TreasureChestTicks
 ------------------------------------------------------------------------------*/
 void SetTreasureChestStart(void) {
@@ -41,13 +41,13 @@ void SetTreasureChestStart(void) {
 /*----------------------------------------------------------------------------
 Name:           FillCheeseRandomNumbers
 ------------------------------------------------------------------------------
-Beschreibung: Füllt einen Speicherbereich mit Zufallszahlen (0,1,2 oder 3), damit die
-              Funktion RenderLevel ein zufälligeres Käsemuster erzeugen kann.
+Beschreibung: FÃ¼llt einen Speicherbereich mit Zufallszahlen (0,1,2 oder 3), damit die
+              Funktion RenderLevel ein zufÃ¤lligeres KÃ¤semuster erzeugen kann.
               Es reicht, dass diese Funktion einmalig aufgerufen wird.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: g_uCheeseRandom[]
 ------------------------------------------------------------------------------*/
 void FillCheeseRandomNumbers(void) {
@@ -65,13 +65,13 @@ Name:           RenderPipeElement
 Beschreibung: Rendert Pipe-Elemente.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uPipeElement, uint16_t, Röhren-Element
+               uPipeElement, uint16_t, RÃ¶hren-Element
                uX, uint32_t, X-Position im Level
                uY, uint32_t, Y-Position im Level
                nXpos, int , Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                nYpos, int , Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
 
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, ge_ExitDoorSequence[], g_uCheeseRandom[]
 ------------------------------------------------------------------------------*/
 int RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32_t uX, uint32_t uY, int nXpos, int nYpos) {
@@ -139,10 +139,10 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                pnXpos, int *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int *, Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
-               nAnimationCount, int, 0 - 15 für Animationsstufe
+               nAnimationCount, int, 0 - 15 fÃ¼r Animationsstufe
       Ausgang: pnXpos, int *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Config.x, g_TreasureChestTicks, g_TreasureChestOpenTicks, g_bTreasureChestOpen
 
 ------------------------------------------------------------------------------*/
@@ -152,10 +152,10 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     uint32_t uX;
     uint32_t uY;
     uint32_t I;                         // Levelindex
-    uint32_t Y;                         // Für YAM-Animation und Post-Animation
-    uint32_t uReplicatorAnimation;      // Animationsschritt für Replikator
+    uint32_t Y;                         // FÃ¼r YAM-Animation und Post-Animation
+    uint32_t uReplicatorAnimation;      // Animationsschritt fÃ¼r Replikator
     uint32_t uUpperLeftLevelIndex;      // oberstes linkes Element, welches entweder komplett oder dessen untere rechte Ecke noch gerade sichtbar ist
-    uint32_t uPostAnimationIndex;       // Zeiger auf Playfield.pPostAnimation für Post-Animationen
+    uint32_t uPostAnimationIndex;       // Zeiger auf Playfield.pPostAnimation fÃ¼r Post-Animationen
     uint32_t uAnimStatus;
     uint32_t uSelfStatus;
     uint32_t uNewMagicElement;
@@ -198,17 +198,17 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
         g_bTreasureChestOpen = false;
     }
 
-    // Sichtbare Fläche aufrunden statt abrunden
+    // Sichtbare FlÃ¤che aufrunden statt abrunden
     uResX = ((Config.uResX + FONT_W) / FONT_W) * FONT_W;
     uResY = ((Config.uResY + FONT_H) / FONT_H) * FONT_H;
 
     uPostAnimationIndex = 0;
-    // Die Eingangsparameter "grob" prüfen, damit nichts Schlimmes passiert
+    // Die Eingangsparameter "grob" prÃ¼fen, damit nichts Schlimmes passiert
     if ((pRenderer == NULL) || (Playfield.pLevel == NULL)) {
         SDL_Log("%s: bad input parameters",__FUNCTION__);
         return -1;
     }
-    // Positionsüberläufe abfangen
+    // PositionsÃ¼berlÃ¤ufe abfangen
     if (*pnXpos < 0) {
         *pnXpos = 0;
     } else if (*pnXpos > Playfield.nMaxXpos) {
@@ -221,7 +221,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     }
     uUpperLeftLevelIndex = (*pnXpos / FONT_W) + (*pnYpos / FONT_H) * Playfield.uLevel_X_Dimension;
     nErrorCode = 0;
-    // Röhren-Elemente ggf. vorher rendern
+    // RÃ¶hren-Elemente ggf. vorher rendern
     for (uY = 0; (uY <= ((uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
         for (uX = 0; (uX <= (uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
             I = uUpperLeftLevelIndex + uY * Playfield.uLevel_X_Dimension + uX;
@@ -340,7 +340,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_TELEPORTER_GREEN):
                     uTextureIndex_0 = TEX_STEEL;    // Stahl
                     bExtendedElement = true;
-                    uTextureIndex = TEX_TELEPORTER_GREEN_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grün
+                    uTextureIndex = TEX_TELEPORTER_GREEN_01 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 13; // Teleporter, grÃ¼n
                     break;
                 case (EMERALD_TELEPORTER_BLUE):
                     uTextureIndex_0 = TEX_STEEL;    // Stahl
@@ -436,7 +436,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     if ((nAnimationCount >= 4) && (nAnimationCount <= 11)) {
                         uTextureIndex = TEX_ALIEN_MOVE_1;                        // Alien geht 1
                     } else {
-                        uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, Flügel voll ausgebreitet
+                        uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, FlÃ¼gel voll ausgebreitet
                     }
                     if (uSelfStatus == EMERALD_ANIM_MONSTER_KILLS_LEFT) {
                         nXoffs = -nAnimationCount * 2;
@@ -726,9 +726,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     // Horizontale Linien zeichnen
                     SDL_SetRenderDrawColor(pRenderer,
                                            ge_uBeamColors[uHorizontalBeamColor * 3 + 0],        // rot
-                                           ge_uBeamColors[uHorizontalBeamColor * 3 + 1],        // grün
+                                           ge_uBeamColors[uHorizontalBeamColor * 3 + 1],        // grÃ¼n
                                            ge_uBeamColors[uHorizontalBeamColor * 3 + 2],        // blau
-                                           SDL_ALPHA_OPAQUE); // Farbe für Line setzen
+                                           SDL_ALPHA_OPAQUE); // Farbe fÃ¼r Line setzen
                     SDL_RenderDrawLine(pRenderer,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix + 2,
@@ -744,9 +744,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     // Vertikale Linien zeichnen
                     SDL_SetRenderDrawColor(pRenderer,
                                            ge_uBeamColors[uVerticalBeamColor * 3 + 0],        // rot
-                                           ge_uBeamColors[uVerticalBeamColor * 3 + 1],        // grün
+                                           ge_uBeamColors[uVerticalBeamColor * 3 + 1],        // grÃ¼n
                                            ge_uBeamColors[uVerticalBeamColor * 3 + 2],        // blau
-                                           SDL_ALPHA_OPAQUE); // Farbe für Line setzen
+                                           SDL_ALPHA_OPAQUE); // Farbe fÃ¼r Line setzen
                     SDL_RenderDrawLine(pRenderer,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix + 2,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix,
@@ -1073,7 +1073,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_DOOR_END_READY):
                     if (uSelfStatus == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
-                        uTextureIndex_0 = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Endtür, blinkend
+                        uTextureIndex_0 = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // EndtÃ¼r, blinkend
                         uTextureIndex = TEX_SPACE;
                         bExtendedElement = true;
                         switch (uAnimStatus) {
@@ -1093,7 +1093,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                                 break;
                             case(EMERALD_ANIM_RIGHT):
                                 uTextureIndex = TEX_MAN_LEFT_1 + nAnimationCount % 8;     // Man geht rechts
-                                nXoffs = - FONT_W + nAnimationCount * 3;    // Durch das Verkleinern des Mans wird dieser zusätzlich nach links gezogen
+                                nXoffs = - FONT_W + nAnimationCount * 3;    // Durch das Verkleinern des Mans wird dieser zusÃ¤tzlich nach links gezogen
                                 nYoffs = nAnimationCount;
                                 fScaleW = 1 - nAnimationCount * 0.03;
                                 fScaleH = fScaleW;
@@ -1102,37 +1102,37 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             case(EMERALD_ANIM_DOWN):
                                 uTextureIndex = TEX_MAN_DOWN_1 + nAnimationCount % 8;     // Man geht runter
                                 nXoffs = nAnimationCount / 2;
-                                nYoffs = -FONT_H + nAnimationCount * 3;     // Durch das Verkleinern des Mans wird dieser zusätzlich nach oben gezogen
+                                nYoffs = -FONT_H + nAnimationCount * 3;     // Durch das Verkleinern des Mans wird dieser zusÃ¤tzlich nach oben gezogen
                                 fScaleW = 1 - nAnimationCount * 0.03;
                                 fScaleH = fScaleW;
                                 break;
                         }
                     } else if (uSelfStatus == EMERALD_ANIM_DOOR_READY_SHRINK) {
-                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Endtür, blinkend
+                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // EndtÃ¼r, blinkend
                         fScaleW = 1 - nAnimationCount * 0.06;
                         fScaleH = fScaleW;
                         nXoffs = nAnimationCount;
                         nYoffs = nAnimationCount * 2;
                     } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
-                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Endtür, blinkend
+                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // EndtÃ¼r, blinkend
                         nXoffs = 15 - nAnimationCount / 2;
                         nYoffs = nXoffs;
                         fScaleW = nAnimationCount * 0.031;
                         fScaleH = fScaleW;
                     } else if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN2) {
-                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Endtür, blinkend
+                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // EndtÃ¼r, blinkend
                         nXoffs = 7 - nAnimationCount / 2;
                         nYoffs = nXoffs;
                         fScaleW = 0.5 + nAnimationCount * 0.031;
                         fScaleH = fScaleW;
                     } else {
-                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Endtür, blinkend
+                        uTextureIndex = TEX_DOOR_EXIT_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // EndtÃ¼r, blinkend
                     }
                     break;
                 case (EMERALD_DOOR_END_READY_STEEL):
-                    uTextureIndex = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-Endtür, blinkend
+                    uTextureIndex = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-EndtÃ¼r, blinkend
                     if (uSelfStatus == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
-                        uTextureIndex_0 = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-Endtür, blinkend
+                        uTextureIndex_0 = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-EndtÃ¼r, blinkend
                         uTextureIndex = TEX_SPACE;
                         bExtendedElement = true;
                         switch (uAnimStatus) {
@@ -1152,7 +1152,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                                 break;
                             case(EMERALD_ANIM_RIGHT):
                                 uTextureIndex = TEX_MAN_LEFT_1 + nAnimationCount % 8;     // Man geht rechts
-                                nXoffs = - FONT_W + nAnimationCount * 3;    // Durch das Verkleinern des Mans wird dieser zusätzlich nach links gezogen
+                                nXoffs = - FONT_W + nAnimationCount * 3;    // Durch das Verkleinern des Mans wird dieser zusÃ¤tzlich nach links gezogen
                                 nYoffs = nAnimationCount;
                                 fScaleW = 1 - nAnimationCount * 0.03;
                                 fScaleH = fScaleW;
@@ -1161,14 +1161,14 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             case(EMERALD_ANIM_DOWN):
                                 uTextureIndex = TEX_MAN_DOWN_1 + nAnimationCount % 8;     // Man geht runter
                                 nXoffs = nAnimationCount / 2;
-                                nYoffs = -FONT_H + nAnimationCount * 3;     // Durch das Verkleinern des Mans wird dieser zusätzlich nach oben gezogen
+                                nYoffs = -FONT_H + nAnimationCount * 3;     // Durch das Verkleinern des Mans wird dieser zusÃ¤tzlich nach oben gezogen
                                 fScaleW = 1 - nAnimationCount * 0.03;
                                 fScaleH = fScaleW;
                                 break;
                         }
-                    } else if (uSelfStatus == EMERALD_ANIM_DOOR_READY_SHRINK) { // Shrink-Animation wird hier für Stahl-Kopf-Überblendung verwendet
+                    } else if (uSelfStatus == EMERALD_ANIM_DOOR_READY_SHRINK) { // Shrink-Animation wird hier fÃ¼r Stahl-Kopf-Ãœberblendung verwendet
                         bExtendedElement = true;
-                        uTextureIndex_0 = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-Endtür, blinkend
+                        uTextureIndex_0 = TEX_DOOR_EXIT_STEEL_1 + ge_ExitDoorSequence[((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 8]; // Stahl-EndtÃ¼r, blinkend
                         uTextureIndex = TEX_STEEL_PLAYER;   // Stahl mit Kopf
                         fScaleW = nAnimationCount * 0.06;
                         fScaleH = fScaleW;
@@ -1207,7 +1207,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                                 break;
                         }
                     }
-                    // Magic Wall muss Element beim Austritt (teilweise) übermalen
+                    // Magic Wall muss Element beim Austritt (teilweise) Ã¼bermalen
                     nYoffs = 0; //- FONT_H;
                     if (Playfield.bMagicWallRunning) {
                         if (uLevelElement == EMERALD_MAGIC_WALL) {
@@ -1233,7 +1233,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_STONE_SAG):
                     bExtendedElement = true;
-                    // Zu übermalendes Element
+                    // Zu Ã¼bermalendes Element
                     uTextureIndex_0 = TEX_STONE;   // Stein
                     nXoffs_0 = 0;
                     fScaleW_0 = 1;
@@ -1243,7 +1243,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     } else if (uSelfStatus == EMERALD_ANIM_STONE_QUICKSAND2){
                         nYoffs_0 = (FONT_H / 2) + nAnimationCount - FONT_H;
                     }
-                    // Überdeckendes Element
+                    // Ãœberdeckendes Element
                     nYoffs = -FONT_H;
                     uTextureIndex = TEX_QUICKSAND;    // Treibsand
                     break;
@@ -1269,7 +1269,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_STONE_SAG_SLOW):
                     bExtendedElement = true;
-                    // Zu übermalendes Element
+                    // Zu Ã¼bermalendes Element
                     uTextureIndex_0 = TEX_STONE;   // Stein
                     nXoffs_0 = 0;
                     fScaleW_0 = 1;
@@ -1283,7 +1283,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     } else if (uSelfStatus == EMERALD_ANIM_STONE_SLOW_QUICKSAND4) {
                         nYoffs_0 = (FONT_H / 2) + (FONT_H / 4) + nAnimationCount / 2 - FONT_H;
                     }
-                    // Überdeckendes Element
+                    // Ãœberdeckendes Element
                     nYoffs = -FONT_H;
                     uTextureIndex = TEX_QUICKSAND_SLOW;    // Treibsand
                     break;
@@ -1306,7 +1306,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     nYoffs = nAnimationCount * 2;
                     break;
                 case (EMERALD_ACIDPOOL_TOP_MID):
-                    uTextureIndex = TEX_ACID_1 + (Playfield.uFrameCounter / 13) % 4;        // Säurebecken, oben mitte (aktives Feld), verlangsamte Animation (13 Frames für eine Animations-Phase)
+                    uTextureIndex = TEX_ACID_1 + (Playfield.uFrameCounter / 13) % 4;        // SÃ¤urebecken, oben mitte (aktives Feld), verlangsamte Animation (13 Frames fÃ¼r eine Animations-Phase)
                     break;
                 case (EMERALD_REPLICATOR_RED_SWITCH):
                     if (Playfield.bReplicatorRedOn) {
@@ -1324,9 +1324,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_REPLICATOR_GREEN_SWITCH):
                     if (Playfield.bReplicatorGreenOn) {
-                        uTextureIndex = TEX_SWITCH_REPLICATOR_GREEN_ON;     // Replikator-Schalter, grün, an
+                        uTextureIndex = TEX_SWITCH_REPLICATOR_GREEN_ON;     // Replikator-Schalter, grÃ¼n, an
                     } else {
-                        uTextureIndex = TEX_SWITCH_REPLICATOR_GREEN_OFF;     // Replikator-Schalter, grün, aus
+                        uTextureIndex = TEX_SWITCH_REPLICATOR_GREEN_OFF;     // Replikator-Schalter, grÃ¼n, aus
                     }
                     break;
                 case (EMERALD_REPLICATOR_BLUE_SWITCH):
@@ -1392,54 +1392,54 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
                     if (Playfield.bReplicatorGreenOn) {
                         if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_1;     // Replikator, grün, an, oben links, Animationsschritt 1
+                            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_1;     // Replikator, grÃ¼n, an, oben links, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_2;     // Replikator, grün, an, oben links, Animationsschritt 2
+                            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_2;     // Replikator, grÃ¼n, an, oben links, Animationsschritt 2
                         } else {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_3;     // Replikator, grün, an, oben links, Animationsschritt 3
+                            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_3;     // Replikator, grÃ¼n, an, oben links, Animationsschritt 3
                         }
                     } else {
-                        uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_OFF;     // Replikator, grün, aus, oben links
+                        uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_OFF;     // Replikator, grÃ¼n, aus, oben links
                     }
                     break;
                 case (EMERALD_REPLICATOR_GREEN_TOP_MID):
                     if (Playfield.bReplicatorGreenOn) {
                         if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_1;     // Replikator, grün, an, mitte, Animationsschritt 1
+                            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_1;     // Replikator, grÃ¼n, an, mitte, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_2;     // Replikator, grün, an, mitte, Animationsschritt 2
+                            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_2;     // Replikator, grÃ¼n, an, mitte, Animationsschritt 2
                         } else {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_3;     // Replikator, grün, an, mitte, Animationsschritt 3
+                            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_3;     // Replikator, grÃ¼n, an, mitte, Animationsschritt 3
                         }
                     } else {
-                        uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_OFF;     // Replikator, grün, aus, oben mitte
+                        uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_OFF;     // Replikator, grÃ¼n, aus, oben mitte
                     }
                     break;
                 case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
                     if (Playfield.bReplicatorGreenOn) {
                         if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_1;     // Replikator, grün, an, oben rechts, Animationsschritt 1
+                            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_1;     // Replikator, grÃ¼n, an, oben rechts, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_2;     // Replikator, grün, an, oben rechts, Animationsschritt 2
+                            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_2;     // Replikator, grÃ¼n, an, oben rechts, Animationsschritt 2
                         } else {
-                            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_3;     // Replikator, grün, an, oben rechts, Animationsschritt 3
+                            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_3;     // Replikator, grÃ¼n, an, oben rechts, Animationsschritt 3
                         }
                     } else {
-                        uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_OFF;     // Replikator, grün, aus, oben rechts
+                        uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_OFF;     // Replikator, grÃ¼n, aus, oben rechts
                     }
                     break;
                 case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
                     if (Playfield.bReplicatorGreenOn) {
-                        uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_ON;     // Replikator, grün, an, unten links, Animationsschritt 1,2 u. 3
+                        uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_ON;     // Replikator, grÃ¼n, an, unten links, Animationsschritt 1,2 u. 3
                     } else {
-                        uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_OFF;     // Replikator, grün, aus, unten links
+                        uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_OFF;     // Replikator, grÃ¼n, aus, unten links
                     }
                     break;
                 case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
                     if (Playfield.bReplicatorGreenOn) {
-                        uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_ON;     // Replikator, grün, an, unten rechts, Animationsschritt 1,2 u. 3
+                        uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_ON;     // Replikator, grÃ¼n, an, unten rechts, Animationsschritt 1,2 u. 3
                     } else {
-                        uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_OFF;     // Replikator, grün, aus, unten rechts
+                        uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_OFF;     // Replikator, grÃ¼n, aus, unten rechts
                     }
                     break;
                 case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
@@ -1589,7 +1589,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_KEY_RED):
-                    uTextureIndex = TEX_KEY_RED;     // roter Schlüssel
+                    uTextureIndex = TEX_KEY_RED;     // roter SchlÃ¼ssel
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
                         nXoffs = 15 - nAnimationCount / 2;
                         nYoffs = nXoffs;
@@ -1609,7 +1609,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_KEY_YELLOW):
-                    uTextureIndex = TEX_KEY_YELLOW;    // gelber Schlüssel
+                    uTextureIndex = TEX_KEY_YELLOW;    // gelber SchlÃ¼ssel
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
                         nXoffs = 15 - nAnimationCount / 2;
                         nYoffs = nXoffs;
@@ -1629,7 +1629,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_KEY_BLUE):
-                    uTextureIndex = TEX_KEY_BLUE;    // blauer Schlüssel
+                    uTextureIndex = TEX_KEY_BLUE;    // blauer SchlÃ¼ssel
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
                         nXoffs = 15 - nAnimationCount / 2;
                         nYoffs = nXoffs;
@@ -1649,7 +1649,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_KEY_GREEN):
-                    uTextureIndex = TEX_KEY_GREEN;     // grüner Schlüssel
+                    uTextureIndex = TEX_KEY_GREEN;     // grÃ¼ner SchlÃ¼ssel
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
                         nXoffs = 15 - nAnimationCount / 2;
                         nYoffs = nXoffs;
@@ -1669,7 +1669,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_MAN):
-                    // Nimmt Man Gegenstand auf, d.h. läuft er in das Element hinein?
+                    // Nimmt Man Gegenstand auf, d.h. lÃ¤uft er in das Element hinein?
                     if ( (uSelfStatus == EMERALD_ANIM_KEY_RED_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_KEY_GREEN_SHRINK) ||
                          (uSelfStatus == EMERALD_ANIM_KEY_BLUE_SHRINK) ||
@@ -1777,7 +1777,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                                 uTextureIndex = TEX_MAN_PUSH_RIGHT_4 + 5 - nAnimationCount / 2;
                             }
                         } else {
-                            // Steht Man noch auf selbst gezündeten Dynamit?
+                            // Steht Man noch auf selbst gezÃ¼ndeten Dynamit?
                             if ((Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension) == Playfield.uDynamitePos) {
                                 bExtendedElement = true;
                                 uTextureIndex_0 = TEX_MAN;      // Man stehend, unter Dynamit
@@ -2051,7 +2051,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             nYoffs_0 = nAnimationCount * 2;
                             uTextureIndex_0 = TEX_RUBY_1 + nAnimationCount / 2;     // Rubin, liegend
                         }
-                        // Blitz-Animation über Rubin
+                        // Blitz-Animation Ã¼ber Rubin
                         nXoffs = 0;
                         nYoffs = 0;
                         if (nAnimationCount <= 7) {
@@ -2124,7 +2124,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         } else if (uAnimStatus == EMERALD_ANIM_DOWN) {
                             nYoffs_0 = nAnimationCount * 2;
                         }
-                        // Blitz-Animation über Kristall
+                        // Blitz-Animation Ã¼ber Kristall
                         nXoffs = 0;
                         nYoffs = 0;
                         if (nAnimationCount <= 7) {
@@ -2203,7 +2203,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             nYoffs_0 = nAnimationCount * 2;
                             uTextureIndex_0 = TEX_EMERALD_1 + nAnimationCount / 2;     // Emerald, liegend
                         }
-                        // Blitz-Animation über Emerald
+                        // Blitz-Animation Ã¼ber Emerald
                         nXoffs = 0;
                         nYoffs = 0;
                         if (nAnimationCount <= 7) {
@@ -2278,7 +2278,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             nYoffs_0 = nAnimationCount * 2;
                             uTextureIndex_0 = TEX_SAPPHIRE_1 + ((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) % 9; // Saphir fallend
                         }
-                        // Blitz-Animation über Saphir
+                        // Blitz-Animation Ã¼ber Saphir
                         nXoffs = 0;
                         nYoffs = 0;
                         if (nAnimationCount <= 7) {
@@ -2289,7 +2289,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_TIME_COIN):
-                    uTextureIndex = TEX_COIN_TIME_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Zeitmünze, drehend
+                    uTextureIndex = TEX_COIN_TIME_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // ZeitmÃ¼nze, drehend
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
                         nXoffs = 15 - nAnimationCount / 2;
                         nYoffs = nXoffs;
@@ -2309,7 +2309,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_SHIELD_COIN):
-                    uTextureIndex = TEX_COIN_SHIELD_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // Schildmünze, drehend
+                    uTextureIndex = TEX_COIN_SHIELD_1 + ((Playfield.uFrameCounter & 0xFFFFFFF8) >> 3) % 6; // SchildmÃ¼nze, drehend
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
                         nXoffs = 15 - nAnimationCount / 2;
                         nYoffs = nXoffs;
@@ -2387,7 +2387,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         if ((nAnimationCount >= 4) && (nAnimationCount <= 11)) {
                             uTextureIndex = TEX_ALIEN_MOVE_1;                        // Alien geht 1
                         } else {
-                            uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, Flügel voll ausgebreitet
+                            uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, FlÃ¼gel voll ausgebreitet
                         }
                         if (uAnimStatus == EMERALD_ANIM_LEFT) {
                             nXoffs = -nAnimationCount * 2;
@@ -2409,7 +2409,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_MINE_EARTH):
-                    // Hinweis: Die äußeren Klammern sind wichtig !
+                    // Hinweis: Die Ã¤uÃŸeren Klammern sind wichtig !
                     uTextureIndex = TEX_MINE_EARTH_LEFT_RIGHT_TOP_BOTTOM + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_EARTH_0) >> 8);    // Erd-Mine mit richtigem Rand aussuchen
                     break;
                 case (EMERALD_EARTH):
@@ -2421,7 +2421,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fScaleH = fScaleW;
                         fAngleOffs = nAnimationCount * 22.5;
                     } else {
-                        // Hinweis: Die äußeren Klammern sind wichtig !
+                        // Hinweis: Die Ã¤uÃŸeren Klammern sind wichtig !
                         uTextureIndex = TEX_EARTH_LEFT_RIGHT_TOP_BOTTOM + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_EARTH_0) >> 8);    // Erde mit richtigem Rand aussuchen
                     }
                     break;
@@ -2435,7 +2435,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                             fScaleH = fScaleW;
                             fAngleOffs = nAnimationCount * 22.5;
                         } else {
-                            // Hinweis: Die äußeren Klammern sind wichtig !
+                            // Hinweis: Die Ã¤uÃŸeren Klammern sind wichtig !
                             uTextureIndex = TEX_EARTH_INVISIBLE_LEFT_RIGHT_TOP_BOTTOM + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_EARTH_0) >> 8);    // Erde mit richtigem Rand aussuchen
                         }
                     } else {
@@ -2451,7 +2451,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fScaleH = fScaleW;
                         fAngleOffs = nAnimationCount * 22.5;
                     } else {
-                        // Hinweis: Die äußeren Klammern sind wichtig !
+                        // Hinweis: Die Ã¤uÃŸeren Klammern sind wichtig !
                         uTextureIndex = TEX_GRASS_LEFT_RIGHT_TOP_BOTTOM + (((Playfield.pStatusAnimation[I] & 0xFF00) - EMERALD_ANIM_EARTH_0) >> 8);    // Gras mit richtigem Rand aussuchen
                     }
                     break;
@@ -2462,8 +2462,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     fScaleW = nAnimationCount * 0.06;
                     fScaleH = fScaleW;
                     break;
-                case (EMERALD_BEETLE_UP):   // Käfer hoch
-                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+                case (EMERALD_BEETLE_UP):   // KÃ¤fer hoch
+                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
                     fAngle = 90;
                     if (uAnimStatus == EMERALD_ANIM_UP) {
                         nYoffs = -nAnimationCount * 2;
@@ -2473,8 +2473,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fAngleOffs = -nAnimationCount * 5.5;
                     }
                     break;
-                case (EMERALD_BEETLE_RIGHT):// Käfer rechts
-                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+                case (EMERALD_BEETLE_RIGHT):// KÃ¤fer rechts
+                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
                     fAngle = 180;
                     if (uAnimStatus == EMERALD_ANIM_RIGHT) {
                         nXoffs = nAnimationCount * 2;
@@ -2484,8 +2484,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fAngleOffs = -nAnimationCount * 5.5;
                     }
                     break;
-                case (EMERALD_BEETLE_DOWN): // Käfer runter
-                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+                case (EMERALD_BEETLE_DOWN): // KÃ¤fer runter
+                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
                     fAngle = 270;
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
                         nXoffs = 15 - nAnimationCount / 2;
@@ -2505,8 +2505,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fAngleOffs = -nAnimationCount * 5.5;
                     }
                     break;
-                case (EMERALD_BEETLE_LEFT): // Käfer left
-                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+                case (EMERALD_BEETLE_LEFT): // KÃ¤fer left
+                    uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
                     fAngle = 0;
                     if (uAnimStatus == EMERALD_ANIM_LEFT) {
                         nXoffs = -nAnimationCount * 2;
@@ -2529,7 +2529,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fScaleW_0 = nAnimationCount * 0.06;
                         fScaleH_0 = fScaleW_0;
                     } else if (uAnimStatus == EMERALD_ANIM_MOLE_STAND) {
-                        nYoffs = 0;         // läuft auf der Stelle
+                        nYoffs = 0;         // lÃ¤uft auf der Stelle
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_UP_TO_RIGHT) {
                         fAngleOffs = nAnimationCount * 5.5;
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_UP_TO_LEFT) {
@@ -2549,14 +2549,14 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fScaleW_0 = nAnimationCount * 0.06;
                         fScaleH_0 = fScaleW_0;
                     } else if (uAnimStatus == EMERALD_ANIM_MOLE_STAND) {
-                        nXoffs = 0;         // läuft auf der Stelle
+                        nXoffs = 0;         // lÃ¤uft auf der Stelle
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_RIGHT_TO_DOWN) {
                         fAngleOffs = nAnimationCount * 5.5;
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_RIGHT_TO_UP) {
                         fAngleOffs = -nAnimationCount * 5.5;
                     }
                      break;
-                case (EMERALD_MOLE_DOWN):   // Mole runter (kann über 2 Steuerungsphasen geboren werden)
+                case (EMERALD_MOLE_DOWN):   // Mole runter (kann Ã¼ber 2 Steuerungsphasen geboren werden)
                     fAngle = 270;
                     uTextureIndex = TEX_MOLE_01 + Playfield.uFrameCounter % 11;     // Mole links
                     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_BORN1) {
@@ -2579,7 +2579,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fScaleW_0 = nAnimationCount * 0.06;
                         fScaleH_0 = fScaleW_0;
                     } else if (uAnimStatus == EMERALD_ANIM_MOLE_STAND) {
-                        nYoffs = 0;         // läuft auf der Stelle
+                        nYoffs = 0;         // lÃ¤uft auf der Stelle
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_DOWN_TO_LEFT) {
                         fAngleOffs = nAnimationCount * 5.5;
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_DOWN_TO_RIGHT) {
@@ -2599,7 +2599,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fScaleW_0 = nAnimationCount * 0.06;
                         fScaleH_0 = fScaleW_0;
                     } else if (uAnimStatus == EMERALD_ANIM_MOLE_STAND) {
-                        nXoffs = 0;         // läuft auf der Stelle
+                        nXoffs = 0;         // lÃ¤uft auf der Stelle
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_LEFT_TO_DOWN) {
                         fAngleOffs = -nAnimationCount * 5.5;
                     } else if (uAnimStatus == EMERALD_ANIM_SPIN_LEFT_TO_UP) {
@@ -2636,7 +2636,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                         fAngleOffs = -nAnimationCount * 5.5;
                     }
                     break;
-                case (EMERALD_MINE_DOWN):   // Mine runter (kann über 2 Steuerungsphasen geboren werden)
+                case (EMERALD_MINE_DOWN):   // Mine runter (kann Ã¼ber 2 Steuerungsphasen geboren werden)
                     if ( ((nAnimationCount >= 0) && (nAnimationCount <= 3)) || ((nAnimationCount >= 8) && (nAnimationCount <=11)) ) {
                         uTextureIndex = TEX_MINE_LEFT_OFF;     // Mine links
                     } else {
@@ -3019,9 +3019,9 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     uTextureIndex = GetTextureIndexByElement(uLevelElement,0,NULL);
                     break;
                 case (EMERALD_INVALID):     // invalides Element gefunden
-                    // Es muss sich nur um Elemente gekümmert werden, die sich am Rand des sichtbaren Bereichs befinden
+                    // Es muss sich nur um Elemente gekÃ¼mmert werden, die sich am Rand des sichtbaren Bereichs befinden
                     // und sich in den sichtbaren Bereich >hinein< bewegen
-                    if (Playfield.pInvalidElement[I] != EMERALD_NONE) {   // Bei grünen Tropfen in Phase 1
+                    if (Playfield.pInvalidElement[I] != EMERALD_NONE) {   // Bei grÃ¼nen Tropfen in Phase 1
                         uTextureIndex = GetTextureIndexByElement(Playfield.pInvalidElement[I],nAnimationCount,&fAngle);
                         if ((uY == 0) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_UP)) {
                             // 1. Element befindet sich am oberen Rand und will nach unten in den sichtbaren Bereich
@@ -3066,7 +3066,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 }
             }
             // Standardelement
-            if ((uTextureIndex != TEX_SPACE) && (uLevelElement != EMERALD_BEAM_CROSS) && (nErrorCode == 0)) {   // Space muss nicht gerendert werden, da nach jedem Bild sowieso Alles gelöscht wird
+            if ((uTextureIndex != TEX_SPACE) && (uLevelElement != EMERALD_BEAM_CROSS) && (nErrorCode == 0)) {   // Space muss nicht gerendert werden, da nach jedem Bild sowieso Alles gelÃ¶scht wird
                 // Position innerhalb des Renderers
                 DestR.x = uX * FONT_W - (*pnXpos % FONT_W) + nXoffs + Playfield.uShiftLevelXpix;
                 DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
@@ -3082,7 +3082,7 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
 
 
     // Den sichtbaren Teil des Levels in den Renderer kopieren, Teil 2
-    // Hier kommen Elemente, die später als die Restlichen gerendert werden sollen
+    // Hier kommen Elemente, die spÃ¤ter als die Restlichen gerendert werden sollen
     for (uY = 0; (uY <= ((uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
         for (uX = 0; (uX <= (uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
             // Levelindex berechnen
@@ -3128,10 +3128,10 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                 case (EMERALD_DOOR_ONLY_RIGHT_WALL):
                 case (EMERALD_DOOR_WHITE):
                 case (EMERALD_DOOR_WHITE_WOOD):
-                case (EMERALD_DOOR_RED_WOOD):     // rote Holztür
-                case (EMERALD_DOOR_YELLOW_WOOD):  // gelbe Holztür
-                case (EMERALD_DOOR_BLUE_WOOD):    // blaue Holztür
-                case (EMERALD_DOOR_GREEN_WOOD):   // grüne Holztür
+                case (EMERALD_DOOR_RED_WOOD):     // rote HolztÃ¼r
+                case (EMERALD_DOOR_YELLOW_WOOD):  // gelbe HolztÃ¼r
+                case (EMERALD_DOOR_BLUE_WOOD):    // blaue HolztÃ¼r
+                case (EMERALD_DOOR_GREEN_WOOD):   // grÃ¼ne HolztÃ¼r
                 case (EMERALD_DOOR_RED):
                 case (EMERALD_DOOR_YELLOW):
                 case (EMERALD_DOOR_BLUE):
@@ -3141,59 +3141,59 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     break;
                 case (EMERALD_DOOR_GREY_RED):
                     if (Playfield.bLightOn) {
-                        uTextureIndex = TEX_DOOR_GREY_RED;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY_RED;     // GeheimtÃ¼r
                     } else {
-                        uTextureIndex = TEX_DOOR_GREY;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY;     // GeheimtÃ¼r
                     }
                     break;
                 case (EMERALD_DOOR_GREY_GREEN):
                     if (Playfield.bLightOn) {
-                        uTextureIndex = TEX_DOOR_GREY_GREEN;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY_GREEN;     // GeheimtÃ¼r
                     } else {
-                        uTextureIndex = TEX_DOOR_GREY;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY;     // GeheimtÃ¼r
                     }
                     break;
                 case (EMERALD_DOOR_GREY_BLUE):
                     if (Playfield.bLightOn) {
-                        uTextureIndex = TEX_DOOR_GREY_BLUE;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY_BLUE;     // GeheimtÃ¼r
                     } else {
-                        uTextureIndex = TEX_DOOR_GREY;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY;     // GeheimtÃ¼r
                     }
                     break;
                 case (EMERALD_DOOR_GREY_YELLOW):
                     if (Playfield.bLightOn) {
-                        uTextureIndex = TEX_DOOR_GREY_YELLOW;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY_YELLOW;     // GeheimtÃ¼r
                     } else {
-                        uTextureIndex = TEX_DOOR_GREY;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY;     // GeheimtÃ¼r
                     }
                     break;
                 case (EMERALD_DOOR_GREY_WHITE):
                     if (Playfield.bLightOn) {
-                        uTextureIndex = TEX_DOOR_GREY_WHITE;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY_WHITE;     // GeheimtÃ¼r
                     } else {
-                        uTextureIndex = TEX_DOOR_GREY;     // Geheimtür
+                        uTextureIndex = TEX_DOOR_GREY;     // GeheimtÃ¼r
                     }
                     break;
                 case (EMERALD_SWITCHDOOR_OPEN):
-                    if (uSelfStatus == EMERALD_ANIM_DOOR_CLOSE) {   // Soll Tür sich schließen?
+                    if (uSelfStatus == EMERALD_ANIM_DOOR_CLOSE) {   // Soll TÃ¼r sich schlieÃŸen?
                         if (nAnimationCount < 15) {
                             uTextureIndex = TEX_DOOR_SWITCHED_5 - nAnimationCount / 3;
                         } else {
-                            uTextureIndex = TEX_DOOR_SWITCHED_1;    // Tür geschlossen
+                            uTextureIndex = TEX_DOOR_SWITCHED_1;    // TÃ¼r geschlossen
                         }
                     } else {
-                        uTextureIndex = TEX_DOOR_SWITCHED_5;        // Schalttür offen
+                        uTextureIndex = TEX_DOOR_SWITCHED_5;        // SchalttÃ¼r offen
                     }
                     break;
                 case (EMERALD_SWITCHDOOR_CLOSED):
-                    if (uSelfStatus == EMERALD_ANIM_DOOR_OPEN) {   // Soll Tür sich öffnen?
+                    if (uSelfStatus == EMERALD_ANIM_DOOR_OPEN) {   // Soll TÃ¼r sich Ã¶ffnen?
                         if (nAnimationCount < 15) {
                             uTextureIndex = TEX_DOOR_SWITCHED_1 + nAnimationCount / 3;
                         } else {
-                            uTextureIndex = TEX_DOOR_SWITCHED_5;    // Tür offen
+                            uTextureIndex = TEX_DOOR_SWITCHED_5;    // TÃ¼r offen
                         }
                     } else {
-                        uTextureIndex = TEX_DOOR_SWITCHED_1;        // Schalttür geschlossen
+                        uTextureIndex = TEX_DOOR_SWITCHED_1;        // SchalttÃ¼r geschlossen
                     }
                     break;
                case (EMERALD_SWITCH_SWITCHDOOR):
@@ -3204,22 +3204,22 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
                     }
                     break;
                 case (EMERALD_DOOR_TIME):
-                    if (uSelfStatus == EMERALD_ANIM_DOOR_OPEN) {   // Tür öffnet sich
+                    if (uSelfStatus == EMERALD_ANIM_DOOR_OPEN) {   // TÃ¼r Ã¶ffnet sich
                         if (nAnimationCount < 15) {
                             uTextureIndex = TEX_DOOR_TIME_1 + nAnimationCount / 3;
                         } else {
                             uTextureIndex = TEX_DOOR_TIME_5;
                         }
-                    } else if (uSelfStatus == EMERALD_ANIM_DOOR_CLOSE) {    // Tür schließt sich
+                    } else if (uSelfStatus == EMERALD_ANIM_DOOR_CLOSE) {    // TÃ¼r schlieÃŸt sich
                         if (nAnimationCount < 15) {
                             uTextureIndex = TEX_DOOR_TIME_5 - nAnimationCount / 3;
                         } else {
-                            uTextureIndex = TEX_DOOR_TIME_1;    // Tür geschlossen
+                            uTextureIndex = TEX_DOOR_TIME_1;    // TÃ¼r geschlossen
                         }
                     } else if (Playfield.bTimeDoorOpen) {
-                        uTextureIndex = TEX_DOOR_TIME_5;    // Tür offen
+                        uTextureIndex = TEX_DOOR_TIME_5;    // TÃ¼r offen
                     } else {
-                        uTextureIndex = TEX_DOOR_TIME_1;    // Tür geschlossen
+                        uTextureIndex = TEX_DOOR_TIME_1;    // TÃ¼r geschlossen
                     }
                     break;
                 case (EMERALD_CENTRAL_EXPLOSION):

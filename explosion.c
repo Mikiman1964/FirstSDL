@@ -21,7 +21,7 @@
 
 extern PLAYFIELD Playfield;
 
-// Alle Explosionen laufen über 2 Phasen.
+// Alle Explosionen laufen Ã¼ber 2 Phasen.
 
 /*----------------------------------------------------------------------------
 Name:           ControlExplosionToElement
@@ -33,7 +33,7 @@ Beschreibung: Steuert eine Einzel-Explosion, die sich in ein beliebiges Element 
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlExplosionToElement(uint32_t I) {
@@ -93,7 +93,7 @@ Parameter
       Eingang: I, int, Index im Level (zentraler Punkt)
                bMega, bool, true = Mega-Explosion, sonst 3x3
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
@@ -115,7 +115,7 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
     // Pass 1: Entfernen der invaliden Elemente von Objekten, die sich innerhalb der Explosion befinden
     for (K = 0; K < MaxK; K++) {
         nCoordinate = I + pCoordArray[K];
-        // Mega-Explosionen könnten theoretisch das Spielfeld überwinden. Daher wird hier mit X/Y-Koordinaten abegrüft, ob innerhalb des Spielfeldes gearbeitet wird
+        // Mega-Explosionen kÃ¶nnten theoretisch das Spielfeld Ã¼berwinden. Daher wird hier mit X/Y-Koordinaten abegrÃ¼ft, ob innerhalb des Spielfeldes gearbeitet wird
         if (nCoordinate > 0) {
             nX = nCoordinate % Playfield.uLevel_X_Dimension;
             nY = nCoordinate / Playfield.uLevel_X_Dimension;
@@ -215,10 +215,10 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
         }
     }
     // Pass 2: Entfernen der invaliden Elemente von Objekten, die sich in die Explosion bewegen
-    // Für diese Objekte dann Re-Kontrolle des Objektes veranlassen.
+    // FÃ¼r diese Objekte dann Re-Kontrolle des Objektes veranlassen.
     for (K = 0; K < MaxK; K++) {
         nCoordinate = I + pCoordArray[K];
-        // Mega-Explosionen könnten theoretisch das Spielfeld überwinden. Daher wird hier mit X/Y-Koordinaten abegrüft, ob innerhalb des Spielfeldes gearbeitet wird
+        // Mega-Explosionen kÃ¶nnten theoretisch das Spielfeld Ã¼berwinden. Daher wird hier mit X/Y-Koordinaten abegrÃ¼ft, ob innerhalb des Spielfeldes gearbeitet wird
         if (nCoordinate > 0) {
             nX = nCoordinate % Playfield.uLevel_X_Dimension;
             nY = nCoordinate / Playfield.uLevel_X_Dimension;
@@ -226,8 +226,8 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                 if (Playfield.pLevel[nCoordinate] == EMERALD_INVALID) {
                     // SDL_Log("%s[EMERALD_INVALID]:  at K = %u",__FUNCTION__,K);
                     // SDL_Log("  element:   0x%X     old anim: 0x%X",Playfield.pInvalidElement[uCoordinate],Playfield.pLastStatusAnimation[uCoordinate]);
-                    // Zunächst Re-Kontrolle durchführen.
-                    // Das invalide Feld wird in der Funktion Pass2InvalidElement() zunächst belassen, damit das re-kontrollierte Objekt
+                    // ZunÃ¤chst Re-Kontrolle durchfÃ¼hren.
+                    // Das invalide Feld wird in der Funktion Pass2InvalidElement() zunÃ¤chst belassen, damit das re-kontrollierte Objekt
                     // dort ein Hindernis erkennen kann und sich nicht erneut in die Explosion bewegt.
                     switch (Playfield.pInvalidElement[nCoordinate]) {    // Element
                         case (EMERALD_REMOTEBOMB):
@@ -315,8 +315,8 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                             Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc);
                             break;
                         case (EMERALD_SLIME):
-                            // Schleim muss extra behandelt werden, da dieser, je nach Phase, bereits 16 Pixel animiert wurde. Rücksetzer ist störend sichtbar.
-                            // Der Schleim wird nur dann zurück gesetzt, wenn die ersten 16 Pixel noch nicht animiert wurden, d.h. eines der folgenden Status hat:
+                            // Schleim muss extra behandelt werden, da dieser, je nach Phase, bereits 16 Pixel animiert wurde. RÃ¼cksetzer ist stÃ¶rend sichtbar.
+                            // Der Schleim wird nur dann zurÃ¼ck gesetzt, wenn die ersten 16 Pixel noch nicht animiert wurden, d.h. eines der folgenden Status hat:
                             // EMERALD_ANIM_SLIME_GO_LEFT_1,  Schleim, bewegt sich nach links, Phase 1
                             // EMERALD_ANIM_SLIME_GO_UP_1,    Schleim, bewegt sich nach open, Phase 1
                             // EMERALD_ANIM_SLIME_GO_RIGHT_1, Schleim, bewegt sich nach rechts, Phase 1
@@ -325,7 +325,7 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                             switch (Playfield.pLastStatusAnimation[nCoordinate]) {
                                 case (EMERALD_ANIM_RIGHT):
                                     if (Playfield.pStatusAnimation[nCoordinate - 1] == EMERALD_ANIM_SLIME_GO_RIGHT_1) {
-                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch spÃ¤ter gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
                                         if (I < nCoordinate) {
                                             Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
                                             Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
@@ -335,17 +335,17 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                                             Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
                                         }
                                     } else  {
-                                        // invalides Feld löschen
+                                        // invalides Feld lÃ¶schen
                                         Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
                                         Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
                                         Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
-                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        // Slime in der nÃ¤chsten Runde in ControlPreElements() lÃ¶schen
                                         Playfield.pStatusAnimation[nCoordinate - 1] |= EMERALD_ANIM_SLIME_CLEAN;
                                     }
                                     break;
                                 case (EMERALD_ANIM_LEFT):
                                     if (Playfield.pStatusAnimation[nCoordinate + 1] == EMERALD_ANIM_SLIME_GO_LEFT_1) {
-                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch spÃ¤ter gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
                                         if (I < nCoordinate) {
                                             Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
                                             Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
@@ -355,17 +355,17 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                                             Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
                                         }
                                     } else {
-                                        // invalides Feld löschen
+                                        // invalides Feld lÃ¶schen
                                         Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
                                         Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
                                         Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
-                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        // Slime in der nÃ¤chsten Runde in ControlPreElements() lÃ¶schen
                                         Playfield.pStatusAnimation[nCoordinate + 1] |= EMERALD_ANIM_SLIME_CLEAN;
                                     }
                                     break;
                                 case (EMERALD_ANIM_UP):
                                     if (Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] == EMERALD_ANIM_SLIME_GO_UP_1) {
-                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch spÃ¤ter gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
                                         if (I < nCoordinate) {
                                             Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
                                             Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
@@ -376,17 +376,17 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                                             Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
                                         }
                                     } else {
-                                        // invalides Feld löschen
+                                        // invalides Feld lÃ¶schen
                                         Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
                                         Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
                                         Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
-                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        // Slime in der nÃ¤chsten Runde in ControlPreElements() lÃ¶schen
                                         Playfield.pStatusAnimation[nCoordinate + Playfield.uLevel_X_Dimension] |= EMERALD_ANIM_SLIME_CLEAN;
                                     }
                                     break;
                                 case (EMERALD_ANIM_DOWN):
                                     if (Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] == EMERALD_ANIM_SLIME_GO_DOWN_1) {
-                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch später gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
+                                        // Mittelpunkt der Explosion liegt oberhalb des invaliden Feldes, d.h. Slime wird noch spÃ¤ter gesteuert, daher EMERALD_ANIM_AVOID_DOUBLE_CONTROL.
                                         if (I < nCoordinate) {
                                             SDL_Log("%s: slime later: down???",__FUNCTION__);
                                             Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
@@ -397,11 +397,11 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
                                             Pass2InvalidElements(Playfield.pLastStatusAnimation[nCoordinate],nCoordinate,pFunc); // invalides Feld entfernen
                                         }
                                     } else  {
-                                        // invalides Feld löschen
+                                        // invalides Feld lÃ¶schen
                                         Playfield.pLevel[nCoordinate] = EMERALD_SPACE;
                                         Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
                                         Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE;
-                                        // Slime in der nächsten Runde in ControlPreElements() löschen
+                                        // Slime in der nÃ¤chsten Runde in ControlPreElements() lÃ¶schen
                                         Playfield.pStatusAnimation[nCoordinate - Playfield.uLevel_X_Dimension] |= EMERALD_ANIM_SLIME_CLEAN;
                                     }
                                     break;
@@ -429,16 +429,16 @@ void CleanInvalidFieldsForCentralExplosion(int I,bool bMega) {
 /*----------------------------------------------------------------------------
 Name:           Pass2InvalidElements
 ------------------------------------------------------------------------------
-Beschreibung: Hilfsfunktion für CleanInvalidFieldsForCentralExplosion(), die
-              das Entfernen von invaliden Elementen übernimmt.
-              In Abhängigkeit des Zeigers pControlFunction wird eine erneute
-              Steuerung des Elements von der ursprünglichen Position durchgeführt.
+Beschreibung: Hilfsfunktion fÃ¼r CleanInvalidFieldsForCentralExplosion(), die
+              das Entfernen von invaliden Elementen Ã¼bernimmt.
+              In AbhÃ¤ngigkeit des Zeigers pControlFunction wird eine erneute
+              Steuerung des Elements von der ursprÃ¼nglichen Position durchgefÃ¼hrt.
 Parameter
       Eingang: uLastStatusAnimation, uint32_t, letzte Animation des Objektes
                nCoordinate, int, Position des invaliden Feldes
                pControlFunction, void *, Zeiger auf entsprechende Control-Funktion (z.B. ControlStone), darf NULL sein
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void Pass2InvalidElements(uint32_t uLastStatusAnimation, int nCoordinate, void *pControlFunction) {
@@ -464,7 +464,7 @@ void Pass2InvalidElements(uint32_t uLastStatusAnimation, int nCoordinate, void *
     }
     if (nLastCoordinate != -1) {
         if (Playfield.pLevel[nLastCoordinate] == Playfield.pInvalidElement[nCoordinate]) {
-            // Bombe und Megabombe dürfen beim Fallen nicht neu gesteuert werden, da diese sonst "Pausieren".
+            // Bombe und Megabombe dÃ¼rfen beim Fallen nicht neu gesteuert werden, da diese sonst "Pausieren".
             // Daher an dieser Stelle in entsprechende Explosionen wandeln.
             if ((Playfield.pLevel[nLastCoordinate] == EMERALD_MEGABOMB) && (uLastStatusAnimation == EMERALD_ANIM_DOWN)) {
                 Playfield.pLevel[nLastCoordinate] = EMERALD_CENTRAL_EXPLOSION_MEGA;
@@ -475,12 +475,12 @@ void Pass2InvalidElements(uint32_t uLastStatusAnimation, int nCoordinate, void *
             }
             Playfield.pStatusAnimation[nLastCoordinate] = EMERALD_ANIM_STAND;
             Playfield.pStatusAnimation[nCoordinate] = EMERALD_ANIM_STAND;
-            Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld löschen
+            Playfield.pInvalidElement[nCoordinate] = EMERALD_NONE; // invalides Feld lÃ¶schen
             if (pControlFunction != NULL) {
                 pFunc = pControlFunction;
                 (*pFunc)(nLastCoordinate);
             }
-            Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield löschen, muss ggf. >NACH< ControlFunction() aufgerufen werden!
+            Playfield.pLevel[nCoordinate] = EMERALD_SPACE; // Invalides Feld im Playfield lÃ¶schen, muss ggf. >NACH< ControlFunction() aufgerufen werden!
         } else {
             SDL_Log("%s[LASTANIMSTATUS:0x%04X]: warning: Element 0x%04X not found. instead element: 0x%04X",
                     __FUNCTION__,uLastStatusAnimation,Playfield.pInvalidElement[nCoordinate],Playfield.pLevel[nLastCoordinate]);
@@ -496,9 +496,9 @@ Name:           ControlCentralExplosion
 Beschreibung: Steuert eine zentrale Explosion (3x3).
 Parameter
       Eingang: I, uint32_t, Index im Level (zentraler Punkt)
-               uSlimeElement, uint16_t, Element für Schleim
+               uSlimeElement, uint16_t, Element fÃ¼r Schleim
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCentralExplosion(uint32_t I,uint16_t uSlimeElement) {
@@ -555,7 +555,7 @@ Beschreibung: Wie ControlCentralExplosion(), aber ohne Mittelpunkt
 Parameter
       Eingang: I, uint32_t, Index im Level (zentraler Punkt)
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCircleExplosion(uint32_t I) {
@@ -606,7 +606,7 @@ Beschreibung: Steuert eine Mega-Explosion (3x3) + (4x3)
 Parameter
       Eingang: nI, int, Index im Level (zentraler Punkt)
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCentralMegaExplosion(int nI) {
@@ -623,7 +623,7 @@ void ControlCentralMegaExplosion(int nI) {
         CleanInvalidFieldsForCentralExplosion(nI,MEGA_EXPLOSION);
         for (K = 0; K < 20; K++) {
             nCoordinate = nI + Playfield.nCentralMegaExplosionCoordinates[K];
-            // Mega-Explosionen könnten theoretisch das Spielfeld überwinden. Daher wird hier mit X/Y-Koordinaten abegrüft, ob innerhalb des Spielfeldes gesprengt wird
+            // Mega-Explosionen kÃ¶nnten theoretisch das Spielfeld Ã¼berwinden. Daher wird hier mit X/Y-Koordinaten abegrÃ¼ft, ob innerhalb des Spielfeldes gesprengt wird
             if (nCoordinate > 0) {
                 nX = nCoordinate % Playfield.uLevel_X_Dimension;
                 nY = nCoordinate / Playfield.uLevel_X_Dimension;
@@ -679,11 +679,11 @@ void ControlCentralMegaExplosion(int nI) {
 /*----------------------------------------------------------------------------
 Name:           ControlCentralBeetleExplosion
 ------------------------------------------------------------------------------
-Beschreibung: Steuert eine zentrale Käfer-Explosion (3x3).
+Beschreibung: Steuert eine zentrale KÃ¤fer-Explosion (3x3).
 Parameter
       Eingang: I, uint32_t, Index im Level (zentraler Punkt)
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCentralBeetleExplosion(uint32_t I) {
@@ -711,7 +711,7 @@ void ControlCentralBeetleExplosion(uint32_t I) {
                     Playfield.bManDead = true;
                     PreparePlaySound(SOUND_MAN_CRIES,I);
                     break;
-                case (EMERALD_EXPLOSION_ELEMENT):   // Käfer sprengt Elemente aus Mauer frei statt Emeralds zu erzeugen
+                case (EMERALD_EXPLOSION_ELEMENT):   // KÃ¤fer sprengt Elemente aus Mauer frei statt Emeralds zu erzeugen
                     Playfield.pLevel[uCoordinate] = EMERALD_EXPLOSION_TO_ELEMENT_1;
                     Playfield.pStatusAnimation[uCoordinate] = uCheckExplosion >> 16;
                     break;
@@ -740,7 +740,7 @@ Beschreibung: Steuert eine zentrale Yam-Explosion (3x3).
 Parameter
       Eingang: I, uint32_t, Index im Level (zentraler Punkt)
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCentralYamExplosion(uint32_t I) {
@@ -753,7 +753,7 @@ void ControlCentralYamExplosion(uint32_t I) {
     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_AVOID_DOUBLE_CONTROL) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     } else {
-        // Kopie der Yam-Elemente machen, da diese für Replikator und Säurebecken ggf. angepasst werden müssen
+        // Kopie der Yam-Elemente machen, da diese fÃ¼r Replikator und SÃ¤urebecken ggf. angepasst werden mÃ¼ssen
         memcpy(YamElements,Playfield.YamExplosions[Playfield.uYamExplosion].uElement,9 * sizeof(uint16_t));
         CleanInvalidFieldsForCentralExplosion(I,NO_MEGA_EXPLOSION);
         CheckYamContents(I,YamElements);
@@ -788,7 +788,7 @@ void ControlCentralYamExplosion(uint32_t I) {
                     break;
             }
             Y++;
-            if (Y == 4) {   // Mittelpunkt überspringen
+            if (Y == 4) {   // Mittelpunkt Ã¼berspringen
                 Y++;
             }
         }
@@ -799,17 +799,17 @@ void ControlCentralYamExplosion(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           CheckExplosionElement
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, wie sich ein bestehendes Objekt, das sich im Bereich einer Explosion
+Beschreibung: PrÃ¼ft, wie sich ein bestehendes Objekt, das sich im Bereich einer Explosion
               befindet, verhalten soll.
 Parameter
       Eingang: uElement, uint16_t, Element, das bewertet werden soll.
                uCoordinate, uint32_t, lineare Koordinate des Elements in Playfield.x
       Ausgang: -
-Rückgabewert:  uint32_t LOW WORD: Explosionstype
+RÃ¼ckgabewert:  uint32_t LOW WORD: Explosionstype
                         HIGH WORD: Element das an dieser Szelle neu entsteht
 
                 EMERALD_EXPLOSION_NONE                    bei diesem Element kann keine Explosion stattfinden, z.B. Stahl
-                EMERALD_EXPLOSION_EMPTY                   an dieser Stelle wird eine Explosion durchgeführt und das bestehende Element entfernt
+                EMERALD_EXPLOSION_EMPTY                   an dieser Stelle wird eine Explosion durchgefÃ¼hrt und das bestehende Element entfernt
                 EMERALD_EXPLOSION_ELEMENT                 an dieser Stelle entsteht nach der Explosion ein neues Element
                 EMERALD_EXPLOSION_NEWCENTRAL              an dieser Stelle entsteht eine neue zentrale 3x3-Explosion
                 EMERALD_EXPLOSION_NEWCENTRAL_MEGA         an dieser Stelle entsteht eine neue zentrale Mega-Explosion
@@ -820,8 +820,8 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
     uint16_t  uNewElement;
 
     switch (uElement) {
-        case (EMERALD_EXPLOSION_TO_ELEMENT_1):  // Nachfolgende Sprengungen überschreiben ältere Sprengfelder.
-        case (EMERALD_EXPLOSION_TO_ELEMENT_2):  // Achtung folgende Ausnahmen: Säurebad und Replikator werden weiter unten extra behandelt.
+        case (EMERALD_EXPLOSION_TO_ELEMENT_1):  // Nachfolgende Sprengungen Ã¼berschreiben Ã¤ltere Sprengfelder.
+        case (EMERALD_EXPLOSION_TO_ELEMENT_2):  // Achtung folgende Ausnahmen: SÃ¤urebad und Replikator werden weiter unten extra behandelt.
         case (EMERALD_NONE):
         case (EMERALD_STONE):
         case (EMERALD_SAPPHIRE):
@@ -1042,10 +1042,10 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
                 Playfield.uWheelRunningXpos = 0;
                 Playfield.uWheelRunningYpos = 0;
             } else if ((uElement == EMERALD_EXPLOSION_TO_ELEMENT_1) || (uElement == EMERALD_EXPLOSION_TO_ELEMENT_2)) {
-                // Hier muss geprüft werden, das eine überschreibende Explosion keine Säurebäder und Replikatoren zerstört.
-                uNewElement = Playfield.pStatusAnimation[uCoordinate] & 0xFFFF; // Das ist ein Explosionsfeld, an dem ein Stück Säurebad/Replikator entsteht
+                // Hier muss geprÃ¼ft werden, das eine Ã¼berschreibende Explosion keine SÃ¤urebÃ¤der und Replikatoren zerstÃ¶rt.
+                uNewElement = Playfield.pStatusAnimation[uCoordinate] & 0xFFFF; // Das ist ein Explosionsfeld, an dem ein StÃ¼ck SÃ¤urebad/Replikator entsteht
                 if (IsAcidOrReplicatorElement(uNewElement)) {
-                    uExplosion = EMERALD_EXPLOSION_NONE;    // Säurebad und Replikator belassen
+                    uExplosion = EMERALD_EXPLOSION_NONE;    // SÃ¤urebad und Replikator belassen
                 }
             }
             break;
@@ -1176,17 +1176,17 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
 /*----------------------------------------------------------------------------
 Name:           YamHasReplicatorAcidPool
 ------------------------------------------------------------------------------
-Beschreibung:   Prüft, ob eine YAM-Explosion einen Replikator oder ein Säurebecken enthält.
-                Der Leveleditor stellt bereits sicher, dass Replikator und Säurebecken
+Beschreibung:   PrÃ¼ft, ob eine YAM-Explosion einen Replikator oder ein SÃ¤urebecken enthÃ¤lt.
+                Der Leveleditor stellt bereits sicher, dass Replikator und SÃ¤urebecken
                 korrekt in der Yam-Explosion kodiert sind.
 Parameter
       Eingang: YamExplosion, uint16_t *, Zeiger auf 3x3 = 9 Explosions-Elemente eines Yams
       Ausgang: -
-Rückgabewert:  0 = kein Replikator oder Säurebecken enthalten
-               1 = Replikator in oberer Hälfte (0,1,2,3,5)
-               2 = Replikator in unterer Hälfte (3,4,5,6,8)
-               3 = Säurebecken in oberer Hälfte (0,1,2,3,4,5)
-               4 = Säurebecken in unterer Hälfte (3,4,5,6,7,8)
+RÃ¼ckgabewert:  0 = kein Replikator oder SÃ¤urebecken enthalten
+               1 = Replikator in oberer HÃ¤lfte (0,1,2,3,5)
+               2 = Replikator in unterer HÃ¤lfte (3,4,5,6,8)
+               3 = SÃ¤urebecken in oberer HÃ¤lfte (0,1,2,3,4,5)
+               4 = SÃ¤urebecken in unterer HÃ¤lfte (3,4,5,6,7,8)
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int YamHasReplicatorAcidPool(uint16_t *YamExplosion) {
@@ -1209,16 +1209,16 @@ int YamHasReplicatorAcidPool(uint16_t *YamExplosion) {
 /*----------------------------------------------------------------------------
 Name:           CheckYamContents
 ------------------------------------------------------------------------------
-Beschreibung:   Falls eine Yam-Explosion einen Replikator oder ein Säurebecken enthält,
+Beschreibung:   Falls eine Yam-Explosion einen Replikator oder ein SÃ¤urebecken enthÃ¤lt,
                 muss ggf. vorher die Yam-Explosion angepasst werden, wenn der R. oder das S.
-                nicht vollständig platziert werden kann.
-                Kann die Platzierung nicht vollständig erfolgen, so werden
+                nicht vollstÃ¤ndig platziert werden kann.
+                Kann die Platzierung nicht vollstÃ¤ndig erfolgen, so werden
                 die R./S.-Elemente durch EMERALD_STEEL_WARNING ersetzt.
 Parameter
       Eingang: I, uint32_t, Zentrum der Yam-Explosion
                YamElements, uint16_t *, Zeiger auf bisherige Yam-Elemente
       Ausgang: YamElements, uint16_t *, Zeiger auf angepasste Yam-Elemente
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckYamContents(uint32_t I,uint16_t *YamElements) {
@@ -1228,16 +1228,16 @@ void CheckYamContents(uint32_t I,uint16_t *YamElements) {
     uint32_t uCheckExplosion;
     int nYamContent;
     // YamContent
-    // 0 = kein Replikator oder Säurebecken enthalten
-    // 1 = Replikator in oberer Hälfte (0,1,2,3,5)
-    // 2 = Replikator in unterer Hälfte (3,4,5,6,8)
-    // 3 = Säurebecken in oberer Hälfte (0,1,2,3,4,5)
-    // 4 = Säurebecken in unterer Hälfte (3,4,5,6,7,8)
+    // 0 = kein Replikator oder SÃ¤urebecken enthalten
+    // 1 = Replikator in oberer HÃ¤lfte (0,1,2,3,5)
+    // 2 = Replikator in unterer HÃ¤lfte (3,4,5,6,8)
+    // 3 = SÃ¤urebecken in oberer HÃ¤lfte (0,1,2,3,4,5)
+    // 4 = SÃ¤urebecken in unterer HÃ¤lfte (3,4,5,6,7,8)
     bReplace = false;
     nYamContent = YamHasReplicatorAcidPool(YamElements);
     if (nYamContent == 0) {
-        return;                         // Yam-Explosion enthält keine Maschine (Replikator oder Säurebecken)
-    } else if (nYamContent == 1) {      // Replikator in oberer Hälfte
+        return;                         // Yam-Explosion enthÃ¤lt keine Maschine (Replikator oder SÃ¤urebecken)
+    } else if (nYamContent == 1) {      // Replikator in oberer HÃ¤lfte
         for (K = 0; (K < 5) && (!bReplace); K++) {
             uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionTop[K];
             uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate],uCoordinate);
@@ -1248,13 +1248,13 @@ void CheckYamContents(uint32_t I,uint16_t *YamElements) {
                 YamElements[K] = EMERALD_STEEL_WARNING;     // Statt Replikator Stahl-Warnschilder erzeugen
             }
         } else {
-            // Replikator kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            // Replikator kann vollstÃ¤ndig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
             for (K = 0; (K < 5); K++) {
                 uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionTop[K];
                 Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
             }
         }
-    } else if (nYamContent == 2) {      // Replikator in unterer Hälfte
+    } else if (nYamContent == 2) {      // Replikator in unterer HÃ¤lfte
         for (K = 0; (K < 5) && (!bReplace); K++) {
             uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionButtom[K];
             uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate],uCoordinate);
@@ -1265,41 +1265,41 @@ void CheckYamContents(uint32_t I,uint16_t *YamElements) {
                 YamElements[3 + K] = EMERALD_STEEL_WARNING;     // Statt Replikator Stahl-Warnschilder erzeugen
             }
         } else {
-            // Replikator kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            // Replikator kann vollstÃ¤ndig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
             for (K = 0; (K < 5); K++) {
                 uCoordinate = I + Playfield.nCheckReplicatorForYamExplosionButtom[K];
                 Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
             }
         }
-    } else if (nYamContent == 3) {       // Säurebecken in oberer Hälfte
+    } else if (nYamContent == 3) {       // SÃ¤urebecken in oberer HÃ¤lfte
         for (K = 0; (K < 6) && (!bReplace); K++) {
             uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionTop[K];
             uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate],uCoordinate);
-            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = Säurebecken-Teil-Element kann nicht erzeugt werden
+            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = SÃ¤urebecken-Teil-Element kann nicht erzeugt werden
         }
         if (bReplace) {
             for (K = 0; K <= 5; K++) {
-                YamElements[K] = EMERALD_STEEL_WARNING;     // Statt Säurebecken Stahl-Warnschilder erzeugen
+                YamElements[K] = EMERALD_STEEL_WARNING;     // Statt SÃ¤urebecken Stahl-Warnschilder erzeugen
             }
         } else {
-            // Säurebecken kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            // SÃ¤urebecken kann vollstÃ¤ndig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
             for (K = 0; (K < 6); K++) {
                 uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionTop[K];
                 Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
             }
         }
-    } else {                            // Säurebecken in unterer Hälfte
+    } else {                            // SÃ¤urebecken in unterer HÃ¤lfte
         for (K = 0; (K < 6) && (!bReplace); K++) {
             uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionButtom[K];
             uCheckExplosion = CheckExplosionElement(Playfield.pLevel[uCoordinate],uCoordinate);
-            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = Säurebecken-Teil-Element kann nicht erzeugt werden
+            bReplace = (uCheckExplosion == EMERALD_EXPLOSION_NONE); // true = SÃ¤urebecken-Teil-Element kann nicht erzeugt werden
         }
         if (bReplace) {
             for (K = 0; K <= 5; K++) {
-                YamElements[3 + K] = EMERALD_STEEL_WARNING;     // Statt Säurebecken Stahl-Warnschilder erzeugen
+                YamElements[3 + K] = EMERALD_STEEL_WARNING;     // Statt SÃ¤urebecken Stahl-Warnschilder erzeugen
             }
         } else {
-            // Säurebecken kann vollständig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
+            // SÃ¤urebecken kann vollstÃ¤ndig erzeugt werden -> Sicherheitshalber im Level an dieser Stelle Spaces erzeugen
             for (K = 0; (K < 6); K++) {
                 uCoordinate = I + Playfield.nCheckAcidPoolForYamExplosionButtom[K];
                 Playfield.pLevel[uCoordinate] = EMERALD_SPACE;
@@ -1312,15 +1312,15 @@ void CheckYamContents(uint32_t I,uint16_t *YamElements) {
 /*----------------------------------------------------------------------------
 Name:           IsDangerousEnemyAround
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob sich eine "gefährlicher" Feind (Standmine, Käfer oder Mine)
+Beschreibung: PrÃ¼ft, ob sich eine "gefÃ¤hrlicher" Feind (Standmine, KÃ¤fer oder Mine)
               um Position I befindet. Die Funktion wird nur in ControlMan() aufgerufen.
 Parameter
-      Eingang: I, uint32_t, Index im Level, Position, an der geprüft werden soll
-      Ausgang: puDangerPos, uint32_t *, Zeiger auf Position des gefärlichen Elements, darf NULL sein
-               puElement, uint16_t *, Zeiger auf Gefährlichkeitstyp, darf NULL sein
+      Eingang: I, uint32_t, Index im Level, Position, an der geprÃ¼ft werden soll
+      Ausgang: puDangerPos, uint32_t *, Zeiger auf Position des gefÃ¤rlichen Elements, darf NULL sein
+               puElement, uint16_t *, Zeiger auf GefÃ¤hrlichkeitstyp, darf NULL sein
                         EMERALD_BEETLE_LEFT
-                        EMERALD_MINE_LEFT (auch für EMERALD_STANDMINE)
-Rückgabewert:  bool, true = "gefährlicher" Feind  hat Kontakt mit Position I
+                        EMERALD_MINE_LEFT (auch fÃ¼r EMERALD_STANDMINE)
+RÃ¼ckgabewert:  bool, true = "gefÃ¤hrlicher" Feind  hat Kontakt mit Position I
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElement) {
@@ -1431,11 +1431,11 @@ bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElemen
 /*----------------------------------------------------------------------------
 Name:           IsPipeElement
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Element eine Röhre ist.
+Beschreibung: PrÃ¼ft, ob ein Element eine RÃ¶hre ist.
 Parameter
-      Eingang: uElement, uint16_t, Element, das geprüft werden soll.
+      Eingang: uElement, uint16_t, Element, das geprÃ¼ft werden soll.
       Ausgang: -
-Rückgabewert:  bool, true = Element ist eine Röhre
+RÃ¼ckgabewert:  bool, true = Element ist eine RÃ¶hre
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 bool IsPipeElement(uint16_t uElement) {
@@ -1466,11 +1466,11 @@ bool IsPipeElement(uint16_t uElement) {
 /*----------------------------------------------------------------------------
 Name:           IsAcidOrReplicatorElement
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Element zu einem Säurebad oder Replikator gehört.
+Beschreibung: PrÃ¼ft, ob ein Element zu einem SÃ¤urebad oder Replikator gehÃ¶rt.
 Parameter
-      Eingang: uElement, uint16_t, Element, das geprüft werden soll.
+      Eingang: uElement, uint16_t, Element, das geprÃ¼ft werden soll.
       Ausgang: -
-Rückgabewert:  bool, true = Element gehört zu Säurebad oder Replikator
+RÃ¼ckgabewert:  bool, true = Element gehÃ¶rt zu SÃ¤urebad oder Replikator
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 bool IsAcidOrReplicatorElement(uint16_t uElement) {

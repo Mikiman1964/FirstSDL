@@ -17,7 +17,7 @@ Beschreibung: Initialisiert den XORSHIFT-Zufallszahlengenerator.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: XorShift.x
 ------------------------------------------------------------------------------*/
 void InitXorShift(void) {
@@ -42,12 +42,12 @@ void InitXorShift(void) {
 /*----------------------------------------------------------------------------
 Name:           DynStringInit
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert ein neues String-Objekt. Der zurückgegebene Speicher
-              muss mit DynStringFree() später freigegeben werden.
+Beschreibung: Initialisiert ein neues String-Objekt. Der zurÃ¼ckgegebene Speicher
+              muss mit DynStringFree() spÃ¤ter freigegeben werden.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  DYNSTRING *, Zeiger auf String-Objekt, NULL = Fehler
+RÃ¼ckgabewert:  DYNSTRING *, Zeiger auf String-Objekt, NULL = Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 DYNSTRING *DynStringInit(void) {
@@ -76,7 +76,7 @@ Parameter
       Eingang: DynString, DYNSTRING *, Zeiger auf String-Objekt
                pszString, char *, String, der dazu addiert wird.
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int DynStringAdd(DYNSTRING *DynString, char *pszString) {
@@ -101,12 +101,12 @@ int DynStringAdd(DYNSTRING *DynString, char *pszString) {
 /*----------------------------------------------------------------------------
 Name:           DynStringFree
 ------------------------------------------------------------------------------
-Beschreibung: Gibt den Speicher für ein String-Objekt wieder frei.
+Beschreibung: Gibt den Speicher fÃ¼r ein String-Objekt wieder frei.
 
 Parameter
       Eingang: DynString, DYNSTRING *, Zeiger auf String-Objekt
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int DynStringFree(DYNSTRING *DynString) {
@@ -126,11 +126,11 @@ int DynStringFree(DYNSTRING *DynString) {
 /*----------------------------------------------------------------------------
 Name:           GetMd5String
 ------------------------------------------------------------------------------
-Beschreibung: Gibt anhand eines MD5-Hashes (16 Bytes) den zugehörigen String (32 + 1 Bytes) zurück.
+Beschreibung: Gibt anhand eines MD5-Hashes (16 Bytes) den zugehÃ¶rigen String (32 + 1 Bytes) zurÃ¼ck.
 Parameter
       Eingang: puMd5Hash, uint8_t *, Zeiger auf MD5-Hash (mindestens 16 Bytes)
-      Ausgang: pszMd5String, char *, Zeiger auf mindestens 32 + 1 = 33 Bytes für den MD5-String (Großbuchstaben)
-Rückgabewert:  -
+      Ausgang: pszMd5String, char *, Zeiger auf mindestens 32 + 1 = 33 Bytes fÃ¼r den MD5-String (GroÃŸbuchstaben)
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void GetMd5String(uint8_t *puMd5Hash, char *pszMd5String) {
@@ -151,15 +151,15 @@ char g_szMD5String[32 + 1];
 /*----------------------------------------------------------------------------
 Name:           GetMd5String2
 ------------------------------------------------------------------------------
-Beschreibung: Gibt einen char-Pointer auf einen MD5-Hash-String zurück.
+Beschreibung: Gibt einen char-Pointer auf einen MD5-Hash-String zurÃ¼ck.
               Diese Funktion verwendet statischen Speicher, d.h. er
               darf nicht freigegeben werden.
               Funktion ist somit nicht threadsicher!
 
 Parameter
       Eingang: puMd5Hash, uint8_t *, Zeiger auf MD5-Hash (mindestens 16 Bytes)
-Rückgabewert:  char *, Zeiger auf MD5-String, Bei Fehler wird "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-                       zurückgegeben.
+RÃ¼ckgabewert:  char *, Zeiger auf MD5-String, Bei Fehler wird "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+                       zurÃ¼ckgegeben.
 Seiteneffekte: g_szMD5String;
 ------------------------------------------------------------------------------*/
 char *GetMd5String2(uint8_t *puMd5Hash) {
@@ -174,11 +174,11 @@ char *GetMd5String2(uint8_t *puMd5Hash) {
 /*----------------------------------------------------------------------------
 Name:           GetMd5HashFromString
 ------------------------------------------------------------------------------
-Beschreibung: Gibt anhand eines MD5-Strings (32 Bytes + 1) den zugehörigen Hash (16 Bytes) zurück.
+Beschreibung: Gibt anhand eines MD5-Strings (32 Bytes + 1) den zugehÃ¶rigen Hash (16 Bytes) zurÃ¼ck.
 Parameter
-      Eingang: pszMd5String, char *, Zeiger auf mindestens 32 + 1 = 33 Bytes für den MD5-String (Groß - oder Kleinbuchstaben)
+      Eingang: pszMd5String, char *, Zeiger auf mindestens 32 + 1 = 33 Bytes fÃ¼r den MD5-String (GroÃŸ - oder Kleinbuchstaben)
       Ausgang: puMd5Hash, uint8_t *, Zeiger auf MD5-Hash (mindestens 16 Bytes)
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash) {
@@ -203,13 +203,13 @@ void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash) {
 /*----------------------------------------------------------------------------
 Name:           GetActualTimestamp
 ------------------------------------------------------------------------------
-Beschreibung: Gibt die aktuelle Zeit als Zeitstempel-String zurück. Der String
+Beschreibung: Gibt die aktuelle Zeit als Zeitstempel-String zurÃ¼ck. Der String
               hat das folgendes Format: YYYYMMDD_HHMMSS
-              Es werden 15 + 1 Bytes Speicher benötigt
+              Es werden 15 + 1 Bytes Speicher benÃ¶tigt
 Parameter
       Eingang: -
-      Ausgang: pszTimestamp, char *, Zeiger auf Speicher für Zeitstempelstring (mindestens 16 Bytes)
-Rückgabewert:  -
+      Ausgang: pszTimestamp, char *, Zeiger auf Speicher fÃ¼r Zeitstempelstring (mindestens 16 Bytes)
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void GetActualTimestamp(char *pszTimestamp) {
@@ -238,9 +238,9 @@ Beschreibung: Erzeugt Integer-Zufallszahl zwischen low und high.
               Vorsicht: Der Bereich sollte nicht um den Nullpunkt gelegt werden, da es ansonsten falsche Ergebnisse gibt.
               Quelle: https://mixable.blog/java-zufallszahlen-in-einem-bestimmten-bereich-erstellen/
 Parameter
-      Eingang: low, int, unterer Bereich für Zufallszahl (einschließlich low)
-      Ausgang: high, int, oberer Bereich für Zufallszahl (einschließlich high)
-Rückgabewert:  int, Zufallswert
+      Eingang: low, int, unterer Bereich fÃ¼r Zufallszahl (einschlieÃŸlich low)
+      Ausgang: high, int, oberer Bereich fÃ¼r Zufallszahl (einschlieÃŸlich high)
+RÃ¼ckgabewert:  int, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int randn(int low, int high) {
@@ -254,13 +254,13 @@ Name:           randf
 Beschreibung: Erzeugt float-Zufallszahl zwischen low und high.
               Quelle: https://stackoverflow.com/questions/22115241/how-to-generate-random-numbers-between-1-and-1-in-c
               von SteveL
-              Ausführlicher Test am 23.6.2023 mit low = -1, high = +1
+              AusfÃ¼hrlicher Test am 23.6.2023 mit low = -1, high = +1
               Vorsicht: Falls der Bereich um den Nullpunkt gelegt werden soll, muss dieser symetrisch (z.B. -2,+2) sein.
 
 Parameter
-      Eingang: low, float, unterer Bereich für Zufallszahl (nicht einschließlich low)
-      Ausgang: high, float, oberer Bereich für Zufallszahl (nicht einschließlich high)
-Rückgabewert:  float, Zufallswert
+      Eingang: low, float, unterer Bereich fÃ¼r Zufallszahl (nicht einschlieÃŸlich low)
+      Ausgang: high, float, oberer Bereich fÃ¼r Zufallszahl (nicht einschlieÃŸlich high)
+RÃ¼ckgabewert:  float, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 float randf(float low, float high) {
@@ -276,7 +276,7 @@ Beschreibung: Erzeugt float-Zufallszahl zwischen 0 und < 1
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  float, Zufallswert zwischen 0 und < 1
+RÃ¼ckgabewert:  float, Zufallswert zwischen 0 und < 1
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 float myrandom(void) {
@@ -295,7 +295,7 @@ Beschreibung: Erzeugt eine Zufallszahl nach dem XORSHIFT-Verfahren.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint32_t, Zufallszahl zwischen 0 und 0xFFFFFFFF
+RÃ¼ckgabewert:  uint32_t, Zufallszahl zwischen 0 und 0xFFFFFFFF
 Seiteneffekte: XorShift.x
 ------------------------------------------------------------------------------*/
 uint32_t xorshift128(void) {
@@ -316,12 +316,12 @@ Parameter
       Eingang: pcMem, uint8_t *, Start-Zeiger auf Speicher
                nLen, int, Anzahl der auszugebenen Bytes ab Start-Zeiger
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void DumpMem(uint8_t *pcMem, int nLen)
 {
-    uint8_t *pcEnd;			// Letzte gültige Adresse
+    uint8_t *pcEnd;			// Letzte gÃ¼ltige Adresse
     int nX;
     int nY;
 
@@ -329,14 +329,14 @@ void DumpMem(uint8_t *pcMem, int nLen)
         nY = 0;
         while (nLen > 0) {
             pcEnd = pcMem + nLen - 1;		    // Letzte Adresse, die ausgegeben werden soll
-            for (nX = 0; nX < 16; nX++) {	    // 16er Blöcke werden immer unabhängig von der Anzahl auszugebener Daten ausgegeben
+            for (nX = 0; nX < 16; nX++) {	    // 16er BlÃ¶cke werden immer unabhÃ¤ngig von der Anzahl auszugebener Daten ausgegeben
                 if (nX == 0) {
                     printf("%04X:   ",nY);	    // Adresse ausgeben
                 }
                 if ((pcMem + nX) <= pcEnd) {	// Soll Inhalt des Speichers noch ausgegeben werden ?
                     printf("%02X ",pcMem[nX]);	// Space nach jeder Zahl
                 } else {
-                    printf("** ");		        // Sterne für "ungültigen" Speicher anzeigen
+                    printf("** ");		        // Sterne fÃ¼r "ungÃ¼ltigen" Speicher anzeigen
                 }
                 if (nX == 7) {
                     printf("  ");			    // 2 Spaces nach 8 Zahlen
@@ -351,7 +351,7 @@ void DumpMem(uint8_t *pcMem, int nLen)
                       printf(".");		        // nicht druckbares Zeichen
                     }
                 } else {
-                    printf(".");			    // "ungültiger" Speicher
+                    printf(".");			    // "ungÃ¼ltiger" Speicher
                 }
             }
             printf("\r\n");			            // neue Zeile
@@ -368,15 +368,15 @@ void DumpMem(uint8_t *pcMem, int nLen)
 /*----------------------------------------------------------------------------
 Name:           ReadFile
 ------------------------------------------------------------------------------
-Beschreibung: Liest Daten aus einer Datei und alloziert hierfür Speicher, der
-              außerhalb dieser Funktion wieder freigegeben werden muss.
+Beschreibung: Liest Daten aus einer Datei und alloziert hierfÃ¼r Speicher, der
+              auÃŸerhalb dieser Funktion wieder freigegeben werden muss.
               Es wird >immer< sichergestellt, dass sich nach den Daten ein
               Nullbyte (Stringterminierung) befindet, d.h. ggf. eingelesene Textdateien
-              können als String behandelt werden!
+              kÃ¶nnen als String behandelt werden!
 Parameter
       Eingang: pszFilename, const char *, Zeiger auf Dateinamen (komplette Pfadangabe)
       Ausgang: puLen, uint32_t *, Anzahl Bytes, die eingelesen bzw. alloziert wurden.
-Rückgabewert:  uint8_t *, NULL = Fehler, sonst Zeiger auf allozierten Speicher mit Daten.
+RÃ¼ckgabewert:  uint8_t *, NULL = Fehler, sonst Zeiger auf allozierten Speicher mit Daten.
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
 uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen) {
@@ -389,11 +389,11 @@ uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen) {
             if (Fileinfo.st_size > 0) {
                 Readfile = fopen(pszFilename,"rb");
                 if (Readfile != NULL) {
-                    pRet = (uint8_t*)malloc(Fileinfo.st_size + 1);  // + 1 für abschließendes Null-Byte
+                    pRet = (uint8_t*)malloc(Fileinfo.st_size + 1);  // + 1 fÃ¼r abschlieÃŸendes Null-Byte
                     if (pRet != NULL) {
                         if (fread(pRet,1,Fileinfo.st_size,Readfile) == (size_t)Fileinfo.st_size) { // Datei lesen
                             *puLen = Fileinfo.st_size;
-                             pRet[Fileinfo.st_size] = 0; // abschließendes Null-Byte
+                             pRet[Fileinfo.st_size] = 0; // abschlieÃŸendes Null-Byte
                         } else {
                             printf("%s: read error, freeing memory for file: %s\r\n",__FUNCTION__,pszFilename);
                             SAFE_FREE(pRet);
@@ -423,15 +423,15 @@ uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen) {
 /*----------------------------------------------------------------------------
 Name:           WriteFile
 ------------------------------------------------------------------------------
-Beschreibung: Schreibt Daten in eine Datei. Eine ggf. vorhandene Datei wird überschrieben.
+Beschreibung: Schreibt Daten in eine Datei. Eine ggf. vorhandene Datei wird Ã¼berschrieben.
 
 Parameter
       Eingang: pszFilename, const char *, Zeiger auf Dateinamen (komplette Pfadangabe)
                pcData, uint8_t *, Zeiger auf Daten
                uLen, uint32_t, Anzahl Bytes, die geschrieben werde
-               bAppend, bool, TRUE = Daten werden an bestehende Daten angehängt
+               bAppend, bool, TRUE = Daten werden an bestehende Daten angehÃ¤ngt
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
 int WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppend)
@@ -468,12 +468,12 @@ int WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppen
 /*----------------------------------------------------------------------------
 Name:           GetLineFeedCount
 ------------------------------------------------------------------------------
-Beschreibung: Zählt die Zeilenumbrüche (0x0A) in einem Text.
+Beschreibung: ZÃ¤hlt die ZeilenumbrÃ¼che (0x0A) in einem Text.
 
 Parameter
       Eingang: pszText, char *, Zeiger auf Text
       Ausgang: -
-Rückgabewert:  int, Anzahl LineFeeds
+RÃ¼ckgabewert:  int, Anzahl LineFeeds
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
 int GetLineFeedCount(char *pszText) {
@@ -495,13 +495,13 @@ int GetLineFeedCount(char *pszText) {
 /*----------------------------------------------------------------------------
 Name:           GetLineLen
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt die aktuelle Zeilenlänge, in der der Cursor steht.
+Beschreibung: Ermittelt die aktuelle ZeilenlÃ¤nge, in der der Cursor steht.
 
 Parameter
       Eingang: pszText, char *, Zeiger auf Text
                nCursorPos, int, Cursorposition im Text
       Ausgang: -
-Rückgabewert:  int, Anzahl LineFeeds
+RÃ¼ckgabewert:  int, Anzahl LineFeeds
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
 int GetLineLen(char *pszText, int nCursorPos) {
@@ -515,9 +515,9 @@ int GetLineLen(char *pszText, int nCursorPos) {
         nTextLen = (int)strlen(pszText);
         // Liegt Cursorposition innerhalb des Textes?
         if ((nTextLen > 0) && (nCursorPos >= 0) && (nCursorPos < nTextLen)) {
-            // Falls Cursor auf Linefeed steht, dann werden nur die Zeichen >vor< dem Cursor gezählt
+            // Falls Cursor auf Linefeed steht, dann werden nur die Zeichen >vor< dem Cursor gezÃ¤hlt
             if (pszText[nCursorPos] != 0x0A) {
-                // Zunächst ab Cursorposition + 1 bis Stringende oder Linefeed Zeichen zählen
+                // ZunÃ¤chst ab Cursorposition + 1 bis Stringende oder Linefeed Zeichen zÃ¤hlen
                 nI = nCursorPos + 1;
                 bEnd = false;
                 do {
@@ -529,7 +529,7 @@ int GetLineLen(char *pszText, int nCursorPos) {
                     }
                 } while (!bEnd);
             }
-            // Dann ab Cursorposition bis Zeilenanfang/Linefeed bzw. Textanfang Zeichen zählen
+            // Dann ab Cursorposition bis Zeilenanfang/Linefeed bzw. Textanfang Zeichen zÃ¤hlen
             nI = nCursorPos;
             bEnd = false;
             if (pszText[nCursorPos] == 0x0A) {
@@ -557,12 +557,12 @@ int GetLineLen(char *pszText, int nCursorPos) {
 /*----------------------------------------------------------------------------
 Name:           CheckAndCreateDir
 ------------------------------------------------------------------------------
-Beschreibung: Prüft ein Directory und legt dieses an, falls es nicht existiert.
+Beschreibung: PrÃ¼ft ein Directory und legt dieses an, falls es nicht existiert.
 Parameter
       Eingang: pszDirectoryName, char *, Zeiger auf Directory-namen
       Ausgang: -
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int CheckAndCreateDir(char *pszDirectoryName) {
@@ -579,7 +579,7 @@ int CheckAndCreateDir(char *pszDirectoryName) {
         } else {
             printf("can not open dir, error: %s\n",strerror(errno));
             if (errno == ENOTDIR) {         // File existiert, ist aber kein Directory
-                bTryToCreateDir = (remove(pszDirectoryName) == 0);  // remove kann beides (Dir/File) löschen
+                bTryToCreateDir = (remove(pszDirectoryName) == 0);  // remove kann beides (Dir/File) lÃ¶schen
             } else if (errno == ENOENT) {   // Directory/File gibt es nicht
                 bTryToCreateDir = true;
             }
@@ -599,27 +599,27 @@ int CheckAndCreateDir(char *pszDirectoryName) {
 }
 
 
-// Für Base64
+// FÃ¼r Base64
 uint8_t g_cBase64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 /*----------------------------------------------------------------------------
 Name:           BinToBase64
 ------------------------------------------------------------------------------
-Beschreibung:  Konvertiert binäre Daten in das base64-Format (druckbare
-                Zeichen). Aus 3 binären Bytes werden 4 druckbare erzeugt.
+Beschreibung:  Konvertiert binÃ¤re Daten in das base64-Format (druckbare
+                Zeichen). Aus 3 binÃ¤ren Bytes werden 4 druckbare erzeugt.
                 Ist der Parameter bNewline = true, so werden
-                nach 76 erzeugten Zeichen automatisch "\r\n" angehängt.
-                Die Funktion alloziert Speicher, der außerhalb dieser
+                nach 76 erzeugten Zeichen automatisch "\r\n" angehÃ¤ngt.
+                Die Funktion alloziert Speicher, der auÃŸerhalb dieser
                 Funktion wieder freigegeben werden muss.
 Parameter
-      Eingang: pcBinary, uint8_t *, Zeiger auf binäre Daten
-               uBinaryLen, uint32_t, Anzahl Bytes für binäre Daten
+      Eingang: pcBinary, uint8_t *, Zeiger auf binÃ¤re Daten
+               uBinaryLen, uint32_t, Anzahl Bytes fÃ¼r binÃ¤re Daten
                bNewLine, bool, true = nach 19 Zeichen neue Zeile erzeugen
-      Ausgang: puBase64Len, uint32_t *, Länge der base64-Daten in Bytes
-Rückgabewert:  uint8_t *, Zeiger auf base64-kodierte Daten, NULL = Fehler
+      Ausgang: puBase64Len, uint32_t *, LÃ¤nge der base64-Daten in Bytes
+RÃ¼ckgabewert:  uint8_t *, Zeiger auf base64-kodierte Daten, NULL = Fehler
 Seiteneffekte: g_cBase64digits[]
 ------------------------------------------------------------------------------*/
 uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64Len, bool bNewLine) {
-    // Hinweis zum Speicherbedarf für Ausgangspuffer: Aus 3 Originalbytes werden 4 druckbare Bytes erzeugt
+    // Hinweis zum Speicherbedarf fÃ¼r Ausgangspuffer: Aus 3 Originalbytes werden 4 druckbare Bytes erzeugt
     uint8_t cFragment;
     uint8_t *pcOut;
     uint8_t *pcBase64;
@@ -632,7 +632,7 @@ uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64L
     if ((pcBinary == NULL) || (uBinaryLen == 0) || (puBase64Len == NULL)) {
         return NULL;
     }
-    // PASS 1, um die genaue Ausgangslänge zu ermitteln
+    // PASS 1, um die genaue AusgangslÃ¤nge zu ermitteln
     uPass1Len = uBinaryLen;
     uBase64Count = 0;
     pcIn = pcBinary;
@@ -658,7 +658,7 @@ uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64L
             }
         }
     }
-    pcBase64 = (uint8_t*)malloc(uBase64Count + 1);  // +1 für Stringende
+    pcBase64 = (uint8_t*)malloc(uBase64Count + 1);  // +1 fÃ¼r Stringende
     if (pcBase64 != NULL) {
         // PASS 2, die eigentliche Kodierung
         pcOut = pcBase64;
@@ -697,7 +697,7 @@ uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64L
                 }
             }
         }
-        *puBase64Len = uBase64Count;    // Länge der base64-kodierten Daten zurückgeben
+        *puBase64Len = uBase64Count;    // LÃ¤nge der base64-kodierten Daten zurÃ¼ckgeben
         *pcOut = 0;                     // Stringende
     }
     return pcBase64;
@@ -772,7 +772,7 @@ int Base64ToBin(uint8_t *pcBinary, uint8_t *pcBase64, uint32_t uBase64Len, uint3
             case 255:
                 return -1;
             case 64:
-                // Nichts machen bei Zeilenumbrüchen, Space und  '='
+                // Nichts machen bei ZeilenumbrÃ¼chen, Space und  '='
                 break;
             default:
                 switch(uCharCount % 4) {

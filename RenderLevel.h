@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 
 #define     MAX_CHEESE_RANDOM_NUMBERS       1024
-#define     TREASURECHEST_TIMER             5000        // Alle 5000 ms die Truhen öffnen
+#define     TREASURECHEST_TIMER             5000        // Alle 5000 ms die Truhen Ã¶ffnen
 #define     TREASURECHEST_OPEN_TIMER        1500        // 1500 ms Truhe offen lassen
 
 void FillCheeseRandomNumbers(void);

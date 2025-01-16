@@ -2,14 +2,23 @@
 TODO
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen, DC3 hat gleiches Problem
 * Leveleditor
-    * Undo für Editor
+    * Undo fÃ¼r Editor
+* Auf doppelte Spielgeschwindigkeit umschaltbar
+* HÃ¶here Y-AuflÃ¶sung fÃ¼r HauptmenÃ¼ und Levelliste nutzen
+* SDL_SetWindowDisplayMode() anwenden, um sicher zu sellen, dass richtige Framerate lÃ¤uft
+* Mit Valgrind auf Speicherlecks prÃ¼fen
 
-Für V 1.11
-* SDL 2.30.9, SDL 2.30.10 funktioniert im Debug-Modus unter Code:Blocks nicht
-* DC3-Importverzeichnis wird während der Verwendung des Leveleditors alle 3 s aktualisiert
-* Schließen-X funktioniert im Leveleditor jetzt wie Button "Quit"
-* 4 Ecken des markierten Stahls hinzugefügt, werden nur beim DC3-Levelimport verwendet und sind noch nicht im Leveleditor auswählbar
-* Doppeltes Sterben/Schreien und nachträglicher Explosionssound im Zusammenhang mit gezündetem Dynamit gefixt
+FÃ¼r V 1.11
+* SDL 2.30.11
+* DC3-Importverzeichnis wird wÃ¤hrend der Verwendung des Leveleditors alle 3 s aktualisiert
+* SchlieÃŸen-X funktioniert im Leveleditor jetzt wie Button "Quit"
+* 4 Ecken des markierten Stahls hinzugefÃ¼gt, werden nur beim DC3-Levelimport verwendet und sind noch nicht im Leveleditor auswÃ¤hlbar
+* Doppeltes Sterben/Schreien und nachtrÃ¤glicher Explosionssound im Zusammenhang mit gezÃ¼ndetem Dynamit gefixt
+* Source in UTF-8 kodiert
+* Speicherlecks beim Beenden des Spiels gefixt
+* Musik-Player kann auch "xm Extended module"  abspielen
+* Falscher/unnÃ¶tiger Aufruf von SDL_RenderPresent() in ShowButtons()
+* Framerate wird auf ca. 125 frames/sec begrenzt
 */
 
 #include "gfx/textures.h"
@@ -68,18 +77,18 @@ extern SMILEY Smileys[MAX_SMILEYS];
 extern LEVELGROUP SelectedLevelgroup;
 extern MAINMENU MainMenu;
 extern AUDIOPLAYER Audioplayer;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uXoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           Menu
 ------------------------------------------------------------------------------
-Beschreibung: Hauptmenü, um den entsprechenden SDL2-Programmteil aufzurufen.
+Beschreibung: HauptmenÃ¼, um den entsprechenden SDL2-Programmteil aufzurufen.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
-Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
+RÃ¼ckgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
+Seiteneffekte: Playfield.x fÃ¼r FrameCounter, Audioplayer.x, MainMenu.x,
                ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int Menu(SDL_Renderer *pRenderer) {
@@ -118,12 +127,12 @@ int Menu(SDL_Renderer *pRenderer) {
         1120,32,EMERALD_STEEL,1120,64,EMERALD_STEEL,1120,96,EMERALD_STEEL,1120,128,EMERALD_STEEL,1120,160,EMERALD_STEEL,1120,192,EMERALD_STEEL,1120,224,EMERALD_STEEL,1120,256,EMERALD_STEEL,
         1120,288,EMERALD_STEEL,1120,320,EMERALD_STEEL,1120,352,EMERALD_STEEL,1120,384,EMERALD_STEEL,1120,416,EMERALD_STEEL,1120,448,EMERALD_STEEL,1120,480,EMERALD_STEEL,1120,512,EMERALD_STEEL,
         1120,544,EMERALD_STEEL,1120,576,EMERALD_STEEL,1120,608,EMERALD_STEEL,1120,640,EMERALD_STEEL,1120,672,EMERALD_STEEL,1120,704,EMERALD_STEEL,
-        // "Menüpunkte"
+        // "MenÃ¼punkte"
         128,224,EMERALD_RUBY,128,288,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
         // "PROGRAMMED IN 2023"
         144,672,EMERALD_FONT_BLUE_P,176,672,EMERALD_FONT_BLUE_R,208,672,EMERALD_FONT_BLUE_O,240,672,EMERALD_FONT_BLUE_G,272,672,EMERALD_FONT_BLUE_R,304,672,EMERALD_FONT_BLUE_A,336,672,EMERALD_FONT_BLUE_M,368,672,EMERALD_FONT_BLUE_M,
         400,672,EMERALD_FONT_BLUE_E,432,672,EMERALD_FONT_BLUE_D,496,672,EMERALD_FONT_BLUE_I,528,672,EMERALD_FONT_BLUE_N,592,672,EMERALD_FONT_BLUE_2,624,672,EMERALD_FONT_BLUE_0,656,672,EMERALD_FONT_BLUE_2,688,672,EMERALD_FONT_BLUE_2,
-        720,672,EMERALD_FONT_BLUE_MINUS,752,672,EMERALD_FONT_BLUE_2,784,672,EMERALD_FONT_BLUE_0,816,672,EMERALD_FONT_BLUE_2,848,672,EMERALD_FONT_BLUE_4
+        720,672,EMERALD_FONT_BLUE_MINUS,752,672,EMERALD_FONT_BLUE_2,784,672,EMERALD_FONT_BLUE_0,816,672,EMERALD_FONT_BLUE_2,848,672,EMERALD_FONT_BLUE_5
     };
 
     InitSmileys();
@@ -169,17 +178,16 @@ int Menu(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,468,326,0,"* MOUSEWHEEL TO ZOOM BALLONS",K_RELATIVE,1);
         PrintLittleFont(pRenderer,468,341,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS, ASTEROIDS AND SMILEYS",K_RELATIVE,1);
         PrintLittleFont(pRenderer,468,356,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,371,0,"* '+' / '-' ON KEYPAD TO CHANGE MUSIC VOLUME",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,386,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,401,0,"* '2' FOR MUSIC 2 -> CIRCUS TIME 2 VOYCE/DELIGHT, 1993",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,416,0,"* '3' FOR MUSIC 3 -> CLASS15 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,431,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,446,0,"* '5' FOR MUSIC 5 -> CLASS11.TIME FLIES BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,461,0,"* '6' FOR MUSIC 6 -> 2000AD:CRACKTRO:IV BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,476,0,"* '7' FOR MUSIC 7 -> 2000AD:CRACKTRO02 BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,491,0,"* '8' FOR MUSIC 8 -> BREWERY BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,506,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,521,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,371,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,386,0,"* '2' FOR MUSIC 2 -> CIRCUS TIME 2 VOYCE/DELIGHT, 1993",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,401,0,"* '3' FOR MUSIC 3 -> CLASS15 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,416,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,431,0,"* '5' FOR MUSIC 5 -> CLASS11.TIME FLIES BY MAKTONE",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,446,0,"* '6' FOR MUSIC 6 -> 2000AD:CRACKTRO:IV BY MAKTONE",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,461,0,"* '7' FOR MUSIC 7 -> 2000AD:CRACKTRO02 BY MAKTONE",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,476,0,"* '8' FOR MUSIC 8 -> BREWERY BY MAKTONE",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,491,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,468,506,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE,1);
         PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE,1);
         nErrorCode = ShowButtons(pRenderer);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
@@ -195,8 +203,7 @@ int Menu(SDL_Renderer *pRenderer) {
             uModVolume--;
             SetModVolume(uModVolume);
         }
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+        RenderPresentAndClear(pRenderer);
         uFrameCounter++;
         Playfield.uFrameCounter++;
     }
@@ -212,13 +219,13 @@ int Menu(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           RunGame
 ------------------------------------------------------------------------------
-Beschreibung: Hauptschleifen-Funktion für das Spielen eines Levels.
+Beschreibung: Hauptschleifen-Funktion fÃ¼r das Spielen eines Levels.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                uLevel, uint32_t, Levelnummer
       Ausgang: -
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x,
 ------------------------------------------------------------------------------*/
 int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
@@ -227,7 +234,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bPause;
     int nColorDimm;
     int nCheckLevelCount;
-    uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
+    uint32_t uManDirection = EMERALD_ANIM_STAND;     // RÃ¼ckgabe von CheckLevel() -> Wohin ist der Man gelaufen?
     uint32_t uKey;
     uint32_t I;
     bool bDimmIn = true;
@@ -240,10 +247,9 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     nColorDimm = 0;
     FillCheeseRandomNumbers();
     bLevelRun = (InitialisePlayfield(uLevel) == 0);
-    // Renderer mit schwarz löschen
+    // Renderer mit schwarz lÃ¶schen
     SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(pRenderer);
-    SDL_RenderPresent(pRenderer);
+    RenderPresentAndClear(pRenderer);
     bPrepareLevelExit = false;
     if (bLevelRun) {
         SetPipeLevel();
@@ -269,7 +275,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         UpdateManKey();
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bExit)) {
             bPrepareLevelExit = true;
-            ManKey.bExit = false; // hier bestätigen
+            ManKey.bExit = false; // hier bestÃ¤tigen
         }
         if ((Playfield.bManDead) || (Playfield.bWellDone)) {
             if (uQuitTime == 0xFFFFFFFF) {
@@ -314,7 +320,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 Playfield.bReadyToGo = true;
                 PreparePlaySound(SOUND_REPLICATOR_PLOP,Playfield.uManXpos + Playfield.uManYpos * Playfield.uLevel_X_Dimension);
             }
-            if (nRet == 0) {   // Falls in ShowAuthorAndLevelname() ESC-Taste gedrückt wurde, Spielsound unterdrücken
+            if (nRet == 0) {   // Falls in ShowAuthorAndLevelname() ESC-Taste gedrÃ¼ckt wurde, Spielsound unterdrÃ¼cken
                 PlayAllSounds();
             }
         }
@@ -361,12 +367,10 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             SetAllTextureColors(nColorDimm);
         }
         if (Playfield.uShowMessageNo != 0) {
-            ConfirmMessage(pRenderer);  // Spiel pausiert hier, bis Nachricht bestätigt wurde
+            ConfirmMessage(pRenderer);  // Spiel pausiert hier, bis Nachricht bestÃ¤tigt wurde
         }
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+        RenderPresentAndClear(pRenderer);
         if (bDebug) SDL_Delay(200);
-
     }
     SDL_ShowCursor(SDL_ENABLE);    // Mauspfeil verstecken
     Playfield.uPlayTimeEnd = SDL_GetTicks();
@@ -391,15 +395,15 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
 /*----------------------------------------------------------------------------
 Name:           SetElementToNextPosition
 ------------------------------------------------------------------------------
-Beschreibung: Setzt ein Element auf die nächste Position. Die nächste Position ist abhängig von uStatusAnimation.
+Beschreibung: Setzt ein Element auf die nÃ¤chste Position. Die nÃ¤chste Position ist abhÃ¤ngig von uStatusAnimation.
 Parameter
       Eingang: I, uint32_t, aktuelle Position/lineare Koordinate
                uStatusAnimation, uint32_t, Animation/Status
-               uNextStatusAnimation, uint32_t, Animation-, Clean-, Self-Status für die nächste Position
-               uInvalidElement, uint16_t, Element, das auf die nächste Position verschoben werden soll
+               uNextStatusAnimation, uint32_t, Animation-, Clean-, Self-Status fÃ¼r die nÃ¤chste Position
+               uInvalidElement, uint16_t, Element, das auf die nÃ¤chste Position verschoben werden soll
       Ausgang: -
 
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetElementToNextPosition(uint32_t I,uint32_t uStatusAnimation, uint32_t uNextStatusAnimation, uint16_t uInvalidElement) {
@@ -422,11 +426,11 @@ void SetElementToNextPosition(uint32_t I,uint32_t uStatusAnimation, uint32_t uNe
             SDL_Log("%s: WARNING: bad Status/Animation at position %u with element : 0x%04x",__FUNCTION__,I,uInvalidElement);
             return;     // Nichts machen, schwerer Fehler!
     }
-    // Animation für aktuelles Element setzen
+    // Animation fÃ¼r aktuelles Element setzen
     Playfield.pStatusAnimation[I] = uStatusAnimation;
-    // neuen Platz mit ungültigem Element besetzen
+    // neuen Platz mit ungÃ¼ltigem Element besetzen
     Playfield.pLevel[uNextPos] = EMERALD_INVALID;
-    // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+    // Damit ungÃ¼ltiges Feld spÃ¤ter auf richtiges Element gesetzt werden kann
     Playfield.pInvalidElement[uNextPos] = uInvalidElement;
     Playfield.pLastStatusAnimation[uNextPos] = uStatusAnimation;
     Playfield.pStatusAnimation[uNextPos] = uNextStatusAnimation;
@@ -438,10 +442,10 @@ Name:           ControlGame
 ------------------------------------------------------------------------------
 Beschreibung: Alle 16 Frames bzw. alle 16 Aniomationsschritte wird diese Funktion aufgerufen, um das Spiel zu steuern.
 Parameter
-      Eingang: uDirection, uint32_t, gewünschte Richtung des Man
+      Eingang: uDirection, uint32_t, gewÃ¼nschte Richtung des Man
       Ausgang: -
 
-Rückgabewert:  uint32_t, tatsächliche Richtung des Man (damit wird Levelscrolling gesteuert)
+RÃ¼ckgabewert:  uint32_t, tatsÃ¤chliche Richtung des Man (damit wird Levelscrolling gesteuert)
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint32_t ControlGame(uint32_t uDirection) {
@@ -460,20 +464,20 @@ uint32_t ControlGame(uint32_t uDirection) {
     Playfield.bSwitchRemoteBombUp = false;
     Playfield.bSwitchRemoteBombIgnition = false;
     Playfield.bRemoteBombMoved = false;
-    // Ab hier das Level und den Status für alle Elemente aus voriger Steuerung vorbereiten
+    // Ab hier das Level und den Status fÃ¼r alle Elemente aus voriger Steuerung vorbereiten
     for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
-        // Dieser Block sorgt bei bewegten Objekten dafür, dass diese
+        // Dieser Block sorgt bei bewegten Objekten dafÃ¼r, dass diese
         // ihren neuen Platz (invalides Feld) einnehmen.
         bSlime = (Playfield.pInvalidElement[I] == EMERALD_SLIME);
         uAnimStatus = Playfield.pStatusAnimation[I] & 0x0000FFFF00;
         if (Playfield.pLevel[I] == EMERALD_INVALID) {
             uCleanStatus = Playfield.pStatusAnimation[I] & 0x00FF0000;
-             // Wird für grüne Tropfen und Schleim verwendet
+             // Wird fÃ¼r grÃ¼ne Tropfen und Schleim verwendet
             if (uCleanStatus != EMERALD_ANIM_CLEAN_NOTHING) {
                 if (Playfield.pInvalidElement[I] == EMERALD_NONE) {
                     SDL_Log("%s: warning, set element EMERALD_NONE at position %d",__FUNCTION__,I);
                 }
-                Playfield.pLevel[I] = Playfield.pInvalidElement[I]; // von invalides auf nächstes Element setzen
+                Playfield.pLevel[I] = Playfield.pInvalidElement[I]; // von invalides auf nÃ¤chstes Element setzen
                 Playfield.pInvalidElement[I] = EMERALD_NONE;
                 // Neue Element-Koordinaten des Man berechnen
                 if (Playfield.pLevel[I] == EMERALD_MAN) {
@@ -539,8 +543,8 @@ uint32_t ControlGame(uint32_t uDirection) {
                 }
             }
         } else if (Playfield.pLevel[I] == EMERALD_ACIDPOOL_DESTROY) {
-            // EMERALD_ACIDPOOL_DESTROY muss im Vorwege "behandelt" werden, da sonst Elemente auf EMERALD_ACIDPOOL_DESTROY fallen können.
-            // Mole down muss beim Säürebecken gesondert behandelt werden, da beim Gang ins Säurebecken noch Erde über dem Becken erzeugt werden muss
+            // EMERALD_ACIDPOOL_DESTROY muss im Vorwege "behandelt" werden, da sonst Elemente auf EMERALD_ACIDPOOL_DESTROY fallen kÃ¶nnen.
+            // Mole down muss beim SÃ¤Ã¼rebecken gesondert behandelt werden, da beim Gang ins SÃ¤urebecken noch Erde Ã¼ber dem Becken erzeugt werden muss
             if (Playfield.pInvalidElement[I] == EMERALD_MOLE_DOWN) {
                 Playfield.pLevel[I] = EMERALD_EARTH_MOLE;
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_MOLE_GOES_ACID;
@@ -549,10 +553,10 @@ uint32_t ControlGame(uint32_t uDirection) {
                 Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
             }
         }
-        // Dieser Block sorgt bei drehenden Objekten (Minen+Käfer+Mole) dafür, dass diese
+        // Dieser Block sorgt bei drehenden Objekten (Minen+KÃ¤fer+Mole) dafÃ¼r, dass diese
         // nach der Drehung in die richtige Richtung zeigen.
         if ((uAnimStatus == EMERALD_ANIM_SPIN_UP_TO_RIGHT) || (uAnimStatus == EMERALD_ANIM_SPIN_DOWN_TO_RIGHT)) {
-            // Ab hier auf Mine, Käfer und Mole prüfen
+            // Ab hier auf Mine, KÃ¤fer und Mole prÃ¼fen
             if ((Playfield.pLevel[I] == EMERALD_MINE_UP) || (Playfield.pLevel[I] == EMERALD_MINE_DOWN)) {
                 Playfield.pLevel[I] = EMERALD_MINE_RIGHT;
             } else if ((Playfield.pLevel[I] == EMERALD_BEETLE_UP) || (Playfield.pLevel[I] == EMERALD_BEETLE_DOWN)) {
@@ -561,7 +565,7 @@ uint32_t ControlGame(uint32_t uDirection) {
                 Playfield.pLevel[I] = EMERALD_MOLE_RIGHT;
             }
         } else if ((uAnimStatus == EMERALD_ANIM_SPIN_RIGHT_TO_DOWN) || (uAnimStatus == EMERALD_ANIM_SPIN_LEFT_TO_DOWN)) {
-            // Ab hier auf Mine, Käfer und Mole prüfen
+            // Ab hier auf Mine, KÃ¤fer und Mole prÃ¼fen
             if ((Playfield.pLevel[I] == EMERALD_MINE_RIGHT) || (Playfield.pLevel[I] == EMERALD_MINE_LEFT)) {
                 Playfield.pLevel[I] = EMERALD_MINE_DOWN;
             } else if ((Playfield.pLevel[I] == EMERALD_BEETLE_RIGHT) || (Playfield.pLevel[I] == EMERALD_BEETLE_LEFT)) {
@@ -570,7 +574,7 @@ uint32_t ControlGame(uint32_t uDirection) {
                 Playfield.pLevel[I] = EMERALD_MOLE_DOWN;
             }
         } else if ((uAnimStatus == EMERALD_ANIM_SPIN_DOWN_TO_LEFT) || (uAnimStatus == EMERALD_ANIM_SPIN_UP_TO_LEFT)) {
-            // Ab hier auf Mine, Käfer und Mole prüfen
+            // Ab hier auf Mine, KÃ¤fer und Mole prÃ¼fen
             if ((Playfield.pLevel[I] == EMERALD_MINE_DOWN) || (Playfield.pLevel[I] == EMERALD_MINE_UP)) {
                 Playfield.pLevel[I] = EMERALD_MINE_LEFT;
             } else if ((Playfield.pLevel[I] == EMERALD_BEETLE_DOWN) || (Playfield.pLevel[I] == EMERALD_BEETLE_UP)) {
@@ -579,7 +583,7 @@ uint32_t ControlGame(uint32_t uDirection) {
                 Playfield.pLevel[I] = EMERALD_MOLE_LEFT;
             }
         } else if ((uAnimStatus == EMERALD_ANIM_SPIN_LEFT_TO_UP) || (uAnimStatus == EMERALD_ANIM_SPIN_RIGHT_TO_UP)) {
-            // Ab hier auf Mine, Käfer und Mole prüfen
+            // Ab hier auf Mine, KÃ¤fer und Mole prÃ¼fen
             if ((Playfield.pLevel[I] == EMERALD_MINE_LEFT) || (Playfield.pLevel[I] == EMERALD_MINE_RIGHT)) {
                 Playfield.pLevel[I] = EMERALD_MINE_UP;
             } else if ((Playfield.pLevel[I] == EMERALD_BEETLE_LEFT) || (Playfield.pLevel[I] == EMERALD_BEETLE_RIGHT)) {
@@ -589,7 +593,7 @@ uint32_t ControlGame(uint32_t uDirection) {
             }
         }
         uCleanStatus = Playfield.pStatusAnimation[I] & 0xFF000000;
-        // Es muss hier auch mit dem Levelelement UND-Verknüpft werden, da der Man unter Umständen auf das Objekt zuläuft und es aufnimmt
+        // Es muss hier auch mit dem Levelelement UND-VerknÃ¼pft werden, da der Man unter UmstÃ¤nden auf das Objekt zulÃ¤uft und es aufnimmt
         if (    ((uCleanStatus == EMERALD_ANIM_KEY_RED_SHRINK) && (Playfield.pLevel[I] == EMERALD_KEY_RED)) ||
                 ((uCleanStatus == EMERALD_ANIM_KEY_GREEN_SHRINK) && (Playfield.pLevel[I] == EMERALD_KEY_GREEN)) ||
                 ((uCleanStatus == EMERALD_ANIM_KEY_BLUE_SHRINK) && (Playfield.pLevel[I] == EMERALD_KEY_BLUE)) ||
@@ -612,7 +616,7 @@ uint32_t ControlGame(uint32_t uDirection) {
             Playfield.pLevel[I] = EMERALD_SPACE;
             Playfield.pStatusAnimation[I] = EMERALD_NO_ADDITIONAL_ANIMSTATUS;
         }
-        // "Geboren" wird über 2 Steuerungsrunden, da sonst zu schnell geboren wird
+        // "Geboren" wird Ã¼ber 2 Steuerungsrunden, da sonst zu schnell geboren wird
         if (uCleanStatus == EMERALD_ANIM_BORN1) {
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_BORN2;
         } else if (uCleanStatus == EMERALD_ANIM_BORN2) {
@@ -622,16 +626,16 @@ uint32_t ControlGame(uint32_t uDirection) {
             Playfield.pSlimeElement[I] = EMERALD_NONE;
             PreparePlaySound(SOUND_REPLICATOR_PLOP,I);
         }
-        // "Selbststeuernde" Animationen und Animationsstatus nicht zurücksetzen,
-        // Nur Clean-Status zurücksetzen
+        // "Selbststeuernde" Animationen und Animationsstatus nicht zurÃ¼cksetzen,
+        // Nur Clean-Status zurÃ¼cksetzen
         Playfield.pStatusAnimation[I] = Playfield.pStatusAnimation[I] & 0xFF00FFFF;
     }
     if (Playfield.uTimeDoorTimeLeft == 0) {
-        // Zeit-Tür schließen, da Zeit abgelaufen ist
+        // Zeit-TÃ¼r schlieÃŸen, da Zeit abgelaufen ist
         Playfield.bTimeDoorOpen = false;
     }
-    // Ab hier beginnt eine neue Steuerung für alle Elemente
-    ControlPreElements();   // ggf. Spaces für Elemente einsetzen, die sich auflösen, Molen-Erde in normale Erde wandeln
+    // Ab hier beginnt eine neue Steuerung fÃ¼r alle Elemente
+    ControlPreElements();   // ggf. Spaces fÃ¼r Elemente einsetzen, die sich auflÃ¶sen, Molen-Erde in normale Erde wandeln
     // Man als Zweites steuern !
     uManDirection = ControlMan(Playfield.uManYpos * Playfield.uLevel_X_Dimension + Playfield.uManXpos,uDirection);
     //SDL_Log("Man protected: %d",Playfield.bManProtected);
@@ -728,7 +732,7 @@ uint32_t ControlGame(uint32_t uDirection) {
                 ControlDynamiteOn(I);
                 break;
             case (EMERALD_CENTRAL_EXPLOSION_BEETLE):
-                ControlCentralBeetleExplosion(I);       // 3x3-Käferexplosion
+                ControlCentralBeetleExplosion(I);       // 3x3-KÃ¤ferexplosion
                 PreparePlaySound(SOUND_EXPLOSION,I);
                 break;
             case (EMERALD_CENTRAL_EXPLOSION):
@@ -740,10 +744,10 @@ uint32_t ControlGame(uint32_t uDirection) {
                 PreparePlaySound(SOUND_EXPLOSION,I);
                 break;
             case (EMERALD_SWITCHDOOR_OPEN):
-                // wird nach der Steuerungsrunde durchgeführt in ControlSwitchDoors();
+                // wird nach der Steuerungsrunde durchgefÃ¼hrt in ControlSwitchDoors();
                 break;
             case (EMERALD_SWITCHDOOR_CLOSED):
-                // wird nach der Steuerungsrunde durchgeführt in ControlSwitchDoors();
+                // wird nach der Steuerungsrunde durchgefÃ¼hrt in ControlSwitchDoors();
                 break;
             case (EMERALD_DOOR_TIME):
                 ControlTimeDoor(I);
@@ -754,7 +758,7 @@ uint32_t ControlGame(uint32_t uDirection) {
                 }
                 break;
             case (EMERALD_EARTH_MOLE):
-                // Wird vorher in ControlPreElements() durchgeführt
+                // Wird vorher in ControlPreElements() durchgefÃ¼hrt
                 break;
             case (EMERALD_MINE_CONTACT):
                 ControlContactMine(I);
@@ -980,7 +984,7 @@ Parameter
       Eingang: uManDirection, uint32_t, aktuelle Richtung des Man
       Ausgang: -
 
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ScrollAndCenterLevel(uint32_t uManDirection) {
@@ -1033,14 +1037,14 @@ void ScrollAndCenterLevel(uint32_t uManDirection) {
 Name:           GetTextureIndexByElementForAcidPool
 ------------------------------------------------------------------------------
 Beschreibung: Holt den entsprechenden Texture-Index anhand eines Elements und des
-              Animations-Schrittes. Die Funktion ist speziell für Elemente, die
-              ins Säurebecken fallen können.
+              Animations-Schrittes. Die Funktion ist speziell fÃ¼r Elemente, die
+              ins SÃ¤urebecken fallen kÃ¶nnen.
 Parameter
       Eingang: uElement, uint16_t, Element, z.B. EMERALD_MINE_RIGHT
                nAnimationCount, int, Animationsschritt
-      Ausgang: pfAngle, float *, Winkel für Texture;
-Rückgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
-                SPACE (EMERALD_SPACE) zurückgegeben.
+      Ausgang: pfAngle, float *, Winkel fÃ¼r Texture;
+RÃ¼ckgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
+                SPACE (EMERALD_SPACE) zurÃ¼ckgegeben.
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCount, float *pfAngle) {
@@ -1088,7 +1092,7 @@ uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCou
             if ((nAnimationCount >= 4) && (nAnimationCount <= 11)) {
                 uTextureIndex = TEX_ALIEN_MOVE_1;                        // Alien geht 1
             } else {
-                uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, Flügel voll ausgebreitet
+                uTextureIndex = TEX_ALIEN_MOVE_2;                        // Alien geht 2, FlÃ¼gel voll ausgebreitet
             }
             break;
         case (EMERALD_MOLE_UP):
@@ -1113,7 +1117,7 @@ uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCou
         case (EMERALD_BEETLE_RIGHT):
         case (EMERALD_BEETLE_DOWN):
         case (EMERALD_BEETLE_LEFT):
-            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // Käfer links
+            uTextureIndex = TEX_BEETLE_LEFT_1 + nAnimationCount % 8;     // KÃ¤fer links
             fAngle = 270;
             break;
         case (EMERALD_MAN):
@@ -1145,17 +1149,17 @@ uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCou
 /*----------------------------------------------------------------------------
 Name:           InitRollUnderground
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert das Array Playfield.uRollUnderground[256]. Hier ist für
+Beschreibung: Initialisiert das Array Playfield.uRollUnderground[256]. Hier ist fÃ¼r
               maximal 65536 Elemente (Element-Index, z.B. EMERALD_SAPPHIRE) abgelegt,
               ob Elemente von einem anderen Element herunterrollen.
               Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
               Beispiel: Playfield.uRollUnderground[EMERALD_KEY_GREEN] = 0x03.
-              -> Emerald (Bit 1) und Saphir (Bit 2) rollt von grünem Schlüssel
+              -> Emerald (Bit 1) und Saphir (Bit 2) rollt von grÃ¼nem SchlÃ¼ssel
               Funktion wird 1-malig zu Programmbeginn aufgerufen.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void InitRollUnderground(void) {
@@ -1196,7 +1200,7 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_STEEL_MODERN_UP_DOWN] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_STEEL_MODERN_DOWN_END] = 0xEB;                   // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_STEEL_MODERN_MIDDLE] = 0xEB;                     // Nur Steine und Bomben rollen hier nicht herunter
-    // Bei DC3 rollt nichts von den Schaltern für ferngesteuerte Bombe
+    // Bei DC3 rollt nichts von den Schaltern fÃ¼r ferngesteuerte Bombe
     Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_UP] = 0xEB;                    // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_DOWN] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
     Playfield.uRollUnderground[EMERALD_SWITCH_REMOTEBOMB_LEFT] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
@@ -1459,8 +1463,8 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_DOWN] = 0x1FF;               // Alles rollt von Lichtschranken
 	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_LEFT] = 0x1FF;               // Alles rollt von Lichtschranken
 	Playfield.uRollUnderground[EMERALD_LIGHTBARRIER_YELLOW_RIGHT] = 0x1FF;              // Alles rollt von Lichtschranken
-	Playfield.uRollUnderground[EMERALD_TIME_COIN] = 0x1FF;                              // Alles rollt von Münzen
-	Playfield.uRollUnderground[EMERALD_SHIELD_COIN] = 0x1FF;                            // Alles rollt von Münzen
+	Playfield.uRollUnderground[EMERALD_TIME_COIN] = 0x1FF;                              // Alles rollt von MÃ¼nzen
+	Playfield.uRollUnderground[EMERALD_SHIELD_COIN] = 0x1FF;                            // Alles rollt von MÃ¼nzen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_1] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_2] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_3] = 0x1FF;                        // Alles rollt von Schatztruhen
@@ -1479,11 +1483,11 @@ void InitRollUnderground(void) {
 /*----------------------------------------------------------------------------
 Name:           GetFreeRollDirections
 ------------------------------------------------------------------------------
-Beschreibung: Prüft freie Roll-Richtungen
+Beschreibung: PrÃ¼ft freie Roll-Richtungen
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  uint8_t, 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+RÃ¼ckgabewert:  uint8_t, 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint8_t GetFreeRollDirections(uint32_t I) {
@@ -1507,7 +1511,7 @@ Name:           GetTextureIndexByShrink
 Beschreibung: Ermittelt anhand einer "Shrink-Animation" den Texture-Index
 Parameter
       Eingang: uShrinkAnimation, uint32_t, Shrink-Animation, z.B.: EMERALD_ANIM_KEY_RED_SHRINK
-Rückgabewert:  uint32_t, TextureIndex, 0 = Space = nicht verfügbar
+RÃ¼ckgabewert:  uint32_t, TextureIndex, 0 = Space = nicht verfÃ¼gbar
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation) {
@@ -1583,14 +1587,14 @@ uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation) {
 /*----------------------------------------------------------------------------
 Name:           ControlPreElements
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt ggf. Spaces für Elemente, die sich auflösen.
+Beschreibung: Erzeugt ggf. Spaces fÃ¼r Elemente, die sich auflÃ¶sen.
               Molen-Erde wird in normale Erde gewandelt.
-              Schaltet Schalttüren ggf. um.
-              Geknackte Nüsse in Emerald wandeln
+              Schaltet SchalttÃ¼ren ggf. um.
+              Geknackte NÃ¼sse in Emerald wandeln
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlPreElements(void) {
@@ -1598,9 +1602,9 @@ void ControlPreElements(void) {
 
     for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
         if (IS_SPACE(I)) {
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;     // setzt ggf. EMERALD_ANIM_BLOCK_MAN zurück
+            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;     // setzt ggf. EMERALD_ANIM_BLOCK_MAN zurÃ¼ck
         } else if ( (Playfield.pLevel[I] == EMERALD_GREEN_CHEESE_GOES) || (Playfield.pLevel[I] == EMERALD_YELLOW_CHEESE_GOES) ||
-             ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) ||   // Für Elemente, die im Magic Wall eintauchen
+             ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) ||   // FÃ¼r Elemente, die im Magic Wall eintauchen
              (Playfield.pStatusAnimation[I] == EMERALD_ANIM_PERL_BREAK) ) {                         // Zerbrechende Perle
            Playfield.pLevel[I] = EMERALD_SPACE;           // Enstehenden Tropfen in Tropfen wandeln.
            Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
@@ -1633,17 +1637,17 @@ void ControlPreElements(void) {
 /*----------------------------------------------------------------------------
 Name:           ControlTimeDoor
 ------------------------------------------------------------------------------
-Beschreibung: Steuert die Zeit-Tür.
+Beschreibung: Steuert die Zeit-TÃ¼r.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlTimeDoor(uint32_t I) {
-    bool bActDoorOpenState;     // false = geschlossen, true = geöffnet
+    bool bActDoorOpenState;     // false = geschlossen, true = geÃ¶ffnet
 
-    Playfield.pStatusAnimation[I] &= 0x00FFFFFF;    // Selbststeuernden Animationsstatus zurücksetzen
+    Playfield.pStatusAnimation[I] &= 0x00FFFFFF;    // Selbststeuernden Animationsstatus zurÃ¼cksetzen
 
     bActDoorOpenState = ((Playfield.pStatusAnimation[I] & 0xFF00) == EMERALD_STATUS_DOOR_OPEN);
     if (Playfield.bTimeDoorOpen != bActDoorOpenState) {
@@ -1663,12 +1667,12 @@ void ControlTimeDoor(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           PostControlSwitchDoors
 ------------------------------------------------------------------------------
-Beschreibung: Steuert die Schalttüren unmittelbar nach der Haupt-Steuerungsrunde, wenn
+Beschreibung: Steuert die SchalttÃ¼ren unmittelbar nach der Haupt-Steuerungsrunde, wenn
               der Man einen Schalt-Impuls gegeben hat.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void PostControlSwitchDoors(void) {
@@ -1677,10 +1681,10 @@ void PostControlSwitchDoors(void) {
     if (Playfield.bSwitchDoorImpluse) {
         for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
             if (Playfield.pLevel[I] == EMERALD_SWITCHDOOR_CLOSED) {
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_OPEN;     // Öffnen der Schalttür einleiten
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_OPEN;     // Ã–ffnen der SchalttÃ¼r einleiten
                 PreparePlaySound(SOUND_DOOR_OPEN_CLOSE,I);
             } else if (Playfield.pLevel[I] == EMERALD_SWITCHDOOR_OPEN) {
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_CLOSE;    // Schließen der Schalttür einleiten
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOOR_CLOSE;    // SchlieÃŸen der SchalttÃ¼r einleiten
                 PreparePlaySound(SOUND_DOOR_OPEN_CLOSE,I);
             }
         }
@@ -1692,12 +1696,12 @@ void PostControlSwitchDoors(void) {
 /*----------------------------------------------------------------------------
 Name:           IsElementAlive
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein angegebenes Element "lebt".
+Beschreibung: PrÃ¼ft, ob ein angegebenes Element "lebt".
 
 Parameter
-      Eingang: uElement, uint16_t, Element, das geprüft werden soll
+      Eingang: uElement, uint16_t, Element, das geprÃ¼ft werden soll
       Ausgang: -
-Rückgabewert:  bool, true = Element lebt, sonst nicht
+RÃ¼ckgabewert:  bool, true = Element lebt, sonst nicht
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsElementAlive(uint16_t uElement) {
@@ -1751,11 +1755,11 @@ bool IsElementAlive(uint16_t uElement) {
 /*----------------------------------------------------------------------------
 Name:           IsSteel
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Element Stahleigenschaften hat.
+Beschreibung: PrÃ¼ft, ob ein Element Stahleigenschaften hat.
 Parameter
-      Eingang: uElement, uint16_t, Element, das geprüft wird
+      Eingang: uElement, uint16_t, Element, das geprÃ¼ft wird
       Ausgang: -
-Rückgabewert:  bool, true = Element gehört zum Stahl.
+RÃ¼ckgabewert:  bool, true = Element gehÃ¶rt zum Stahl.
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 bool IsSteel(uint16_t uElement) {
@@ -1905,12 +1909,12 @@ bool IsSteel(uint16_t uElement) {
 /*----------------------------------------------------------------------------
 Name:           CheckGameDirectorys
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob alle benötigten Directorys vorhanden sind und legt diese
+Beschreibung: PrÃ¼ft, ob alle benÃ¶tigten Directorys vorhanden sind und legt diese
               ggf. an.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int CheckGameDirectorys(void) {

@@ -20,11 +20,11 @@ extern uint8_t _binary_2kad02_mod_start;extern uint8_t _binary_2kad02_mod_end;  
 extern uint8_t _binary_brewery_mod_start;extern uint8_t _binary_brewery_mod_end;                        // 8. brewery.mod (the brewery)  von Maktone
 extern uint8_t _binary_class05_1999_mod_start;extern uint8_t _binary_class05_1999_mod_end;              // 9. class05 von Maktone
 extern uint8_t _binary_softworld_mod_start;extern uint8_t _binary_softworld_mod_end;                    // 10. softworld von Maktone
+extern uint8_t _binary_heritage_xm_start;extern uint8_t _binary_heritage_xm_end;                        // 11. heritage von Maniac, ist ein xm und
 
 
 
-
-uint8_t* g_pMusicPointer[(MAX_MUSICINDEX + 1) * 2];          // 2 Pointer / Musik + Pärchen NULL-Pointer
+uint8_t* g_pMusicPointer[(MAX_MUSICINDEX + 1) * 2];          // 2 Pointer / Musik + PÃ¤rchen NULL-Pointer
 
 // Prototypen
 
@@ -36,9 +36,9 @@ Beschreibung: Initialisiert das modulglobale MusicPointer-Array
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte:  g_pMusicPointer
-                alle externen Pointer auf die MOD-Musikstücke
+                alle externen Pointer auf die MOD-MusikstÃ¼cke
 ------------------------------------------------------------------------------*/
 void InitMusicPointer(void) {
     g_pMusicPointer[0] = &_binary_echoing2_mod_start;g_pMusicPointer[1] = &_binary_echoing2_mod_end;
@@ -51,18 +51,20 @@ void InitMusicPointer(void) {
     g_pMusicPointer[14] = &_binary_brewery_mod_start;g_pMusicPointer[15] = &_binary_brewery_mod_end;
     g_pMusicPointer[16] = &_binary_class05_1999_mod_start;g_pMusicPointer[17] = &_binary_class05_1999_mod_end;
     g_pMusicPointer[18] = &_binary_softworld_mod_start;g_pMusicPointer[19] = &_binary_softworld_mod_end;
-    g_pMusicPointer[20] = NULL;g_pMusicPointer[21] = NULL;// Ende
+    g_pMusicPointer[20] = &_binary_heritage_xm_start;g_pMusicPointer[21] = &_binary_heritage_xm_end;
+    g_pMusicPointer[22] = NULL;g_pMusicPointer[23] = NULL;// Ende
 }
 
 /*----------------------------------------------------------------------------
 Name:           InitAudioplayerStruct
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Struktur Audioplayer.x und öffnet das
-              Audiodevice für MODPlay.
+Beschreibung: Initialisiert die Struktur Audioplayer.x und Ã¶ffnet das
+              Audiodevice fÃ¼r MODPlay und XM-Player.
+              Darf nur einmal zum Programmstart aufgerufen werden.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x
 ------------------------------------------------------------------------------*/
 int InitAudioplayerStruct(void) {
@@ -89,18 +91,23 @@ int InitAudioplayerStruct(void) {
 /*----------------------------------------------------------------------------
 Name:           SetModMusic
 ------------------------------------------------------------------------------
-Beschreibung: Stellt ein MOD-File für MODPlay zum Abspielen bereit.
+Beschreibung: Stellt ein MOD-File fÃ¼r MODPlay zum Abspielen bereit.
 
 Parameter
       Eingang: nMusicIndex, int, Index auf MOD-File, siehe oben "Externe Pointer und Indexe"
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x,
-               g_pMusicPointer[] (alle externen Pointer auf die MOD-Musikstücke)
+               g_pMusicPointer[] (alle externen Pointer auf die MOD-MusikstÃ¼cke)
 ------------------------------------------------------------------------------*/
 int SetModMusic(int nMusicIndex) {
     int nErrorCode;
 
+    Audioplayer.nModulType = MODULE_TYPE_UNKNOWN;
+    if (Audioplayer.pCtxXm != NULL) {
+        xm_free_context(Audioplayer.pCtxXm);    // ggf. voriges XM freigeben
+        Audioplayer.pCtxXm = NULL;
+    }
     nErrorCode = -1;
     if ( (nMusicIndex < 1) || (nMusicIndex > MAX_MUSICINDEX) ) {
         nMusicIndex = 1;
@@ -120,14 +127,26 @@ int SetModMusic(int nMusicIndex) {
         Audioplayer.pTheMusic = (uint8_t*)realloc(Audioplayer.pTheMusic,Audioplayer.nMusicSize);
         if (Audioplayer.pTheMusic != NULL) {
             memcpy(Audioplayer.pTheMusic,Audioplayer.pMusicStart,Audioplayer.nMusicSize);
-            if (InitMOD(Audioplayer.pTheMusic, Audioplayer.sdl_audio.freq) != NULL) {
-                nErrorCode = 0;
+            // PrÃ¼fen, ob MOD oder XM
+            if (memcmp(Audioplayer.pTheMusic,"Extended Module:",16) == 0) {
+                if (xm_create_context_safe(&Audioplayer.pCtxXm,(char*) Audioplayer.pTheMusic, Audioplayer.nMusicSize, 44100) == 0) {
+                    nErrorCode = 0;
+                    Audioplayer.nModulType = MODULE_TYPE_XM;
+                } else {
+                    SDL_Log("%s: invalid xm file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
+                    Audioplayer.pCtxXm = NULL;
+                }
             } else {
-                SDL_Log("%s: invalid mod file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
+                if (InitMOD(Audioplayer.pTheMusic, Audioplayer.sdl_audio.freq) != NULL) {
+                    nErrorCode = 0;
+                    Audioplayer.nModulType = MODULE_TYPE_MOD;
+                } else {
+                    SDL_Log("%s: invalid mod file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
+                }
             }
         }
     } else {
-        SDL_Log("%s: bad mod file size, MusicIndex: %d",__FUNCTION__,nMusicIndex + 1);
+        SDL_Log("%s: bad file size, MusicIndex: %d",__FUNCTION__,nMusicIndex + 1);
     }
     return nErrorCode;
 }
@@ -138,7 +157,7 @@ Name:           PlayMusic
 ------------------------------------------------------------------------------
 Beschreibung: Spielt ein MOD-File ab. Diese Funktion muss zyklisch aufgerufen werden,
               da z.Z. keine Callback-Funktion verwendet wird.
-              Vor Aufruf dieser Funktion muss das Audiodevice geöffnet
+              Vor Aufruf dieser Funktion muss das Audiodevice geÃ¶ffnet
               * InitAudioplayerStruct()   und
               ein Modfile gesetzt
               * SetModMusic
@@ -147,27 +166,33 @@ Beschreibung: Spielt ein MOD-File ab. Diese Funktion muss zyklisch aufgerufen we
 Parameter
       Eingang: bIgnoreConfig, bool, true = Config.bGameMusic wird ignoriert
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x, Config.x
 ------------------------------------------------------------------------------*/
 int PlayMusic(bool bIgnoreConfig) {
-    int nErrorCode;
-    // ModPlayerStatus_t *m;
+    int nErrorCode = 0;
+    uint32_t k;
 
-    // m = &mp;
-    // printf("\rRow %02d, order %02d/%02d (pattern %02d) @ speed %d", m->row, m->order, m->orders - 1, m->ordertable[m->order], m->speed);
     if ((Config.bGameMusic) || (bIgnoreConfig)) {
-        if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) < (Audioplayer.sdl_audio.samples * 4)) {
-            RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples);
-            nErrorCode = SDL_QueueAudio(Audioplayer.audio_device,Audioplayer. audiobuffer, Audioplayer.sdl_audio.samples * 4); // 2 channels, 2 bytes/sample
+        if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) < Audioplayer.sdl_audio.samples * sizeof(short) * 2) {
+            if (Audioplayer.nModulType == MODULE_TYPE_MOD) {
+                RenderMOD(Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples / 2); // durch 2, da 2 KanÃ¤le
+            } else if (Audioplayer.nModulType == MODULE_TYPE_XM) {
+                xm_generate_samples(Audioplayer.pCtxXm,Audioplayer.xm_audiobuffer,Audioplayer.sdl_audio.samples / 2);   // durch 2, da 2 KanÃ¤le
+                for (k = 0; k < AUDIO_BUFFERSIZE; ++k) {
+                    Audioplayer.audiobuffer[k] = Audioplayer.xm_audiobuffer[k] * 32767; // floats in short umrechnen
+                }
+             } else {
+                SDL_Log("%s: unknown module type: %d",__FUNCTION__,Audioplayer.nModulType);
+                nErrorCode = -1; // unbekanntes Modul
+            }
+            if (nErrorCode == 0) {
+                nErrorCode = SDL_QueueAudio(Audioplayer.audio_device,Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples * sizeof(short)); // 2 channels, 2 bytes/sample
+            }
             if (nErrorCode != 0) {
                 SDL_Log("%s: SDL_QueueAudio() failed: %s",__FUNCTION__,SDL_GetError());
             }
-        } else {
-            nErrorCode = 0; // Queue ist noch voll
         }
-    } else {
-        nErrorCode = 0; // Es soll nicht gespielt werden
     }
     return nErrorCode;
 }
@@ -176,11 +201,11 @@ int PlayMusic(bool bIgnoreConfig) {
 /*----------------------------------------------------------------------------
 Name:           CheckMusicSwitch
 ------------------------------------------------------------------------------
-Beschreibung: Prüft anhand eines Tastendrucks, ob auf eine andere Musik umgeschaltet werden soll
+Beschreibung: PrÃ¼ft anhand eines Tastendrucks, ob auf eine andere Musik umgeschaltet werden soll
 Parameter
       Eingang: pKeyboardArray, const Uint8 *, Zeiger auf Tastatur-Array
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Audioplayer.x
 ------------------------------------------------------------------------------*/
 void CheckMusicSwitch(const Uint8 *pKeyboardArray) {
@@ -233,6 +258,11 @@ void CheckMusicSwitch(const Uint8 *pKeyboardArray) {
     if (pKeyboardArray[SDL_SCANCODE_0]) {
         if (Audioplayer.nNextMusicIndex == 0) {
             Audioplayer.nNextMusicIndex = 10;
+        }
+    }
+    if (pKeyboardArray[SDL_SCANCODE_G]) {
+        if (Audioplayer.nNextMusicIndex == 0) {
+            Audioplayer.nNextMusicIndex = 11;
         }
     }
 }

@@ -35,10 +35,10 @@ Name:           GetLeveldimensionFromXml
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt die X- und Y-Dimension aus der XML-Leveldatei.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: puX, uint32_t *, X-Level-Dimension
                puY, uint32_t *, Y-Level-Dimension
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY) {
@@ -79,13 +79,13 @@ int GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY) {
 /*----------------------------------------------------------------------------
 Name:           GetMemoryForPlayfield
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt die Speicherbereiche für das Spielfeld.
+Beschreibung: Erzeugt die Speicherbereiche fÃ¼r das Spielfeld.
               Hinweis: Die Level-Dimension (X/Y) muss bereits ermittelt worden sein.
               Speicherbedarf S = X * Y * 2 * 2 * 4 * 8 = X * Y * 64
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetMemoryForPlayfield(void) {
@@ -137,10 +137,10 @@ Name:           GetTitleAuthorVersionHashFromXml
 Beschreibung: Ermittelt den Level-Titel, Level-Autor, die Level-Version und den
               MD5-Hash und legt diese Informationen in der Struktur Playfield.x ab.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetTitleAuthorVersionHashFromXml(ezxml_t xml) {
@@ -214,12 +214,12 @@ int GetTitleAuthorVersionHashFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelScoresFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt alle Level-Scores und trägt diese in die Struktur Playfield.x ein.
+Beschreibung: Ermittelt alle Level-Scores und trÃ¤gt diese in die Struktur Playfield.x ein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetLevelScoresFromXml(ezxml_t xml) {
@@ -308,9 +308,9 @@ int GetLevelScoresFromXml(ezxml_t xml) {
                                                                         nNum = strtol(pAttr,NULL,10);
                                                                         Playfield.uScoreTimeCoin = (uint32_t)nNum;
                                                                         nErrorCode = 0;
-                                                                        // Der folgende Scores (Schildmünze, Schleim und Schatztruhe) wurden später eingeführt.
-                                                                        // Damit alte Levels kompatibel bleiben, werden die Scores ohne Fehlerrückgabe ausgelesen.
-                                                                        // Ist ein Auslesen nicht möglich, wird der Score auf 0 gesetzt.
+                                                                        // Der folgende Scores (SchildmÃ¼nze, Schleim und Schatztruhe) wurden spÃ¤ter eingefÃ¼hrt.
+                                                                        // Damit alte Levels kompatibel bleiben, werden die Scores ohne FehlerrÃ¼ckgabe ausgelesen.
+                                                                        // Ist ein Auslesen nicht mÃ¶glich, wird der Score auf 0 gesetzt.
                                                                         node = ezxml_child(scores,"shieldcoin");
                                                                         if (node != NULL) {
                                                                             pAttr = node->txt;
@@ -396,16 +396,16 @@ int GetLevelScoresFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetOtherLevelValuesFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt folgende 'Values' aus der Level-XML-Datei  und trägt
+Beschreibung: Ermittelt folgende 'Values' aus der Level-XML-Datei  und trÃ¤gt
               diese in die Struktur Playfield.x ein.
-              * Emerald, die gesammelt werden müssen, um Spiel zu lösen
+              * Emerald, die gesammelt werden mÃ¼ssen, um Spiel zu lÃ¶sen
               * Time / Score - Faktor
-              * Ausbreitungsgeschwindigkeit für grünen Käse
+              * Ausbreitungsgeschwindigkeit fÃ¼r grÃ¼nen KÃ¤se
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetOtherLevelValuesFromXml(ezxml_t xml) {
@@ -439,9 +439,9 @@ int GetOtherLevelValuesFromXml(ezxml_t xml) {
                             nNum = strtol(pAttr,NULL,10);
                             Playfield.uGrassSpreadSpeed = (uint32_t)nNum;
                             nErrorCode = 0;
-                            // Der folgende Spread-Wertfür den gelben Käse wurde später eingeführt. Damit alte Levels
-                            // kompatibel bleiben, wird der Spread-Wert ohne Fehlerrückgabe ausgelesen. Ist ein Auslesen nicht
-                            // möglich, wird der Wert auf 0 gesetzt.
+                            // Der folgende Spread-WertfÃ¼r den gelben KÃ¤se wurde spÃ¤ter eingefÃ¼hrt. Damit alte Levels
+                            // kompatibel bleiben, wird der Spread-Wert ohne FehlerrÃ¼ckgabe ausgelesen. Ist ein Auslesen nicht
+                            // mÃ¶glich, wird der Wert auf 0 gesetzt.
                             node = ezxml_child(values,"speed_yellow_cheese_spread");
                             if (node != NULL) {
                                 pAttr = node->txt;
@@ -476,13 +476,13 @@ int GetOtherLevelValuesFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelTimesFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt alle Level-Zeiten aus der Level-XML-Datei und trägt
+Beschreibung: Ermittelt alle Level-Zeiten aus der Level-XML-Datei und trÃ¤gt
               diese in die Struktur Playfield.x ein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetLevelTimesFromXml(ezxml_t xml) {
@@ -526,9 +526,9 @@ int GetLevelTimesFromXml(ezxml_t xml) {
                                     nNum = strtol(pAttr,NULL,10);
                                     Playfield.uAdditonalTimeCoinTime = (uint32_t)nNum * ge_DisplayMode.refresh_rate;
                                     nErrorCode = 0;
-                                    // Der folgende Zeitwert für die Schildmünze wurde später eingeführt. Damit alte Levels kompatibel bleiben,
-                                    // wird der ShieldCoin-Zeitwert ohne Fehlerrückgabe ausgelesen. Ist ein Auslesen nicht
-                                    // möglich, wird der Wert auf 0 gesetzt.
+                                    // Der folgende Zeitwert fÃ¼r die SchildmÃ¼nze wurde spÃ¤ter eingefÃ¼hrt. Damit alte Levels kompatibel bleiben,
+                                    // wird der ShieldCoin-Zeitwert ohne FehlerrÃ¼ckgabe ausgelesen. Ist ein Auslesen nicht
+                                    // mÃ¶glich, wird der Wert auf 0 gesetzt.
                                     node = ezxml_child(times,"shieldcoin");
                                     if (node != NULL) {
                                         pAttr = node->txt;
@@ -569,13 +569,13 @@ int GetLevelTimesFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelInventoryFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt alle Gegenstände, die die Spielfigur bei Levelstart
-              erhält und trägt diese in die Struktur Playfield.x ein.
+Beschreibung: Ermittelt alle GegenstÃ¤nde, die die Spielfigur bei Levelstart
+              erhÃ¤lt und trÃ¤gt diese in die Struktur Playfield.x ein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetLevelInventoryFromXml(ezxml_t xml) {
@@ -626,13 +626,13 @@ int GetLevelInventoryFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetConveyorBeltSettingsFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt für alle Laufbänder die Einstellungen
-                und trägt diese in die Struktur Playfield.x ein.
+Beschreibung: Ermittelt fÃ¼r alle LaufbÃ¤nder die Einstellungen
+                und trÃ¤gt diese in die Struktur Playfield.x ein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetConveyorBeltSettingsFromXml(ezxml_t xml) {
@@ -786,13 +786,13 @@ int GetConveyorBeltSettingsFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetReplicatorLighbarrierSettingsFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt für alle Replikatoren und Lichtschranken die Einstellungen
-                und trägt diese in die Struktur Playfield.x ein.
+Beschreibung: Ermittelt fÃ¼r alle Replikatoren und Lichtschranken die Einstellungen
+                und trÃ¤gt diese in die Struktur Playfield.x ein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetReplicatorLighbarrierSettingsFromXml(ezxml_t xml) {
@@ -965,13 +965,13 @@ int GetReplicatorLighbarrierSettingsFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetLetterMessagesFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt alle Nachrichten für das Element 'Briefumschlag', EMERALD_MESSAGE_1 bis EMERALD_MESSAGE_8
-               und trägt diese in die Struktur Playfield.x ein.
+Beschreibung: Ermittelt alle Nachrichten fÃ¼r das Element 'Briefumschlag', EMERALD_MESSAGE_1 bis EMERALD_MESSAGE_8
+               und trÃ¤gt diese in die Struktur Playfield.x ein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetLetterMessagesFromXml(ezxml_t xml) {
@@ -997,7 +997,7 @@ int GetLetterMessagesFromXml(ezxml_t xml) {
                     if (strlen(pAttr) > 0) {
                         Playfield.pMessage[I - 1] = malloc(strlen(pAttr) + 1);  // Zielspeicher wird auf jeden Fall kleiner
                         if (Playfield.pMessage[I - 1] != NULL) {
-                            memset(Playfield.pMessage[I - 1],0,strlen(pAttr) + 1); // Für Stringende sorgen
+                            memset(Playfield.pMessage[I - 1],0,strlen(pAttr) + 1); // FÃ¼r Stringende sorgen
                             if (Base64ToBin((uint8_t*)Playfield.pMessage[I - 1],(uint8_t*)pAttr,strlen(pAttr),&uBinaryLen) != 0) {
                                 SDL_Log("%s: Base64ToBin() failed for Message Nr. %d.",__FUNCTION__,I + 1);
                                 nErrorCode = -2;
@@ -1026,14 +1026,14 @@ int GetLetterMessagesFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetTreasureChestElementsFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt alle Elemente für das Element 'Schatztruhe', EMERALD_TREASURECHEST_1 bis EMERALD_TREASURECHEST_8
-              und trägt diese in die Struktur Playfield.x ein.
-              Können die Elemente nicht ermittelt werden, so werden diese auf EMERALD_SPACE gesetzt.
+Beschreibung: Ermittelt alle Elemente fÃ¼r das Element 'Schatztruhe', EMERALD_TREASURECHEST_1 bis EMERALD_TREASURECHEST_8
+              und trÃ¤gt diese in die Struktur Playfield.x ein.
+              KÃ¶nnen die Elemente nicht ermittelt werden, so werden diese auf EMERALD_SPACE gesetzt.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetTreasureChestElementsFromXml(ezxml_t xml) {
@@ -1044,7 +1044,7 @@ int GetTreasureChestElementsFromXml(ezxml_t xml) {
     char *pAttr;
     char szTc[32];    // 'tc1' bis 'tc8', bzw. 'tc1_warn' bis 'tc8_warn'
 
-    // Default-Werte für Schatztruhen-Elemente setzen
+    // Default-Werte fÃ¼r Schatztruhen-Elemente setzen
     for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
         Playfield.uTreasureChestElement[I] = EMERALD_SPACE;
         Playfield.bTreasureChestWarn[I] = true; // Warnung vor "Monstern" in Schatztruhen per default an.
@@ -1089,12 +1089,12 @@ int GetTreasureChestElementsFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetYamExplosionsFromXml
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt YAM-Explosionen und trägt diese in die Struktur Playfield.x ein.
+Beschreibung: Ermittelt YAM-Explosionen und trÃ¤gt diese in die Struktur Playfield.x ein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetYamExplosionsFromXml(ezxml_t xml) {
@@ -1157,10 +1157,10 @@ Beschreibung:  Holt die eigentlichen Labyrinth-Leveldaten aus der Level-XML-Date
                und kopiert diese in die Struktur Playfield.pLevel. Der Speicher
                muss dort bereits alloziert worden sein.
 Parameter
-      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Eingang: xml, ezxml_t, gÃ¼ltiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int GetLeveldataFromXml(ezxml_t xml) {
@@ -1169,7 +1169,7 @@ int GetLeveldataFromXml(ezxml_t xml) {
     char *pAttr;
     uint32_t uBase64Len;
     uint32_t uBinLen;
-    char szMD5String[32 + 1];   // + 1 für Stringende
+    char szMD5String[32 + 1];   // + 1 fÃ¼r Stringende
     MD5Context MD5Leveldata;
     uint8_t *pCompressed;
     uint32_t uUnCompressLen;
@@ -1188,7 +1188,7 @@ int GetLeveldataFromXml(ezxml_t xml) {
                 md5Finalize(&MD5Leveldata);
                 GetMd5String(MD5Leveldata.digest,szMD5String);
                 if (strcasecmp(Playfield.szMd5String,szMD5String) == 0) {
-                    // Genaue Länge der Binärdaten ermitteln und Probelauf mit Base64-Daten
+                    // Genaue LÃ¤nge der BinÃ¤rdaten ermitteln und Probelauf mit Base64-Daten
                     if (Base64ToBin(NULL,(uint8_t*)pAttr, strlen(pAttr),&uBinLen) != 0) {
                         uBinLen = -1;
                     }
@@ -1233,12 +1233,12 @@ int GetLeveldataFromXml(ezxml_t xml) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelTag
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt das Leveltag innerhalb einer geöffneten Levelgruppe.
+Beschreibung: Ermittelt das Leveltag innerhalb einer geÃ¶ffneten Levelgruppe.
 Parameter
-      Eingang: xml, ezxml_t, Zeiger auf geöffnete XML-Datei (Levelgruppe).
+      Eingang: xml, ezxml_t, Zeiger auf geÃ¶ffnete XML-Datei (Levelgruppe).
                uLevelNumber, uint32_t, Level innerhalb der Levelgruppe
       Ausgang: -
-Rückgabewert:  ezxml_t, NULL = Fehler, sonst Tag auf Level
+RÃ¼ckgabewert:  ezxml_t, NULL = Fehler, sonst Tag auf Level
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 ezxml_t GetLevelTag(ezxml_t xml,uint32_t uLevelNumber) {
@@ -1248,20 +1248,21 @@ ezxml_t GetLevelTag(ezxml_t xml,uint32_t uLevelNumber) {
     return ezxml_child(xml,szLevelNumberTag);
 }
 
+
 /*----------------------------------------------------------------------------
 Name:           InitialisePlayfield
 ------------------------------------------------------------------------------
-Beschreibung: Lädt die Leveldaten und initialisiert das Spielfeld. Das Ergebnis
+Beschreibung: LÃ¤dt die Leveldaten und initialisiert das Spielfeld. Das Ergebnis
               wird in der Struktur Playfield.x abgelegt.
-              Diese Funktion alloziert Speicher, der später wieder freigegebem
+              Diese Funktion alloziert Speicher, der spÃ¤ter wieder freigegebem
               werden muss: Playfield.pLevel und Playfield.pStatusAnimation.
 
-              Vor Aufruf dieser Funktion muss eine Levelgruppe mit SelectLevelgroup() ausgewählt worden sein.
+              Vor Aufruf dieser Funktion muss eine Levelgruppe mit SelectLevelgroup() ausgewÃ¤hlt worden sein.
 Parameter
-      Eingang: uLevelgroupIndex, uint32_t, Auswahl der Levelgruppe aus LevelgroupFiles[].x über Levelgruppen-Index
+      Eingang: uLevelgroupIndex, uint32_t, Auswahl der Levelgruppe aus LevelgroupFiles[].x Ã¼ber Levelgruppen-Index
                uLevelNumber, uint32_t, Level innerhalb der Levelgruppe
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, ge_DisplayMode, SelectedLevelgroup.x, Config.x
 ------------------------------------------------------------------------------*/
 int InitialisePlayfield(uint32_t uLevelNumber) {
@@ -1303,7 +1304,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         if (xml != NULL) {
             level = GetLevelTag(xml,uLevelNumber);
             if (level != NULL) {
-                // Zunächst X- und Y-Dimension ermitteln. Diese Werte werden benötigt, um die Größe des Levelspeichers zu bestimmen
+                // ZunÃ¤chst X- und Y-Dimension ermitteln. Diese Werte werden benÃ¶tigt, um die GrÃ¶ÃŸe des Levelspeichers zu bestimmen
                 if (GetLeveldimensionFromXml(level,&Playfield.uLevel_X_Dimension,&Playfield.uLevel_Y_Dimension) == 0) {
                     Playfield.uLevel_XY_Dimension = Playfield.uLevel_X_Dimension * Playfield.uLevel_Y_Dimension;
                     if (GetMemoryForPlayfield() == 0) {
@@ -1325,9 +1326,9 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
                                                                                 SetActiveDynamiteP1();
                                                                                 nErrorCode = SearchTeleporter();
                                                                                 Playfield.bInitOK = (nErrorCode == 0);
-                                                                                // Die Schatztruhen sind später dazu gekommen. Damit alte Levels kompatibel bleiben,
-                                                                                // wird beim Auslesen der Schatztruhen-Elemente kein Fehler zurückgegeben.
-                                                                                // Ist ein Auslesen nicht möglich, wird jedes Schatztruhen-Element auf EMERALD_SPACE
+                                                                                // Die Schatztruhen sind spÃ¤ter dazu gekommen. Damit alte Levels kompatibel bleiben,
+                                                                                // wird beim Auslesen der Schatztruhen-Elemente kein Fehler zurÃ¼ckgegeben.
+                                                                                // Ist ein Auslesen nicht mÃ¶glich, wird jedes Schatztruhen-Element auf EMERALD_SPACE
                                                                                 // gesetzt.
                                                                                 if (Playfield.bInitOK) {
                                                                                     GetTreasureChestElementsFromXml(level);
@@ -1353,7 +1354,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         } else {
             SDL_Log("%s: ezxml_parse_str() failed",__FUNCTION__);
         }
-        ezxml_free(xml);    // Prüft selbst, ob Pointer NULL ist
+        ezxml_free(xml);    // PrÃ¼ft selbst, ob Pointer NULL ist
         SAFE_FREE(pXml);
     }
     if (Playfield.bInitOK) {
@@ -1363,20 +1364,20 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.uVisibleCenterY = Playfield.uVisibleY / 2;
         Playfield.uVisibleCenterX = Playfield.uVisibleX / 2;
         // Y-Zentrierung des Levels im Anzeigebereich
-        if (Playfield.uVisibleY >= Playfield.uLevel_Y_Dimension) {    // Level ist in Y-Richtung kleiner bzw. gleich der Anzeigehöhe (in Y-Richtung wird nicht gescrollt)
+        if (Playfield.uVisibleY >= Playfield.uLevel_Y_Dimension) {    // Level ist in Y-Richtung kleiner bzw. gleich der AnzeigehÃ¶he (in Y-Richtung wird nicht gescrollt)
             Playfield.uShiftLevelYpix = ((Playfield.uVisibleY - Playfield.uLevel_Y_Dimension) / 2) * FONT_H;    // Level im Anzeigebereich zentrieren
         } else {
-            // Level ist in Y-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
+            // Level ist in Y-Richtung grÃ¶ÃŸer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
             Playfield.uShiftLevelYpix = 0;
         }
         // X-Zentrierung des Levels im Anzeigebereich
         if (Playfield.uVisibleX >= Playfield.uLevel_X_Dimension) {    // Level ist in X-Richtung kleiner bzw. gleich der Anzeigebreite (in X-Richtung wird nicht gescrollt)
             Playfield.uShiftLevelXpix = ((Playfield.uVisibleX - Playfield.uLevel_X_Dimension) / 2) * FONT_H;    // Level im Anzeigebereich zentrieren
         } else {
-            // Level ist in X-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
+            // Level ist in X-Richtung grÃ¶ÃŸer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
             Playfield.uShiftLevelXpix = 0;
         }
-        // Positionsüberläufe abfangen
+        // PositionsÃ¼berlÃ¤ufe abfangen
         Playfield.nMaxXpos = (Playfield.uLevel_X_Dimension * FONT_W) - Config.uResX;
         if (Playfield.nMaxXpos < 0) {
             Playfield.nMaxXpos = 0;
@@ -1404,8 +1405,8 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.uTimeLightLeft = 0;
         Playfield.bWheelRunning = false;
         Playfield.uTimeWheelRotationLeft = 0;
-        Playfield.uWheelRunningXpos = 0;      // nur gültig, wenn bWheelRunning = true
-        Playfield.uWheelRunningYpos = 0;      // nur gültig, wenn bWheelRunning = true
+        Playfield.uWheelRunningXpos = 0;      // nur gÃ¼ltig, wenn bWheelRunning = true
+        Playfield.uWheelRunningYpos = 0;      // nur gÃ¼ltig, wenn bWheelRunning = true
         Playfield.bHasRedKey = false;
         Playfield.bHasGreenKey = false;
         Playfield.bHasBlueKey = false;
@@ -1425,8 +1426,8 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         Playfield.bRemoteBombMoved = false;
         Playfield.uShowMessageNo = 0;
         Playfield.uYamExplosion = 0;          // Aktuelle YAM-Explosion
-        Playfield.uDynamitePos = 0xFFFFFFFF;  // lineare Koordinate des manuell gezündeten Dynamits durch den Man, 0xFFFFFFFF = keine Zündung
-        Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND; // Status/Animation für manuell gezündetes Dynamit
+        Playfield.uDynamitePos = 0xFFFFFFFF;  // lineare Koordinate des manuell gezÃ¼ndeten Dynamits durch den Man, 0xFFFFFFFF = keine ZÃ¼ndung
+        Playfield.uDynamiteStatusAnim = EMERALD_ANIM_STAND; // Status/Animation fÃ¼r manuell gezÃ¼ndetes Dynamit
         InitRollUnderground();
         SetCentralExplosionCoordinates();
         SetCentralMegaExplosionCoordinates();
@@ -1445,11 +1446,11 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
 /*----------------------------------------------------------------------------
 Name:           SetCentralExplosionCoordinates
 ------------------------------------------------------------------------------
-Beschreibung: Hinterlegt die 3x3-Koordinaten für eine zentrale Explosion ab Mittelpunkt.
+Beschreibung: Hinterlegt die 3x3-Koordinaten fÃ¼r eine zentrale Explosion ab Mittelpunkt.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetCentralExplosionCoordinates() {
@@ -1461,26 +1462,26 @@ void SetCentralExplosionCoordinates() {
     Playfield.nCentralExplosionCoordinates[5] = (int)Playfield.uLevel_X_Dimension - 1;          // unten links
     Playfield.nCentralExplosionCoordinates[6] = (int)Playfield.uLevel_X_Dimension;              // unten mitte
     Playfield.nCentralExplosionCoordinates[7] = (int)Playfield.uLevel_X_Dimension + 1;          // unten rechts
-    // Für Yam-Explosion mit Replikator (obere Hälfte)
+    // FÃ¼r Yam-Explosion mit Replikator (obere HÃ¤lfte)
     Playfield.nCheckReplicatorForYamExplosionTop[0] = -(int)Playfield.uLevel_X_Dimension - 1;   // R. oben links
     Playfield.nCheckReplicatorForYamExplosionTop[1] = -(int)Playfield.uLevel_X_Dimension;       // R. oben mitte
     Playfield.nCheckReplicatorForYamExplosionTop[2] = -(int)Playfield.uLevel_X_Dimension + 1;   // R. oben rechts
     Playfield.nCheckReplicatorForYamExplosionTop[3] = -1;                                       // R. mitte links
     Playfield.nCheckReplicatorForYamExplosionTop[4] = 1;                                        // R. mitte rechts
-    // Für Yam-Explosion mit Replikator (untere Hälfte)
+    // FÃ¼r Yam-Explosion mit Replikator (untere HÃ¤lfte)
     Playfield.nCheckReplicatorForYamExplosionButtom[0] = -1;                                    // R. oben links
     Playfield.nCheckReplicatorForYamExplosionButtom[1] = 0;                                     // R. oben mitte
     Playfield.nCheckReplicatorForYamExplosionButtom[2] = 1;                                     // R. oben rechts
     Playfield.nCheckReplicatorForYamExplosionButtom[3] = (int)Playfield.uLevel_X_Dimension - 1; // R. mitte links;
     Playfield.nCheckReplicatorForYamExplosionButtom[4] = (int)Playfield.uLevel_X_Dimension + 1; // R. mitte rechts;
-    // Für Yam-Explosion mit Säurebecken (obere Hälfte)
+    // FÃ¼r Yam-Explosion mit SÃ¤urebecken (obere HÃ¤lfte)
     Playfield.nCheckAcidPoolForYamExplosionTop[0] = -(int)Playfield.uLevel_X_Dimension - 1;     // S. oben links
     Playfield.nCheckAcidPoolForYamExplosionTop[1] = -(int)Playfield.uLevel_X_Dimension;         // S. oben mitte
     Playfield.nCheckAcidPoolForYamExplosionTop[2] = -(int)Playfield.uLevel_X_Dimension + 1;     // S. oben rechts
     Playfield.nCheckAcidPoolForYamExplosionTop[3] = - 1;                                        // S. mitte links
     Playfield.nCheckAcidPoolForYamExplosionTop[4] = 0;                                          // S. mitte
     Playfield.nCheckAcidPoolForYamExplosionTop[5] = 1;                                          // S. mitte rechts
-    // Für Yam-Explosion mit Säurebecken (untere Hälfte)
+    // FÃ¼r Yam-Explosion mit SÃ¤urebecken (untere HÃ¤lfte)
     Playfield.nCheckAcidPoolForYamExplosionButtom[0] = -1;                                      // S. oben links
     Playfield.nCheckAcidPoolForYamExplosionButtom[1] = 0;                                       // S. oben mitte
     Playfield.nCheckAcidPoolForYamExplosionButtom[2] = 1;                                       // S. oben rechts
@@ -1493,11 +1494,11 @@ void SetCentralExplosionCoordinates() {
 /*----------------------------------------------------------------------------
 Name:           SetCentralMegaExplosionCoordinates
 ------------------------------------------------------------------------------
-Beschreibung: Hinterlegt die Koordinaten für eine zentrale Mega-Explosion ab Mittelpunkt.
+Beschreibung: Hinterlegt die Koordinaten fÃ¼r eine zentrale Mega-Explosion ab Mittelpunkt.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetCentralMegaExplosionCoordinates(void) {
@@ -1527,11 +1528,11 @@ void SetCentralMegaExplosionCoordinates(void) {
 /*----------------------------------------------------------------------------
 Name:           InitYamExplosions
 ------------------------------------------------------------------------------
-Beschreibung: Stellt für alle Yam-Explosionen das Element auf EMERALD_SPACE.
+Beschreibung: Stellt fÃ¼r alle Yam-Explosionen das Element auf EMERALD_SPACE.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void InitYamExplosions(YAMEXPLOSION *pYamExplosions) {
@@ -1549,12 +1550,12 @@ void InitYamExplosions(YAMEXPLOSION *pYamExplosions) {
 /*----------------------------------------------------------------------------
 Name:           SetPipeLevel
 ------------------------------------------------------------------------------
-Beschreibung: Entnimmt die Röhren-Elemente aus Playfield.pLevel und setzt diese
+Beschreibung: Entnimmt die RÃ¶hren-Elemente aus Playfield.pLevel und setzt diese
               in Playfield.pPipeLevel.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetPipeLevel(void) {
@@ -1588,11 +1589,11 @@ void SetPipeLevel(void) {
 /*----------------------------------------------------------------------------
 Name:           CheckLevelBorder
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob die Level-Umrandung mit "Stahl" an jeder Stelle abgrenzt.
+Beschreibung: PrÃ¼ft, ob die Level-Umrandung mit "Stahl" an jeder Stelle abgrenzt.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 int CheckLevelBorder(void) {
@@ -1600,21 +1601,21 @@ int CheckLevelBorder(void) {
     int nErrorCode;
 
     nErrorCode = 0;
-    // Obere Zeile prüfen
+    // Obere Zeile prÃ¼fen
     for (I = 0; (I < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); I++) {
         if (!IsSteel(Playfield.pLevel[I])) {
             SDL_Log("%s[top line]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
             nErrorCode = -1;
         }
     }
-    // Untere Zeile prüfen
+    // Untere Zeile prÃ¼fen
     for (I = Playfield.uLevel_X_Dimension * (Playfield.uLevel_Y_Dimension - 1); (I < Playfield.uLevel_XY_Dimension) && (nErrorCode == 0); I++) {
         if (!IsSteel(Playfield.pLevel[I])) {
             SDL_Log("%s[buttom line]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
             nErrorCode = -1;
         }
     }
-    // Linke Spalte prüfen
+    // Linke Spalte prÃ¼fen
     for (I = 0; (I < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); I++) {
 
         if (!IsSteel(Playfield.pLevel[I * Playfield.uLevel_X_Dimension])) {
@@ -1622,7 +1623,7 @@ int CheckLevelBorder(void) {
             nErrorCode = -1;
         }
     }
-    // Rechte Spalte prüfen
+    // Rechte Spalte prÃ¼fen
     for (I = 1; (I <= Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); I++) {
         if (!IsSteel(Playfield.pLevel[I * Playfield.uLevel_X_Dimension - 1])) {
             SDL_Log("%s[right column]  invalid element (%x) found at %d",__FUNCTION__,Playfield.pLevel[I],I);
@@ -1636,13 +1637,13 @@ int CheckLevelBorder(void) {
 /*----------------------------------------------------------------------------
 Name:           CheckReplicators
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob im Level die Replikatoren korrekt zusammengebaut sind.
+Beschreibung: PrÃ¼ft, ob im Level die Replikatoren korrekt zusammengebaut sind.
 Parameter
       Eingang: pLevel, uint16_t *, Zeiger auf Leveldaten
                uXdim, uint32_t, X-Dimension des Levels
                uYdim, uint32_t, Y-Dimension des Levels
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
@@ -1729,7 +1730,7 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                     nErrorCode = -1;
                 }
                 break;
-            // Grüner Replikator
+            // GrÃ¼ner Replikator
             case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
                 if ((I + 1) <= uMaxIndex) {
                     if (pLevel[I + 1] == EMERALD_REPLICATOR_GREEN_TOP_MID) {
@@ -1954,13 +1955,13 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
 /*----------------------------------------------------------------------------
 Name:           CheckAcidPools
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob im Level die Säurebecken korrekt zusammengebaut sind.
+Beschreibung: PrÃ¼ft, ob im Level die SÃ¤urebecken korrekt zusammengebaut sind.
 Parameter
       Eingang: pLevel, uint16_t *, Zeiger auf Leveldaten
                uXdim, uint32_t, X-Dimension des Levels
                uYdim, uint32_t, Y-Dimension des Levels
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
@@ -1979,7 +1980,7 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
         switch (uElement) {
             // Roter Replikator
             case (EMERALD_ACIDPOOL_TOP_LEFT):
-                if ((I + uXdim) <= uMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
+                if ((I + uXdim) <= uMaxIndex) {     // SchlieÃŸt folgende PrÃ¼fung (I + 1) mit ein
                     if (pLevel[I + uXdim] == EMERALD_ACIDPOOL_BOTTOM_LEFT) {
                         if (pLevel[I + 1] != EMERALD_ACIDPOOL_TOP_MID) {
                             nErrorCode = -1;
@@ -1994,7 +1995,7 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
             case (EMERALD_ACIDPOOL_TOP_MID):
                 if ((I - 1) >= 0) {
                     if ((pLevel[I - 1] == EMERALD_ACIDPOOL_TOP_MID) || (pLevel[I - 1] == EMERALD_ACIDPOOL_TOP_LEFT)) {
-                        if ((I + uXdim) <= uMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
+                        if ((I + uXdim) <= uMaxIndex) {     // SchlieÃŸt folgende PrÃ¼fung (I + 1) mit ein
                             if (pLevel[I + uXdim] == EMERALD_ACIDPOOL_BOTTOM_MID) {
                                 if ((pLevel[I + 1] != EMERALD_ACIDPOOL_TOP_MID) && (pLevel[I + 1] != EMERALD_ACIDPOOL_TOP_RIGHT)) {
                                     nErrorCode = -1;
@@ -2015,7 +2016,7 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
             case (EMERALD_ACIDPOOL_TOP_RIGHT):
                 if ((I - 1) >= 0) {
                     if (pLevel[I - 1] == EMERALD_ACIDPOOL_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
+                        if ((I + uXdim) <= uMaxIndex) {     // SchlieÃŸt folgende PrÃ¼fung (I + 1) mit ein
                             if (pLevel[I + uXdim] != EMERALD_ACIDPOOL_BOTTOM_RIGHT) {
                                 nErrorCode = -1;
                             }
@@ -2047,7 +2048,7 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_ACIDPOOL_BOTTOM_MID):
-                if ((I - uXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
+                if ((I - uXdim) >= 0) { // SchlieÃŸt folgende PrÃ¼fung (I - 1) mit ein
                     if (pLevel[I - uXdim] == EMERALD_ACIDPOOL_TOP_MID) {
                         if ((pLevel[I - 1] == EMERALD_ACIDPOOL_BOTTOM_MID) || (pLevel[I - 1] == EMERALD_ACIDPOOL_BOTTOM_LEFT)) {
                             if ((I + 1) <= uMaxIndex) {
@@ -2068,7 +2069,7 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
-                if ((I - uXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
+                if ((I - uXdim) >= 0) { // SchlieÃŸt folgende PrÃ¼fung (I - 1) mit ein
                     if (pLevel[I - uXdim] == EMERALD_ACIDPOOL_TOP_RIGHT) {
                         if (pLevel[I - 1] != EMERALD_ACIDPOOL_BOTTOM_MID) {
                             nErrorCode = -1;
@@ -2099,7 +2100,7 @@ Parameter
                uYdim, uint32_t, Y-Dimension des Levels
       Ausgang: puManXpos, uint32_t *, X-Koordinate des Man, darf NULL sein
                puManYpos, uint32_t *, Y-Koordinate des Man, darf NULL sein
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t *puManXpos, uint32_t *puManYpos) {
@@ -2110,9 +2111,9 @@ int GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t
 
     nManCount = 0;
     nErrorcode = -1;
-    // Das Gröbste wurde bereits in InitialisePlayfield() geprüft
+    // Das GrÃ¶bste wurde bereits in InitialisePlayfield() geprÃ¼ft
     if (pLevel != NULL) {
-        // Prüfen, ob sich genau ein Man im Level befindet
+        // PrÃ¼fen, ob sich genau ein Man im Level befindet
         for (I = 0; I < (uXdim * uYdim); I++) {
             if (pLevel[I] == EMERALD_MAN) {
                 uLinCoordinate = I;
@@ -2140,12 +2141,12 @@ int GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t
 /*----------------------------------------------------------------------------
 Name:           CloseAllDoors
 ------------------------------------------------------------------------------
-Beschreibung: Schließt alle Türen (Timer+Schalter) in einem Level.
+Beschreibung: SchlieÃŸt alle TÃ¼ren (Timer+Schalter) in einem Level.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CloseAllDoors(void) {
@@ -2167,7 +2168,7 @@ Beschreibung: Setzt alle aktiven Dynamits auf Phase 1.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetActiveDynamiteP1(void) {
@@ -2184,13 +2185,13 @@ void SetActiveDynamiteP1(void) {
 /*----------------------------------------------------------------------------
 Name:           SetTreasureChests
 ------------------------------------------------------------------------------
-Beschreibung: Setzt das Animationsflag für alle Schatztruhen. Falls die Schatztruhe
-              ein Monster enthält, so wird die Truhe animiert.
+Beschreibung: Setzt das Animationsflag fÃ¼r alle Schatztruhen. Falls die Schatztruhe
+              ein Monster enthÃ¤lt, so wird die Truhe animiert.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetTreasureChests(void) {
@@ -2223,7 +2224,7 @@ Beschreibung: Zeigt die Werte der Struktur Playfield.x an.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void PrintPlayfieldValues() {
@@ -2287,9 +2288,9 @@ void PrintPlayfieldValues() {
         printf("MaxYamExplosionIndex:        %d\r\n",Playfield.uMaxYamExplosionIndex);
         printf("Total Score:                 %u\r\n",Playfield.uTotalScore);            // Total-Score
         printf("Level Dimension:             X(%u) x Y(%u)\r\n",Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension);
-        printf("visible Dimension:           X(%u) x Y(%u)\r\n",Playfield.uVisibleX,Playfield.uVisibleY);   // Sichtbarer Bereich (nur von Fenstergröße abhängig)
-        printf("visible Center:              X(%u) / Y(%u)\r\n",Playfield.uVisibleCenterX,Playfield.uVisibleCenterY);   // Zentrum des sichtbaren Bereichs (nur von Fenstergröße abhängig)
-        printf("top left Pixel Position:     X(%d) / Y(%d)\r\n",Playfield.nTopLeftXpos,Playfield.nTopLeftYpos);           // aktuelle X/Y-Pixelposition, abhängig von Man position
+        printf("visible Dimension:           X(%u) x Y(%u)\r\n",Playfield.uVisibleX,Playfield.uVisibleY);   // Sichtbarer Bereich (nur von FenstergrÃ¶ÃŸe abhÃ¤ngig)
+        printf("visible Center:              X(%u) / Y(%u)\r\n",Playfield.uVisibleCenterX,Playfield.uVisibleCenterY);   // Zentrum des sichtbaren Bereichs (nur von FenstergrÃ¶ÃŸe abhÃ¤ngig)
+        printf("top left Pixel Position:     X(%d) / Y(%d)\r\n",Playfield.nTopLeftXpos,Playfield.nTopLeftYpos);           // aktuelle X/Y-Pixelposition, abhÃ¤ngig von Man position
         printf("Man Position:                X(%u) / Y(%u)\r\n",Playfield.uManXpos,Playfield.uManYpos);   // Man-X/Y-Element-Koordinate
         printf("FrameCounter:                %u\r\n",Playfield.uFrameCounter);
         printf("MD5 hash for leveldata:      %s\r\n",Playfield.szMd5String);
@@ -2311,8 +2312,8 @@ Beschreibung: Berechnet den MD5-Hash einer Levelgruppe.
 
 Parameter
       Eingang: puLevelgroupXml, uint8_t *, Zeiger auf Levelgruppen-XML-Daten, muss 0-terminiert (String) sein
-      Ausgang: puMd5Hash, uint8_t, Zeiger auf mindestens 16 Bytes für MD5-Hash, nur gültig, wenn Rückgabe = 0
-Rückgabewert:  0 = Alles OK, sonst Fehler
+      Ausgang: puMd5Hash, uint8_t, Zeiger auf mindestens 16 Bytes fÃ¼r MD5-Hash, nur gÃ¼ltig, wenn RÃ¼ckgabe = 0
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int CalculateLevelGroupMd5Hash(uint8_t *puLevelgroupXml,uint8_t *puMd5Hash) {
@@ -2355,13 +2356,13 @@ int CalculateLevelGroupMd5Hash(uint8_t *puLevelgroupXml,uint8_t *puMd5Hash) {
 /*----------------------------------------------------------------------------
 Name:           InitLevelgroups
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Strukturen für die Levelgruppen.
+Beschreibung: Initialisiert die Strukturen fÃ¼r die Levelgruppen.
 
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 void InitLevelgroups(void) {
@@ -2375,16 +2376,16 @@ void InitLevelgroups(void) {
 Name:           GetLevelgroupFiles
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt die Levelgruppen-Dateien im Arbeitsverzeichnis und stellt
-              diese in der Struktur LevelgroupFiles[].x zur Verfügung.
+              diese in der Struktur LevelgroupFiles[].x zur VerfÃ¼gung.
 
               WICHTIG: Es muss sichergestellt werden, dass nach diesem Aufruf mindestens
-              eine Levelgruppe zur Verfügung steht. Kann keine der bestehenden Levelgruppen
+              eine Levelgruppe zur VerfÃ¼gung steht. Kann keine der bestehenden Levelgruppen
               verwendet werden, so wird eine Default-Gruppe angelegt.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 int GetLevelgroupFiles(void) {
@@ -2415,12 +2416,12 @@ int GetLevelgroupFiles(void) {
                 FilenameLen = 0;    // Fehler
             }
             if ((FilenameLen > 4) && (FilenameLen <= EMERALD_MAX_FILENAME_LEN)) {          // a.xml    muss es wenigstens sein
-                // Nur XML-Dateien prüfen
+                // Nur XML-Dateien prÃ¼fen
                 if ((memcmp(szFullFilename + FilenameLen - 4,".xml",4) == 0) || (memcmp(szFullFilename + FilenameLen - 4,".XML",4) == 0)) {
                     pXml = ReadFile(szFullFilename,&uXmlLen);
                     if (pXml != NULL) {
                         if ((strstr((char*)pXml,"<levelgroup>") != NULL) && (strstr((char*)pXml,"</levelgroup>") != NULL)) {  // levelgroup tags gefunden?
-                            if (CalculateLevelGroupMd5Hash(pXml,uCalculatedLevelgroupMd5Hash) == 0) { // muss vor ezxml_parse_str() durchgeführt werden, da Library Original ändert
+                            if (CalculateLevelGroupMd5Hash(pXml,uCalculatedLevelgroupMd5Hash) == 0) { // muss vor ezxml_parse_str() durchgefÃ¼hrt werden, da Library Original Ã¤ndert
                                 //GetMd5String2(uCalculatedLevelgroupMd5Hash);
                                 //SDL_Log("LG: %s  --> Hash: %s",szFullFilename,p1);
                                 xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
@@ -2435,7 +2436,7 @@ int GetLevelgroupFiles(void) {
                                             // Stimmt der berechnete Hash mit dem Gelesenen?
                                             GetMd5HashFromString(levelgrouphash->txt,uLevelgroupMd5Hash);
                                             if (memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) {
-                                                strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,szFullFilename); // Maximale Länge wurde bereits geprüft
+                                                strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,szFullFilename); // Maximale LÃ¤nge wurde bereits geprÃ¼ft
                                                 if ((strlen(levelgroupname->txt) > 0) && (strlen(levelgroupname->txt) <= EMERALD_GROUPNAME_LEN)) {
                                                     strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szLevelgroupname,levelgroupname->txt);
                                                 } else {
@@ -2487,18 +2488,18 @@ Beschreibung: Sortiert die Levelgruppen nach Levelgruppennamen.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 void SortLevelGroupsByGroupName(void) {
-    // Temporäre Elemente für Tauschvorgang - Start
+    // TemporÃ¤re Elemente fÃ¼r Tauschvorgang - Start
     char szFilename[EMERALD_MAX_FILENAME_LEN + 1];
     char szLevelgroupname[EMERALD_GROUPNAME_LEN + 1];
     char szPasswordHash[32 + 1];
     char szCreateTimestamp[15 + 1];                                             // 20230331_133530
     uint8_t uMd5Hash[16];
     uint32_t uLevelCount;                                                       // Anzahl Level in der Levelgruppe
-    // Temporäre Elemente für Tauschvorgang - Ende
+    // TemporÃ¤re Elemente fÃ¼r Tauschvorgang - Ende
     uint32_t I;
     bool bChanged;
 
@@ -2516,14 +2517,14 @@ void SortLevelGroupsByGroupName(void) {
                     strcpy(szCreateTimestamp,LevelgroupFiles[I].szCreateTimestamp);
                     memcpy(uMd5Hash,LevelgroupFiles[I].uMd5Hash,16);
                     uLevelCount = LevelgroupFiles[I].uLevelCount;
-                    // Elemente von I + 1 auf I übertragen
+                    // Elemente von I + 1 auf I Ã¼bertragen
                     strcpy(LevelgroupFiles[I].szFilename,LevelgroupFiles[I + 1].szFilename);
                     strcpy(LevelgroupFiles[I].szLevelgroupname,LevelgroupFiles[I + 1].szLevelgroupname);
                     strcpy(LevelgroupFiles[I].szPasswordHash,LevelgroupFiles[I + 1].szPasswordHash);
                     strcpy(LevelgroupFiles[I].szCreateTimestamp,LevelgroupFiles[I + 1].szCreateTimestamp);
                     memcpy(LevelgroupFiles[I].uMd5Hash,LevelgroupFiles[I + 1].uMd5Hash,16);
                     LevelgroupFiles[I].uLevelCount = LevelgroupFiles[I + 1].uLevelCount;
-                    // Zwischengespeicherte Elemente auf I + 1 übertragen
+                    // Zwischengespeicherte Elemente auf I + 1 Ã¼bertragen
                     strcpy(LevelgroupFiles[I + 1].szFilename,szFilename);
                     strcpy(LevelgroupFiles[I + 1].szLevelgroupname,szLevelgroupname);
                     strcpy(LevelgroupFiles[I + 1].szPasswordHash,szPasswordHash);
@@ -2545,7 +2546,7 @@ Beschreibung: Ermittelt den Levelgruppenindex anhand des Levelgruppen-MD5-Hashes
 Parameter
       Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
       Ausgang: -
-Rückgabewert:  uint32_t, Levelgruppenindex, Falls Hash nicht gefunden werden kann, wird -1 zurückgegeben
+RÃ¼ckgabewert:  uint32_t, Levelgruppenindex, Falls Hash nicht gefunden werden kann, wird -1 zurÃ¼ckgegeben
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 uint32_t GetLevelgroupIndexByHash(uint8_t *puLevelgroupMd5Hash) {
@@ -2572,15 +2573,15 @@ uint32_t GetLevelgroupIndexByHash(uint8_t *puLevelgroupMd5Hash) {
 /*----------------------------------------------------------------------------
 Name:           SelectLevelgroup
 ------------------------------------------------------------------------------
-Beschreibung: Wählt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
+Beschreibung: WÃ¤hlt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
               GetLevelgroupFiles() eine Liste der Levelgruppen ermittelt worden sein.
               Bei erfolgreicher Auswahl der Levelgruppe wird die Struktur
-              SelectedLevelgroup.x befüllt.
+              SelectedLevelgroup.x befÃ¼llt.
 Parameter
       Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
                bReadWriteHighscores, bool, true = Highscores lesen/schreiben, false = Highscores nicht lesen/schreiben
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x.
                Config.x
 ------------------------------------------------------------------------------*/
@@ -2606,7 +2607,7 @@ int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
                 nErrorCode = 0;
                 for (uLevelNumber = 0; (uLevelNumber < LevelgroupFiles[uLevelgroupIndex].uLevelCount) && (nErrorCode == 0); uLevelNumber++) {
                     sprintf(szLevelNumberTag,"level%03u",uLevelNumber); // Levelnummern-Tag bauen
-                    level = ezxml_child(xml,szLevelNumberTag);          // Level im xml auswählen
+                    level = ezxml_child(xml,szLevelNumberTag);          // Level im xml auswÃ¤hlen
                     leveltitle = ezxml_child(level,"title");
                     levelauthor = ezxml_child(level,"author");
                     if ((leveltitle != NULL) && (levelauthor != NULL)) {
@@ -2653,18 +2654,18 @@ int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
 /*----------------------------------------------------------------------------
 Name:           SelectAlternativeLevelgroup
 ------------------------------------------------------------------------------
-Beschreibung: Wählt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
+Beschreibung: WÃ¤hlt eine Levelgruppe aus. Vor Aufruf dieser Funktion muss mit
               GetLevelgroupFiles() eine Liste der Levelgruppen ermittelt worden sein.
               Bei erfolgreicher Auswahl der Levelgruppe wird die Struktur
-              SelectedLevelgroup.x befüllt.
+              SelectedLevelgroup.x befÃ¼llt.
 
               Im Gegensatz zur Funktion SelectLevelgroup() wird ggf. eine andere
-              Levelgruppe selektiert, wenn die Gewünschte nicht selektierbar ist.
+              Levelgruppe selektiert, wenn die GewÃ¼nschte nicht selektierbar ist.
 Parameter
       Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
                bReadWriteHighscores, bool, true = Highscores lesen/schreiben, false = Highscores nicht lesen/schreiben
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
@@ -2672,11 +2673,11 @@ int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHig
     uint32_t G;
     bool bSelected = false;
 
-    // Zunächst versuchen die gewünschte Levelgruppe zu selektieren
+    // ZunÃ¤chst versuchen die gewÃ¼nschte Levelgruppe zu selektieren
     nErrorCode = SelectLevelgroup(puLevelgroupMd5Hash,bReadWriteHighscores);
     if (nErrorCode != 0) {
         // SDL_Log("%s: searching for an alternative levelgroup ...",__FUNCTION__);
-        // Falls das nicht klappt, die Nächstbeste selektieren
+        // Falls das nicht klappt, die NÃ¤chstbeste selektieren
         for (G = 0; (G < g_LevelgroupFilesCount) && (!bSelected); G++) {
             if (SelectLevelgroup(LevelgroupFiles[G].uMd5Hash,bReadWriteHighscores) == 0) {
                 bSelected = true;
@@ -2696,12 +2697,12 @@ int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHig
 /*----------------------------------------------------------------------------
 Name:           ShowSelectedLevelgroup
 ------------------------------------------------------------------------------
-Beschreibung: Zeigt Informationen der ausgewählten Levelgruppe an.
+Beschreibung: Zeigt Informationen der ausgewÃ¤hlten Levelgruppe an.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 void ShowSelectedLevelgroup(void) {
@@ -2726,12 +2727,12 @@ void ShowSelectedLevelgroup(void) {
 /*----------------------------------------------------------------------------
 Name:           ShowAvailableLevelgroups
 ------------------------------------------------------------------------------
-Beschreibung: Zeigt alle verfügbaren Levelgruppen an.
+Beschreibung: Zeigt alle verfÃ¼gbaren Levelgruppen an.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: LevelgroupFiles, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 void ShowAvailableLevelgroups(void) {
@@ -2759,7 +2760,7 @@ Beschreibung: Schreibt eine leere Namens-Datei (names.xml)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
 int WriteDefaultNamesFile(void) {
@@ -2777,7 +2778,7 @@ Beschreibung: Schreibt den Inhalt der Struktur Names.x als Daten-File.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
 int WriteNamesFile(void) {
@@ -2786,11 +2787,11 @@ int WriteNamesFile(void) {
     uint8_t uResultHash[16];        // Ergebnis-Hash aus MD5Names und MD5nameCount
     uint32_t I;
 
-    // Zunächst Hash der inneren Struktur Names.Name bilden
+    // ZunÃ¤chst Hash der inneren Struktur Names.Name bilden
     md5Init(&MD5Names);
     md5Update(&MD5Names,(uint8_t*)&Names.Name,sizeof(Names.Name));
     md5Finalize(&MD5Names);
-    // Dann Hash für Names.uNameCount bilden
+    // Dann Hash fÃ¼r Names.uNameCount bilden
     md5Init(&MD5NameCount);
     md5Update(&MD5Names,(uint8_t*)&Names.uNameCount,sizeof(uint32_t));
     md5Finalize(&MD5NameCount);
@@ -2810,7 +2811,7 @@ Beschreibung: Liest die Namensdatei in die Struktur Names.x ein.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
 int ReadNamesFile(void) {
@@ -2824,17 +2825,17 @@ int ReadNamesFile(void) {
     uint8_t uResultHash[16];        // Ergebnis-Hash aus MD5Names und MD5nameCount
 
     nErrorCode = -1;
-    memset(&Names,0,sizeof(Names));       // löscht auch letzten Spieler
+    memset(&Names,0,sizeof(Names));       // lÃ¶scht auch letzten Spieler
     pData = ReadFile(EMERALD_NAMES_FILENAME,&uDataLen);     // Levelgruppen-Datei einlesen
     if (pData != NULL) {
         if (uDataLen == sizeof(Names)) {
             memcpy((uint8_t*)&Names,pData,uDataLen);
             // Wenn der Security-Hash auch noch OK ist, kann die Names-Struktur verwendet werden
-            // Zunächst Hash der inneren Struktur Names.Name bilden
+            // ZunÃ¤chst Hash der inneren Struktur Names.Name bilden
             md5Init(&MD5Names);
             md5Update(&MD5Names,(uint8_t*)&Names.Name,sizeof(Names.Name));
             md5Finalize(&MD5Names);
-            // Dann Hash für Names.uNameCount bilden
+            // Dann Hash fÃ¼r Names.uNameCount bilden
             md5Init(&MD5NameCount);
             md5Update(&MD5Names,(uint8_t*)&Names.uNameCount,sizeof(uint32_t));
             md5Finalize(&MD5NameCount);
@@ -2866,7 +2867,7 @@ Beschreibung: Zeigt alle hinterlegten Namen und deren Anzahl Gruppen-Hashes.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
 void ShowNames(void) {
@@ -2898,15 +2899,15 @@ void ShowNames(void) {
 Name:           CleanNameHashes
 ------------------------------------------------------------------------------
 Beschreibung: Bereinigt die Struktur Names.x von nicht vorhandenen Levelgruppen-Hashes.
-              Vor Aufruf dieser Funktion müssen folgende Funktionen mit Erfolg
+              Vor Aufruf dieser Funktion mÃ¼ssen folgende Funktionen mit Erfolg
               aufgerufen worden sein:
-              * GetLevelgroupFiles():  Übersicht von vorhandenen Levelgroup-Hashes
+              * GetLevelgroupFiles():  Ãœbersicht von vorhandenen Levelgroup-Hashes
               * ReadNamesFile(): Aktuelle Namen mit Hashes und Handicaps usw.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x, LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 int CleanNameHashes(void) {
@@ -2915,8 +2916,8 @@ int CleanNameHashes(void) {
     uint32_t L;     // Level-Gruppenhash aus Levelgroup.x
     bool bHashFound;
 
-    for (N = 0; N < Names.uNameCount; N++) {                    // Alle Namen prüfen
-        for (G = 0; G <EMERALD_MAX_LEVELGROUPFILES; G++) {      // Alle Hashes dieses Namens prüfen
+    for (N = 0; N < Names.uNameCount; N++) {                    // Alle Namen prÃ¼fen
+        for (G = 0; G <EMERALD_MAX_LEVELGROUPFILES; G++) {      // Alle Hashes dieses Namens prÃ¼fen
             if (memcmp(Names.Name[N].GroupHash[G].uHash,"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",16) != 0) {
                 bHashFound = false;
                 for (L = 0; (L < g_LevelgroupFilesCount) && (!bHashFound); L++) {
@@ -2940,12 +2941,12 @@ int CleanNameHashes(void) {
 /*----------------------------------------------------------------------------
 Name:           ShowActualPlayer
 ------------------------------------------------------------------------------
-Beschreibung: Zeigt den aktuell gewählten Spieler an.
+Beschreibung: Zeigt den aktuell gewÃ¤hlten Spieler an.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Actualplayer.x
 ------------------------------------------------------------------------------*/
 void ShowActualPlayer(void) {
@@ -2955,13 +2956,13 @@ void ShowActualPlayer(void) {
     if (Actualplayer.bValid) {
         GetMd5String(Actualplayer.uLevelgroupMd5Hash,szString);
         SDL_Log("Name:             %s",Actualplayer.szPlayername);      // Aktueller Spieler
-        SDL_Log("Levelgroup Hash:  %s",szString);                       // aktuell gewählte Levelgruppe als MD5 Hash
-        SDL_Log("Level:            %u",Actualplayer.uLevel);            // aktuell gewähltes Level (wird beim Init. auf Handicap gestellt)
-        SDL_Log("Handicap:         %u",Actualplayer.uHandicap);         // aktuelles Handicap in der gewählten Levelgruppe
-        SDL_Log("Games played:     %u",Actualplayer.uGamesPlayed);      // Anzahl gespielter Level in der gewählten Levelgruppe
-        SDL_Log("Games won:        %u",Actualplayer.uGamesWon);         // Anzahl gewonnener Spiele in der gewählten Levelgruppe
-        SDL_Log("Totalscore:       %u",Actualplayer.uTotalScore);       // Gesamtpunktezahl in der gewählten Levelgruppe
-        SDL_Log("Playtime[secs]:   %u",Actualplayer.uPlayTimeS);        // Gesamtspielzeit in Sekunden in der gewählten Levelgruppe
+        SDL_Log("Levelgroup Hash:  %s",szString);                       // aktuell gewÃ¤hlte Levelgruppe als MD5 Hash
+        SDL_Log("Level:            %u",Actualplayer.uLevel);            // aktuell gewÃ¤hltes Level (wird beim Init. auf Handicap gestellt)
+        SDL_Log("Handicap:         %u",Actualplayer.uHandicap);         // aktuelles Handicap in der gewÃ¤hlten Levelgruppe
+        SDL_Log("Games played:     %u",Actualplayer.uGamesPlayed);      // Anzahl gespielter Level in der gewÃ¤hlten Levelgruppe
+        SDL_Log("Games won:        %u",Actualplayer.uGamesWon);         // Anzahl gewonnener Spiele in der gewÃ¤hlten Levelgruppe
+        SDL_Log("Totalscore:       %u",Actualplayer.uTotalScore);       // Gesamtpunktezahl in der gewÃ¤hlten Levelgruppe
+        SDL_Log("Playtime[secs]:   %u",Actualplayer.uPlayTimeS);        // Gesamtspielzeit in Sekunden in der gewÃ¤hlten Levelgruppe
     } else {
         SDL_Log("No actual player selected");
     }
@@ -2973,13 +2974,13 @@ void ShowActualPlayer(void) {
 /*----------------------------------------------------------------------------
 Name:           InsertNewName
 ------------------------------------------------------------------------------
-Beschreibung: Fügt einen neuen Namen in die Struktur Names.x hinzu. Falls es
+Beschreibung: FÃ¼gt einen neuen Namen in die Struktur Names.x hinzu. Falls es
               bereits diesen Spielernamen gibt, wird dieser neu angelegt.
 
 Parameter
       Eingang: pszname, char*, Zeiger auf Spielernamen, der angelegt werden soll
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = kein Platz mehr
+RÃ¼ckgabewert:  0 = Alles OK, -1 = Fehler, -2 = kein Platz mehr
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
 int InsertNewName(char *pszName) {
@@ -2993,7 +2994,7 @@ int InsertNewName(char *pszName) {
     if (pszName != NULL) {
         if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
             if (Names.uNameCount < EMERALD_MAX_PLAYERNAMES) {
-                // Zunächst schauen, ob es diesen Namen bereits gibt
+                // ZunÃ¤chst schauen, ob es diesen Namen bereits gibt
                 bNameFound =  false;
                 uInsertIndex = Names.uNameCount;
                 for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
@@ -3003,11 +3004,11 @@ int InsertNewName(char *pszName) {
                         uInsertIndex = N;
                     }
                 }
-                // An uInsertIndex den (neuen) Namen eintragen und Gruppen-Hashes löschen
+                // An uInsertIndex den (neuen) Namen eintragen und Gruppen-Hashes lÃ¶schen
                 strcpy(Names.Name[uInsertIndex].szName,pszName);
                 memset(Names.Name[uInsertIndex].GroupHash,0,sizeof(GROUPHASH));
                 if (!bNameFound) {
-                    Names.uNameCount++; // Falls Name nicht überschrieben wurde, kommt ein neuer hinzu
+                    Names.uNameCount++; // Falls Name nicht Ã¼berschrieben wurde, kommt ein neuer hinzu
                 }
                 nErrorCode = WriteNamesFile();
             } else {
@@ -3032,10 +3033,10 @@ Beschreibung: Die Werte aus der Struktur Actualplayer.x werden in die Strukturen
               der Namensliste hinterlegt.
 
 Parameter
-      Eingang: pszName, char*, Zeiger auf Spielernamen, für den Werte gespeichert werden sollen
-               puHash, uint8_t * , Zeiger auf Levelgruppen-Hash, für den die Werte gelten
+      Eingang: pszName, char*, Zeiger auf Spielernamen, fÃ¼r den Werte gespeichert werden sollen
+               puHash, uint8_t * , Zeiger auf Levelgruppen-Hash, fÃ¼r den die Werte gelten
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x, Actualplayer.x
 ------------------------------------------------------------------------------*/
 int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
@@ -3051,7 +3052,7 @@ int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
     uFoundIndex = 0;
     if ((pszName != NULL) && (puHash != NULL)) {
         if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
-            // Zunächst schauen, ob es diesen Namen bereits gibt
+            // ZunÃ¤chst schauen, ob es diesen Namen bereits gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
                     // SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
@@ -3094,15 +3095,15 @@ int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
 /*----------------------------------------------------------------------------
 Name:           SelectName
 ------------------------------------------------------------------------------
-Beschreibung: Wählt einen Spielernamen aus.
+Beschreibung: WÃ¤hlt einen Spielernamen aus.
               Die Funktion ReadNamesFile() muss bereits aufgerufen worden sein,
-              d.h. die Struktur Names.x ist befüllt.
+              d.h. die Struktur Names.x ist befÃ¼llt.
 
 Parameter
       Eingang: pszName, char*, Zeiger auf Spielernamen, der angelegt werden soll
                puHash, uint8_t * , Zeiger auf Levelgruppen-Hash
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = name nicht gefunden
+RÃ¼ckgabewert:  0 = Alles OK, -1 = Fehler, -2 = name nicht gefunden
 Seiteneffekte: Names.x, Actualplayer.x
 ------------------------------------------------------------------------------*/
 int SelectName(char *pszName, uint8_t *puHash) {
@@ -3119,7 +3120,7 @@ int SelectName(char *pszName, uint8_t *puHash) {
     memset(&Actualplayer,0,sizeof(Actualplayer));
     if ((pszName != NULL) && (puHash != NULL)) {
         if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
-            // Zunächst schauen, ob es diesen Namen bereits gibt
+            // ZunÃ¤chst schauen, ob es diesen Namen bereits gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
                     // SDL_Log("%s: Name %s exist, selecting ...",__FUNCTION__,pszName);
@@ -3146,7 +3147,7 @@ int SelectName(char *pszName, uint8_t *puHash) {
                         nErrorCode = 0;
                     }
                 }
-                // Wenn Levelgruppen-Hash nicht gefunden wurde, dann diesen hinzufügen
+                // Wenn Levelgruppen-Hash nicht gefunden wurde, dann diesen hinzufÃ¼gen
                 if (!bHashFound) {
                     nErrorCode = InsertGroupHashForName(pszName,puHash);
                     if (nErrorCode == 0) {
@@ -3183,13 +3184,13 @@ int SelectName(char *pszName, uint8_t *puHash) {
 /*----------------------------------------------------------------------------
 Name:           InsertGroupHashForName
 ------------------------------------------------------------------------------
-Beschreibung: Fügt einen neuen Levlgruppen-Hash zu einem Namen hinzu.
+Beschreibung: FÃ¼gt einen neuen Levlgruppen-Hash zu einem Namen hinzu.
               bereits diesen Spielernamen gibt, wird dieser neu angelegt.
 Parameter
-      Eingang: pszname, char*, Zeiger auf Spielernamen, bei dem der Levelgruppen-Hash hinzugefügt werden soll
+      Eingang: pszname, char*, Zeiger auf Spielernamen, bei dem der Levelgruppen-Hash hinzugefÃ¼gt werden soll
                puHash, uint8_t * , Zeiger auf anzulegenden Levelgruppen-Hash
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler,
+RÃ¼ckgabewert:  0 = Alles OK, -1 = Fehler,
                              -2 = Name nicht gefunden,
                              -3 = kein Platz mehr
                               0 = Hash gibt es schon
@@ -3208,7 +3209,7 @@ int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
     uInsertIndex = 0;
     if ((pszName != NULL) && (puHash != NULL)) {
         if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
-            // Zunächst schauen, ob es diesen Namen bereits gibt
+            // ZunÃ¤chst schauen, ob es diesen Namen bereits gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
                     // SDL_Log("%s: Name %s exist, clearing GroupHashes ...",__FUNCTION__,pszName);
@@ -3226,7 +3227,7 @@ int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
                         bHashFound = true;
                     }
                 }
-                // Wenn Hash nicht gefunden wurde, dann Platz für neuen Hash suchen
+                // Wenn Hash nicht gefunden wurde, dann Platz fÃ¼r neuen Hash suchen
                 if (!bHashFound) {
                     for (H = 0; (H < EMERALD_MAX_LEVELGROUPFILES) && (!bHashFound); H++) {
                         if (memcmp(Names.Name[uInsertIndex].GroupHash[H].uHash,"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",16) == 0) {
@@ -3259,12 +3260,12 @@ int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
 /*----------------------------------------------------------------------------
 Name:           DeleteName
 ------------------------------------------------------------------------------
-Beschreibung: Löscht einen Namen aus der Struktur Names.x. Die zugehörigen
-              Levelgruppen-Hashes werden mitgelöscht.
+Beschreibung: LÃ¶scht einen Namen aus der Struktur Names.x. Die zugehÃ¶rigen
+              Levelgruppen-Hashes werden mitgelÃ¶scht.
 Parameter
-      Eingang: pszname, char*, Zeiger auf Spielernamen, der gelöscht werden soll
+      Eingang: pszname, char*, Zeiger auf Spielernamen, der gelÃ¶scht werden soll
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = Name nicht gefunden
+RÃ¼ckgabewert:  0 = Alles OK, -1 = Fehler, -2 = Name nicht gefunden
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
 int DeleteName(char *pszName) {
@@ -3278,7 +3279,7 @@ int DeleteName(char *pszName) {
     uDeleteIndex = 0;
     if (pszName != NULL) {
         if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
-            // Prüfen, ob es diesen Namen gibt
+            // PrÃ¼fen, ob es diesen Namen gibt
             for (N = 0; (N < Names.uNameCount) && (!bNameFound); N++) {
                 if (strcmp(pszName,Names.Name[N].szName) == 0) {
                     // SDL_Log("%s: Name %s exist, deleting name ...",__FUNCTION__,pszName);
@@ -3291,7 +3292,7 @@ int DeleteName(char *pszName) {
                 for (N = uDeleteIndex; N < (EMERALD_MAX_PLAYERNAMES - 1); N++) {
                     memcpy(&Names.Name[N],&Names.Name[N + 1],sizeof(NAME));
                 }
-                memset(&Names.Name[N],0,sizeof(NAME));   // Der letzte Platz muss mit 0 aufgefüllt werden
+                memset(&Names.Name[N],0,sizeof(NAME));   // Der letzte Platz muss mit 0 aufgefÃ¼llt werden
                 Names.uNameCount--;
                 nErrorCode = WriteNamesFile();
             } else {

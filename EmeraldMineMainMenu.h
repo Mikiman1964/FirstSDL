@@ -14,7 +14,7 @@
 #define MAX_NAMES_IN_LIST                   4
 #define MAX_LEVELGROUPS_IN_LIST             4
 #define MAX_LEVELTITLES_IN_LIST             31
-// Farbige Rahmen für Gamecontroller und Joystick im Settingsmenü
+// Farbige Rahmen fÃ¼r Gamecontroller und Joystick im SettingsmenÃ¼
 #define COLOR_REC_1_W                       224
 #define COLOR_REC_1_H                       128
 #define COLOR_REC_2_W                       480
@@ -34,7 +34,7 @@ typedef struct {
     uint8_t  uFlashBrightness[20];
     char     szTempName[EMERALD_PLAYERNAME_LEN + 1];
     uint32_t uCursorPos;
-    int      nState;            // 0 = Hauptmenü, 1 = Namenseingabe
+    int      nState;            // 0 = HauptmenÃ¼, 1 = Namenseingabe
     uint32_t uMaxFlashIndex;
     uint32_t uFlashIndex;
     float    fSettingsbuttonAngle;
@@ -53,7 +53,7 @@ int MenuSelectLevelgroup(SDL_Renderer *pRenderer);
 int MenuSelectName(SDL_Renderer *pRenderer);
 void ScrollLevelGroups(int nButton);
 void ScrollPlayernames(int nButton);
-int SetMenuText(uint16_t *pMenuScreen, char *pszText, int nXpos, int nYpos,uint32_t uFont);
+int SetMenuText(uint16_t *pMenuScreen, char *pszText, int nXpos, int nYpos, uint32_t uFont);
 void SetMenuBorderAndClear(void);
 void SetStaticMenuElements(void);
 int SetDynamicMenuElements(void);
@@ -62,11 +62,11 @@ uint32_t GetLevelgroupBeamPosition(void);
 void ActivateInputPlayernameMode(void);
 void InitLists(void);
 int EvaluateGame(int *pnNewHighscoreIndex, uint32_t *puLevelPlayed);
-uint16_t GetFontElementByChar(char sign,uint32_t uFont);
+uint16_t GetFontElementByChar(char sign, uint32_t uFont);
 uint32_t GetRainbowColors(uint16_t uWert);
 int RenderSettingsbutton(SDL_Renderer *pRenderer);
 int SettingsMenu(SDL_Renderer *pRenderer);
-void RotateColors(RGBCOLOR *pColors,int nCount,int nCycles);
+void RotateColors(RGBCOLOR *pColors, int nCount, int nCycles);
 int ShowControllersAndJoysticks(SDL_Renderer *pRenderer);
 int ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int nXpos, int nYpos, int nWidth, int nHeight, int nDimm);
 void PrepareSettingsMenu(void);

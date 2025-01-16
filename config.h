@@ -7,14 +7,14 @@
 
 
 typedef struct {
-    bool        bStartDynamiteWithSpace;                                        // true = Dynamite wird mit Space gezündet
-    bool        bFullScreen;                                                    // true = Spiel läuft als Fullscreen
+    bool        bStartDynamiteWithSpace;                                        // true = Dynamite wird mit Space gezÃ¼ndet
+    bool        bFullScreen;                                                    // true = Spiel lÃ¤uft als Fullscreen
     bool        bEditorZoom;                                                    // true = 32x32 Pixel, sonst 16x16 Pixel
-    bool        bGameMusic;                                                     // true = Modfiles in den Gamemenüs abspielen
+    bool        bGameMusic;                                                     // true = Modfiles in den GamemenÃ¼s abspielen
     bool        bShowHighscores;                                                // true = Highscores zeigen, wenn genug Punkte
-    uint32_t    uResX;                                                          // Auflösung X bzw. Fensterbreite
-    uint32_t    uResY;                                                          // Auflösung Y bzw. Fensterhöhe
-    uint8_t     uLevelgroupMd5Hash[16];                                         // zuletzt gewählte Levelgruppe als MD5 Hash
+    uint32_t    uResX;                                                          // AuflÃ¶sung X bzw. Fensterbreite
+    uint32_t    uResY;                                                          // AuflÃ¶sung Y bzw. FensterhÃ¶he
+    uint8_t     uLevelgroupMd5Hash[16];                                         // zuletzt gewÃ¤hlte Levelgruppe als MD5 Hash
     char        szPlayername[EMERALD_PLAYERNAME_LEN + 1];                       // letzter Spieler
     uint32_t    uInputdevice;                                                   // 0 = kein Input device (Keyboard), 1 = Joystick, 2 = Gamecontroller
     uint32_t    uDeviceIndex;                                                   // Standard ist 0, d.h. das zuerst Gefundene
@@ -29,13 +29,13 @@ typedef struct {
     char        cJoystickFireButton;                                            // 'A', 'B', 'X' oder 'Y'
     char        cJoystickStartDynamiteButton;                                   // 'A', 'B', 'X' oder 'Y'
     char        cJoystickExitButton;                                            // 'A', 'B', 'X' oder 'Y'
-    uint32_t    uDisplay;                                                       // Ab 0 gezählt (eingestellt)
-    uint32_t    uDisplayUse;                                                    // Ab 0 gezählt (Dieses wird vervendet)
-    uint32_t    uKeyboardScancodeLeft;                                          // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_LEFT
-    uint32_t    uKeyboardScancodeRight;                                         // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_RIGHT
-    uint32_t    uKeyboardScancodeUp;                                            // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_UP
-    uint32_t    uKeyboardScancodeDown;                                          // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_DOWN
-    uint32_t    uKeyboardScancodeFire;                                          // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_LCTRL
+    uint32_t    uDisplay;                                                       // Ab 0 gezÃ¤hlt (eingestellt)
+    uint32_t    uDisplayUse;                                                    // Ab 0 gezÃ¤hlt (Dieses wird vervendet)
+    uint32_t    uKeyboardScancodeLeft;                                          // SDL_SCANCODE fÃ¼r Links, Standard ist SDL_SCANCODE_LEFT
+    uint32_t    uKeyboardScancodeRight;                                         // SDL_SCANCODE fÃ¼r Links, Standard ist SDL_SCANCODE_RIGHT
+    uint32_t    uKeyboardScancodeUp;                                            // SDL_SCANCODE fÃ¼r Links, Standard ist SDL_SCANCODE_UP
+    uint32_t    uKeyboardScancodeDown;                                          // SDL_SCANCODE fÃ¼r Links, Standard ist SDL_SCANCODE_DOWN
+    uint32_t    uKeyboardScancodeFire;                                          // SDL_SCANCODE fÃ¼r Links, Standard ist SDL_SCANCODE_LCTRL
 } CONFIG;
 
 

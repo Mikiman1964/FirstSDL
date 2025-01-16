@@ -10,16 +10,15 @@
 #define EMERALD_LEVELGROUPS_DIRECTORYNAME       "levelgroups"                   // High-Scores-Directory
 #define EMERALD_CONFIG_FILENAME                 "config.xml"                    // Konfigurationsfile
 #define EMERALD_DEFAULT_LEVELGROUP_FILENAME     "default_levelgroup.xml"        // Diese Levelgruppe ist immer vorhanden
-#define EMERALD_NAMES_FILENAME                  "names.dat"                     // Namen mit Handicaps, Games Played, Games Won und Totalscore f¸r jede Levelgruppe
+#define EMERALD_NAMES_FILENAME                  "names.dat"                     // Namen mit Handicaps, Games Played, Games Won und Totalscore f√ºr jede Levelgruppe
 
-#define EMERALD_GROUPNAME_LEN                   25                              // Maximale L‰nge f¸r Gruppennamen
-#define EMERALD_GROUP_PASSWORD_LEN              25                              // Maximale L‰nge f¸r Passwort einer Levelgruppe
+#define EMERALD_GROUPNAME_LEN                   25                              // Maximale L√§nge f√ºr Gruppennamen
+#define EMERALD_GROUP_PASSWORD_LEN              25                              // Maximale L√§nge f√ºr Passwort einer Levelgruppe
 #define EMERALD_MAX_LEVELGROUPFILES             100                             // Maximale Anzahl von Levelgruppen
-#define EMERALD_MAX_FILENAME_LEN                255                             // Maximale Filenamenl‰nge ist bei den meisten Dateisystemen 255
-#define EMERALD_PLAYERNAME_LEN                  29                              // Maximale Spielernamenl‰nge
+#define EMERALD_MAX_FILENAME_LEN                255                             // Maximale Filenamenl√§nge ist bei den meisten Dateisystemen 255
+#define EMERALD_PLAYERNAME_LEN                  29                              // Maximale Spielernamenl√§nge
 #define EMERALD_MAX_LEVELCOUNT                  1000                            // maximale Anzahl Level in einer Levelgruppe
 #define EMERALD_MAX_PLAYERNAMES                 100
-
 
 #define BUTTONLABEL_CREATE_PLAYER               "CREATE_PLAYER"
 #define BUTTONLABEL_DELETE_PLAYER               "DELETE_PLAYER"
@@ -28,7 +27,7 @@
 #define BUTTONLABEL_EXIT_HIGHSCORES             "EXIT_HIGHSCORES"
 
 
-/////////////////////// F¸r names.dat ////////////////START//////////
+/////////////////////// F√ºr names.dat ////////////////START//////////
 typedef struct {
     bool     bDelete;   // wird nicht verwendet
     uint8_t  uHash[16];
@@ -51,18 +50,18 @@ typedef struct {
     NAME Name[EMERALD_MAX_PLAYERNAMES];
     uint8_t uSecurityHash[16];
 } NAMES;
-/////////////////////// F¸r names.dat ////////////////ENDE///////////
+/////////////////////// F√ºr names.dat ////////////////ENDE///////////
 
 typedef struct {
-    bool        bValid;                                                         // diese Struktur enth‰lt einen validen Spieler
+    bool        bValid;                                                         // diese Struktur enth√§lt einen validen Spieler
     char        szPlayername[EMERALD_PLAYERNAME_LEN + 1];                       // Aktueller Spieler
-    uint8_t     uLevelgroupMd5Hash[16];                                         // aktuell gew‰hlte Levelgruppe als MD5 Hash
-    uint32_t    uLevel;                                                         // aktuell gew‰hltes Level (wird beim Init. auf Handicap gestellt)
-    uint32_t    uHandicap;                                                      // aktuelles Handicap in der gew‰hlten Levelgruppe
-    uint32_t    uGamesPlayed;                                                   // Anzahl gespielter Level in der gew‰hlten Levelgruppe
-    uint32_t    uGamesWon;                                                      // Anzahl gewonnener Spiele in der gew‰hlten Levelgruppe
-    uint32_t    uTotalScore;                                                    // Gesamtpunktezahl in der gew‰hlten Levelgruppe
-    uint32_t    uPlayTimeS;                                                     // Gesamtspielzeit in Sekunden in der gew‰hlten Levelgruppe
+    uint8_t     uLevelgroupMd5Hash[16];                                         // aktuell gew√§hlte Levelgruppe als MD5 Hash
+    uint32_t    uLevel;                                                         // aktuell gew√§hltes Level (wird beim Init. auf Handicap gestellt)
+    uint32_t    uHandicap;                                                      // aktuelles Handicap in der gew√§hlten Levelgruppe
+    uint32_t    uGamesPlayed;                                                   // Anzahl gespielter Level in der gew√§hlten Levelgruppe
+    uint32_t    uGamesWon;                                                      // Anzahl gewonnener Spiele in der gew√§hlten Levelgruppe
+    uint32_t    uTotalScore;                                                    // Gesamtpunktezahl in der gew√§hlten Levelgruppe
+    uint32_t    uPlayTimeS;                                                     // Gesamtspielzeit in Sekunden in der gew√§hlten Levelgruppe
 } ACTUALPLAYER;
 
 
@@ -78,11 +77,11 @@ typedef struct {
 
 typedef struct {
     bool bOK;
-    char szFilename[EMERALD_MAX_FILENAME_LEN + 1];                              // Dateiname der ausgew‰hlten Levelgruppe
+    char szFilename[EMERALD_MAX_FILENAME_LEN + 1];                              // Dateiname der ausgew√§hlten Levelgruppe
     char szLevelgroupname[EMERALD_GROUPNAME_LEN + 1];                           // Levelgruppenname
     char szPasswordHash[32 + 1];
     uint8_t uMd5Hash[16];
-    uint32_t uLevelCount;                                                       // Anzahl Level in der ausgew‰hlten Levelgruppe
+    uint32_t uLevelCount;                                                       // Anzahl Level in der ausgew√§hlten Levelgruppe
     char szLevelTitle[EMERALD_MAX_LEVELCOUNT][EMERALD_TITLE_LEN + 1];           // Levelname
     char szLevelAuthor[EMERALD_MAX_LEVELCOUNT][EMERALD_AUTHOR_LEN + 1];         // Levelname
 } LEVELGROUP;

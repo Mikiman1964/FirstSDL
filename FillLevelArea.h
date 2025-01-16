@@ -2,10 +2,10 @@
 #define FILLLEVELAREA_H_INCLUDED
 
 
-// Bei Levelgröße 1000 x 1000 werden bis zu 2.500.000 Elemente benötigt
+// Bei LevelgrÃ¶ÃŸe 1000 x 1000 werden bis zu 2.500.000 Elemente benÃ¶tigt
 #define FILLSTACK_SIZE      (MAX_LEVEL_W * MAX_LEVEL_H * 3) // aktuell 3.000.000 Elemente
 
-// Für die iterative Füllroutine
+// FÃ¼r die iterative FÃ¼llroutine
 typedef struct {
 int nX;
 int nY;

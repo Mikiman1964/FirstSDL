@@ -51,39 +51,39 @@ uint8_t* g_pSfxPointer_wav[] = {
 // Bit
 /*01*/    &_binary_sound_ping_wav_start,&_binary_sound_ping_wav_end,                        // Ping, Emerald oder Saphir fallen auf etwas Hartes
 /*02*/    &_binary_sound_mine_wav_start,&_binary_sound_mine_wav_end,                        // Mine
-/*03*/    &_binary_sound_beetle_wav_start,&_binary_sound_beetle_wav_end,                    // Käfer
+/*03*/    &_binary_sound_beetle_wav_start,&_binary_sound_beetle_wav_end,                    // KÃ¤fer
 /*04*/    &_binary_sound_wheel_wav_start,&_binary_sound_wheel_wav_end,                      // Rad
 /*05*/    &_binary_sound_alien_wav_start,&_binary_sound_alien_wav_end,                      // Alien
 /*06*/    &_binary_sound_magic_wall_wav_start,&_binary_sound_magic_wall_wav_end,            // Magic Wall
 /*07*/    &_binary_sound_man_space_wav_start,&_binary_sound_man_space_wav_end,              // Man geht in Space
-/*08*/    &_binary_sound_door_wav_start,&_binary_sound_door_wav_end,                        // Man geht durch Tür
-/*09*/    &_binary_sound_nut_wav_start,&_binary_sound_nut_wav_end,                          // Nuss fällt auf Etwas
+/*08*/    &_binary_sound_door_wav_start,&_binary_sound_door_wav_end,                        // Man geht durch TÃ¼r
+/*09*/    &_binary_sound_nut_wav_start,&_binary_sound_nut_wav_end,                          // Nuss fÃ¤llt auf Etwas
 /*10*/    &_binary_sound_nut_crack_wav_start,&_binary_sound_nut_crack_wav_end,              // Nuss wird geknackt
-/*11*/    &_binary_sound_replicator_wav_start,&_binary_sound_replicator_wav_end,            // Replikator läuft
+/*11*/    &_binary_sound_replicator_wav_start,&_binary_sound_replicator_wav_end,            // Replikator lÃ¤uft
 /*12*/    &_binary_sound_man_push_wav_start,&_binary_sound_man_push_wav_end,                // Man schiebt Etwas
 /*13*/    &_binary_sound_yam_wav_start,&_binary_sound_yam_wav_end,                          // Yam
-/*14*/    &_binary_sound_stone_wav_start,&_binary_sound_stone_wav_end,                      // Stein fällt auf Etwas
+/*14*/    &_binary_sound_stone_wav_start,&_binary_sound_stone_wav_end,                      // Stein fÃ¤llt auf Etwas
 /*15*/    &_binary_sound_explosion_wav_start,&_binary_sound_explosion_wav_end,              // Explosion
 /*16*/    &_binary_sound_dynamite_tick_wav_start,&_binary_sound_dynamite_tick_wav_end,      // Dynamit aktiv
-/*17*/    &_binary_sound_pool_blub_wav_start,&_binary_sound_pool_blub_wav_end,              // Etwas ist ins Säurebecken gefallen
+/*17*/    &_binary_sound_pool_blub_wav_start,&_binary_sound_pool_blub_wav_end,              // Etwas ist ins SÃ¤urebecken gefallen
 /*18*/    &_binary_sound_man_take_wav_start,&_binary_sound_man_take_wav_end,                // Man nimmt etwas auf
-/*19*/    &_binary_sound_man_dig_wav_start,&_binary_sound_man_dig_wav_end,                  // Man gräbt Sand
-/*20*/    &_binary_sound_door_exit_wav_start,&_binary_sound_door_exit_wav_end,              // Man geht in die Endtür
+/*19*/    &_binary_sound_man_dig_wav_start,&_binary_sound_man_dig_wav_end,                  // Man grÃ¤bt Sand
+/*20*/    &_binary_sound_door_exit_wav_start,&_binary_sound_door_exit_wav_end,              // Man geht in die EndtÃ¼r
 /*21*/    &_binary_sound_man_cry_wav_start,&_binary_sound_man_cry_wav_end,                  // Man schreit
-/*22*/    &_binary_sound_cheese_wav_start,&_binary_sound_cheese_wav_end,                    // Käse breitet sich aus
+/*22*/    &_binary_sound_cheese_wav_start,&_binary_sound_cheese_wav_end,                    // KÃ¤se breitet sich aus
 /*23*/    &_binary_sound_gong_wav_start,&_binary_sound_gong_wav_end,                        // Zeit ist bald um
 /*24*/    &_binary_sound_squeeze_wav_start,&_binary_sound_squeeze_wav_end,                  // Saphir gequetscht / Objekt durch blaue Wand
-/*25*/    &_binary_sound_switch_wav_start,&_binary_sound_switch_wav_end,                    // Ein Schalter wird betätigt
+/*25*/    &_binary_sound_switch_wav_start,&_binary_sound_switch_wav_end,                    // Ein Schalter wird betÃ¤tigt
 /*26*/    &_binary_sound_mole_wav_start,&_binary_sound_mole_wav_end,                        // Maulwurf
-/*27*/    &_binary_sound_wheel_door_time_wav_start,&_binary_sound_wheel_door_time_wav_end,  // Rad für Zeit-Tür
-/*28*/    &_binary_sound_door_close_open_wav_start,&_binary_sound_door_close_open_wav_end,  // Tür schließen / öffnen
+/*27*/    &_binary_sound_wheel_door_time_wav_start,&_binary_sound_wheel_door_time_wav_end,  // Rad fÃ¼r Zeit-TÃ¼r
+/*28*/    &_binary_sound_door_close_open_wav_start,&_binary_sound_door_close_open_wav_end,  // TÃ¼r schlieÃŸen / Ã¶ffnen
 /*29*/    &_binary_sound_replicator_plop_wav_start,&_binary_sound_replicator_plop_wav_end,  // Replikator erzeugt neues Objekt
 /*30*/    &_binary_sound_dynamite_start_wav_start,&_binary_sound_dynamite_start_wav_end,    // Dynamit wird gestartet
 /*31*/    &_binary_sound_conveyorbelt_wav_start,&_binary_sound_conveyorbelt_wav_end,        // Laufband
 /*32*/    &_binary_sound_teleporter_wav_start,&_binary_sound_teleporter_wav_end,            // Teleporter
-/*33*/    &_binary_sound_steel_wall_grow_wav_start,&_binary_sound_steel_wall_grow_wav_end,  // Mauer und Stahl wächst
+/*33*/    &_binary_sound_steel_wall_grow_wav_start,&_binary_sound_steel_wall_grow_wav_end,  // Mauer und Stahl wÃ¤chst
 /*34*/    &_binary_sound_bomb_remote_wav_start,&_binary_sound_bomb_remote_wav_end,          // ferngesteuerte Bombe
-/*35*/    &_binary_sound_pipe_wav_start,&_binary_sound_pipe_wav_end,                        // Man läuft in Röhre
+/*35*/    &_binary_sound_pipe_wav_start,&_binary_sound_pipe_wav_end,                        // Man lÃ¤uft in RÃ¶hre
 /*36*/    &_binary_sound_shield_end_wav_start,&_binary_sound_shield_end_wav_end,            // Schutzschild geht zu Ende
 /*37*/    &_binary_sound_slime_slurp_wav_start,&_binary_sound_slime_slurp_wav_end,          // Schleim frisst etwas
 /*38*/    &_binary_sound_slime_move_wav_start,&_binary_sound_slime_move_wav_end,            // Schleim bewegt sich
@@ -96,11 +96,11 @@ Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];
 /*----------------------------------------------------------------------------
 Name:           InitGameSound
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert das Soundsystem für das Spiel.
+Beschreibung: Initialisiert das Soundsystem fÃ¼r das Spiel.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: GameSound.x, g_pChunk[]
 ------------------------------------------------------------------------------*/
 int InitGameSound(void) {
@@ -110,8 +110,8 @@ int InitGameSound(void) {
         g_pChunk[I] = NULL;
     }
     GameSound.uAllSounds = 0;
-    if (Mix_OpenAudio(44100,AUDIO_S16,2,1024) == 0) {       // Samplerate, Audioformat,Kanäle,Chunksize die in einem Stück verarbeitet wird
-        Mix_AllocateChannels(MAX_WAV_CHUNKS);  // Die Allocation muss nach Mix_OpenAudio erfolgen, ansonsten bleibt es bei 8 Kanälen
+    if (Mix_OpenAudio(44100,AUDIO_S16,2,1024) == 0) {       // Samplerate, Audioformat,KanÃ¤le,Chunksize die in einem StÃ¼ck verarbeitet wird
+        Mix_AllocateChannels(MAX_WAV_CHUNKS);  // Die Allocation muss nach Mix_OpenAudio erfolgen, ansonsten bleibt es bei 8 KanÃ¤len
         // SDL_Log("%s: allocated channels: %d",__FUNCTION__,Mix_AllocateChannels(-2));
         return CreateWavChunks();
     } else {
@@ -131,7 +131,7 @@ Parameter
                uCoordinate, uint32_t, lineare Level-Koordinate, wo Sound entstanden ist.
                     Einige Sounds werden nur im sichtbaren Bereich abgespielt
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: GameSound.x, Playfield.x
 ------------------------------------------------------------------------------*/
 void PreparePlaySound(uint64_t uSound, uint32_t uCoordinate) {
@@ -139,10 +139,10 @@ void PreparePlaySound(uint64_t uSound, uint32_t uCoordinate) {
     uint32_t uTopLeftYpos;   // obere linke Ecke, Y-Position (Level-Koordinate)
     uint32_t uElementXpos;
     uint32_t uElementYpos;
-    bool     bAlwaysOn;      // Sound ist unabhängig vom sichtbaren Bereich aktiv
+    bool     bAlwaysOn;      // Sound ist unabhÃ¤ngig vom sichtbaren Bereich aktiv
     uint32_t uAddX,uAddY;
 
-    // Bei "ungeraden" Auflösung wird der hörbare Bereich um ein Feld nach unten bzw. rechts erweitert.
+    // Bei "ungeraden" AuflÃ¶sung wird der hÃ¶rbare Bereich um ein Feld nach unten bzw. rechts erweitert.
     if ((Config.uResX % FONT_W) != 0) {
         uAddX = 1;
     } else {
@@ -155,9 +155,9 @@ void PreparePlaySound(uint64_t uSound, uint32_t uCoordinate) {
     }
     bAlwaysOn = ((uSound & 0x8000000000000000) != 0);
     uSound = uSound & 0x7FFFFFFFFFFFFFFF;               // Always-Bit ausblenden
-    // Falls Sound bisher noch nicht aktiv ist, muss hier die Koordinate geprüft werden, ob wir uns im sichtbaren Bereich befinden
+    // Falls Sound bisher noch nicht aktiv ist, muss hier die Koordinate geprÃ¼ft werden, ob wir uns im sichtbaren Bereich befinden
     if ((GameSound.uAllSounds & uSound) == 0) {
-        if (bAlwaysOn) {   // unabhängig vom sichtbaren Bereich aktiv ?
+        if (bAlwaysOn) {   // unabhÃ¤ngig vom sichtbaren Bereich aktiv ?
             GameSound.uAllSounds |= uSound;
         } else {
             // Pixel-Koordinate in Level-Koordinate umrechnen
@@ -181,7 +181,7 @@ Beschreibung: Bereitet das Apspielen eines Sounds vor.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: GameSound.x, g_pChunk[]
 ------------------------------------------------------------------------------*/
 int PlayAllSounds(void) {
@@ -214,15 +214,15 @@ int PlayAllSounds(void) {
 /*----------------------------------------------------------------------------
 Name:           CreateWavChunks
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt WAV-Chunks aus WAV-Dateien. Die WAV-Chunks können mit
+Beschreibung: Erzeugt WAV-Chunks aus WAV-Dateien. Die WAV-Chunks kÃ¶nnen mit
               SDL_Mixer direkt auf einem Kanal/Track ausgegeben werden.
               Vor Aufruf dieser Funktion muss der Audio-Mixer mit Mix_OpenAudio
-              geöffnet worden sein und die Anzahl der Tracks mit Mix_AllocateChannels()
-              ggf. erhöht worden sein.
+              geÃ¶ffnet worden sein und die Anzahl der Tracks mit Mix_AllocateChannels()
+              ggf. erhÃ¶ht worden sein.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: g_pChunk[], g_pSfxPointer_wav[]
 ------------------------------------------------------------------------------*/
 int CreateWavChunks(void) {
@@ -236,7 +236,7 @@ int CreateWavChunks(void) {
     nErrorCode = 0;
     while ((g_pSfxPointer_wav[I * 2] != NULL) && (g_pSfxPointer_wav[I * 2 + 1] != NULL) && (I < MAX_WAV_CHUNKS) && (nErrorCode == 0)) {
         uSoundSize = g_pSfxPointer_wav[I * 2 + 1] - g_pSfxPointer_wav[I * 2];
-        pSDLStreamPointer = SDL_RWFromMem((void*)g_pSfxPointer_wav[I * 2],uSoundSize);// Erzeugt SDL-Speicherstruktur für Speicher (Stream)
+        pSDLStreamPointer = SDL_RWFromMem((void*)g_pSfxPointer_wav[I * 2],uSoundSize);// Erzeugt SDL-Speicherstruktur fÃ¼r Speicher (Stream)
         if (pSDLStreamPointer != NULL) {
             pChunk = Mix_LoadWAV_RW(pSDLStreamPointer,1);
             if (pChunk != NULL) {
@@ -264,7 +264,7 @@ Beschreibung: Gibt alle erzeugten WAV-Chunks wieder frei. Wird am Ende des
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: g_pChunk[]
 ------------------------------------------------------------------------------*/
 void FreeWavChunks(void) {

@@ -20,15 +20,15 @@ extern CONFIG Config;
 /*----------------------------------------------------------------------------
 Name:           CheckPlayTime
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob noch Spielzeit verfügbar ist und verringert dann nach
+Beschreibung: PrÃ¼ft, ob noch Spielzeit verfÃ¼gbar ist und verringert dann nach
               jedem Frame die Spielzeit um 1.
               Diese Funktion wird aus RenderLevel() aufgerufen, d.h. bei jedem
-              Frame. Zusätzlich wird hier auch der Frame-Counter erhöht.
+              Frame. ZusÃ¤tzlich wird hier auch der Frame-Counter erhÃ¶ht.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void CheckPlayTime(void) {
@@ -47,7 +47,7 @@ Beschreibung: Zeigt das Spielepanel mit den aktuellen Werten wie z.B. Time,
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, ge_DisplayMode.x, Config.x
 ------------------------------------------------------------------------------*/
 int ShowPanel(SDL_Renderer *pRenderer) {
@@ -56,7 +56,7 @@ int ShowPanel(SDL_Renderer *pRenderer) {
     char szNumber[8];
     uint32_t uRemainingSeconds;
 
-    // Die folgenden Werte müssen 4-stellig bleiben
+    // Die folgenden Werte mÃ¼ssen 4-stellig bleiben
     if (Playfield.uTotalScore > 9999) {
         Playfield.uTotalScore = 9999;
     }
@@ -120,11 +120,11 @@ int ShowPanel(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           WriteShieldValue
 ------------------------------------------------------------------------------
-Beschreibung: Zeichnet für die Schildmünze den verbleibenden Schutz.
+Beschreibung: Zeichnet fÃ¼r die SchildmÃ¼nze den verbleibenden Schutz.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Config.x
 ------------------------------------------------------------------------------*/
 int WriteShieldValue(SDL_Renderer *pRenderer) {
@@ -161,11 +161,11 @@ int WriteShieldValue(SDL_Renderer *pRenderer) {
 Name:           WritePanelDynamitHammerKeys
 ------------------------------------------------------------------------------
 Beschreibung: Zeichnet Dynamit- und Hammer-Anzahl ins Panel.
-              Zusätzlich werden noch aufgesammelte Schlüssel eingeblendet.
+              ZusÃ¤tzlich werden noch aufgesammelte SchlÃ¼ssel eingeblendet.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Config.x
 ------------------------------------------------------------------------------*/
 int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
@@ -210,7 +210,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
                         DestR.y = Config.uResY - FONT_H + 8;
                         DestR.w = FONT_W / 2;
                         DestR.h = FONT_H / 2;
-                        if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_WHITE),NULL,&DestR) == 0) { // Weißer Schlüssel
+                        if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_WHITE),NULL,&DestR) == 0) { // WeiÃŸer SchlÃ¼ssel
                             nErrorCode = 0;
                         }
                     } else {
@@ -233,7 +233,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_RED),NULL,&DestR); // roter Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_RED),NULL,&DestR); // roter SchlÃ¼ssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(red Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -243,7 +243,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_YELLOW),NULL,&DestR); // gelber Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_YELLOW),NULL,&DestR); // gelber SchlÃ¼ssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(yellow Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -253,7 +253,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GREEN),NULL,&DestR); // grüner Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GREEN),NULL,&DestR); // grÃ¼ner SchlÃ¼ssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(green Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -263,7 +263,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_BLUE),NULL,&DestR); // blauer Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_BLUE),NULL,&DestR); // blauer SchlÃ¼ssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(blue Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -273,7 +273,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H;
         DestR.w = FONT_W;
         DestR.h = FONT_H;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GENERAL),NULL,&DestR); // General-Schlüssel
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GENERAL),NULL,&DestR); // General-SchlÃ¼ssel
         if (nErrorCode != 0) {
             SDL_Log("%s: SDL_RenderCopy(general Key) failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -292,15 +292,15 @@ Parameter
                szText, const char *, Zeiger auf Text
                nXpos, int, X-Position in Pixeln
                nYpos, int, Y-Position in Pixeln
-               nFontSize, int, Skalierung für Font (Standard = 32, für Panel = 16)
-               uFont, uint32_t, möglich ist Folgendes:
+               nFontSize, int, Skalierung fÃ¼r Font (Standard = 32, fÃ¼r Panel = 16)
+               uFont, uint32_t, mÃ¶glich ist Folgendes:
                     EMERALD_FONT_BLUE
                     EMERALD_FONT_STEEL_BLUE
                     EMERALD_FONT_GREEN
                     EMERALD_FONT_STEEL_GREEN
 
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int WritePanelText(SDL_Renderer *pRenderer, const char *szText, int nXpos, int nYpos, int nFontSize,uint32_t uFont) {
@@ -336,7 +336,7 @@ Beschreibung: Erzeugt ein Fenster mit Text und wartet auf "Fire" oder "Space".
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int ConfirmMessage(SDL_Renderer *pRenderer) {
@@ -356,7 +356,7 @@ int ConfirmMessage(SDL_Renderer *pRenderer) {
     uSpaceState = 0;
     if (CreateMessageWindow(pRenderer,-1,-1,0,pszMessage) == 0) {
         nErrorCode = 0;
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lÃ¤sst Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         do {
             UpdateManKey();
             if ((uFireState == 0) && (!ManKey.bFire)) {

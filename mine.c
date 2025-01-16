@@ -13,19 +13,19 @@ Beschreibung: Steuert eine nach oben laufende Mine im Level.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineUp(uint32_t I) {
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I,EMERALD_SPACE);
         PreparePlaySound(SOUND_EXPLOSION,I);
-        return; // Für die Mine ist das Spiel hier zu Ende
+        return; // FÃ¼r die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    // Hat Mine Kontakt zu grÃ¼nem/gelbem KÃ¤se ?
     if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_UP_TO_RIGHT;
-        return; // Für die Mine ist das Spiel nächste Runde zu Ende
+        return; // FÃ¼r die Mine ist das Spiel nÃ¤chste Runde zu Ende
     }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
@@ -33,19 +33,19 @@ void ControlMineUp(uint32_t I) {
         if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
             SetElementToNextPosition(I,EMERALD_ANIM_UP,EMERALD_ANIM_CLEAN_DOWN,EMERALD_MINE_UP);
         } else {                        // Oben ist nicht frei
-            // Mine bleibt zunächst auf "oben" muss sich aber bei Blockade nach rechts drehen
+            // Mine bleibt zunÃ¤chst auf "oben" muss sich aber bei Blockade nach rechts drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_RIGHT;
         }
     }
-    else if (!IS_SPACE(I - 1)) { // Hat Mine links Führung?
+    else if (!IS_SPACE(I - 1)) { // Hat Mine links FÃ¼hrung?
         if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Ist nach oben frei?
             SetElementToNextPosition(I,EMERALD_ANIM_UP,EMERALD_ANIM_CLEAN_DOWN,EMERALD_MINE_UP);
         } else {                        // Oben ist nicht frei
-            // Mine bleibt zunächst auf "oben" muss sich aber bei Blockade nach rechts drehen
+            // Mine bleibt zunÃ¤chst auf "oben" muss sich aber bei Blockade nach rechts drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_RIGHT;
         }
     } else {                      // Linke Wand verloren
-        // Mine bleibt zunächst auf "oben" muss sich aber bei Wand-Verlust nach links drehen
+        // Mine bleibt zunÃ¤chst auf "oben" muss sich aber bei Wand-Verlust nach links drehen
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_UP_TO_LEFT | EMERALD_ANIM_LOST_GUIDE;
     }
 }
@@ -58,19 +58,19 @@ Beschreibung: Steuert eine nach rechts laufende Mine im Level.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineRight(uint32_t I) {
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I,EMERALD_SPACE);
         PreparePlaySound(SOUND_EXPLOSION,I);
-        return; // Für die Mine ist das Spiel hier zu Ende
+        return; // FÃ¼r die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    // Hat Mine Kontakt zu grÃ¼nem/gelbem KÃ¤se ?
     if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_RIGHT_TO_DOWN;
-        return; // Für die Mine ist das Spiel nächste Runde zu Ende
+        return; // FÃ¼r die Mine ist das Spiel nÃ¤chste Runde zu Ende
     }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
@@ -78,18 +78,18 @@ void ControlMineRight(uint32_t I) {
         if (IS_SPACE(I + 1)) {    // Ist rechts frei?
             SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MINE_RIGHT);
         } else {                            // Rechts ist nicht frei
-            // Mine bleibt zunächst auf "rechts" muss sich aber bei Blockade nach unten drehen
+            // Mine bleibt zunÃ¤chst auf "rechts" muss sich aber bei Blockade nach unten drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_DOWN;
         }
-    } else if (!IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Hat Mine links Führung?
+    } else if (!IS_SPACE(I - Playfield.uLevel_X_Dimension)) {  // Hat Mine links FÃ¼hrung?
         if (IS_SPACE(I + 1)) {    // Ist nach rechts frei?
             SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MINE_RIGHT);
         } else {                            // Rechts ist nicht frei
-            // Mine bleibt zunächst auf "rechts" muss sich aber bei Blockade nach unten drehen
+            // Mine bleibt zunÃ¤chst auf "rechts" muss sich aber bei Blockade nach unten drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_DOWN;
         }
     } else {                          // Linke Wand verloren
-        // Mine bleibt zunächst auf "rechts" muss sich aber bei Wand-Verlust nach oben drehen
+        // Mine bleibt zunÃ¤chst auf "rechts" muss sich aber bei Wand-Verlust nach oben drehen
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_RIGHT_TO_UP | EMERALD_ANIM_LOST_GUIDE;
     }
 }
@@ -102,7 +102,7 @@ Beschreibung: Steuert eine nach unten laufende Mine im Level.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineDown(uint32_t I) {
@@ -113,43 +113,43 @@ void ControlMineDown(uint32_t I) {
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I,EMERALD_SPACE);
         PreparePlaySound(SOUND_EXPLOSION,I);
-        return; // Für die Mine ist das Spiel hier zu Ende
+        return; // FÃ¼r die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    // Hat Mine Kontakt zu grÃ¼nem/gelbem KÃ¤se ?
     if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
-        return; // Für die Mine ist das Spiel nächste Runde zu Ende
+        return; // FÃ¼r die Mine ist das Spiel nÃ¤chste Runde zu Ende
     }
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
         // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
         Playfield.pStatusAnimation[I] = 0;
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
             SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_MINE_DOWN);
-        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Mine ins SÃ¤urebecken?
             // SDL_Log("Mine falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pInvalidElement[I] = EMERALD_MINE_DOWN;
             PreparePlaySound(SOUND_POOL_BLUB,I);
             return;
         } else {                            // Unten ist nicht frei
-            // Mine bleibt zunächst auf "unten" muss sich aber bei Blockade nach links drehen
+            // Mine bleibt zunÃ¤chst auf "unten" muss sich aber bei Blockade nach links drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
         }
     } else if (!IS_SPACE(I + 1)) {   // Links von Mine irgendwas?
         if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
             SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_CLEAN_UP,EMERALD_MINE_DOWN);
-        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Mine ins Säurebecken?
+        } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Mine ins SÃ¤urebecken?
             // SDL_Log("Mine falls in pool");
             Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
             Playfield.pInvalidElement[I] = EMERALD_MINE_DOWN;
             PreparePlaySound(SOUND_POOL_BLUB,I);
             return;
         } else {                            // Unten ist nicht frei
-            // Mine bleibt zunächst auf "unten" muss sich aber bei Blockade nach links drehen
+            // Mine bleibt zunÃ¤chst auf "unten" muss sich aber bei Blockade nach links drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_LEFT;
         }
     } else {                          // Linke Wand verloren
-        // Mine bleibt zunächst auf "unten" muss sich aber bei Wand-Verlust nach rechts drehen
+        // Mine bleibt zunÃ¤chst auf "unten" muss sich aber bei Wand-Verlust nach rechts drehen
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_DOWN_TO_RIGHT | EMERALD_ANIM_LOST_GUIDE;
     }
 }
@@ -162,19 +162,19 @@ Beschreibung: Steuert eine nach links laufende Mine im Level.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMineLeft(uint32_t I) {
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MINE_WILL_EXPLODE) {
         ControlCentralExplosion(I,EMERALD_SPACE);
         PreparePlaySound(SOUND_EXPLOSION,I);
-        return; // Für die Mine ist das Spiel hier zu Ende
+        return; // FÃ¼r die Mine ist das Spiel hier zu Ende
     }
-    // Hat Mine Kontakt zu grünem/gelbem Käse ?
+    // Hat Mine Kontakt zu grÃ¼nem/gelbem KÃ¤se ?
     if (IsCheeseAround(I)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_MINE_WILL_EXPLODE | EMERALD_ANIM_SPIN_LEFT_TO_UP;
-        return; // Für die Mine ist das Spiel nächste Runde zu Ende
+        return; // FÃ¼r die Mine ist das Spiel nÃ¤chste Runde zu Ende
     }
     // Hatte Mine vor Drehung Wandverlust -> dann versuchen neue Richtung zu gehen
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_LOST_GUIDE) {
@@ -182,18 +182,18 @@ void ControlMineLeft(uint32_t I) {
         if (IS_SPACE(I - 1)) {    // Ist nach links frei?
             SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_MINE_LEFT);
         } else {                           // Links ist nicht frei
-            // Mine bleibt zunächst auf "links" muss sich aber bei Blockade nach oben drehen
+            // Mine bleibt zunÃ¤chst auf "links" muss sich aber bei Blockade nach oben drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_UP;
         }
     } else if ( (!IS_SPACE(I + Playfield.uLevel_X_Dimension)) && (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] != EMERALD_ACIDPOOL) ) {   // Links von Mine irgendwas? AcidPool ist wie Space.
         if (IS_SPACE(I - 1)) {   // Ist nach links frei?
             SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_MINE_LEFT);
         } else {                            // Links ist nicht frei
-            // Mine bleibt zunächst auf "links" muss sich aber bei Blockade nach oben drehen
+            // Mine bleibt zunÃ¤chst auf "links" muss sich aber bei Blockade nach oben drehen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_UP;
         }
     } else {                          // Linke Wand verloren
-        // Mine bleibt zunächst auf "links" muss sich aber bei Wand-Verlust nach unten drehen
+        // Mine bleibt zunÃ¤chst auf "links" muss sich aber bei Wand-Verlust nach unten drehen
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_SPIN_LEFT_TO_DOWN | EMERALD_ANIM_LOST_GUIDE;
     }
 }
@@ -203,11 +203,11 @@ void ControlMineLeft(uint32_t I) {
 Name:           ControlContactMine
 ------------------------------------------------------------------------------
 Beschreibung: Steuert eine Kontakt-Mine. Sobald sich ein Objekt neben dieser Mine
-              befindet, wird eine Explosion ausgelöst.
+              befindet, wird eine Explosion ausgelÃ¶st.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlContactMine(uint32_t I) {
@@ -223,11 +223,11 @@ void ControlContactMine(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           IsContactMineExplode
 ------------------------------------------------------------------------------
-Beschreibung: Prüft für eine Kontakt-Mine, ob sich "Monster" in der Nähe befinden.
+Beschreibung: PrÃ¼ft fÃ¼r eine Kontakt-Mine, ob sich "Monster" in der NÃ¤he befinden.
 Parameter
       Eingang: uElement, uint16_t, Element
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsContactMineExplode(uint16_t uElement) {
@@ -244,11 +244,11 @@ bool IsContactMineExplode(uint16_t uElement) {
 /*----------------------------------------------------------------------------
 Name:           ControlDynamiteOn
 ------------------------------------------------------------------------------
-Beschreibung: Steuert ein angezündetes Dynamit und bringt es zur Explosion.
+Beschreibung: Steuert ein angezÃ¼ndetes Dynamit und bringt es zur Explosion.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlDynamiteOn(uint32_t I) {

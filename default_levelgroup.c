@@ -1,6 +1,5 @@
-#include "loadlevel.h"  // Für den Dateinamen
+#include "loadlevel.h"  // FÃ¼r den Dateinamen
 #include "mystd.h"
-
 
 uint8_t g_default_levelgroup[10897] = {
 	0x3C, 0x3F, 0x78, 0x6D, 0x6C, 0x20, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3D, 0x22, 0x31,
@@ -910,7 +909,7 @@ Beschreibung: Schreibt die Default-Levelgruppe. Wenn das nicht funktioniert,
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: g_default_levelgroup
 ------------------------------------------------------------------------------*/
 int WriteDefaultLevelgroup(void) {

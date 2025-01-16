@@ -13,11 +13,11 @@ Beschreibung: Steuert eine Nuss.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlNut(uint32_t I) {
-    uint8_t uFree;  // Richtung, in die Nut rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+    uint8_t uFree;  // Richtung, in die Nut rollen kÃ¶nnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
     uint16_t uHitElement;       // Element, welches getroffen wird
     uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
@@ -41,14 +41,14 @@ void ControlNut(uint32_t I) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_NUT_CRACK2;
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_NUT);
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Nut ins Säurebecken?
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Nut ins SÃ¤urebecken?
         // SDL_Log("Nut falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_NUT;
         PreparePlaySound(SOUND_POOL_BLUB,I);
         return;
     } else {                            // Unten ist nicht frei
-        // Nut bleibt zunächst auf Platz liegen
+        // Nut bleibt zunÃ¤chst auf Platz liegen
         uHitCoordinate = I + Playfield.uLevel_X_Dimension;
         uHitElement = Playfield.pLevel[uHitCoordinate];
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
@@ -89,7 +89,7 @@ void ControlNut(uint32_t I) {
                     SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_NUT);
                 }
             }
-        // Ab hier prüfen, ob Nut durch Laufband bewegt werden kann
+        // Ab hier prÃ¼fen, ob Nut durch Laufband bewegt werden kann
         } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||

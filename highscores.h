@@ -6,14 +6,14 @@
 #define EMERALD_HIGHSCORES_DIRECTORYNAME            "highscores"                        // High-Scores-Directory
 #define EMERALD_HIGHSCORES_FILENAME                 "high_"                             // High-Scores-Filename mit Gruppen-Hash
 #define EMERALD_HIGHSCORES_FILENAME_EXTENSION       ".dat"                              // High-Scores-Extension
-#define EMERALD_HIGHSCORE_LISTLEN                   20                                  // 20 Eintr‰ge pro Level
+#define EMERALD_HIGHSCORE_LISTLEN                   20                                  // 20 Eintr√§ge pro Level
 
 
 /*
 1000 Level / Gruppe
 29 Zeichen / Playername + 1 (String-Terminierung)
 4 Bytes / Punktzahl
-20 Eintr‰ge / Level
+20 Eintr√§ge / Level
 
 Max. Platzbedarf pro Levelgruppe:
 1000 * 20 * (29 + 1 + 4) = 680.000 Bytes
@@ -26,7 +26,7 @@ typedef struct {
 } TOPTWENTY;
 
 
-// Diese Struktur gilt f¸r eine Levelgruppe
+// Diese Struktur gilt f√ºr eine Levelgruppe
 typedef struct {
     TOPTWENTY TopTwenty[EMERALD_MAX_LEVELCOUNT];
 } HIGHSCOREFILE;

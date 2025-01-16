@@ -9,16 +9,16 @@ extern PLAYFIELD Playfield;
 /*----------------------------------------------------------------------------
 Name:           ControlDrop
 ------------------------------------------------------------------------------
-Beschreibung: Steuert einen Tropfen. Dieser fällt mit halber Geschwindigkeit.
+Beschreibung: Steuert einen Tropfen. Dieser fÃ¤llt mit halber Geschwindigkeit.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlDrop(uint32_t I) {
     uint32_t uSelfStatus;
-    uint16_t uDropElement;  // kann grüner oder gelber Tropfen sein
+    uint16_t uDropElement;  // kann grÃ¼ner oder gelber Tropfen sein
 
     uDropElement = Playfield.pLevel[I];
     // Doppelte Steuerung vermeiden
@@ -33,16 +33,16 @@ void ControlDrop(uint32_t I) {
     } else if (uSelfStatus == EMERALD_ANIM_DROP_1) {
         // Tropfen wurde bereits behandelt
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_DROP_2;
-        //Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
+        //Damit ungÃ¼ltiges Feld spÃ¤ter auf richtiges Element gesetzt werden kann
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_UP | uDropElement;
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_DROP_1;
-        // neuen Platz mit ungültigem Element besetzen
+        // neuen Platz mit ungÃ¼ltigem Element besetzen
         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_INVALID;
-        // Zunächst invalides Element ignorieren, da Tropfen in 2 Phasen nach unten fällt.
+        // ZunÃ¤chst invalides Element ignorieren, da Tropfen in 2 Phasen nach unten fÃ¤llt.
         Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = uDropElement;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_CLEAN_NOTHING;
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Tropfen ins Säurebecken?
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Tropfen ins SÃ¤urebecken?
         /*
         if (uDropElement == EMERALD_GREEN_DROP) {
             SDL_Log("Green drop falls in pool");
@@ -63,10 +63,10 @@ void ControlDrop(uint32_t I) {
             Playfield.bManDead = true;
             if (uDropElement == EMERALD_GREEN_DROP) {
                 // SDL_Log("Green drop kills man");
-                Playfield.pLevel[I] = EMERALD_GREEN_CHEESE;     // Tropfen, der Man getroffen hat, verwandelt sich in Käse
+                Playfield.pLevel[I] = EMERALD_GREEN_CHEESE;     // Tropfen, der Man getroffen hat, verwandelt sich in KÃ¤se
             } else {
                 // SDL_Log("Yellow drop kills man");
-                Playfield.pLevel[I] = EMERALD_YELLOW_CHEESE;     // Tropfen, der Man getroffen hat, verwandelt sich in Käse
+                Playfield.pLevel[I] = EMERALD_YELLOW_CHEESE;     // Tropfen, der Man getroffen hat, verwandelt sich in KÃ¤se
             }
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
             PreparePlaySound(SOUND_CHEESE,I);
@@ -96,21 +96,21 @@ void ControlDrop(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlCheese
 ------------------------------------------------------------------------------
-Beschreibung: Steuert den Käse. Die Ausbreitungsgeschwindigkeit ist
+Beschreibung: Steuert den KÃ¤se. Die Ausbreitungsgeschwindigkeit ist
               im Leveleditor einstellbar.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCheese(uint32_t I) {
     int nRandom;
     int nLoops;
     int nDirectionRandom;
-    uint16_t uCheeseElement;            // kann grüner oder gelber Käse sein
-    uint16_t uCheeseComesElement;       // Element, wenn grüner oder gelber Käse entsteht
-    uint32_t uCheeseSpreadSpeed;        // grüner und gelber Käse können unterschiedliche Ausbreitungsgeschwindigkeiten haben
+    uint16_t uCheeseElement;            // kann grÃ¼ner oder gelber KÃ¤se sein
+    uint16_t uCheeseComesElement;       // Element, wenn grÃ¼ner oder gelber KÃ¤se entsteht
+    uint32_t uCheeseSpreadSpeed;        // grÃ¼ner und gelber KÃ¤se kÃ¶nnen unterschiedliche Ausbreitungsgeschwindigkeiten haben
 
     uCheeseElement = Playfield.pLevel[I];
     if (uCheeseElement == EMERALD_GREEN_CHEESE) {
@@ -132,25 +132,25 @@ void ControlCheese(uint32_t I) {
         do {
             nDirectionRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten
             switch (nDirectionRandom) {
-                case (1):           // links prüfen
+                case (1):           // links prÃ¼fen
                     if (IsFieldPosForCheeseFree(I - 1)) {
                         Playfield.pLevel[I - 1] = uCheeseComesElement;
                         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
                     }
                     break;
-                case (2):           // oben prüfen
+                case (2):           // oben prÃ¼fen
                     if (IsFieldPosForCheeseFree(I - Playfield.uLevel_X_Dimension)) {
                         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = uCheeseComesElement;
                         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                     }
                     break;
-                case (3):           // rechts prüfen
+                case (3):           // rechts prÃ¼fen
                     if (IsFieldPosForCheeseFree(I + 1)) {
                         Playfield.pLevel[I + 1] = uCheeseComesElement;
                         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     }
                     break;
-                case (4):           // unten prüfen
+                case (4):           // unten prÃ¼fen
                     if (IsFieldPosForCheeseFree(I + Playfield.uLevel_X_Dimension)) {
                         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = uCheeseComesElement;
                         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
@@ -173,7 +173,7 @@ Beschreibung: Ein enstehender Tropfen (EMERALD_GREEN_DROP_COMES oder EMERALD_YEL
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlSpreadCheese(uint32_t I) {
@@ -195,11 +195,11 @@ void ControlSpreadCheese(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           IsCheeseAround
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob sich Käse um die angegebene Position I befindet.
+Beschreibung: PrÃ¼ft, ob sich KÃ¤se um die angegebene Position I befindet.
 Parameter
-      Eingang: I, uint32_t, Index im Level, Position, die geprüft werden soll
+      Eingang: I, uint32_t, Index im Level, Position, die geprÃ¼ft werden soll
       Ausgang: -
-Rückgabewert:  bool, true = Käse hat Kontakt mit Position I
+RÃ¼ckgabewert:  bool, true = KÃ¤se hat Kontakt mit Position I
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsCheeseAround(uint32_t I) {
@@ -213,11 +213,11 @@ bool IsCheeseAround(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           IsFieldPosForCheeseFree
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob die angegebene Position durch Käse eingenommen werden kann.
+Beschreibung: PrÃ¼ft, ob die angegebene Position durch KÃ¤se eingenommen werden kann.
 Parameter
-      Eingang: I, uint32_t, Index im Level, Position, die geprüft werden soll
+      Eingang: I, uint32_t, Index im Level, Position, die geprÃ¼ft werden soll
       Ausgang: -
-Rückgabewert:  bool, true = Position kann durch Käse eingenommen werden, sonst nicht
+RÃ¼ckgabewert:  bool, true = Position kann durch KÃ¤se eingenommen werden, sonst nicht
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsFieldPosForCheeseFree(uint32_t uPosition) {

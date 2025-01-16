@@ -7,7 +7,6 @@
 
 extern PLAYFIELD Playfield;
 
-
 /*----------------------------------------------------------------------------
 Name:           ControlAlien
 ------------------------------------------------------------------------------
@@ -15,7 +14,7 @@ Beschreibung: Steuert einen Alien.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlAlien(uint32_t I) {
@@ -94,7 +93,7 @@ void ControlAlien(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
             } else {                            // Steht bereits auf richtiger Koordinate
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;    // gibt es später nicht mehr
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;    // gibt es spÃ¤ter nicht mehr
             }
         } else if (nRandom == 2) {  // Y testen
             if (uCatchYpos > uYpos) {  // Ist Man-Y-Koordinate > als eigene Y-Koordinate ?
@@ -118,7 +117,7 @@ void ControlAlien(uint32_t I) {
                         Playfield.bManDead = true;
                         PreparePlaySound(SOUND_MAN_CRIES,I);
                     }
-                } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Alien ins Säurebecken?
+                } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Alien ins SÃ¤urebecken?
                         // SDL_Log("Alien falls in pool");
                         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
                         Playfield.pInvalidElement[I] = EMERALD_ALIEN;
@@ -152,7 +151,7 @@ void ControlAlien(uint32_t I) {
                     Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
                 }
             } else {                            // Steht bereits auf richtiger Koordinate
-                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;    // gibt es später nicht mehr
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;    // gibt es spÃ¤ter nicht mehr
             }
         } else {                    // gar nicht laufen
             Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
@@ -164,11 +163,11 @@ void ControlAlien(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlAlienKillsMan
 ------------------------------------------------------------------------------
-Beschreibung: Steuert die Tötung des Mans durch einen Alien.
+Beschreibung: Steuert die TÃ¶tung des Mans durch einen Alien.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlAlienKillsMan(uint32_t I) {
@@ -178,7 +177,7 @@ void ControlAlienKillsMan(uint32_t I) {
         // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     }
-    // Ab hier: Nach Tötung des Mans den Alien auf ursprüngliche Man-Position setzen
+    // Ab hier: Nach TÃ¶tung des Mans den Alien auf ursprÃ¼ngliche Man-Position setzen
     if (Playfield.pStatusAnimation[I] == EMERALD_ANIM_MONSTER_KILLS_UP) {
         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_ALIEN;
         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;

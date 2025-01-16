@@ -14,11 +14,11 @@ Beschreibung: Steuert einen Emerald.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlEmerald(uint32_t I) {
-    uint8_t uFree;              // Richtung, in die Emerald rollen könnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
+    uint8_t uFree;              // Richtung, in die Emerald rollen kÃ¶nnte: 0 = kann nicht rollen, 1 = kann links rollen, 2 = kann rechts rollen, 3 = kann links und rechts rollen
     uint16_t uHitElement;       // Element, welches getroffen wird
     uint32_t uHitCoordinate;    // Lineare Koordinate des getroffenen Elements
 
@@ -44,14 +44,14 @@ void ControlEmerald(uint32_t I) {
         return;
     } else if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {   // Ist nach unten frei?
         SetElementToNextPosition(I,EMERALD_ANIM_DOWN,EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP,EMERALD_EMERALD);
-    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // Fällt Emerald ins Säurebecken?
+    } else if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_ACIDPOOL) {   // FÃ¤llt Emerald ins SÃ¤urebecken?
         // SDL_Log("Emerald falls in pool");
         Playfield.pLevel[I] = EMERALD_ACIDPOOL_DESTROY;
         Playfield.pInvalidElement[I] = EMERALD_EMERALD;
         PreparePlaySound(SOUND_POOL_BLUB,I);
         return;
     } else {                            // Unten ist nicht frei
-        // Emerald bleibt zunächst auf Platz liegen
+        // Emerald bleibt zunÃ¤chst auf Platz liegen
         uHitCoordinate = I + Playfield.uLevel_X_Dimension;
         uHitElement = Playfield.pLevel[uHitCoordinate];
         if ( (Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_DOWN_SELF) {
@@ -102,7 +102,7 @@ void ControlEmerald(uint32_t I) {
                     SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_EMERALD);
                 }
             }
-        // Ab hier prüfen, ob Emerald durch Laufband bewegt werden kann
+        // Ab hier prÃ¼fen, ob Emerald durch Laufband bewegt werden kann
         } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
                                          ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||

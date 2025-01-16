@@ -4,13 +4,13 @@
 #include <SDL2/SDL.h>
 
 #define DEFAULT_WINDOW_W            1280        // Ist auch gleichzeitig die
-#define DEFAULT_WINDOW_H            768         // Mindestanforderung an die Auflösung
+#define DEFAULT_WINDOW_H            768         // Mindestanforderung an die AuflÃ¶sung
 #define WINDOW_TITLE        "My first SDL2 application"
 
 #define FONT_W              32
 #define FONT_H              32
 
-// Little Font, schwarz, grün, rot
+// Little Font, schwarz, grÃ¼n, rot
 #define FONT_LITTLE_W       10
 #define FONT_LITTLE_H       14
 
@@ -18,16 +18,16 @@
 #define FONT_LITTLE_COURIER_W   8
 #define FONT_LITTLE_COURIER_H   14
 
-// Button-Höhe für Font 1
+// Button-HÃ¶he fÃ¼r Font 1
 #define BUTTON_H            (FONT_LITTLE_COURIER_H + 5)
 
-// Für Messageboxen
-#define EMERALD_MAX_LINEFEEDS_IN_MESSAGE        30              // Maximal 30 Zeilenumbrüche in Message
+// FÃ¼r Messageboxen
+#define EMERALD_MAX_LINEFEEDS_IN_MESSAGE        30              // Maximal 30 ZeilenumbrÃ¼che in Message
 #define EMERALD_MAX_CHARACTERS_PER_LINE         96              // Maximal 96 Zeichen pro Zeile in Message
 
 #define MAX_USABLE_DISPLAYMODES                 500
 
-#define MAX_SHOWABLE_DISPLAYMODES               21              // Maximale Anzahl von auswählbaren Displaymodi
+#define MAX_SHOWABLE_DISPLAYMODES               21              // Maximale Anzahl von auswÃ¤hlbaren Displaymodi
 
 #define K_ABSOLUTE                              true
 #define K_RELATIVE                              false
@@ -63,6 +63,7 @@ int GetUsableDisplayModes(uint32_t uDisplay);
 int GetShowableDisplayModes(void);
 int GetDesktopDisplayMode(void);
 SDL_Renderer *CreateRenderer(SDL_Window * pWindow);
+int RenderPresentAndClear(SDL_Renderer *pRenderer);
 int LoadTextures(SDL_Renderer *pRenderer);
 int CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int nXpos, int nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle);
 int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH, bool bAbsolute);

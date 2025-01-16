@@ -4,7 +4,6 @@
 #include "mySDL.h"
 #include "mystd.h"
 
-
 uint8_t *GetLevelFromLevelgroup(uint8_t *pszLevelgroup, uint32_t uLevelNumber);
 int GetLevelTitleFromLevel(uint8_t *pszLevel, uint8_t *pszLevelTitle);
 int LevelgroupOperaton_Edit(uint32_t uLevelNumber, DYNSTRING *NewLevel);

@@ -9,29 +9,28 @@
 #define EMERALD_LEVELTYPE_DC3                   0
 
 #define BITMAP_MINSIZE                          4096
-#define EMERALD_IMPORTDC3_DIRECTORYNAME         "importdc3"                     // Import-Directory f¸r Diamond Caves 3-Bitmap-Level
-#define IMPORTDC3_NAME_FILENAME                 "levelauthor.txt"               // Datei enth‰lt Levelautor
+#define EMERALD_IMPORTDC3_DIRECTORYNAME         "importdc3"                     // Import-Directory f√ºr Diamond Caves 3-Bitmap-Level
+#define IMPORTDC3_NAME_FILENAME                 "levelauthor.txt"               // Datei enth√§lt Levelautor
 
 #define EMERALD_MAX_IMPORTFILES                 200
 #define EMERALD_MAX_SHOWFILENAME_LEN            120                             // Maximal 120 Zeichen des Filenamens (szShowFilename) anzeigen
 #define EMERALD_MAX_MAXIMPORTFILES_IN_LIST      35
 
-#define EMERALD_BORDER_NOSTEEL_NONE             0x00                            // Kein Rand enth‰lt Nicht-Stahl-Elemente, d.h. Level kann belassen werden
-#define EMERALD_BORDER_NOSTEEL_LEFT             0x01                            // Linker Rand enth‰lt Nicht-Stahl-Elemente
-#define EMERALD_BORDER_NOSTEEL_RIGHT            0x02                            // Rechter Rand enth‰lt Nicht-Stahl-Elemente
-#define EMERALD_BORDER_NOSTEEL_TOP              0x04                            // Oberer Rand enth‰lt Nicht-Stahl-Elemente
-#define EMERALD_BORDER_NOSTEEL_BOTTOM           0x08                            // Unterer Rand enth‰lt Nicht-Stahl-Elemente
-
+#define EMERALD_BORDER_NOSTEEL_NONE             0x00                            // Kein Rand enth√§lt Nicht-Stahl-Elemente, d.h. Level kann belassen werden
+#define EMERALD_BORDER_NOSTEEL_LEFT             0x01                            // Linker Rand enth√§lt Nicht-Stahl-Elemente
+#define EMERALD_BORDER_NOSTEEL_RIGHT            0x02                            // Rechter Rand enth√§lt Nicht-Stahl-Elemente
+#define EMERALD_BORDER_NOSTEEL_TOP              0x04                            // Oberer Rand enth√§lt Nicht-Stahl-Elemente
+#define EMERALD_BORDER_NOSTEEL_BOTTOM           0x08                            // Unterer Rand enth√§lt Nicht-Stahl-Elemente
 
 
 typedef struct {
     char szFilename[EMERALD_MAX_FILENAME_LEN + 1];      // "Echter" Filename (zum Laden der Datei)
-    char szShowFilename[EMERALD_MAX_FILENAME_LEN + 1];  // Anzeigename, Zeichensatz unterst¸tzt nicht alle Zeichen, d.h. in der Regel k¸rzer als "echter" Name
+    char szShowFilename[EMERALD_MAX_FILENAME_LEN + 1];  // Anzeigename, Zeichensatz unterst√ºtzt nicht alle Zeichen, d.h. in der Regel k√ºrzer als "echter" Name
 } LEVELFILESLIST;
 
 
 
-// F¸r IMPORT (DC3) ///////////////
+// F√ºr IMPORT (DC3) ///////////////
 typedef struct {
     uint32_t uDc3FileCount;             // Anzahl der DC3-Bimap-Levelfiles
 } IMPORTLEVEL;
@@ -41,7 +40,7 @@ typedef struct {
     uint32_t        uFilesize;
     char            szFilename[EMERALD_MAX_FILENAME_LEN + 1];
     uint8_t         cHeader[14];
-    uint8_t         cInfoHeader[40];            // Es gibt zwar noch andere Info-Header-Grˆﬂen, hier wird aber nur diese Grˆﬂe verwendet
+    uint8_t         cInfoHeader[40];            // Es gibt zwar noch andere Info-Header-Gr√∂√üen, hier wird aber nur diese Gr√∂√üe verwendet
     uint8_t         uBytesPerPixel;
     uint32_t        uBytesPerLine;
     int32_t         nW;

@@ -8,7 +8,7 @@
 SMILEY Smileys[MAX_SMILEYS];
 uint32_t g_uNextWaitTime;
 uint32_t g_uLastSmileyRotation;
-bool g_bT;  // Für rechts/links-Drall
+bool g_bT;  // FÃ¼r rechts/links-Drall
 
 
 extern CONFIG Config;
@@ -19,7 +19,7 @@ Name:           InitSmileys
 Beschreibung: Initialisiert alles Smileys.
 Parameter
       Eingang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Smileys.x, g_uLastSmileyRotation, g_uNextWaitTime
 ------------------------------------------------------------------------------*/
 void InitSmileys(void) {
@@ -43,7 +43,7 @@ Name:           BornSmileys
 Beschreibung: Erzeugt neue Smileys.
 Parameter
       Eingang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Smileys.x, Config.x
 ------------------------------------------------------------------------------*/
 void BornSmileys(void) {
@@ -80,7 +80,7 @@ Name:           MoveSmileys
 Beschreibung: Bewegt alle Smileys.
 Parameter
       Eingang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Smileys.x, g_bT, Config.x, g_uNextWaitTime, g_uLastSmileyRotation
 ------------------------------------------------------------------------------*/
 int MoveSmileys(SDL_Renderer *pRenderer) {
@@ -108,7 +108,7 @@ int MoveSmileys(SDL_Renderer *pRenderer) {
             Smileys[I].fYpos = Smileys[I].fYpos + Smileys[I].fYSpeed;
             Smileys[I].fSize = Smileys[I].fSize + 0.003;
             Smileys[I].fAngleRotate = Smileys[I].fAngleRotate + Smileys[I].fRotationSpeed;
-            // Smiley außerhalb des Sichtbereichs?
+            // Smiley auÃŸerhalb des Sichtbereichs?
             if ( (Smileys[I].fXpos > (Config.uResX + 200)) || (Smileys[I].fXpos < - 200) || (Smileys[I].fYpos > (Config.uResY + 200)) || (Smileys[I].fYpos < - 200) ) {
                 Smileys[I].bReady = true;
             }
@@ -117,7 +117,7 @@ int MoveSmileys(SDL_Renderer *pRenderer) {
 
     if (SDL_GetTicks() - g_uLastSmileyRotation > g_uNextWaitTime) {
         g_uNextWaitTime = randn(200,5000);
-        g_bT = !g_bT;   // Für rechts/links-Drall
+        g_bT = !g_bT;   // FÃ¼r rechts/links-Drall
         if (g_bT) {
             fM = randf(1,4);
             fN = randf(-4,-1);

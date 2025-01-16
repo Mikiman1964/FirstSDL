@@ -7,7 +7,7 @@
 
 // Das Array ist wie folgt aufgebaut:
 
-/*       Offset      Länge
+/*       Offset      LÃ¤nge
  uint32_t Gfx[] = {
         0x00000000,0x00000C36,     // 0000 - Space.bmp
         0x00000C36,0x00000C36,     // 0001 - Ausrufungszeichen.bmp

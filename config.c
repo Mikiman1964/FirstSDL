@@ -4,8 +4,8 @@
 
 CONFIG Config;
 extern ACTUALPLAYER Actualplayer;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uXoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
 
 /*----------------------------------------------------------------------------
 Name:           ShowConfigFile
@@ -15,7 +15,7 @@ Beschreibung: Zeigt die Konfigurations-Struktur
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 void ShowConfigFile(void) {
@@ -86,20 +86,20 @@ Beschreibung: Schreibt eine Werks-Konfiguration.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int WriteDefaultConfigFile(void) {
     // SDL_Log("Writing default config file ...");
-    memset(&Config,0,sizeof(Config));               // löscht auch letzten Spieler
-    Config.bStartDynamiteWithSpace = true;          // true = Dynamite wird mit Space gezündet
-    Config.bFullScreen = false;                     // Spiel läuft als Fullscreen
-    Config.bEditorZoom = false;                     // Editor läuft mit 16x16 Pixeln
-    Config.bGameMusic = true;                       // true = Modfiles in den Gamemenüs abspielen
+    memset(&Config,0,sizeof(Config));               // lÃ¶scht auch letzten Spieler
+    Config.bStartDynamiteWithSpace = true;          // true = Dynamite wird mit Space gezÃ¼ndet
+    Config.bFullScreen = false;                     // Spiel lÃ¤uft als Fullscreen
+    Config.bEditorZoom = false;                     // Editor lÃ¤uft mit 16x16 Pixeln
+    Config.bGameMusic = true;                       // true = Modfiles in den GamemenÃ¼s abspielen
     Config.bShowHighscores = true;                  // true = Highscores zeigen, wenn genug Punkte
     Config.uDisplay = 0;                            // Ersten Montitor ansprechen
-    Config.uResX = DEFAULT_WINDOW_W;                // Standard-Auflösung X bzw. Fensterbreite
-    Config.uResY = DEFAULT_WINDOW_H;                // Auflösung Y bzw. Fensterhöhe
+    Config.uResX = DEFAULT_WINDOW_W;                // Standard-AuflÃ¶sung X bzw. Fensterbreite
+    Config.uResY = DEFAULT_WINDOW_H;                // AuflÃ¶sung Y bzw. FensterhÃ¶he
     memset(Config.uLevelgroupMd5Hash,0,16);         // MD5-Hash auf "00000000000000000000000000000000" setzen
     Config.uInputdevice = 0;                        // 0 = kein Input device (Keyboard), 1 = Joystick, 2 = Gamecontroller
     Config.uDeviceIndex = 0;                        // Standard ist 0, d.h. das zuerst Gefundene
@@ -131,7 +131,7 @@ Beschreibung: Schreibt den Inhalt der Struktur Config.x als XML-File.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int WriteConfigFile(void) {
@@ -289,12 +289,12 @@ int WriteConfigFile(void) {
 /*----------------------------------------------------------------------------
 Name:           ReadConfigFile
 ------------------------------------------------------------------------------
-Beschreibung: Liest die Konfigurationsdatei und befüllt die Struktur Config.x
+Beschreibung: Liest die Konfigurationsdatei und befÃ¼llt die Struktur Config.x
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x, Actualplayer.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int ReadConfigFile(void) {
@@ -307,17 +307,17 @@ int ReadConfigFile(void) {
     char szErrorMessage[256];
 
     nErrorCode = -1;
-    memset(&Config,0,sizeof(Config));       // löscht auch letzten Spieler
+    memset(&Config,0,sizeof(Config));       // lÃ¶scht auch letzten Spieler
     memset(&Actualplayer,0,sizeof(Actualplayer));
     pXml = ReadFile(EMERALD_CONFIG_FILENAME,&uXmlLen);     // Levelgruppen-Datei einlesen
-    // Default für Keyboard, falls Config nicht vollständig gelesen werden kann
+    // Default fÃ¼r Keyboard, falls Config nicht vollstÃ¤ndig gelesen werden kann
     Config.uKeyboardScancodeLeft = SDL_SCANCODE_LEFT;
     Config.uKeyboardScancodeRight = SDL_SCANCODE_RIGHT;
     Config.uKeyboardScancodeUp = SDL_SCANCODE_UP;
     Config.uKeyboardScancodeDown = SDL_SCANCODE_DOWN;
     Config.uKeyboardScancodeFire = SDL_SCANCODE_LCTRL;
     if (pXml != NULL) {
-        // Prüfen, ob Schreibrechte bestehen und versuchen gelesene Datei zurück zu schreiben
+        // PrÃ¼fen, ob Schreibrechte bestehen und versuchen gelesene Datei zurÃ¼ck zu schreiben
         if (WriteFile(EMERALD_CONFIG_FILENAME,pXml,uXmlLen,false) == 0) {
             if ((strstr((char*)pXml,"<configuration>") != NULL) && (strstr((char*)pXml,"</configuration>") != NULL)) {  // configuration tags gefunden?
                 xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));
@@ -341,7 +341,7 @@ int ReadConfigFile(void) {
                                             if (Config.uDisplay > 1) {
                                                 Config.uDisplay = 1;
                                             }
-                                            Config.uDisplayUse = Config.uDisplay; // Wird später ggf. noch angepasst
+                                            Config.uDisplayUse = Config.uDisplay; // Wird spÃ¤ter ggf. noch angepasst
                                             highscores = ezxml_child(xml,"show_highscores");
                                             if (highscores != NULL) {
                                                 Config.bShowHighscores = (strtol(highscores->txt,NULL,10) == 1);
@@ -362,9 +362,9 @@ int ReadConfigFile(void) {
                                                                     if (strlen(playername->txt) <= EMERALD_PLAYERNAME_LEN) {
                                                                         strcpy(Config.szPlayername,playername->txt);
                                                                     }
-                                                                    // Auflösung checken
+                                                                    // AuflÃ¶sung checken
                                                                     if ((Config.uResX >= DEFAULT_WINDOW_W) && (Config.uResY >= DEFAULT_WINDOW_H)) {
-                                                                        // ggf. die abgerundeten Werte in die Konfiguration übernehmen
+                                                                        // ggf. die abgerundeten Werte in die Konfiguration Ã¼bernehmen
                                                                         ge_uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
                                                                         ge_uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
                                                                         inputdevice = ezxml_child(xml,"input_device");
@@ -469,7 +469,7 @@ int ReadConfigFile(void) {
     SAFE_FREE(xml);
     SAFE_FREE(pXml);
     if (nErrorCode == 0) {
-        nErrorCode = WriteConfigFile(); // ggf. angepasste Auflösung schreiben
+        nErrorCode = WriteConfigFile(); // ggf. angepasste AuflÃ¶sung schreiben
     } else if (nErrorCode == -1) {
         nErrorCode = WriteDefaultConfigFile();
     }
@@ -481,16 +481,16 @@ int ReadConfigFile(void) {
 Name:           ReadConfigFile
 ------------------------------------------------------------------------------
 Beschreibung: Liest die Keyboard-Konfigurationsdaten aus der config.xml aus und
-              befüllt die Struktur Config.x.
+              befÃ¼llt die Struktur Config.x.
               Funktion wird nur aus ReadConfigFile() aufgerufen. Da diese
-              Einstellung nachgepfelgt wurde, schlägt diese Funktion bei
-              älteren Konfigurationsdateien fehl. In diesem Fall werden default-Werte
+              Einstellung nachgepfelgt wurde, schlÃ¤gt diese Funktion bei
+              Ã¤lteren Konfigurationsdateien fehl. In diesem Fall werden default-Werte
               verwendet.
 
 Parameter
       Eingang: inputdevice, ezxml_t, Knoten auf inputdevice in der der XML
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 int ReadKeyboardConfig(ezxml_t inputdevice) {
@@ -524,7 +524,7 @@ int ReadKeyboardConfig(ezxml_t inputdevice) {
         }
     }
     if (nErrorCode != 0) {
-        // Default für Keyboard, falls Config nicht vollständig gelesen werden konnte
+        // Default fÃ¼r Keyboard, falls Config nicht vollstÃ¤ndig gelesen werden konnte
         Config.uKeyboardScancodeLeft = SDL_SCANCODE_LEFT;
         Config.uKeyboardScancodeRight = SDL_SCANCODE_RIGHT;
         Config.uKeyboardScancodeUp = SDL_SCANCODE_UP;

@@ -30,8 +30,8 @@ extern CONFIG Config;
 extern LEVELGROUP SelectedLevelgroup;
 extern MAINMENU MainMenu;
 extern IMPORTLEVEL ImportLevel;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uXoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset fÃ¼r die Zentrierung von Elementen
 extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
 
 
@@ -649,7 +649,7 @@ char ge_szElementNames[][64] =
                           "STEEL, STRIPE, CORNER LEFT TOP",     // 0X25A // Diese Stahl-Elemente
                           "STEEL, STRIPE, CORNER RIGHT TOP",    // 0X25B // sind noch nicht
                           "STEEL, STRIPE, CORNER LEFT BOTTOM",  // 0X25C // im Leveleditor
-                          "STEEL, STRIPE, CORNER RIGHT BOTTOM", // 0X25D // auswählbar, werden aber beim DC3-Import berücksichtigt
+                          "STEEL, STRIPE, CORNER RIGHT BOTTOM", // 0X25D // auswÃ¤hlbar, werden aber beim DC3-Import berÃ¼cksichtigt
                           "SMILEY",                             // 0X25E
                           };
 
@@ -660,7 +660,7 @@ uint16_t g_PanelElements[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_INVALID
                             };
 
-// Level-Elemente, die im Hauptmenü verfügbar sind
+// Level-Elemente, die im HauptmenÃ¼ verfÃ¼gbar sind
 uint16_t g_PanelElementsMain[MAX_PANEL_ELEMENTS + 1] = {
                             EMERALD_DOOR_RED,EMERALD_DOOR_YELLOW,EMERALD_DOOR_GREEN,EMERALD_DOOR_BLUE,EMERALD_KEY_RED,EMERALD_KEY_YELLOW,EMERALD_KEY_GREEN,EMERALD_KEY_BLUE,
                             EMERALD_DOOR_GREY_RED,EMERALD_DOOR_GREY_YELLOW,EMERALD_DOOR_GREY_GREEN,EMERALD_DOOR_GREY_BLUE,EMERALD_DOOR_RED_WOOD,EMERALD_DOOR_YELLOW_WOOD,EMERALD_DOOR_GREEN_WOOD,EMERALD_DOOR_BLUE_WOOD,
@@ -763,11 +763,11 @@ uint16_t g_PanelElementsText[MAX_PANEL_ELEMENTS + 1] = {
 /*----------------------------------------------------------------------------
 Name:           SetPanelElements
 ------------------------------------------------------------------------------
-Beschreibung: Legt durch Befüllen des Array g_PanelElements[] fest, welche
-              Levelelemente sichtbar und auswählbar sind.
+Beschreibung: Legt durch BefÃ¼llen des Array g_PanelElements[] fest, welche
+              Levelelemente sichtbar und auswÃ¤hlbar sind.
 Parameter
-      Eingang: uMenuState, uint32_t, Menü-Status (siehe editor.h)
-Rückgabewert:  -
+      Eingang: uMenuState, uint32_t, MenÃ¼-Status (siehe editor.h)
+RÃ¼ckgabewert:  -
 Seiteneffekte: g_PanelElements[], g_PanelElementsMain[], g_PanelElementsMachines[]
 ------------------------------------------------------------------------------*/
 void SetPanelElements(uint32_t uMenuState) {
@@ -785,7 +785,7 @@ void SetPanelElements(uint32_t uMenuState) {
         case (MENUSTATE_YAMS):
             memcpy(g_PanelElements,g_PanelElementsMain,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
             for (K = 0; K < MAX_PANEL_ELEMENTS; K++) {
-                // Yam-Menü soll einige Elemente nicht anbieten
+                // Yam-MenÃ¼ soll einige Elemente nicht anbieten
                 switch (g_PanelElements[K]) {
                     case (EMERALD_MAN):
                         g_PanelElements[K] = EMERALD_SPACE;
@@ -802,7 +802,7 @@ void SetPanelElements(uint32_t uMenuState) {
         case (MENUSTATE_TREASURECHESTS):
             memcpy(g_PanelElements,g_PanelElementsMain,sizeof(uint16_t) * (MAX_PANEL_ELEMENTS + 1));
             for (K = 0; K < MAX_PANEL_ELEMENTS; K++) {
-                // Schatztruhen-Menü soll einige Elemente nicht anbieten
+                // Schatztruhen-MenÃ¼ soll einige Elemente nicht anbieten
                 switch (g_PanelElements[K]) {
                     case (EMERALD_MAN):
                     case (EMERALD_REPLICATOR_RED_TOP_LEFT):
@@ -850,7 +850,7 @@ Beschreibung: Beim Setzen eines neuen Mannes, muss der Alte durch Space ersetzt 
 
 Parameter
       Eingang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 void ClearOldMan(void) {
@@ -867,14 +867,14 @@ void ClearOldMan(void) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelXmlFromEditor
 ------------------------------------------------------------------------------
-Beschreibung: Gibt ein Level in XML zurück, welches sich in der Struktur
-              Ed.x befindet. Bei Erfolg muss der XML-Speicher außerhalb
+Beschreibung: Gibt ein Level in XML zurÃ¼ck, welches sich in der Struktur
+              Ed.x befindet. Bei Erfolg muss der XML-Speicher auÃŸerhalb
               dieser Funktion wieder freigegeben werden.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  DYNSTRING *, Zeiger auf XML-Leveldaten, NULL = Fehler
+RÃ¼ckgabewert:  DYNSTRING *, Zeiger auf XML-Leveldaten, NULL = Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 DYNSTRING *GetLevelXmlFromEditor(void) {
@@ -1200,21 +1200,21 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     for (I = 1; (I <= EMERALD_MAX_MESSAGES) && (!bError); I++) {
         szM[1] = I + 0x30;
         sprintf(szTag,"    <%s>",szM);
-        DynStringAdd(XML,szTag);             // Öffnungstag schreiben
+        DynStringAdd(XML,szTag);             // Ã–ffnungstag schreiben
         if (Ed.pMessage[I - 1] != NULL) {
             pcBaseMessage64 = BinToBase64((uint8_t*)Ed.pMessage[I - 1], strlen(Ed.pMessage[I - 1]),&uBase64MessageLen,false);
             if (pcBaseMessage64 != NULL) {
                 DynStringAdd(XML,(char*)pcBaseMessage64);
                 SAFE_FREE(pcBaseMessage64);
                 sprintf(szTag,"</%s>\r\n",szM);
-                DynStringAdd(XML,szTag);     // Schließungstag schreiben
+                DynStringAdd(XML,szTag);     // SchlieÃŸungstag schreiben
             } else {
                 SDL_Log("%s: BinToBase64() for message %s failed",__FUNCTION__,szTag);
                 bError = true;
             }
         } else {
             sprintf(szTag,"</%s>\r\n",szM);
-            DynStringAdd(XML,szTag);     // Schließungstag schreiben
+            DynStringAdd(XML,szTag);     // SchlieÃŸungstag schreiben
         }
     }
     if (!bError) {
@@ -1241,7 +1241,7 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
         uMaxCompressedSize = Ed.uLevel_XY_Dimension * sizeof(uint16_t) * 2 + 16 * KB;
         pcCompressedLevel = malloc(uMaxCompressedSize);
         if (pcCompressedLevel != NULL) {
-            // uMaxCompressedSize ist hier noch Eingabeparameter, damit mz_compress2() weiß, wieviel Puffer zum Komprimieren bereit steht
+            // uMaxCompressedSize ist hier noch Eingabeparameter, damit mz_compress2() weiÃŸ, wieviel Puffer zum Komprimieren bereit steht
             nMiniz = mz_compress2(pcCompressedLevel,(mz_ulong*)&uMaxCompressedSize,(uint8_t*)Ed.pLevel,Ed.uLevel_XY_Dimension * sizeof(uint16_t),MZ_UBER_COMPRESSION);
             if (nMiniz == MZ_OK) {
                 // SDL_Log("%s:c compressed level size: %u",__FUNCTION__,uMaxCompressedSize);
@@ -1291,7 +1291,7 @@ Parameter
       Eingang: -
                -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 void ShowEditorStatus(void) {
@@ -1324,7 +1324,7 @@ Parameter
       Eingang: -
                -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, Ed.x, ge_DisplayMode.x
 ------------------------------------------------------------------------------*/
 int CopyPlayfieldValueToEditor(void) {
@@ -1416,19 +1416,19 @@ int CopyPlayfieldValueToEditor(void) {
 /*----------------------------------------------------------------------------
 Name:           InitMessageEditor
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Struktur Ed.MessageEditor für den Nachrichten-Editor.
+Beschreibung: Initialisiert die Struktur Ed.MessageEditor fÃ¼r den Nachrichten-Editor.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 void InitMessageEditor(void) {
     Ed.MessageEditor.nEditMessage = -1;
     Ed.MessageEditor.bCursor = false;
     Ed.MessageEditor.bInsert = true;
-    Ed.MessageEditor.uFrameCounter = 0;             // Bildzähler
+    Ed.MessageEditor.uFrameCounter = 0;             // BildzÃ¤hler
     Ed.MessageEditor.uCursorFlashSpeedFrames = 15;  // Nach X Frames wird Cursor umgeschaltet
     Ed.MessageEditor.uLastToggleCursorFrame = 0;    // Letztes Frame, bei dem Cursor umgeschaltet wurde
 }
@@ -1443,7 +1443,7 @@ Beschreibung: Berechnet den Sichtbereich und die Positionierung des Levels im Ed
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 void CalcEditorViewArea(void) {
@@ -1472,23 +1472,23 @@ void CalcEditorViewArea(void) {
     Ed.uVisibleCenterX = Ed.uVisibleX / 2;
 
     // Y-Zentrierung des Levels im Anzeigebereich
-    if (Ed.uVisibleY >= Ed.uLevel_Y_Dimension) {    // Level ist in Y-Richtung kleiner bzw. gleich der Anzeigehöhe (in Y-Richtung wird nicht gescrollt)
+    if (Ed.uVisibleY >= Ed.uLevel_Y_Dimension) {    // Level ist in Y-Richtung kleiner bzw. gleich der AnzeigehÃ¶he (in Y-Richtung wird nicht gescrollt)
         Ed.uShiftLevelYpix = ((Ed.uVisibleY - Ed.uLevel_Y_Dimension) / 2) * Ed.uFont_W;    // Level im Anzeigebereich zentrieren
     } else {
-        // Level ist in Y-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
+        // Level ist in Y-Richtung grÃ¶ÃŸer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
         Ed.uShiftLevelYpix = 0;
     }
     // X-Zentrierung des Levels im Anzeigebereich
     if (Ed.uVisibleX >= Ed.uLevel_X_Dimension) {    // Level ist in X-Richtung kleiner bzw. gleich der Anzeigebreite (in X-Richtung wird nicht gescrollt)
         Ed.uShiftLevelXpix = ((Ed.uVisibleX - Ed.uLevel_X_Dimension) / 2) * Ed.uFont_H;    // Level im Anzeigebereich zentrieren
     } else {
-        // Level ist in X-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
+        // Level ist in X-Richtung grÃ¶ÃŸer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
         Ed.uShiftLevelXpix = 0;
     }
-    // Positionsüberläufe abfangen
+    // PositionsÃ¼berlÃ¤ufe abfangen
     if ((Config.uResX % FONT_W) != 0) {
         uX = Config.uResX;
-        uX = ((uX + FONT_W - 1) / FONT_W) * FONT_W;     // Aufrunden auf nächste passende X-Auflösung
+        uX = ((uX + FONT_W - 1) / FONT_W) * FONT_W;     // Aufrunden auf nÃ¤chste passende X-AuflÃ¶sung
         Ed.nMaxXpos = (Ed.uLevel_X_Dimension * Ed.uFont_W) - uX + Ed.uPanelW + Ed.uFont_W;
     } else {
         Ed.nMaxXpos = (Ed.uLevel_X_Dimension * Ed.uFont_W) - Config.uResX + Ed.uPanelW;
@@ -1515,10 +1515,10 @@ Parameter
       Eingang: pLevel, uint16_t *, Zeiger auf Levelspeicher
                bClear, bool, true = Spielfeld auf EMERALD_SPACE setzen
                bAlwaysSteel, bool,
-                true = der Außenrand wird immer auf EMERALD_STEEL gesetzt, auch wenn bereits ein kompatibles Stahl-Element (IsSteel()) vorhanden ist
-                false = falls der Außenrand bereits ein kompatibles Stahl-Element (IsSteel()) enhält, wird dieses Element belassen.
+                true = der AuÃŸenrand wird immer auf EMERALD_STEEL gesetzt, auch wenn bereits ein kompatibles Stahl-Element (IsSteel()) vorhanden ist
+                false = falls der AuÃŸenrand bereits ein kompatibles Stahl-Element (IsSteel()) enhÃ¤lt, wird dieses Element belassen.
       Ausgang: -
-Rückgabewert:  int, 0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 int SetLevelBorder(uint16_t *pLevel, bool bClear, bool AlwaysSteel) {
@@ -1573,8 +1573,8 @@ Parameter
       Eingang: nMouseXpos, int, X-Position des Mauspfeils
                nMouseYpos, int, Y-Position des Mauspfeils
       Ausgang: -
-Rückgabewert:  uint16_t, Levelelement, wenn keines ermittelt werden kann,
-                         wird EMERALD_INVALID zurück gegeben.
+RÃ¼ckgabewert:  uint16_t, Levelelement, wenn keines ermittelt werden kann,
+                         wird EMERALD_INVALID zurÃ¼ck gegeben.
 Seiteneffekte: Ed.x, g_PanelElements[], Config.x
 ------------------------------------------------------------------------------*/
 uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos) {
@@ -1611,11 +1611,11 @@ uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos) {
 /*----------------------------------------------------------------------------
 Name:           FillPanel
 ------------------------------------------------------------------------------
-Beschreibung: Füllt das Editor-Panel mit Elementen aus dem Array g_PanelElements[].
+Beschreibung: FÃ¼llt das Editor-Panel mit Elementen aus dem Array g_PanelElements[].
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, g_PanelElements[], Playfiel.x
 ------------------------------------------------------------------------------*/
 int FillPanel(SDL_Renderer *pRenderer) {
@@ -1627,7 +1627,7 @@ int FillPanel(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;                     // Zum Kopieren in den Renderer
     float fAngle;
 
-    // Bei der aktuellen Fenster- (1024 * 768) und Panelgröße sind 32 * 8 = 256 Elemente möglich
+    // Bei der aktuellen Fenster- (1024 * 768) und PanelgrÃ¶ÃŸe sind 32 * 8 = 256 Elemente mÃ¶glich
     nErrorCode = 0;
     for (uI = 0; (g_PanelElements[uI] != EMERALD_INVALID) && (nErrorCode == 0); uI++) {
         if (g_PanelElements[uI] != EMERALD_NONE) {
@@ -1656,7 +1656,7 @@ Beschreibung: Zeichnet das Editor-Panel.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, g_PanelColorPatterns[], Config.x
 ------------------------------------------------------------------------------*/
 int DrawEditorPanel(SDL_Renderer *pRenderer) {
@@ -1667,7 +1667,7 @@ int DrawEditorPanel(SDL_Renderer *pRenderer) {
     uint32_t uTextureIndex;
 
     for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
-        SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+        SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
         Rect.x = Ed.uPanelXpos + 1 + 4 - I;
         Rect.y = Ed.uPanelYpos + 3 - I;
         Rect.w = Ed.uPanelW - 8 + I * 2;
@@ -1678,21 +1678,21 @@ int DrawEditorPanel(SDL_Renderer *pRenderer) {
         nErrorCode = FillPanel(pRenderer);
         for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
             // linkes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
             Rect.x = Config.uResX - 177 - I;
             Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
             nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
             // rechtes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
             Rect.x = Config.uResX - 48 - I;
             Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
             nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
             // mittleres Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
             Rect.x = Config.uResX - 112 - I;
             Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
@@ -1741,10 +1741,10 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                pnXpos, int *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int *, Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
-               nAnimationCount, int, 0 - 15 für Animationsstufe
+               nAnimationCount, int, 0 - 15 fÃ¼r Animationsstufe
       Ausgang: pnXpos, int *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount)
@@ -1758,12 +1758,12 @@ int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAn
     uint16_t uLevelElement;
     float fAngle;
 
-    // Die Eingangsparameter "grob" prüfen, damit nichts Schlimmes passiert
+    // Die Eingangsparameter "grob" prÃ¼fen, damit nichts Schlimmes passiert
     if ((pRenderer == NULL) || (Ed.pLevel == NULL)) {
         SDL_Log("%s: bad input parameters",__FUNCTION__);
         return -1;
     }
-    // Positionsüberläufe abfangen
+    // PositionsÃ¼berlÃ¤ufe abfangen
     if (*pnXpos < 0) {
         *pnXpos = 0;
     } else if (*pnXpos > Ed.nMaxXpos) {
@@ -1787,7 +1787,7 @@ int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAn
                 break;
             }
             uLevelElement = Ed.pLevel[I];
-            if ((uLevelElement != EMERALD_SPACE) && (uLevelElement != EMERALD_BEAM_CROSS) && (nErrorCode == 0)) {   // Space muss nicht gerendert werden, da nach jedem Bild sowieso Alles gelöscht wird
+            if ((uLevelElement != EMERALD_SPACE) && (uLevelElement != EMERALD_BEAM_CROSS) && (nErrorCode == 0)) {   // Space muss nicht gerendert werden, da nach jedem Bild sowieso Alles gelÃ¶scht wird
                 // Position innerhalb des Renderers
                 DestR.x = uX * Ed.uFont_W - (*pnXpos % Ed.uFont_W) + Ed.uShiftLevelXpix;
                 DestR.y = uY * Ed.uFont_H - (*pnYpos % Ed.uFont_H) + Ed.uShiftLevelYpix;
@@ -1809,12 +1809,12 @@ int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAn
 Name:           EditorStateLevel
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_LEVEL befindet,
-              wird diese Funktion ausgeführt. Sie ermöglicht das Zeichnen von Elementen
+              wird diese Funktion ausgefÃ¼hrt. Sie ermÃ¶glicht das Zeichnen von Elementen
               in einem Level.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, InputStates.x, Config.x
 ------------------------------------------------------------------------------*/
 int EditorStateLevel(SDL_Renderer *pRenderer) {
@@ -1916,11 +1916,11 @@ int EditorStateLevel(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           PreCalcYamCoords
 ------------------------------------------------------------------------------
-Beschreibung: Berechnet die Koordinaten der Kästchen für den YAM-Editor vor.
+Beschreibung: Berechnet die Koordinaten der KÃ¤stchen fÃ¼r den YAM-Editor vor.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 void PreCalcYamCoords(void) {
@@ -1931,9 +1931,9 @@ void PreCalcYamCoords(void) {
     for (I = 0; (I < EMERALD_MAX_YAM_EXPLOSIONS); I++) {
         uXpos = (I % 10);
         uYpos = (I / 10);
-        Ed.YamCoords[I].uXstart = uXpos * 80 + 4;   // Spaltenabstand beträgt 80 Pixel
+        Ed.YamCoords[I].uXstart = uXpos * 80 + 4;   // Spaltenabstand betrÃ¤gt 80 Pixel
         Ed.YamCoords[I].uXend = Ed.YamCoords[I].uXstart + (FONT_W / 2) * 3 - 1;
-        Ed.YamCoords[I].uYstart = uYpos * 74 + 20;  // Reihenabstand beträgt 74 Pixel
+        Ed.YamCoords[I].uYstart = uYpos * 74 + 20;  // Reihenabstand betrÃ¤gt 74 Pixel
         Ed.YamCoords[I].uYend = Ed.YamCoords[I].uYstart + (FONT_H / 2) * 3 - 1;
     }
  }
@@ -1946,8 +1946,8 @@ Beschreibung: Ermittelt anhand der Mausposition, welche Yam-Explosion angesproch
 Parameter
       Eingang: -
       Ausgang: puElementIndex, uint8_t *, Elementindex innerhalb der gefundenen Yam-Explosion,
-               nur gültig, wenn Rückgabe nicht -1
-Rückgabewert:  int, Yam-Explosion, falls -1, dann befindet sich Mauseposition nicht auf Yam-Explosion
+               nur gÃ¼ltig, wenn RÃ¼ckgabe nicht -1
+RÃ¼ckgabewert:  int, Yam-Explosion, falls -1, dann befindet sich Mauseposition nicht auf Yam-Explosion
 Seiteneffekte: Ed.x, InputStates.x
 ------------------------------------------------------------------------------*/
  int GetYamExplosionFromMousepointer(uint8_t *puElementIndex) {
@@ -1981,12 +1981,12 @@ Seiteneffekte: Ed.x, InputStates.x
 Name:           EditorStateYams
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_YAMS befindet,
-              wird diese Funktion ausgeführt. Sie ermöglicht das Zeichnen von Elementen
-              für explodierende Yams.
+              wird diese Funktion ausgefÃ¼hrt. Sie ermÃ¶glicht das Zeichnen von Elementen
+              fÃ¼r explodierende Yams.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, InputStates.x, Config.x
 ------------------------------------------------------------------------------*/
 int EditorStateYams(SDL_Renderer *pRenderer) {
@@ -2000,8 +2000,8 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
     uint16_t uElement;
     int nYamExplosion;
     uint8_t uElementIndex;
-    SDL_Rect Rect;  // Für Quadrate
-    SDL_Rect DestR;  // Für Elemente
+    SDL_Rect Rect;  // FÃ¼r Quadrate
+    SDL_Rect DestR;  // FÃ¼r Elemente
     float fAngle;
     uint32_t uTextureIndex;
     bool bFoundError;
@@ -2019,8 +2019,8 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,uXpos,uYpos,0,szText,K_ABSOLUTE,1);
 
         for (uLine = 0; (uLine < 4) && (nErrorCode == 0); uLine++) {
-            // Quadrat für Yam
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            // Quadrat fÃ¼r Yam
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
             Rect.x = uXpos - uLine;
             Rect.y = uYpos - uLine;
             Rect.w = FONT_LITTLE_W * 5 + uLine * 2;
@@ -2028,7 +2028,7 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
             nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
         }
         for (uLine = 0; (uLine < 4) && (nErrorCode == 0); uLine++) {
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
             SDL_RenderDrawLine(pRenderer, uXpos + 1, uYpos + FONT_H / 2 - uLine, uXpos + 3 * FONT_W / 2, uYpos + FONT_H / 2 - uLine);
         }
         for (E = 0; (E < 9) && (nErrorCode == 0); E++) {
@@ -2086,12 +2086,12 @@ int EditorStateYams(SDL_Renderer *pRenderer) {
 Name:           EditorStateMachines
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_MACHINES befindet,
-              wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration von
-              Replikatoren, Lichtschranken und Laufbändern.
+              wird diese Funktion ausgefÃ¼hrt. Sie ermÃ¶glicht die Konfiguration von
+              Replikatoren, Lichtschranken und LaufbÃ¤ndern.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, InputStates.x
 ------------------------------------------------------------------------------*/
 int EditorStateMachines(SDL_Renderer *pRenderer) {
@@ -2258,7 +2258,7 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
     } else {
         nErrorCode = PrintLittleFont(pRenderer,400,712,0,"NO",K_ABSOLUTE,1);
     }
-    // Laufbänder
+    // LaufbÃ¤nder
     PrintLittleFont(pRenderer,682,24,0,"CONVEYOR BELTS",K_ABSOLUTE,1);
     PrintLittleFont(pRenderer,848,72,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
@@ -2359,7 +2359,7 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
             }
         }
     }
-    // Dieser Block kann die Aktivität der Laufbänder umschalten
+    // Dieser Block kann die AktivitÃ¤t der LaufbÃ¤nder umschalten
     if (((InputStates.nMouseXpos_Absolute >= 800) && (InputStates.nMouseXpos_Absolute < (800 + FONT_W))) && (InputStates.bLeftMouseButton)) {
         if ((InputStates.nMouseYpos_Absolute >= 64) && (InputStates.nMouseYpos_Absolute < (64 + FONT_H))) {
             switch (Ed.uConveybeltRedState) {
@@ -2436,7 +2436,7 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
         }
     }
 
-    // Dieser Block kann die Aktivität der Replikatoren umschalten
+    // Dieser Block kann die AktivitÃ¤t der Replikatoren umschalten
     if (((InputStates.nMouseXpos_Absolute >= 192) && (InputStates.nMouseXpos_Absolute <= 224)) && (InputStates.bLeftMouseButton)) {
         if ((InputStates.nMouseYpos_Absolute >= 64) && (InputStates.nMouseYpos_Absolute <= 96)) {
             Ed.bReplicatorRedOn = !Ed.bReplicatorRedOn;
@@ -2450,7 +2450,7 @@ int EditorStateMachines(SDL_Renderer *pRenderer) {
         } else if ((InputStates.nMouseYpos_Absolute >= 352) && (InputStates.nMouseYpos_Absolute <= 384)) {
             Ed.bReplicatorBlueOn = !Ed.bReplicatorBlueOn;
             WaitNoKey();
-        // Dieser Block kann die Aktivität der Lichtschranken umschalten
+        // Dieser Block kann die AktivitÃ¤t der Lichtschranken umschalten
         } else if ((InputStates.nMouseYpos_Absolute >= 512) && (InputStates.nMouseYpos_Absolute <= 544)) {
             Ed.bLightBarrierRedOn = !Ed.bLightBarrierRedOn;
             WaitNoKey();
@@ -2515,12 +2515,12 @@ Name:           EditorStateTreasureChests
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_TREASURECHESTS,
               oder in Menustate = MENUSTATE_TREASURECHESTS_TEXT befindet,
-              wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration der
+              wird diese Funktion ausgefÃ¼hrt. Sie ermÃ¶glicht die Konfiguration der
               Schatztruhen.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, InputStates.x
 ------------------------------------------------------------------------------*/
 int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
@@ -2557,7 +2557,7 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
                                         640,64,EMERALD_TREASURECHEST_6,
                                         704,64,EMERALD_TREASURECHEST_7,
                                         768,64,EMERALD_TREASURECHEST_8,
-                                        // grüne Pfeile runter
+                                        // grÃ¼ne Pfeile runter
                                         320,128,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         384,128,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         448,128,EMERALD_FONT_GREEN_ARROW_DOWN,
@@ -2566,7 +2566,7 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
                                         640,128,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         704,128,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         768,128,EMERALD_FONT_GREEN_ARROW_DOWN,
-                                        // Platzhalter für Elemente
+                                        // Platzhalter fÃ¼r Elemente
                                         320,192,EMERALD_SPACE, // 30
                                         384,192,EMERALD_SPACE,
                                         448,192,EMERALD_SPACE,
@@ -2575,7 +2575,7 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
                                         640,192,EMERALD_SPACE,
                                         704,192,EMERALD_SPACE,
                                         768,192,EMERALD_SPACE,
-                                        // grüne Pfeile runter
+                                        // grÃ¼ne Pfeile runter
                                         320,256,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         384,256,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         448,256,EMERALD_FONT_GREEN_ARROW_DOWN,
@@ -2584,7 +2584,7 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
                                         640,256,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         704,256,EMERALD_FONT_GREEN_ARROW_DOWN,
                                         768,256,EMERALD_FONT_GREEN_ARROW_DOWN,
-                                        // Platzhalter für Warnungen
+                                        // Platzhalter fÃ¼r Warnungen
                                         320,320,EMERALD_SPACE, // 46.
                                         384,320,EMERALD_SPACE,
                                         448,320,EMERALD_SPACE,
@@ -2604,11 +2604,11 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
             uPositionsAndElements[(46 + I) * 3 + 2] = EMERALD_TREASURECHEST_0;
         }
     }
-    // Quadrate für Schatztruhen zeichnen (Elemente)
+    // Quadrate fÃ¼r Schatztruhen zeichnen (Elemente)
     for (Q = 0; Q < EMERALD_MAX_TREASURECHESTS; Q++) {
         for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
             // linkes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
             Rect.x = 319 + Q * 64 - I;
             Rect.y = 191 - I;
             Rect.w = FONT_W + 2 + I * 2;
@@ -2617,11 +2617,11 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
         }
     }
     PrintLittleFont(pRenderer,10,328,0,"WARNING OF DANGEROUS CONTENT:",K_ABSOLUTE,1);
-    // Quadrate für Schatztruhen zeichnen (Warnung)
+    // Quadrate fÃ¼r Schatztruhen zeichnen (Warnung)
     for (Q = 0; Q < EMERALD_MAX_TREASURECHESTS; Q++) {
         for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
             // linkes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
             Rect.x = 319 + Q * 64 - I;
             Rect.y = 319 - I;
             Rect.w = FONT_W + 2 + I * 2;
@@ -2643,17 +2643,17 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
             }
         }
     }
-    // Mausposition für Elemente abfragen
+    // Mausposition fÃ¼r Elemente abfragen
     bXfound = false;
     if ((InputStates.nMouseYpos_Absolute >= 192) && (InputStates.nMouseYpos_Absolute <= 192 + FONT_H)) {    // Y-Mausposition
-        for (I = 0; (I < EMERALD_MAX_TREASURECHESTS) && (!bXfound); I++) {      // X-Mauspositionen prüfen
+        for (I = 0; (I < EMERALD_MAX_TREASURECHESTS) && (!bXfound); I++) {      // X-Mauspositionen prÃ¼fen
             if ((InputStates.nMouseXpos_Absolute >= 320 + I * 64) && (InputStates.nMouseXpos_Absolute <= 320 + FONT_W + I * 64)) {
                 uChestIndex = I;
                 bXfound = true;
             }
         }
     }
-    // Dieser Block kann das Element einer Schatztruhe ändern
+    // Dieser Block kann das Element einer Schatztruhe Ã¤ndern
     if (bXfound) {
         if (InputStates.bLeftMouseButton) {
             Ed.uTreasureChestElement[uChestIndex] = Ed.uSelectedElementLeft[Ed.uMenuState];
@@ -2664,10 +2664,10 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
         }
     }
 
-    // Mausposition für Warnungen abfragen
+    // Mausposition fÃ¼r Warnungen abfragen
     bXfound = false;
     if ((InputStates.nMouseYpos_Absolute >= 320) && (InputStates.nMouseYpos_Absolute <= 320 + FONT_H)) {    // Y-Mausposition
-        for (I = 0; (I < EMERALD_MAX_TREASURECHESTS) && (!bXfound); I++) {      // X-Mauspositionen prüfen
+        for (I = 0; (I < EMERALD_MAX_TREASURECHESTS) && (!bXfound); I++) {      // X-Mauspositionen prÃ¼fen
             if ((InputStates.nMouseXpos_Absolute >= 320 + I * 64) && (InputStates.nMouseXpos_Absolute <= 320 + FONT_W + I * 64)) {
                 uChestIndex = I;
                 bXfound = true;
@@ -2693,12 +2693,12 @@ int EditorStateTreasureChests(SDL_Renderer *pRenderer) {
 Name:           EditorStateTimeAndScores
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_TIME_AND_SCORES befindet,
-              wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration von
+              wird diese Funktion ausgefÃ¼hrt. Sie ermÃ¶glicht die Konfiguration von
               Zeiten und Scores.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, InputStates.x
 ------------------------------------------------------------------------------*/
 int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
@@ -2896,7 +2896,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         816,736,EMERALD_FONT_BLUE_0,
                                         848,736,EMERALD_FONT_BLUE_0,
                                         880,736,EMERALD_FONT_BLUE_0,
-                                        // Pfeil hoch über X
+                                        // Pfeil hoch Ã¼ber X
                                         784,704,EMERALD_STEEL_ARROW_UP,
                                         816,704,EMERALD_STEEL_ARROW_UP,
                                         848,704,EMERALD_STEEL_ARROW_UP,
@@ -2913,7 +2913,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         816,832,EMERALD_FONT_BLUE_0,
                                         848,832,EMERALD_FONT_BLUE_0,
                                         880,832,EMERALD_FONT_BLUE_0,
-                                        // Pfeil hoch über Y
+                                        // Pfeil hoch Ã¼ber Y
                                         784,800,EMERALD_STEEL_ARROW_UP,
                                         816,800,EMERALD_STEEL_ARROW_UP,
                                         848,800,EMERALD_STEEL_ARROW_UP,
@@ -2940,8 +2940,8 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             // 2.Zeile
                             100,109,124,134,110,119,124,134,120,129,124,134,130,139,124,134, // ++++ Nachricht
                             100,109,150,160,110,119,150,160,120,129,150,160,130,139,150,160, // ---- Nachricht
-                            260,269,124,134,270,279,124,134,280,289,124,134,290,299,124,134, // ++++ Schlüssel
-                            260,269,150,160,270,279,150,160,280,289,150,160,290,299,150,160, // ---- Schlüssel
+                            260,269,124,134,270,279,124,134,280,289,124,134,290,299,124,134, // ++++ SchlÃ¼ssel
+                            260,269,150,160,270,279,150,160,280,289,150,160,290,299,150,160, // ---- SchlÃ¼ssel
                             420,429,124,134,430,439,124,134,440,449,124,134,450,459,124,134, // ++++ Dynamit
                             420,429,150,160,430,439,150,160,440,449,150,160,450,459,150,160, // ---- Dynamit
                             580,589,124,134,590,599,124,134,600,609,124,134,610,619,124,134, // ++++ Hammer
@@ -2953,8 +2953,8 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             // 3. Zeile
                             100,109,188,198,110,119,188,198,120,129,188,198,130,139,188,198, // ++++ Schleim
                             100,109,214,224,110,119,214,224,120,129,214,224,130,139,214,224, // ---- Schleim
-                            260,269,188,198,270,279,188,198,280,289,188,198,290,299,188,198, // ++++ Käfer
-                            260,269,214,224,270,279,214,224,280,289,214,224,290,299,214,224, // ---- Käfer
+                            260,269,188,198,270,279,188,198,280,289,188,198,290,299,188,198, // ++++ KÃ¤fer
+                            260,269,214,224,270,279,214,224,280,289,214,224,290,299,214,224, // ---- KÃ¤fer
                             420,429,188,198,430,439,188,198,440,449,188,198,450,459,188,198, // ++++ Mine
                             420,429,214,224,430,439,214,224,440,449,214,224,450,459,214,224, // ---- Mine
                             580,589,188,198,590,599,188,198,600,609,188,198,610,619,188,198, // ++++ Alien
@@ -3008,10 +3008,10 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             1008,1039,64,95,1072,1103,64,95,1136,1167,64,95,1200,1231,64,95,1008,1039,128,159,1072,1103,128,159,1136,1167,128,159,1200,1231,128,159,
                             };
 
-    // Rahmen und Füllung für Level-Title und Level Author zeichnen
+    // Rahmen und FÃ¼llung fÃ¼r Level-Title und Level Author zeichnen
     // Rechtecke in Farbe 20,200,20 zeichnen
     if (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_MESSAGE) {
-        SDL_SetRenderDrawColor(pRenderer,20,200,20, SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+        SDL_SetRenderDrawColor(pRenderer,20,200,20, SDL_ALPHA_OPAQUE);  // Farbe fÃ¼r Rechteck setzen
         DestR.x = 28;
         DestR.y = 764;
         DestR.w = (EMERALD_TITLE_LEN + 15) * FONT_LITTLE_W;
@@ -3025,10 +3025,10 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         // Senkrechte Linien hinter Doppelpunkt setzen
         SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,764,31 + 13 *FONT_LITTLE_W,764 + FONT_LITTLE_H + 6); // Level-Title
         SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,860,31 + 13 *FONT_LITTLE_W,860 + FONT_LITTLE_H + 6); // Level-Author
-        // Untergründe für Title und Author (vor Doppelunkt) zeichnen
+        // UntergrÃ¼nde fÃ¼r Title und Author (vor Doppelunkt) zeichnen
         DrawBeam(pRenderer,29, 765, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
         DrawBeam(pRenderer,29, 861, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
-        // Untergründe für Title und Author (nach Doppelunkt) zeichnen
+        // UntergrÃ¼nde fÃ¼r Title und Author (nach Doppelunkt) zeichnen
         DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 765, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
         DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 861, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
     }
@@ -3052,7 +3052,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         }
         if (InputStates.pKeyboardArray[SDL_SCANCODE_RIGHT])  {
             if (Ed.MessageEditor.uCursorPos < (Ed.MessageEditor.uMessageLen - 1)) {
-                // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+                // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
                 Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
                 Ed.MessageEditor.uCursorPos++;
                 // Neues Zeichen unter Cursor sichern
@@ -3061,7 +3061,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             }
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_LEFT]) {
             if (Ed.MessageEditor.uCursorPos > 0) {
-                // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+                // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
                 Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
                 Ed.MessageEditor.uCursorPos--;
                 // Neues Zeichen unter Cursor sichern
@@ -3071,7 +3071,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_UP]) {
             // Setzt den Cursor auf den Start der aktuellen Zeile
             if (Ed.MessageEditor.uCursorPos > 0) {
-                // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+                // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
                 Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
                 for (nE = Ed.MessageEditor.uCursorPos; nE >= 0; nE--) {
                     if (Ed.MessageEditor.szMessageEditorMem[nE] == 0x0A) {
@@ -3089,9 +3089,9 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 WaitNoKey();
             }
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_DOWN]) {
-            // Setzt den Cursor auf den Start der nächsten Zeile
+            // Setzt den Cursor auf den Start der nÃ¤chsten Zeile
             if (Ed.MessageEditor.uCursorPos < Ed.MessageEditor.uMessageLen) {
-                // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+                // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
                 Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
                 for (nE = Ed.MessageEditor.uCursorPos; nE < Ed.MessageEditor.uMessageLen; nE++) {
                     if (Ed.MessageEditor.szMessageEditorMem[nE] == 0x0A) {
@@ -3112,9 +3112,9 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_INSERT]) {
             Ed.MessageEditor.bInsert = !Ed.MessageEditor.bInsert;
             WaitNoSpecialKey(SDL_SCANCODE_INSERT);
-        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {    // Zeichen links vom Cursor löschen
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {    // Zeichen links vom Cursor lÃ¶schen
             if (Ed.MessageEditor.uCursorPos > 0) {
-                // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+                // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
                 Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
                 for (nE = Ed.MessageEditor.uCursorPos - 1; nE <= Ed.MessageEditor.uMessageLen; nE++) {
                     Ed.MessageEditor.szMessageEditorMem[nE] = Ed.MessageEditor.szMessageEditorMem[nE + 1];
@@ -3126,9 +3126,9 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 //WaitNoKey();
                 SDL_Delay(50);
             }
-        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_DELETE]) {    // Zeichen rechts vom Cursor löschen
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_DELETE]) {    // Zeichen rechts vom Cursor lÃ¶schen
             if (Ed.MessageEditor.uCursorPos < (Ed.MessageEditor.uMessageLen - 2)) {
-                // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+                // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
                 Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
                 for (nE = Ed.MessageEditor.uCursorPos; nE < Ed.MessageEditor.uMessageLen; nE++) {
                     Ed.MessageEditor.szMessageEditorMem[nE] = Ed.MessageEditor.szMessageEditorMem[nE + 1];
@@ -3141,13 +3141,13 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             }
 
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_HOME]) {
-            // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+            // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
             Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
             Ed.MessageEditor.uCursorPos = 0;
             // Neues Zeichen unter Cursor sichern
             Ed.MessageEditor.cCharAtCursor = Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos];
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_END]) {
-            // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+            // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
             Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
             Ed.MessageEditor.uCursorPos = Ed.MessageEditor.uMessageLen - 1;
             // Neues Zeichen unter Cursor sichern
@@ -3159,7 +3159,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             if (Ed.MessageEditor.bInsert) {
                 if ((GetLineLen(Ed.MessageEditor.szMessageEditorMem,Ed.MessageEditor.uCursorPos) < EMERALD_MAX_CHARACTERS_PER_LINE) || (uKey == 0x0A)) {
                     if ( (Ed.MessageEditor.uCursorPos < (Ed.MessageEditor.uMessageLen)) && ((Ed.MessageEditor.uMessageLen) < EDITOR_MEM_SIZE - 2) && (!((Ed.MessageEditor.uCursorPos == 0) && (uKey == 0x0A))) ) {
-                        // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+                        // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
                         Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
                         // nE ist beim Start der Schleife Zeiger auf letztes Zeichen im Text
                         for (nE = Ed.MessageEditor.uMessageLen - 1; (nE >= Ed.MessageEditor.uCursorPos) && (nE >= 0); nE--) {
@@ -3174,7 +3174,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 }
             } else {
                 if (!((Ed.MessageEditor.uCursorPos == 0) && (uKey == 0x0A))) {
-                    // Überschreib-Modus
+                    // Ãœberschreib-Modus
                     Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = uKey;
                     if (Ed.MessageEditor.uCursorPos < (Ed.MessageEditor.uMessageLen - 1)) {
                         Ed.MessageEditor.uCursorPos++;
@@ -3190,7 +3190,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
     } else {
         //sprintf(szText,"X: %d   Y: %d",InputStates.nMouseXpos_Absolute,InputStates.nMouseYpos_Absolute);
         //PrintLittleFont(pRenderer,1100,940,0,szText,K_ABSOLUTE); // Maus-Koordinate anzeigen
-        // Level-Dimension prüfen und ggf. anpassen
+        // Level-Dimension prÃ¼fen und ggf. anpassen
         if (Ed.uTmpLevel_X_Dimension > MAX_LEVEL_W) {
             Ed.uTmpLevel_X_Dimension = MAX_LEVEL_W;
         } else if (Ed.uTmpLevel_X_Dimension < MIN_LEVEL_W) {
@@ -3201,7 +3201,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         } else if (Ed.uTmpLevel_Y_Dimension < MIN_LEVEL_H) {
             Ed.uTmpLevel_Y_Dimension = MIN_LEVEL_H;
         }
-        // Ziffern für Level-Dimension
+        // Ziffern fÃ¼r Level-Dimension
         sprintf(szText,"%04d",Ed.uTmpLevel_X_Dimension);
         for (I = 0; I < 4; I++) {
             uPositionsAndElements[(159 + I) * 3 + 2] = EMERALD_FONT_BLUE_0 + szText[I] - 0x30;
@@ -3247,7 +3247,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,100,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreMessage);
         PrintLittleFont(pRenderer,100,137,0,szText,K_ABSOLUTE,1);
-        // Schlüssel
+        // SchlÃ¼ssel
         PrintLittleFont(pRenderer,260,124,0,"++++",K_ABSOLUTE,1);
         PrintLittleFont(pRenderer,260,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreKey);
@@ -3424,7 +3424,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                             SetButtonActivity(BUTTONLABEL_SAVE_MESSAGE,true);
                             SetButtonActivity(BUTTONLABEL_CANCEL_MESSAGE,true);
                             memset(Ed.MessageEditor.szMessageEditorMem,0,EDITOR_MEM_SIZE);
-                            GetKey();   // Letztes Zeichen im Tastaturpuffer löschen
+                            GetKey();   // Letztes Zeichen im Tastaturpuffer lÃ¶schen
                             if ((Ed.MessageEditor.nEditMessage >= 0) && (Ed.MessageEditor.nEditMessage < EMERALD_MAX_MESSAGES)) {
                                 if (Ed.pMessage[Ed.MessageEditor.nEditMessage] != NULL) {
                                     if (strlen(Ed.pMessage[Ed.MessageEditor.nEditMessage]) < (EDITOR_MEM_SIZE - 2) ) {
@@ -3520,13 +3520,13 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           ChangeTimeScoresValue
 ------------------------------------------------------------------------------
-Beschreibung: Ändert einen Wert im Menü Times & Scores anhand eines Schaltersfeldes
+Beschreibung: Ã„ndert einen Wert im MenÃ¼ Times & Scores anhand eines Schaltersfeldes
               und den Schalteroffset.
 Parameter
-      Eingang: nSwitchField, int, Schalterfeld im Menü Times & Scores, 0 bis 34
+      Eingang: nSwitchField, int, Schalterfeld im MenÃ¼ Times & Scores, 0 bis 34
                uSwitchFieldOffset, uint32_t, Schalteroffset
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 void ChangeTimeScoresValue(int nSwitchField,uint32_t uSwitchFieldOffset) {
@@ -3715,13 +3715,13 @@ void ChangeTimeScoresValue(int nSwitchField,uint32_t uSwitchFieldOffset) {
 /*----------------------------------------------------------------------------
 Name:           IncreaseOrDecreaseTimeScoreValue
 ------------------------------------------------------------------------------
-Beschreibung: Erhöht oder erniedrigt einen Wert für das Menü Times & Scores.
+Beschreibung: ErhÃ¶ht oder erniedrigt einen Wert fÃ¼r das MenÃ¼ Times & Scores.
 
 Parameter
-      Eingang: uSValue, uint32_t, Wert, der verändert werden soll.
+      Eingang: uSValue, uint32_t, Wert, der verÃ¤ndert werden soll.
                uSwitchOffset, uint32_t, Schalteroffset, 0 bis 7
       Ausgang: -
-Rückgabewert:  uint32_t , veränderter Wert
+RÃ¼ckgabewert:  uint32_t , verÃ¤nderter Wert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 uint32_t IncreaseOrDecreaseTimeScoreValue(uint32_t uValue, uint32_t uSwitchOffset) {
@@ -3733,28 +3733,28 @@ uint32_t IncreaseOrDecreaseTimeScoreValue(uint32_t uValue, uint32_t uSwitchOffse
     sprintf(szValue,"%04d",uValue);
     switch (uSwitchOffset) {
         case(0):        // +1000
-            if (szValue[0] == 0x39) {   // Überlauf?
+            if (szValue[0] == 0x39) {   // Ãœberlauf?
                 szValue[0] = 0x30;
             } else {
                 szValue[0] = szValue[0] + 1;
             }
             break;
         case(1):        // +100
-            if (szValue[1] == 0x39) {   // Überlauf?
+            if (szValue[1] == 0x39) {   // Ãœberlauf?
                 szValue[1] = 0x30;
             } else {
                 szValue[1] = szValue[1] + 1;
             }
             break;
         case(2):        // +10
-            if (szValue[2] == 0x39) {   // Überlauf?
+            if (szValue[2] == 0x39) {   // Ãœberlauf?
                 szValue[2] = 0x30;
             } else {
                 szValue[2] = szValue[2] + 1;
             }
             break;
         case(3):        // +1
-            if (szValue[3] == 0x39) {   // Überlauf?
+            if (szValue[3] == 0x39) {   // Ãœberlauf?
                 szValue[3] = 0x30;
             } else {
                 szValue[3] = szValue[3] + 1;
@@ -3797,12 +3797,12 @@ uint32_t IncreaseOrDecreaseTimeScoreValue(uint32_t uValue, uint32_t uSwitchOffse
 /*----------------------------------------------------------------------------
 Name:           GetTimeScoresSwitchfieldAndOffset
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt im Menü Times & Scores anhand eines Schalters das Schalterfeld
+Beschreibung: Ermittelt im MenÃ¼ Times & Scores anhand eines Schalters das Schalterfeld
               und den Schalteroffset.
 Parameter
-      Eingang: uSwitch, uint32_t, Schalter im Menü Times & Scores, 0 bis 359
+      Eingang: uSwitch, uint32_t, Schalter im MenÃ¼ Times & Scores, 0 bis 359
       Ausgang: puSwitchOffset, uint32_t *, Schalteroffset innerhalb des Schalterfelds
-Rückgabewert:  int , > 0 = Schaltergruppe, -1 = nichts gefunden
+RÃ¼ckgabewert:  int , > 0 = Schaltergruppe, -1 = nichts gefunden
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int GetTimeScoresSwitchfieldAndOffset(uint32_t uSwitch,uint32_t *puSwitchOffset) {
@@ -3826,12 +3826,12 @@ int GetTimeScoresSwitchfieldAndOffset(uint32_t uSwitch,uint32_t *puSwitchOffset)
 Name:           EditorStateConfirmNewLevelDimension
 ------------------------------------------------------------------------------
 Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION
-              befindet, wird diese Funktion ausgeführt. Sie ermöglicht die Bestätigigung oder
+              befindet, wird diese Funktion ausgefÃ¼hrt. Sie ermÃ¶glicht die BestÃ¤tigigung oder
               Ablehnung der neuen Level-Dimension.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
@@ -3867,7 +3867,7 @@ int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
     MainMenu.uMenuScreen[6 * MainMenu.uXdim + 26] = EMERALD_STEEL_STRIPE_TOP;
     MainMenu.uMenuScreen[6 * MainMenu.uXdim + 27] = EMERALD_STEEL_STRIPE_TOP;
     MainMenu.uMenuScreen[6 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT_TOP;
-    //Seitenwände
+    //SeitenwÃ¤nde
     MainMenu.uMenuScreen[7 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
     MainMenu.uMenuScreen[8 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
     MainMenu.uMenuScreen[9 * MainMenu.uXdim + 10] = EMERALD_STEEL_STRIPE_LEFT;
@@ -3904,7 +3904,7 @@ int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
     MainMenu.uMenuScreen[14 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT_BOTTOM;
     nErrorCode = RenderMenuElements(pRenderer);
     if (nErrorCode == 0) {
-        // 20 Pixel Zeilenabstand für LittleFont
+        // 20 Pixel Zeilenabstand fÃ¼r LittleFont
         nErrorCode = PrintLittleFont(pRenderer,364,234,0,"LEVEL DIMENSION WAS CHANGED FROM",K_RELATIVE,1);
         sprintf(szText,"%d X %d  TO  %d X %d.",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,Ed.uTmpLevel_X_Dimension,Ed.uTmpLevel_Y_Dimension);
         PrintLittleFont(pRenderer,364,254,0,szText,K_RELATIVE,1);
@@ -3921,16 +3921,16 @@ int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           CreateEditorButtons
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt alle notwenigen Buttons für den Editor.
+Beschreibung: Erzeugt alle notwenigen Buttons fÃ¼r den Editor.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Config.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int CreateEditorButtons(void) {
     int nErrors;
-    // Da hier absolute Koordinaten verwendet werden, müssen die Offsets wieder abgezogen werden.
+    // Da hier absolute Koordinaten verwendet werden, mÃ¼ssen die Offsets wieder abgezogen werden.
 
     nErrors = CreateButton(BUTTONLABEL_EDITOR_SAVE,"Save",Config.uResX - 184 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,true,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_QUIT,"Quit",Config.uResX - 139 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs,true,true);
@@ -3959,7 +3959,7 @@ Beschreibung: Gibt alle Buttons des Editors frei.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void FreeEditorButtons(void) {
@@ -3985,15 +3985,15 @@ void FreeEditorButtons(void) {
 /*----------------------------------------------------------------------------
 Name:           CreateNewLevel
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt ein neues Spielfeld für den Leveleditor nach den
-              Abmaßen die in Ed.uTmpLevel_X_Dimension und Ed.uTmpLevel_Y_Dimension
+Beschreibung: Erzeugt ein neues Spielfeld fÃ¼r den Leveleditor nach den
+              AbmaÃŸen die in Ed.uTmpLevel_X_Dimension und Ed.uTmpLevel_Y_Dimension
               gesetzt sind.
 
 Parameter
       Eingang: bCopyOldLeveldata, bool, true = kopiere die bestehenden Leveldaten ab
                     oben links in das neue Level, false = leeres Level
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 int CreateNewLevel(bool bCopyOldLeveldata) {
@@ -4031,7 +4031,7 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
                             }
                         }
                     }
-                    // Man auf nächste passende Position setzen
+                    // Man auf nÃ¤chste passende Position setzen
                     for (I = 0; I < Ed.uLevel_XY_Dimension; I++) {
                         if ((pLevel[I] == EMERALD_SPACE) || (pLevel[I] == EMERALD_EARTH) || (pLevel[I] == EMERALD_EARTH_INVISIBLE)) {
                             pLevel[I] = EMERALD_MAN;
@@ -4042,11 +4042,11 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
                     // Einen Man oben links setzen
                     pLevel[Ed.uLevel_X_Dimension + 1] = EMERALD_MAN;
                 }
-                // Wenn alles gut gegangen ist, kann das alte Spielfeld gelöscht werden
+                // Wenn alles gut gegangen ist, kann das alte Spielfeld gelÃ¶scht werden
                 SAFE_FREE(Ed.pLevel);
                 // dann neues Spielfeld zuweisen
                 Ed.pLevel = pLevel;
-                //  Sichtbereich für Editor neu berechnen
+                //  Sichtbereich fÃ¼r Editor neu berechnen
                 CalcEditorViewArea();
                 // Oben links positionieren
                 Ed.nXpos = 0;
@@ -4062,7 +4062,7 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
         SDL_Log("%s: bad level dimensions   x: %d    y: %d",__FUNCTION__,Ed.uTmpLevel_X_Dimension,Ed.uTmpLevel_Y_Dimension);
     }
     if (nErrorCode != 0) {
-        // Bei Fehler alte Leveldaten nicht löschen und alte Level-Dimension setzen
+        // Bei Fehler alte Leveldaten nicht lÃ¶schen und alte Level-Dimension setzen
         Ed.uLevel_X_Dimension = uOldX_Dimension;
         Ed.uLevel_Y_Dimension = uOldY_Dimension;
         Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
@@ -4076,12 +4076,12 @@ int CreateNewLevel(bool bCopyOldLeveldata) {
 /*----------------------------------------------------------------------------
 Name:           SaveNewMessage
 ------------------------------------------------------------------------------
-Beschreibung: Speichert eine aktuellen/geänderte Nachricht.
+Beschreibung: Speichert eine aktuellen/geÃ¤nderte Nachricht.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 int SaveNewMessage(void) {
@@ -4130,15 +4130,15 @@ int SaveNewMessage(void) {
 /*----------------------------------------------------------------------------
 Name:           InitEditor
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Struktur Ed.x für den Editor.
+Beschreibung: Initialisiert die Struktur Ed.x fÃ¼r den Editor.
 
 Parameter
-      Eingang: bNewLevel, bool, TRUE = Ein neues Level wird erzeugt mit den Abmaßen uXdim und uYdim.
-               uXdim, X-Dimension für neues Level, wird nur verwendet, wenn bNewLevel = true
-               uYdim, Y-Dimension für neues Level, wird nur verwendet, wenn bNewLevel = true
-               nLevel, int, Levelnummer innerhalb einer gewählten Levelgruppe, wird nur verwendet, wenn bNewLevel = false
+      Eingang: bNewLevel, bool, TRUE = Ein neues Level wird erzeugt mit den AbmaÃŸen uXdim und uYdim.
+               uXdim, X-Dimension fÃ¼r neues Level, wird nur verwendet, wenn bNewLevel = true
+               uYdim, Y-Dimension fÃ¼r neues Level, wird nur verwendet, wenn bNewLevel = true
+               nLevel, int, Levelnummer innerhalb einer gewÃ¤hlten Levelgruppe, wird nur verwendet, wenn bNewLevel = false
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: Ed.x, Config.x
 ------------------------------------------------------------------------------*/
 int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
@@ -4147,7 +4147,7 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
     nErrorCode = -1;
     memset(&Ed,0,sizeof(Ed));
     Ed.uPanelW = 192;                                       // Breite des Panels im Editor
-    Ed.uPanelH = Config.uResX;                              // Höhe des Panels im Editor
+    Ed.uPanelH = Config.uResX;                              // HÃ¶he des Panels im Editor
     Ed.uPanelXpos = Config.uResX - Ed.uPanelW;              // X-Positionierung des Panels im Editor
     Ed.uPanelYpos = 0;                                      // Y-Positionierung des Panels im Editor
     InitYamExplosions(Ed.YamExplosions);
@@ -4256,14 +4256,14 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
 /*----------------------------------------------------------------------------
 Name:           Editor
 ------------------------------------------------------------------------------
-Beschreibung: Hauptfunktion (Einsprungsfunktion) für den Level-Editor.
-              Diese Funktion alloziert Speicher über die Funktion GetLevelXmlFile(),
+Beschreibung: Hauptfunktion (Einsprungsfunktion) fÃ¼r den Level-Editor.
+              Diese Funktion alloziert Speicher Ã¼ber die Funktion GetLevelXmlFile(),
               der wieder freigegeben werdn muss.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
-               nLevel, int, Levelnummer innerhalb einer gewählten Levelgruppe, -1 = Level wird nicht verwendet
+               nLevel, int, Levelnummer innerhalb einer gewÃ¤hlten Levelgruppe, -1 = Level wird nicht verwendet
       Ausgang: -
-Rückgabewert:  DYNSTRING , XML-Daten des Levels, NULL = Fehler oder Quit
+RÃ¼ckgabewert:  DYNSTRING , XML-Daten des Levels, NULL = Fehler oder Quit
 Seiteneffekte: Ed.x, InputStates.x, Config.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
@@ -4345,7 +4345,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,true);
             SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 49 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs);
         } else if ((IsButtonPressed(BUTTONLABEL_RETURN_TO_LEVEL)) && (!Ed.bFoundError)) {
-            // Wenn sich Level-Dimension geändert hat, dann Warnung bzw. weiteres Vorgehen anbieten
+            // Wenn sich Level-Dimension geÃ¤ndert hat, dann Warnung bzw. weiteres Vorgehen anbieten
             if ((Ed.uTmpLevel_X_Dimension != Ed.uLevel_X_Dimension) || (Ed.uTmpLevel_Y_Dimension != Ed.uLevel_Y_Dimension)) {
                 Ed.uMenuState = MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION;
                 SetButtonActivity(BUTTONLABEL_EDITOR_OPTION_1,true);
@@ -4401,13 +4401,13 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,false);
             SetButtonActivity(BUTTONLABEL_SAVE_MESSAGE,false);
             SetButtonActivity(BUTTONLABEL_CANCEL_MESSAGE,false);
-            // unabhängig vom Zustand des Cursor das originale Zeichen in den Puffer zurückschreiben
+            // unabhÃ¤ngig vom Zustand des Cursor das originale Zeichen in den Puffer zurÃ¼ckschreiben
             Ed.MessageEditor.szMessageEditorMem[Ed.MessageEditor.uCursorPos] = Ed.MessageEditor.cCharAtCursor;
             if (IsButtonPressed(BUTTONLABEL_SAVE_MESSAGE)) {
                 Ed.bEditorRun = (SaveNewMessage() == 0);
             }
         } else if (IsButtonPressed(BUTTONLABEL_EDITOR_TEXT)) {
-            // Prüfen, in welchem Menü der Text-Button gedrückt wurde
+            // PrÃ¼fen, in welchem MenÃ¼ der Text-Button gedrÃ¼ckt wurde
             if (Ed.uMenuState == MENUSTATE_LEVEL_STD) {
                 Ed.uMenuState = MENUSTATE_LEVEL_TEXT;
             } else if (Ed.uMenuState == MENUSTATE_YAMS) {
@@ -4426,7 +4426,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonActivity(BUTTONLABEL_EDITOR_QUIT,false);
             SetButtonActivity(BUTTONLABEL_EDITOR_TEXT,false);
         } else if (IsButtonPressed(BUTTONLABEL_EDITOR_STD)) {
-            // Kann nur aus Yam- und Schatztruhen-Menü gedrückt werden
+            // Kann nur aus Yam- und Schatztruhen-MenÃ¼ gedrÃ¼ckt werden
             if (Ed.uMenuState == MENUSTATE_YAMS_TEXT) {
                 Ed.uMenuState = MENUSTATE_YAMS;
                 SetPanelElements(Ed.uMenuState);
@@ -4484,10 +4484,9 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
             SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 48 - ge_uXoffs,Config.uResY - 100 - ge_uYoffs);
             SetPanelElements(Ed.uMenuState);
         }
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+        RenderPresentAndClear(pRenderer);
         Ed.uFrameCounter++;
-        Playfield.uFrameCounter++;      // Einige Elemente benötigen den Playfield-Counter in der Funktion GetTextureIndexByElement();
+        Playfield.uFrameCounter++;      // Einige Elemente benÃ¶tigen den Playfield-Counter in der Funktion GetTextureIndexByElement();
         SDL_Delay(5);
     }
     FreeEditorButtons();
@@ -4510,7 +4509,7 @@ Parameter
       Eingang: pszInput, uint8_t *, Zeiger auf XML-Daten, muss \0 terminiert sein
       Ausgang: puCalculatedHash, uint_t *, Zeiger auf berechneten MD5-Levelgruppen-Hash, mindestens 16 Bytes
                     Dieser Pointer darf NULL sein.
-Rückgabewert:  int, 0 =  Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 =  Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int UpdateLevelgroupHash(uint8_t *pszInput, uint8_t *puCalculatedHash) {
@@ -4547,7 +4546,7 @@ Beschreibung: Aktualisiert den Zeitstempel in einer XML-Levelgruppendatei.
 Parameter
       Eingang: pszInput, uint8_t *, Zeiger auf XML-Daten, muss \0 terminiert sein
       Ausgang: -
-Rückgabewert:  int, 0 =  Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 =  Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int UpdateCreateTimestamp(uint8_t *pszInput) {
@@ -4580,7 +4579,7 @@ Parameter
                pEndpointer, uint8_t *, Zeiger auf Ende der XML-Daten (soweit darf gesucht werden)
                bStartFlag, bool, true = Start-Flag, sonst End-Flag
       Ausgang: -
-Rückgabewert:  uint8_t *, Zeiger auf Level-Start/End-Tag, NULL = nicht gefunden
+RÃ¼ckgabewert:  uint8_t *, Zeiger auf Level-Start/End-Tag, NULL = nicht gefunden
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 uint8_t *GetStartOrEndLevelTag(uint8_t *pszInput, uint8_t *pEndpointer, bool bStartFlag) {
@@ -4604,7 +4603,7 @@ uint8_t *GetStartOrEndLevelTag(uint8_t *pszInput, uint8_t *pEndpointer, bool bSt
                         } else if ((!bStartFlag) && (pSearch[10] == '>') && (isdigit(pSearch[7])) && (isdigit(pSearch[8])) && (isdigit(pSearch[9]))) {
                             pFound = pSearch;
                         } else {
-                            pSearch = pSearch + 9;  // ist für Start- und Ende-Tag OK
+                            pSearch = pSearch + 9;  // ist fÃ¼r Start- und Ende-Tag OK
                             pSearch = (uint8_t*)strstr((char*)pSearch,szTag);
                         }
                     } else {
@@ -4625,7 +4624,7 @@ Beschreibung: Re-nummeriert die Levelnummern einer Levelgruppe.
 Parameter
       Eingang: pszXml, uint8_t *, Zeiger auf XML-Daten einer Levelgruppe, muss \0 terminiert sein
       Ausgang: pszXml, uint8_t *, Zeiger auf XML-Daten der Eingangs-Levelgruppe (jetzt neu nummeriert)
-Rückgabewert:  > 0 = Alles OK, sonst Fehler (Anzahl gezählter Level)
+RÃ¼ckgabewert:  > 0 = Alles OK, sonst Fehler (Anzahl gezÃ¤hlter Level)
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int RenumLevelgroup(uint8_t *pszXml) {
@@ -4640,9 +4639,9 @@ int RenumLevelgroup(uint8_t *pszXml) {
 
     if (pszXml != NULL) {
         // SDL_Log("%s: Start, input len: %u",__FUNCTION__,(uint32_t)strlen((char*)pszXml));
-        // XML zunächst grob prüfen
+        // XML zunÃ¤chst grob prÃ¼fen
         puLevelgroupMd5TagStart = (uint8_t*)strstr((char*)pszXml,"<levelgroup_md5_hash>");
-        puLastTag = (uint8_t*)strstr((char*)pszXml,"</levelgroup>");     // "Höchster" Pointer
+        puLastTag = (uint8_t*)strstr((char*)pszXml,"</levelgroup>");     // "HÃ¶chster" Pointer
         if ((strstr((char*)pszXml,"<levelgroup>") != NULL) && (strstr((char*)pszXml,"<groupname>") != NULL) && (strstr((char*)pszXml,"<create_timestamp>") != NULL) && puLevelgroupMd5TagStart && puLastTag) {
             pSearch = GetStartOrEndLevelTag(pszXml,puLastTag,bStartFlag);
             do {
@@ -4682,12 +4681,12 @@ int RenumLevelgroup(uint8_t *pszXml) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelnameBeamPosition
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der Mauspfeil sich über
+Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der Mauspfeil sich Ã¼ber
               der Liste der Level-Namen befindet.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung, sonst 0 bis MAX_LEVELTITLES_IN_LIST - 1 für einen der MAX_LEVELTITLES_IN_LIST Level-Namen
+RÃ¼ckgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung, sonst 0 bis MAX_LEVELTITLES_IN_LIST - 1 fÃ¼r einen der MAX_LEVELTITLES_IN_LIST Level-Namen
 Seiteneffekte: InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 uint32_t GetLevelnameBeamPosition(void) {
@@ -4695,7 +4694,7 @@ uint32_t GetLevelnameBeamPosition(void) {
     uint32_t I;
     bool bMouseFound = false;
 
-    // Prüfen, ob Mauspfeil über Levelnamenliste steht und ggf. Balken einblenden
+    // PrÃ¼fen, ob Mauspfeil Ã¼ber Levelnamenliste steht und ggf. Balken einblenden
     if ((InputStates.nMouseXpos_Relative >= FONT_W) && (InputStates.nMouseXpos_Relative < 512 )) {
         for (I = 0; (I < MAX_LEVELTITLES_IN_LIST) && (!bMouseFound); I++) {
             if ((InputStates.nMouseYpos_Relative >= (110 + (I * 20))) && (InputStates.nMouseYpos_Relative < (130 + (I * 20)))) {
@@ -4713,13 +4712,13 @@ uint32_t GetLevelnameBeamPosition(void) {
 /*----------------------------------------------------------------------------
 Name:           GetImportFilesBeamPosition
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der Mauspfeil sich über
+Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der Mauspfeil sich Ã¼ber
               der Liste der Import-Dateiliste befindet.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung,
-               sonst 0 bis EMERALD_MAX_MAXIMPORTFILES_IN_LIST - 1 für einen der EMERALD_MAX_MAXIMPORTFILES_IN_LIST Import-Dateinamen
+RÃ¼ckgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung,
+               sonst 0 bis EMERALD_MAX_MAXIMPORTFILES_IN_LIST - 1 fÃ¼r einen der EMERALD_MAX_MAXIMPORTFILES_IN_LIST Import-Dateinamen
 Seiteneffekte: InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 uint32_t GetImportFilesBeamPosition(void) {
@@ -4727,7 +4726,7 @@ uint32_t GetImportFilesBeamPosition(void) {
     uint32_t I;
     bool bMouseFound = false;
 
-    // Prüfen, ob Mauspfeil über Levelnamenliste steht und ggf. Balken einblenden
+    // PrÃ¼fen, ob Mauspfeil Ã¼ber Levelnamenliste steht und ggf. Balken einblenden
     if ((InputStates.nMouseXpos_Relative >= FONT_W) && (InputStates.nMouseXpos_Relative < (DEFAULT_WINDOW_W - FONT_W) )) {
         for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (!bMouseFound); I++) {
             if ((InputStates.nMouseYpos_Relative >= (35 + (I * 20))) && (InputStates.nMouseYpos_Relative < (55 + (I * 20)))) {
@@ -4745,13 +4744,13 @@ uint32_t GetImportFilesBeamPosition(void) {
 /*----------------------------------------------------------------------------
 Name:           MenuSelectLevelname
 ------------------------------------------------------------------------------
-Beschreibung: Erledigt die Auswahl eines Levels aus dem Pre-Editor-Menü und
-              blendet die Balken für die Auswahl eines Levels ein, wenn sich
-              der Mauspfeil über den Namen einer Gruppe befindet.
+Beschreibung: Erledigt die Auswahl eines Levels aus dem Pre-Editor-MenÃ¼ und
+              blendet die Balken fÃ¼r die Auswahl eines Levels ein, wenn sich
+              der Mauspfeil Ã¼ber den Namen einer Gruppe befindet.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, InputStates.x
 ------------------------------------------------------------------------------*/
 int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
@@ -4776,13 +4775,13 @@ int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
 /*----------------------------------------------------------------------------
 Name:          ImportMenuSelectFile
 ------------------------------------------------------------------------------
-Beschreibung: Erledigt die Auswahl einer Datei aus dem Import-Level-Menü
-              und blendet die Balken für die Auswahl einer Datei ein, wenn sich
-              der Mauspfeil über den Namen einer Datei befindet.
+Beschreibung: Erledigt die Auswahl einer Datei aus dem Import-Level-MenÃ¼
+              und blendet die Balken fÃ¼r die Auswahl einer Datei ein, wenn sich
+              der Mauspfeil Ã¼ber den Namen einer Datei befindet.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, InputStates.x
 ------------------------------------------------------------------------------*/
 int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
@@ -4807,13 +4806,13 @@ int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
 /*----------------------------------------------------------------------------
 Name:           InitLevelTitleList
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Anzeigeliste für die Level-Titel.
+Beschreibung: Initialisiert die Anzeigeliste fÃ¼r die Level-Titel.
               Vor Aufruf dieser Funktion muss erfolgreich eine Levelgruppe
-              ausgewählt worden sein.
+              ausgewÃ¤hlt worden sein.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: MainMenu.x,  SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 void InitLevelTitleList(void) {
@@ -4832,11 +4831,11 @@ void InitLevelTitleList(void) {
 /*----------------------------------------------------------------------------
 Name:           HandlePreEditorButtons
 ------------------------------------------------------------------------------
-Beschreibung: Zeigt die Buttons im Pre-Editor-Menü an und wertet diese aus.
+Beschreibung: Zeigt die Buttons im Pre-Editor-MenÃ¼ an und wertet diese aus.
 Parameter
-      Eingang: nSelectedLevel, int, ausgewähltes Level, -1 = kein Level ausgewählt
+      Eingang: nSelectedLevel, int, ausgewÃ¤hltes Level, -1 = kein Level ausgewÃ¤hlt
       Ausgang: -
-Rückgabewert:  int, gedrückter Button
+RÃ¼ckgabewert:  int, gedrÃ¼ckter Button
                     0 = kein Button
                     1 = Create Levelgroup
                     2 = Rename Levelgroup
@@ -4864,7 +4863,7 @@ int HandlePreEditorButtons(int nSelectedLevel) {
     bButtonFound = false;
     bMouseInLevelArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 512) && (InputStates.nMouseYpos_Relative >= 96) && (InputStates.nMouseYpos_Relative < 736));
     memset(bButtons,false,sizeof(bButtons));
-    // Die folgenden Buttons werden unabhängig eines ausgewählten levels angezeigt
+    // Die folgenden Buttons werden unabhÃ¤ngig eines ausgewÃ¤hlten levels angezeigt
     MainMenu.uMenuScreen[4 * MainMenu.uXdim + 18] = EMERALD_STEEL_ADD_LEVELGROUP;
     SetMenuText(MainMenu.uMenuScreen,"NEW LEVELGROUP",20,4,EMERALD_FONT_BLUE);
     bButtons[1] = true;
@@ -4878,7 +4877,7 @@ int HandlePreEditorButtons(int nSelectedLevel) {
         SetMenuText(MainMenu.uMenuScreen,"SET LEVELGROUP PW",20,8,EMERALD_FONT_BLUE);
     }
     bButtons[3] = true;
-    // Die restlichen Buttons zunächst unsichtbar schalten
+    // Die restlichen Buttons zunÃ¤chst unsichtbar schalten
     MainMenu.uMenuScreen[10 * MainMenu.uXdim + 18] = EMERALD_SPACE;  // Joystick
     SetMenuText(MainMenu.uMenuScreen,"                   ",20,10,EMERALD_FONT_BLUE);
     MainMenu.uMenuScreen[12 * MainMenu.uXdim + 18] = EMERALD_SPACE; // Edit
@@ -4894,11 +4893,11 @@ int HandlePreEditorButtons(int nSelectedLevel) {
     MainMenu.uMenuScreen[22 * MainMenu.uXdim + 18] = EMERALD_SPACE; // DC3-Level-Import
     SetMenuText(MainMenu.uMenuScreen,"                   ",20,22,EMERALD_FONT_BLUE);
     // Obere Leiste mit Levelgruppennamen und Levelnummer
-    if (nSelectedLevel == -1) { // Ist ein Level ausgewählt?
-        // Kein Level ausgewählt
+    if (nSelectedLevel == -1) { // Ist ein Level ausgewÃ¤hlt?
+        // Kein Level ausgewÃ¤hlt
         sprintf(szText,"%s/LEVEL:-",SelectedLevelgroup.szLevelgroupname);
     } else {
-        // Level ausgewählt
+        // Level ausgewÃ¤hlt
         sprintf(szText,"%s/LEVEL:%03u",SelectedLevelgroup.szLevelgroupname,nSelectedLevel);
         MainMenu.uMenuScreen[10 * MainMenu.uXdim + 18] = EMERALD_STEEL_JOYSTICK;
         SetMenuText(MainMenu.uMenuScreen,"TEST LEVEL",20,10,EMERALD_FONT_BLUE);
@@ -4931,7 +4930,7 @@ int HandlePreEditorButtons(int nSelectedLevel) {
         bButtons[10] = true;
     }
     if (InputStates.bLeftMouseButton) {
-        // Prüfen, ob Mauspfeil auf richtiger X-Position steht
+        // PrÃ¼fen, ob Mauspfeil auf richtiger X-Position steht
         if ((InputStates.nMouseXpos_Relative >= 576) && (InputStates.nMouseXpos_Relative < (576 + FONT_W))) {
             bButtonFound = false;
             for (B = 1; (B <= 10) && (!bButtonFound); B++) {
@@ -4941,7 +4940,7 @@ int HandlePreEditorButtons(int nSelectedLevel) {
                 }
             }
         }
-        // Scroll-Buttons für Levelnamensliste
+        // Scroll-Buttons fÃ¼r Levelnamensliste
         if ((!bButtonFound) && (SelectedLevelgroup.uLevelCount > MAX_LEVELTITLES_IN_LIST)) {
             if ((InputStates.nMouseXpos_Relative >= 512) && (InputStates.nMouseXpos_Relative < (512 + FONT_W))) {
                 if ((InputStates.nMouseYpos_Relative >= 96) && (InputStates.nMouseYpos_Relative < (96 + FONT_H))) {
@@ -4966,11 +4965,11 @@ int HandlePreEditorButtons(int nSelectedLevel) {
 /*----------------------------------------------------------------------------
 Name:           PreparePreEditormenu
 ------------------------------------------------------------------------------
-Beschreibung: Zeichnet ein paar Mauern und Beschriftungen für das PreEditorMenu.
+Beschreibung: Zeichnet ein paar Mauern und Beschriftungen fÃ¼r das PreEditorMenu.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: MainMenu.x, SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 void PreparePreEditormenu(void) {
@@ -4993,13 +4992,13 @@ void PreparePreEditormenu(void) {
 /*----------------------------------------------------------------------------
 Name:           PreEditorMenu
 ------------------------------------------------------------------------------
-Beschreibung: Vor-Menü für den Leveleditor. Hier können die vorhandenen Level
-              der SelectedLevelgroup angezeigt und ausgewählt werden.
+Beschreibung: Vor-MenÃ¼ fÃ¼r den Leveleditor. Hier kÃ¶nnen die vorhandenen Level
+              der SelectedLevelgroup angezeigt und ausgewÃ¤hlt werden.
 
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: InputStates.x, SelectedLevelgroup, MainMenu.x, Playfield.x
                ImportLevel.x, ManKey.x, Clipboard.x
 ------------------------------------------------------------------------------*/
@@ -5027,7 +5026,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     bool bColorToggle;
     uint8_t uFontColor;
     char szFullDefaultLevelgroupFilename[EMERALD_MAX_FILENAME_LEN * 2];
-    // Die folgenden Variablen für Doppelclick-Erkennung auf Levelnamen
+    // Die folgenden Variablen fÃ¼r Doppelclick-Erkennung auf Levelnamen
     uint32_t uDoubleClickState;
     uint32_t uLastBeamPosition;
     uint32_t uLastClickTime;    // Merken nach erstem Klick
@@ -5063,7 +5062,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     do {
         UpdateManKey(); // ruft auch UpdateInputStates(); auf
         //printf("x:%u  y:%u   BeamPos: %d\n",InputStates.nMouseXpos,InputStates.nMouseYpos,nSelectedBeamPosition);
-        // Hervorhebung für ausgewähltes Level: Balken nicht anzeigen, wenn abgedimmt (PrepareExit) wird.
+        // Hervorhebung fÃ¼r ausgewÃ¤hltes Level: Balken nicht anzeigen, wenn abgedimmt (PrepareExit) wird.
         if ((nSelectedBeamPosition >= 0) && (nSelectedBeamPosition < MAX_LEVELTITLES_IN_LIST) && (!bPrepareExit)) {
             if (nMoveState == 0) {
                 DrawBeam(pRenderer,FONT_W,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0x20,0x20,0x60,K_RELATIVE);
@@ -5083,7 +5082,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
             uDoubleClickState = 0;
             nButton = 5;    // Doppelclick auf Levelname kann ebenfalls Editor aufrufen
         }
-        // Für das schnelle Scrollen der Level-Liste
+        // FÃ¼r das schnelle Scrollen der Level-Liste
         if ( ((nLastButton == 12) && (nButton == 12)) || ((nLastButton == 11) && (nButton == 11)) ) {
             uScrollFastCounter++;
         } else {
@@ -5269,7 +5268,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     uDoubleClickState = 0;
                 }
             }
-        } else if (uDoubleClickState == 1) {    // Maustaste nicht gedrückt
+        } else if (uDoubleClickState == 1) {    // Maustaste nicht gedrÃ¼ckt
             uLastClickTime = SDL_GetTicks();
             uDoubleClickState = 2;
             // SDL_Log("%s: set double click state 2",__FUNCTION__);
@@ -5329,7 +5328,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
 
         if (bWarnDefaultLevelGroup) {
             if (bColorToggle) {
-                uFontColor = 3;//0;     // grün
+                uFontColor = 3;//0;     // grÃ¼n
             } else {
                 uFontColor = 2;     // rot
             }
@@ -5351,8 +5350,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
             bPrepareExit = true;
         }
         ShowButtons(pRenderer);
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+        RenderPresentAndClear(pRenderer);
         SDL_Delay(5);
         Playfield.uFrameCounter++;
     } while ((!bExit) && (nErrorCode == 0));
@@ -5366,12 +5364,12 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           ScrollLevelTitleList
 ------------------------------------------------------------------------------
-Beschreibung: Scrollt die Levelnamen im Pre-Editor-Menü.
+Beschreibung: Scrollt die Levelnamen im Pre-Editor-MenÃ¼.
 Parameter
-      Eingang: nButton, int, Levelnamenlisten-Button, der gedrückt wurde
-                        0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
+      Eingang: nButton, int, Levelnamenlisten-Button, der gedrÃ¼ckt wurde
+                        0 = kein Button gedrÃ¼ckt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
       Ausgang: -
-Rückgabewert:  int, 0 = nicht gescrollt
+RÃ¼ckgabewert:  int, 0 = nicht gescrollt
                     1 = runter gescrollt
                     2 = hoch gescrollt
 Seiteneffekte: SelectedLevelgroup, MainMenu.x
@@ -5413,7 +5411,7 @@ Beschreibung: Initialisiert die Struktur Clipboard.x.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Clipboard.x
 ------------------------------------------------------------------------------*/
 void InitClipboard(void) {
@@ -5425,15 +5423,15 @@ void InitClipboard(void) {
 /*----------------------------------------------------------------------------
 Name:           PutLevelToClipboard
 ------------------------------------------------------------------------------
-Beschreibung: Fügt ein Level aus der aktuell selektierten Lvelgruppe in die Struktur
+Beschreibung: FÃ¼gt ein Level aus der aktuell selektierten Lvelgruppe in die Struktur
               Clipboard.x ein. Falls sich bereits Daten im Clipboard befinden,
               wird der Clipboard-Speicher vorher freigegeben und neuer Speicher alloziert.
-              Im Erfolgsfall muss der Clipboard-Speicher außerhalb dieser
+              Im Erfolgsfall muss der Clipboard-Speicher auÃŸerhalb dieser
               Funktion wieder freigegeben werden.
 Parameter
       Eingang: nLevelNumber, int, Levelnummer in der selektierten Levelgruppe.
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Clipboard.x, SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 int PutLevelToClipboard(int nLevelNumber) {
@@ -5476,7 +5474,7 @@ int PutLevelToClipboard(int nLevelNumber) {
                                 strcpy(Clipboard.szLevelTitle,pAttr);
                             }
                         }
-                        ezxml_free(xml);    // Prüft selbst, ob Pointer NULL ist
+                        ezxml_free(xml);    // PrÃ¼ft selbst, ob Pointer NULL ist
                     }
                 }
             }
@@ -5495,7 +5493,7 @@ Beschreibung: Gibt ggf. den Speicher des Clipboards wieder frei.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Clipboard.x
 ------------------------------------------------------------------------------*/
 void FreeClipboard(void) {
@@ -5511,7 +5509,7 @@ Beschreibung: Zeigt den Inhalt des Clipboards. (Debugfunktion)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Clipboard.x
 ------------------------------------------------------------------------------*/
 void ShowClipboard(void) {

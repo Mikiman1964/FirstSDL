@@ -2,18 +2,17 @@
 #include "earth.h"
 #include "mystd.h"
 
-
 extern PLAYFIELD Playfield;
 
 /*----------------------------------------------------------------------------
 Name:           ControlEarth
 ------------------------------------------------------------------------------
-Beschreibung: Überprüft die freien Ränder eines Erd-Stückes und gibt diesem
+Beschreibung: ÃœberprÃ¼ft die freien RÃ¤nder eines Erd-StÃ¼ckes und gibt diesem
               Element den richtigen Zustand.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlEarth(uint32_t I) {
@@ -32,12 +31,12 @@ void ControlEarth(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlEarthInvisible
 ------------------------------------------------------------------------------
-Beschreibung: Überprüft die freien Ränder eines unsichtbaren Erd-Stückes und gibt diesem
+Beschreibung: ÃœberprÃ¼ft die freien RÃ¤nder eines unsichtbaren Erd-StÃ¼ckes und gibt diesem
               Element den richtigen Zustand.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlEarthInvisible(uint32_t I) {
@@ -56,12 +55,12 @@ void ControlEarthInvisible(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlEarthMine
 ------------------------------------------------------------------------------
-Beschreibung: Überprüft die freien Ränder eines Erd-Minen-Stückes und gibt diesem
+Beschreibung: ÃœberprÃ¼ft die freien RÃ¤nder eines Erd-Minen-StÃ¼ckes und gibt diesem
               Element den richtigen Zustand.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlEarthMine(uint32_t I) {
@@ -78,12 +77,12 @@ void ControlEarthMine(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlGrass
 ------------------------------------------------------------------------------
-Beschreibung: Überprüft die freien Ränder eines Gras-Stückes und gibt diesem
+Beschreibung: ÃœberprÃ¼ft die freien RÃ¤nder eines Gras-StÃ¼ckes und gibt diesem
               Element den richtigen Zustand.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlGrass(uint32_t I) {
@@ -111,25 +110,25 @@ void ControlGrass(uint32_t I) {
         do {
             nDirectionRandom = randn(1,4);       // Ergibt Zufallszahl zwischen 1-4  (1 = links, 2 = oben, 3 = rechts, 4 = unten)
             switch (nDirectionRandom) {
-                case (1):           // links prüfen
+                case (1):           // links prÃ¼fen
                     if (IS_SPACE(I - 1)) {
                         Playfield.pLevel[I - 1] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I - 1] = EMERALD_ANIM_STAND;
                     }
                     break;
-                case (2):           // oben prüfen
+                case (2):           // oben prÃ¼fen
                     if (IS_SPACE(I - Playfield.uLevel_X_Dimension)) {
                         Playfield.pLevel[I - Playfield.uLevel_X_Dimension] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I - Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND;
                     }
                     break;
-                case (3):           // rechts prüfen
+                case (3):           // rechts prÃ¼fen
                     if (IS_SPACE(I + 1)) {
                         Playfield.pLevel[I + 1] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I + 1] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
                     }
                     break;
-                case (4):           // unten prüfen
+                case (4):           // unten prÃ¼fen
                     if (IS_SPACE(I + Playfield.uLevel_X_Dimension)) {
                         Playfield.pLevel[I + Playfield.uLevel_X_Dimension] = EMERALD_GRASS_COMES;
                         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_STAND | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
@@ -147,12 +146,12 @@ void ControlGrass(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlGrassComes
 ------------------------------------------------------------------------------
-Beschreibung: Steuert "wachsendes" Gras und wandelt dieses in "stationäres"
+Beschreibung: Steuert "wachsendes" Gras und wandelt dieses in "stationÃ¤res"
               Gras um.
 Parameter
       Eingang: I, uint32_t, Index im Level
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlGrassComes(uint32_t I) {

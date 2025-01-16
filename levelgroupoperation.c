@@ -21,15 +21,15 @@ extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
 /*----------------------------------------------------------------------------
 Name:           GetLevelFromLevelgroup
 ------------------------------------------------------------------------------
-Beschreibung: Gibt einen Level aus einer Levelgruppe zurück. Im Erfolgsfall
-              alloziert die Funktion Speicher, der außerhalb dieser Funktion
+Beschreibung: Gibt einen Level aus einer Levelgruppe zurÃ¼ck. Im Erfolgsfall
+              alloziert die Funktion Speicher, der auÃŸerhalb dieser Funktion
               wieder freigegeben werden muss. Der level ist \0 terminiert und
               somit als String verwendbar.
 Parameter
       Eingang: pszLevelgroup, uint8_t *, XML-Daten einer Levelgruppe
                uLevelNumber, uint32_t, Levelnummer
       Ausgang: -
-Rückgabewert:  uint8_t *, NULL = Fehler, sonst XML-Leveldaten
+RÃ¼ckgabewert:  uint8_t *, NULL = Fehler, sonst XML-Leveldaten
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 uint8_t *GetLevelFromLevelgroup(uint8_t *pszLevelgroup, uint32_t uLevelNumber) {
@@ -66,9 +66,9 @@ Name:           GetLevelTitleFromLevel
 Beschreibung: Holt den level-Titel aus einer Leveldatei.
 Parameter
       Eingang: pszLevel, uint8_t *, XML-Daten eines Levels
-      Ausgang: pszLevelTitle, uint8_t *, Zeiger auf Speicher für Leveltitel, mindestens
+      Ausgang: pszLevelTitle, uint8_t *, Zeiger auf Speicher fÃ¼r Leveltitel, mindestens
                EMERALD_TITLE_LEN + 1 Bytes Speicher
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int GetLevelTitleFromLevel(uint8_t *pszLevel, uint8_t *pszLevelTitle) {
@@ -100,9 +100,9 @@ Name:           LevelgroupOperaton_Edit
 Beschreibung: Ersetzt einen Level innerhalb einer Levelgruppe durch neue Leveldaten.
 Parameter
       Eingang: uLevelNumber, uint32_t, Levelnummer
-               NewLevel, DYNSTRING *, Zeiger auf Struktur für neue XML-Leveldaten
+               NewLevel, DYNSTRING *, Zeiger auf Struktur fÃ¼r neue XML-Leveldaten
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_Edit(uint32_t uLevelNumber, DYNSTRING *NewLevel) {
@@ -124,14 +124,14 @@ int LevelgroupOperaton_Edit(uint32_t uLevelNumber, DYNSTRING *NewLevel) {
         if ((NewLevel->pszString != NULL) && (NewLevel->nLen > 0)) {
             pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen);     // Levelgruppen-Datei einlesen
             if (pLevelgroupXml != NULL) {
-                puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>");     // "Höchster" Pointer
+                puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>");     // "HÃ¶chster" Pointer
                 if (puLastTag != NULL) {
                     if (UpdateCreateTimestamp(pLevelgroupXml) == 0) {
                         sprintf(szLevelNumberTag,"<level%03u>\r\n",uLevelNumber);
                         puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
                         if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
                             uPart1Size = puEndPart1 - pLevelgroupXml;
-                            puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                            puPart1 = malloc(uPart1Size + 1); // + 1 fÃ¼r String-Terminierung
                             if (puPart1 != NULL) {
                                 memset(puPart1,0,uPart1Size + 1);
                                 memcpy(puPart1,pLevelgroupXml,uPart1Size);
@@ -181,7 +181,7 @@ Beschreibung: Kopiert einen Level innerhalb einer Levelgruppe. Wird zum Beispiel
 Parameter
       Eingang: uLevelNumber, uint32_t, Levelnummer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
@@ -190,11 +190,11 @@ int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *puLastTag;
-    uint8_t *puEndPart1;            // beinhaltet alle Level einschließlich uLevelNumber
+    uint8_t *puEndPart1;            // beinhaltet alle Level einschlieÃŸlich uLevelNumber
     uint8_t *puPart1 = NULL;
     uint8_t *puRestPartStart;
     uint32_t uPart1Size = 0;
-    // Für Levelcount
+    // FÃ¼r Levelcount
     char *puStartLevelCountTag;
     char *puEndLevelCountTag;
     uint8_t *puPart2 = NULL;
@@ -211,17 +211,17 @@ int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
     S2 = DynStringInit();
     if ((uLevelNumber < SelectedLevelgroup.uLevelCount) && (SelectedLevelgroup.bOK)  && (S != NULL) && (S2 != NULL)) {
         if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
-            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer
+            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "HÃ¶chster" Pointer
                 if (UpdateCreateTimestamp(pLevelgroupXml) == 0) {
                     sprintf(szLevelNumberTag,"</level%03u>\r\n",uLevelNumber);
                     puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
                     if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
                         uPart1Size = puEndPart1 - pLevelgroupXml + strlen(szLevelNumberTag);
-                        puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                        puPart1 = malloc(uPart1Size + 1); // + 1 fÃ¼r String-Terminierung
                         if (puPart1 != NULL) {
                             memset(puPart1,0,uPart1Size + 1);
                             memcpy(puPart1,pLevelgroupXml,uPart1Size);
-                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level bis einschließlich Level X im String.
+                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level bis einschlieÃŸlich Level X im String.
                             pszlevel = GetLevelFromLevelgroup(pLevelgroupXml,uLevelNumber); // Kopie von Level X holen
                             if (pszlevel != NULL) {
                                 if (GetLevelTitleFromLevel(pszlevel,(uint8_t*)szLevelTitle) == 0) {
@@ -230,7 +230,7 @@ int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
                                     DynStringAdd(S,"  <title>");
                                     strcpy(szNewLevelTitle,"COPY OF "); // Len = 8
                                     strcat(szNewLevelTitle,szLevelTitle);
-                                    szNewLevelTitle[EMERALD_TITLE_LEN] = 0;  // Länge begrenzen
+                                    szNewLevelTitle[EMERALD_TITLE_LEN] = 0;  // LÃ¤nge begrenzen
                                     DynStringAdd(S,szNewLevelTitle);
                                     DynStringAdd(S,"</title>\r\n");
                                     puRestPartStart = (uint8_t*)strstr((char*)pszlevel,"<author>");     // Start vom Rest des levels
@@ -239,7 +239,7 @@ int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
                                         sprintf(szLevelNumberTag,"</level%03u>\r\n",uLevelNumber);
                                         puEndPart1 = puEndPart1 + strlen(szLevelNumberTag);
                                         if (puEndPart1 < puLastTag) {
-                                            DynStringAdd(S,(char*)puEndPart1);        // Den Rest der Levelgruppe anhängen
+                                            DynStringAdd(S,(char*)puEndPart1);        // Den Rest der Levelgruppe anhÃ¤ngen
                                             if ((nNewLevelCount = RenumLevelgroup((uint8_t *)S->pszString)) > 0) {
                                                 // Levelgruppe ist fast fertig, jetzt Anpassung von <levelcount>x</levelcount>
                                                 puStartLevelCountTag = strstr(S->pszString,"<levelcount>");
@@ -292,12 +292,12 @@ int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
 /*----------------------------------------------------------------------------
 Name:           LevelgroupOperaton_CopyClipboard
 ------------------------------------------------------------------------------
-Beschreibung: Kopiert einen Level aus dem Clipboard hinter das ausgewählte Level
+Beschreibung: Kopiert einen Level aus dem Clipboard hinter das ausgewÃ¤hlte Level
               innerhalb einer Levelgruppe.
 Parameter
       Eingang: uLevelNumber, uint32_t, Levelnummer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Clipboard.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber) {
@@ -306,10 +306,10 @@ int LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber) {
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *puLastTag;
-    uint8_t *puEndPart1;            // beinhaltet alle Level einschließlich uLevelNumber
+    uint8_t *puEndPart1;            // beinhaltet alle Level einschlieÃŸlich uLevelNumber
     uint8_t *puPart1 = NULL;
     uint32_t uPart1Size = 0;
-    // Für Levelcount
+    // FÃ¼r Levelcount
     char *puStartLevelCountTag;
     char *puEndLevelCountTag;
     uint8_t *puPart2 = NULL;
@@ -323,21 +323,21 @@ int LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber) {
     S2 = DynStringInit();
     if ((uLevelNumber < SelectedLevelgroup.uLevelCount) && (SelectedLevelgroup.bOK)  && (S != NULL) && (S2 != NULL) && (Clipboard.pLevelXml != NULL)) {
         if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
-            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer
+            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "HÃ¶chster" Pointer
                 if (UpdateCreateTimestamp(pLevelgroupXml) == 0) {
                     sprintf(szLevelNumberTag,"</level%03u>\r\n",uLevelNumber);
                     puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
                     if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
                         uPart1Size = puEndPart1 - pLevelgroupXml + strlen(szLevelNumberTag);
-                        puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                        puPart1 = malloc(uPart1Size + 1); // + 1 fÃ¼r String-Terminierung
                         if (puPart1 != NULL) {
                             memset(puPart1,0,uPart1Size + 1);
                             memcpy(puPart1,pLevelgroupXml,uPart1Size);
-                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level bis einschließlich Level X im String.
+                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level bis einschlieÃŸlich Level X im String.
                             DynStringAdd(S,(char*)Clipboard.pLevelXml); // Clipboard-Level dazu kopieren.
                             puEndPart1 = puEndPart1 + strlen(szLevelNumberTag);
                             if (puEndPart1 < puLastTag) {
-                                DynStringAdd(S,(char*)puEndPart1);        // Den Rest der Levelgruppe anhängen
+                                DynStringAdd(S,(char*)puEndPart1);        // Den Rest der Levelgruppe anhÃ¤ngen
                                 if ((nNewLevelCount = RenumLevelgroup((uint8_t *)S->pszString)) > 0) {
                                     // Levelgruppe ist fast fertig, jetzt Anpassung von <levelcount>x</levelcount>
                                     puStartLevelCountTag = strstr(S->pszString,"<levelcount>");
@@ -386,13 +386,13 @@ int LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber) {
 /*----------------------------------------------------------------------------
 Name:           LevelgroupOperaton_Delete
 ------------------------------------------------------------------------------
-Beschreibung: Löscht einen Level innerhalb einer Levelgruppe. Wird zum Beispiel
-              Level 2 gelöscht, so rücken die nachfolgenden Level ab 3 weiter nach
+Beschreibung: LÃ¶scht einen Level innerhalb einer Levelgruppe. Wird zum Beispiel
+              Level 2 gelÃ¶scht, so rÃ¼cken die nachfolgenden Level ab 3 weiter nach
               vorne.
 Parameter
-      Eingang: uLevelNumber, uint32_t, Levelnummer -> Level, dass gelöscht werden soll
+      Eingang: uLevelNumber, uint32_t, Levelnummer -> Level, dass gelÃ¶scht werden soll
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_Delete(uint32_t uLevelNumber) {
@@ -401,11 +401,11 @@ int LevelgroupOperaton_Delete(uint32_t uLevelNumber) {
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *puLastTag;
-    uint8_t *puEndPart1;            // beinhaltet alle Level einschließlich uLevelNumber
+    uint8_t *puEndPart1;            // beinhaltet alle Level einschlieÃŸlich uLevelNumber
     uint8_t *puPart1 = NULL;
     uint8_t *puRestPartStart;
     uint32_t uPart1Size = 0;
-    // Für Levelcount
+    // FÃ¼r Levelcount
     char *puStartLevelCountTag;
     char *puEndLevelCountTag;
     uint8_t *puPart2 = NULL;
@@ -419,22 +419,22 @@ int LevelgroupOperaton_Delete(uint32_t uLevelNumber) {
     S2 = DynStringInit();
     if ((uLevelNumber < SelectedLevelgroup.uLevelCount) && (SelectedLevelgroup.bOK)  && (S != NULL) && (S2 != NULL)) {
         if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
-            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer
+            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "HÃ¶chster" Pointer
                 if (UpdateCreateTimestamp(pLevelgroupXml) == 0) {
-                    sprintf(szLevelNumberTag,"<level%03u>\r\n",uLevelNumber);   // Start des zu löschenden Levels
+                    sprintf(szLevelNumberTag,"<level%03u>\r\n",uLevelNumber);   // Start des zu lÃ¶schenden Levels
                     puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
                     if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
                         uPart1Size = puEndPart1 - pLevelgroupXml;
-                        puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                        puPart1 = malloc(uPart1Size + 1); // + 1 fÃ¼r String-Terminierung
                         if (puPart1 != NULL) {
                             memset(puPart1,0,uPart1Size + 1);
                             memcpy(puPart1,pLevelgroupXml,uPart1Size);
-                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level bis einschließlich Level X im String.
-                            sprintf(szLevelNumberTag,"</level%03u>\r\n",uLevelNumber);   // Ende des zu löschenden Levels
+                            DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level bis einschlieÃŸlich Level X im String.
+                            sprintf(szLevelNumberTag,"</level%03u>\r\n",uLevelNumber);   // Ende des zu lÃ¶schenden Levels
                             if ((puRestPartStart = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag)) != NULL) {
                                 puRestPartStart = puRestPartStart + strlen(szLevelNumberTag);   // Start vom Rest der Levelgruppe
                                 if (puRestPartStart < puLastTag) {
-                                    DynStringAdd(S,(char*)puRestPartStart);         // Den Rest anhängen
+                                    DynStringAdd(S,(char*)puRestPartStart);         // Den Rest anhÃ¤ngen
                                     if ((nNewLevelCount = RenumLevelgroup((uint8_t *)S->pszString)) > 0) {
                                         // Levelgruppe ist fast fertig, jetzt Anpassung von <levelcount>x</levelcount>
                                         puStartLevelCountTag = strstr(S->pszString,"<levelcount>");
@@ -490,20 +490,20 @@ Parameter
       Eingang: uSrcLevelNumber, uint32_t, Levelnummer -> Level, dass verschoben werden soll
                uDestLevelNumber, uint32_t, Levelnummer -> an diese Position wird verschoben
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_Move(uint32_t uSrcLevelNumber,uint32_t uDestLevelNumber) {
     uint32_t I;
     bool bOK;
-    int nLevels[EMERALD_MAX_LEVELCOUNT];    // Dieses Array enthält die neue Levelsortierung
+    int nLevels[EMERALD_MAX_LEVELCOUNT];    // Dieses Array enthÃ¤lt die neue Levelsortierung
     int nErrorCode = -1;
     int nNewLevelCount = 0;
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *pszlevel = NULL;
     uint8_t *puLastTag;
-    uint8_t *puEndPart1;            // beinhaltet alle Level einschließlich uLevelNumber
+    uint8_t *puEndPart1;            // beinhaltet alle Level einschlieÃŸlich uLevelNumber
     uint8_t *puPart1 = NULL;
     uint8_t *puRestPartStart;
     uint32_t uPart1Size = 0;
@@ -531,12 +531,12 @@ int LevelgroupOperaton_Move(uint32_t uSrcLevelNumber,uint32_t uDestLevelNumber) 
     S = DynStringInit();
     if ((uSrcLevelNumber < SelectedLevelgroup.uLevelCount) && (uDestLevelNumber < SelectedLevelgroup.uLevelCount) && (SelectedLevelgroup.bOK)  && (S != NULL)) {
         if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
-            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer
+            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "HÃ¶chster" Pointer
                 sprintf(szLevelNumberTag,"<level000>\r\n");   // Ende des ersten Teils, bzw. Start von Level 000
                 puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
                 if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
                     uPart1Size = puEndPart1 - pLevelgroupXml;
-                    puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                    puPart1 = malloc(uPart1Size + 1); // + 1 fÃ¼r String-Terminierung
                     if (puPart1 != NULL) {
                         memset(puPart1,0,uPart1Size + 1);
                         memcpy(puPart1,pLevelgroupXml,uPart1Size);
@@ -557,7 +557,7 @@ int LevelgroupOperaton_Move(uint32_t uSrcLevelNumber,uint32_t uDestLevelNumber) 
                             if (((puRestPartStart = (uint8_t*)strstr((char*)pLevelgroupXml,"<password_md5_hash>")) != NULL) && (puRestPartStart < puLastTag)) {
                                 DynStringAdd(S,(char*)puRestPartStart);
                                 if ((nNewLevelCount = RenumLevelgroup((uint8_t *)S->pszString)) > 0) {
-                                    if (nNewLevelCount == SelectedLevelgroup.uLevelCount) { // Hier darf sich nichts geändert haben
+                                    if (nNewLevelCount == SelectedLevelgroup.uLevelCount) { // Hier darf sich nichts geÃ¤ndert haben
                                         if (UpdateLevelgroupHash((uint8_t*)S->pszString,uLevelgroupHash) == 0) {
                                             // Levelgruppe aktualisieren
                                             if (WriteFile(SelectedLevelgroup.szFilename,(uint8_t*)S->pszString,S->nLen,false) == 0) {
@@ -592,7 +592,7 @@ Beschreibung: Erzeugt eine neue Levelgruppe mit einem Level.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, ge_new_levelgroup[]
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_NewGroup(void) {
@@ -643,12 +643,12 @@ int LevelgroupOperaton_NewGroup(void) {
 /*----------------------------------------------------------------------------
 Name:           LevelgroupOperaton_RenameGroupname
 ------------------------------------------------------------------------------
-Beschreibung: Benennt den Levelgruppennamen um und bietet hierfür eine Eingabe
+Beschreibung: Benennt den Levelgruppennamen um und bietet hierfÃ¼r eine Eingabe
               an.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
@@ -684,7 +684,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
     MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUPNAME_LEN + 2] = EMERALD_WALL_CORNERED;
     while ((nErrorCode == 0) && (!bExit)) {
         UpdateInputStates();
-        // Eingabe eines Zeichens für den Levelgruppennamen
+        // Eingabe eines Zeichens fÃ¼r den Levelgruppennamen
         nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
         MainMenu.uFlashIndex++;
         if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
@@ -699,13 +699,13 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
         if (uKey != 0) {
            if (uCursorPos < EMERALD_GROUPNAME_LEN) {
                 szTempName[uCursorPos] = uKey;
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                 uCursorPos++;
            }
         } else  if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
              if (uCursorPos > 0) {
                 szTempName[uCursorPos - 1] = 0;
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                 uCursorPos--;
              }
              do {
@@ -722,15 +722,14 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
         if (nErrorCode == 0) {
             nErrorCode = RenderMenuElements(pRenderer);
         }
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+        RenderPresentAndClear(pRenderer);
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);
             uModVolume = uModVolume + 4;
             SetModVolume(uModVolume);
         } else if (bPrepareExit) {
-            MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+            MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 4;
                 SetAllTextureColors(nColorDimm);
@@ -751,7 +750,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
         S = DynStringInit();
         if (S != NULL) {
             if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
-                if ((puPart2 = (uint8_t*)strstr((char*)pLevelgroupXml,"</groupname>")) != NULL) {     // "Höchster" Pointer
+                if ((puPart2 = (uint8_t*)strstr((char*)pLevelgroupXml,"</groupname>")) != NULL) {     // "HÃ¶chster" Pointer
                     DynStringAdd(S,"<?xml version=\"1.0\"?>\r\n");
                     DynStringAdd(S,"<levelgroup>\r\n");
                     DynStringAdd(S,"<groupname>");
@@ -781,12 +780,12 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           LevelgroupOperaton_Password
 ------------------------------------------------------------------------------
-Beschreibung: Setzt oder lösct ein Levelgruppenpasswort. Falls ein Passwort
-              gesetzt werden muss, wird hierfür eine Eingabe angeboten.
+Beschreibung: Setzt oder lÃ¶sct ein Levelgruppenpasswort. Falls ein Passwort
+              gesetzt werden muss, wird hierfÃ¼r eine Eingabe angeboten.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
@@ -828,7 +827,7 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
         MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUP_PASSWORD_LEN + 2] = EMERALD_WALL_CORNERED;
         while ((nErrorCode == 0) && (!bExit)) {
             UpdateInputStates();
-            // Eingabe eines Zeichens für den Levelgruppennamen
+            // Eingabe eines Zeichens fÃ¼r den Levelgruppennamen
             nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
             MainMenu.uFlashIndex++;
             if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
@@ -843,13 +842,13 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
             if (uKey != 0) {
                if (uCursorPos < EMERALD_GROUP_PASSWORD_LEN) {
                     szPassword[uCursorPos] = uKey;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                     uCursorPos++;
                }
             } else  if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
                  if (uCursorPos > 0) {
                     szPassword[uCursorPos - 1] = 0;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                     uCursorPos--;
                  }
                  do {
@@ -866,15 +865,14 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
             if (nErrorCode == 0) {
                 nErrorCode = RenderMenuElements(pRenderer);
             }
-            SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-            SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+            RenderPresentAndClear(pRenderer);
             if ((!bPrepareExit) && (nColorDimm < 100)) {
                 nColorDimm = nColorDimm + 4;
                 SetAllTextureColors(nColorDimm);
                 uModVolume = uModVolume + 4;
                 SetModVolume(uModVolume);
             } else if (bPrepareExit) {
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                 if (nColorDimm > 0) {
                     nColorDimm = nColorDimm - 4;
                     SetAllTextureColors(nColorDimm);
@@ -947,12 +945,12 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           LevelgroupOperaton_AskPassword
 ------------------------------------------------------------------------------
-Beschreibung: Falls eine Levelgruppe passwortgeschützt ist, kommt die folgende
+Beschreibung: Falls eine Levelgruppe passwortgeschÃ¼tzt ist, kommt die folgende
               Abfrage.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK
+RÃ¼ckgabewert:  0 = Alles OK
                -1 = Fehler
                -2 = Kennwort falsch
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
@@ -988,7 +986,7 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
         MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUP_PASSWORD_LEN + 2] = EMERALD_WALL_CORNERED;
         while ((nErrorCode == 0) && (!bExit)) {
             UpdateInputStates();
-            // Eingabe eines Zeichens für den Levelgruppennamen
+            // Eingabe eines Zeichens fÃ¼r den Levelgruppennamen
             nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
             MainMenu.uFlashIndex++;
             if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
@@ -1003,13 +1001,13 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
             if (uKey != 0) {
                if (uCursorPos < EMERALD_GROUP_PASSWORD_LEN) {
                     szPassword[uCursorPos] = uKey;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                     uCursorPos++;
                }
             } else  if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
                  if (uCursorPos > 0) {
                     szPassword[uCursorPos - 1] = 0;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                     uCursorPos--;
                  }
                  do {
@@ -1022,15 +1020,14 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
             if (nErrorCode == 0) {
                 nErrorCode = RenderMenuElements(pRenderer);
             }
-            SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-            SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+            RenderPresentAndClear(pRenderer);
             if ((!bPrepareExit) && (nColorDimm < 100)) {
                 nColorDimm = nColorDimm + 4;
                 SetAllTextureColors(nColorDimm);
                 uModVolume = uModVolume + 4;
                 SetModVolume(uModVolume);
             } else if (bPrepareExit) {
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor lÃ¶schen
                 if (nColorDimm > 0) {
                     nColorDimm = nColorDimm - 4;
                     SetAllTextureColors(nColorDimm);
@@ -1070,11 +1067,11 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
 /*----------------------------------------------------------------------------
 Name:           LevelgroupOperaton_ImportDC3
 ------------------------------------------------------------------------------
-Beschreibung: Bietet eine Dateiauswahl für den DC3-Levelimport an.
+Beschreibung: Bietet eine Dateiauswahl fÃ¼r den DC3-Levelimport an.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = Alles OK, sonst Fehler
 Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
@@ -1141,25 +1138,25 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
                     XML = GetLevelXmlFromEditor();
                     if (XML != NULL) {
                         if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
-                            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "Höchster" Pointer
+                            if ((puLastTag = (uint8_t*)strstr((char*)pLevelgroupXml,"</levelgroup>")) != NULL) {     // "HÃ¶chster" Pointer
                                 if (UpdateCreateTimestamp(pLevelgroupXml) == 0) {
                                     sprintf(szLevelNumberTag,"</level%03u>\r\n",SelectedLevelgroup.uLevelCount - 1);    // Ende-Tag des letzten Levels
                                     puEndPart1 = (uint8_t*)strstr((char*)pLevelgroupXml,szLevelNumberTag);     // Hier ist Teil 1 zu Ende
                                     if ((puEndPart1 != NULL) && (puEndPart1 > pLevelgroupXml) && (puEndPart1 < puLastTag)) {
                                         uPart1Size = puEndPart1 - pLevelgroupXml + strlen(szLevelNumberTag);
-                                        puPart1 = malloc(uPart1Size + 1); // + 1 für String-Terminierung
+                                        puPart1 = malloc(uPart1Size + 1); // + 1 fÃ¼r String-Terminierung
                                         if (puPart1 != NULL) {
                                             memset(puPart1,0,uPart1Size + 1);
                                             memcpy(puPart1,pLevelgroupXml,uPart1Size);
                                             DynStringAdd(S,(char*)puPart1);         // Es befinden sich nun alle Level im String S.
                                             sprintf(szLevelNumberTag,"<level%03u>\r\n",SelectedLevelgroup.uLevelCount);    // Start-Tag des neuen importierten Levels
-                                            DynStringAdd(S,szLevelNumberTag);       // Start-Tag hinzufügen
-                                            DynStringAdd(S,XML->pszString);         // Das importierte Level hinzufügen
+                                            DynStringAdd(S,szLevelNumberTag);       // Start-Tag hinzufÃ¼gen
+                                            DynStringAdd(S,XML->pszString);         // Das importierte Level hinzufÃ¼gen
                                             sprintf(szLevelNumberTag,"</level%03u>\r\n",SelectedLevelgroup.uLevelCount);    // End-Tag des neuen importierten Levels
-                                            DynStringAdd(S,szLevelNumberTag);       // End-Tag hinzufügen
+                                            DynStringAdd(S,szLevelNumberTag);       // End-Tag hinzufÃ¼gen
                                             if ((puRestPartStart = (uint8_t*)strstr((char*)pLevelgroupXml,"<password_md5_hash>")) != NULL) {
                                                 if (puRestPartStart < puLastTag) {
-                                                    DynStringAdd(S,(char*)puRestPartStart);    // Den Rest hinzufügen
+                                                    DynStringAdd(S,(char*)puRestPartStart);    // Den Rest hinzufÃ¼gen
                                                     if ((nNewLevelCount = RenumLevelgroup((uint8_t *)S->pszString)) > 0) {
                                                         // Levelgruppe ist fast fertig, jetzt Anpassung von <levelcount>x</levelcount>
                                                         puStartLevelCountTag = strstr(S->pszString,"<levelcount>");
@@ -1207,9 +1204,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
             bPrepareExit = true;
         }
 
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-        SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
-
+        RenderPresentAndClear(pRenderer);
 
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;

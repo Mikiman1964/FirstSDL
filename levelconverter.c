@@ -1126,12 +1126,12 @@ Beschreibung: Konvertiert eine exportierte Diamond Caves III-Level-Bitmap
               in Leveldaten. Das Ergebnis wird in Ed.x abgelegt.
               Die Struktur Ed.x muss bereits teilweise initialisiert sein.
 
-              Im Erfolgsfall alloziert die Funktion in Ed.pLevel Speicher für
+              Im Erfolgsfall alloziert die Funktion in Ed.pLevel Speicher fÃ¼r
               das konvertierte Level.
 Parameter
       Eingang: pszFilename, char *, Dateiname der Bitmap
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Ed.x, Bitmap.x
 ------------------------------------------------------------------------------*/
 int LevelConverterFromBitap(char *pszFilename) {
@@ -1142,7 +1142,7 @@ int LevelConverterFromBitap(char *pszFilename) {
     uint32_t X,Y,I;
     uint16_t uLevelElement;
     MD5Context MD5Block;
-    char szMD5String[32 + 1];   // + 1 für Stringende
+    char szMD5String[32 + 1];   // + 1 fÃ¼r Stringende
     char szNum[16];
     int nErrorCode = 0;
     bool bBottomLeftReplicator;     // Linke und rechte Seite vom unteren Replikatorteil kann nicht unterschieden werden, daher Logik
@@ -1202,7 +1202,7 @@ int LevelConverterFromBitap(char *pszFilename) {
                 // Der untere Teil eines Replikators kann nicht direkt unterschieden werden, daher Logik
                 switch (uLevelElement) {
                     case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
-                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-HÃ¤lfte
                             uLevelElement = EMERALD_REPLICATOR_RED_BOTTOM_RIGHT;
                             bBottomLeftReplicator = false;
                         } else {
@@ -1210,7 +1210,7 @@ int LevelConverterFromBitap(char *pszFilename) {
                         }
                         break;
                     case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
-                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-HÃ¤lfte
                             uLevelElement = EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT;
                             bBottomLeftReplicator = false;
                         } else {
@@ -1218,7 +1218,7 @@ int LevelConverterFromBitap(char *pszFilename) {
                         }
                         break;
                     case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
-                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-HÃ¤lfte
                             uLevelElement = EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT;
                             bBottomLeftReplicator = false;
                         } else {
@@ -1226,7 +1226,7 @@ int LevelConverterFromBitap(char *pszFilename) {
                         }
                         break;
                     case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
-                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-Hälfte
+                        if (bBottomLeftReplicator) {    // es gab bereits eine linke Replikator-HÃ¤lfte
                             uLevelElement = EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT;
                             bBottomLeftReplicator = false;
                         } else {
@@ -1243,8 +1243,7 @@ int LevelConverterFromBitap(char *pszFilename) {
                 //Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_FONT_BLUE_STEEL_QUESTION_MARK;
             }
-            //SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-            //SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+            // RenderPresentAndClear(pRenderer);   // nur zu Debugzwecke
         }
     }
     if (nErrorCode == 0) {
@@ -1272,13 +1271,13 @@ int LevelConverterFromBitap(char *pszFilename) {
 /*----------------------------------------------------------------------------
 Name:           AdjustLevelborder
 ------------------------------------------------------------------------------
-Beschreibung: Vergrößert ggf. anhand der Levelrand-Prüfung die Leveldimension.
-              Die hinzugefügten Spalten und Zeilen werden mit EMERALD_STEEL_INVISIBLE belegt
+Beschreibung: VergrÃ¶ÃŸert ggf. anhand der Levelrand-PrÃ¼fung die Leveldimension.
+              Die hinzugefÃ¼gten Spalten und Zeilen werden mit EMERALD_STEEL_INVISIBLE belegt
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+RÃ¼ckgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 int AdjustLevelborder(void) {
@@ -1369,14 +1368,14 @@ int AdjustLevelborder(void) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelborderInfo
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob sich Nicht-Stahl-Elemente am Levelrand befinden und gibt eine
-              Information über die Ränder zurück.
+Beschreibung: PrÃ¼ft, ob sich Nicht-Stahl-Elemente am Levelrand befinden und gibt eine
+              Information Ã¼ber die RÃ¤nder zurÃ¼ck.
               Die Struktur Ed.x muss bereits initialisiert sein.
 
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint_8, Bitmaske, beschreibt, welcher Rand keine Nicht-Stahl-Elemente enthält
+RÃ¼ckgabewert:  uint_8, Bitmaske, beschreibt, welcher Rand keine Nicht-Stahl-Elemente enthÃ¤lt
                EMERALD_BORDER_NOSTEEL_LEFT | EMERALD_BORDER_NOSTEEL_RIGHT | EMERALD_BORDER_NOSTEEL_TOP | EMERALD_BORDER_NOSTEEL_BOTTOM
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
@@ -1386,28 +1385,28 @@ uint8_t GetLevelborderInfo(void) {
 
     uBorderinfo = EMERALD_BORDER_NOSTEEL_NONE;
     if ((Ed.pLevel != NULL) && (Ed.uLevel_X_Dimension > 0) && (Ed.uLevel_Y_Dimension > 0)) {
-        // Obere Zeile prüfen
+        // Obere Zeile prÃ¼fen
         for (I = 0; I < Ed.uLevel_X_Dimension; I++) {
             if (!IsSteel(Ed.pLevel[I])) {
                 uBorderinfo |= EMERALD_BORDER_NOSTEEL_TOP;
                 break;
             }
         }
-        // Untere Zeile prüfen
+        // Untere Zeile prÃ¼fen
         for (I = Ed.uLevel_X_Dimension * (Ed.uLevel_Y_Dimension - 1); (I < Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension); I++) {
             if (!IsSteel(Ed.pLevel[I])) {
                 uBorderinfo |= EMERALD_BORDER_NOSTEEL_BOTTOM;
                 break;
             }
         }
-        // Linke Spalte prüfen
+        // Linke Spalte prÃ¼fen
         for (I = 0; (I < Ed.uLevel_Y_Dimension); I++) {
             if (!IsSteel(Ed.pLevel[I * Ed.uLevel_X_Dimension])) {
                 uBorderinfo |= EMERALD_BORDER_NOSTEEL_LEFT;
                 break;
             }
         }
-        // Rechte Spalte prüfen
+        // Rechte Spalte prÃ¼fen
         for (I = 1; (I <= Ed.uLevel_Y_Dimension); I++) {
             if (!IsSteel(Ed.pLevel[I * Ed.uLevel_X_Dimension - 1])) {
                 uBorderinfo |= EMERALD_BORDER_NOSTEEL_RIGHT;
@@ -1423,12 +1422,12 @@ uint8_t GetLevelborderInfo(void) {
 Name:           GetLevelAuthorFromFile
 ------------------------------------------------------------------------------
 Beschreibung: Holt den Levelautor aus einer Datei. Falls diese Datei nicht existiert
-              oder keinen Namen enthält, so wird der Autor mit "LEVELIMPORTER" belegt.
+              oder keinen Namen enthÃ¤lt, so wird der Autor mit "LEVELIMPORTER" belegt.
 
 Parameter
       Eingang/Ausgang: szLevelAuthor, char *, Zeiger auf Speicher mit mindestens
                 EMERALD_AUTHOR_LEN + 1
-Rückgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung möglich
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung mÃ¶glich
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int GetLevelAuthorFromFile(char *pszLevelAuthor) {
@@ -1475,8 +1474,8 @@ Beschreibung: Ermittelt anhand des Filenamens den Leveltitel.
 
 Parameter
       Eingang: pszFilename, char *, Zeiger auf Filenamen im Format "importdc3/num name.bmp"
-      Ausgang: pszLevelTitle, char *, Zeiger auf mindestens EMERALD_TITLE_LEN + 1 Bytes Speicher für den Level-Titel
-Rückgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung möglich
+      Ausgang: pszLevelTitle, char *, Zeiger auf mindestens EMERALD_TITLE_LEN + 1 Bytes Speicher fÃ¼r den Level-Titel
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung mÃ¶glich
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle) {
@@ -1524,11 +1523,11 @@ Beschreibung: Schreibt einen 16x16-Pixelblock in den Renderer.
 
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uXpos, uint32_t, X-Position für Block
-               uYpos, uint32_t, Y-Position für Block
+               uXpos, uint32_t, X-Position fÃ¼r Block
+               uYpos, uint32_t, Y-Position fÃ¼r Block
                puBlockbuf, uint8_t *, Zeiger auf RGB-Daten des 16x16-Makroblocks
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf) {
@@ -1559,10 +1558,10 @@ Name:           ReadBmHeader
 Beschreibung: Liest einen Bitmap-Header (14 Bytes) und Bitmap-Info-Header (40 Bytes) ein.
 
 Parameter
-      Eingang: pF, FILE *, gültiges Lese-Handle auf Bitmap-Datei
+      Eingang: pF, FILE *, gÃ¼ltiges Lese-Handle auf Bitmap-Datei
                pBitmap, BITMAP *, Zeiger auf Bitmap-Struktur
       Ausgang: pBitmap, BITMAP *, Eingelesener Bitmap-Header
-Rückgabewert:  0 = alles OK, sonst Fehler
+RÃ¼ckgabewert:  0 = alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int ReadBmHeader(FILE *pF,BITMAP *pBitmap) {
@@ -1616,7 +1615,7 @@ Beschreibung: Gibt Elemente der BITMAP-Struktur aus.
 Parameter
       Eingang: pBitmap, BITMAP *, Zeiger auf Bitmap-Struktur
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void PrintBitmapInfos(BITMAP *pBitmap) {
@@ -1638,7 +1637,7 @@ Beschreibung: Gibt Elemente der ED-Struktur aus.
 Parameter
       Eingang: pEd, ED *, Zeiger auf Editor-Struktur
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 void PrintLevelInfos(ED *pEd) {
@@ -1652,12 +1651,12 @@ Name:           PrintLevelInfos
 ------------------------------------------------------------------------------
 Beschreibung: Gibt Elemente der ED-Struktur aus.
 Parameter
-      Eingang: pF, FILE *, gültiges Lese-Handle auf Bitmap-Datei
+      Eingang: pF, FILE *, gÃ¼ltiges Lese-Handle auf Bitmap-Datei
                X, uint32_t, Levelposition X
                Y, uint32_t, Levelposition Y
                puBlockbuf, uint8_t *, Zeiger auf Speicher 16 x 16 x 3 = 768 Bytes
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: Bitmap.x, Ed.x
 ------------------------------------------------------------------------------*/
 int Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf) {
@@ -1679,7 +1678,7 @@ int Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf) {
         }
         for (L = 0; (L <= 15) && (nErrorCode == 0); L++) {
             Offset = Bitmap.uDataOffset + uLine * Bitmap.uBytesPerLine + X * 16 * Bitmap.uBytesPerPixel;
-            nErrorCode = fseek(pF,Offset,SEEK_SET); // Gibt 0 bei Erfolg zurück
+            nErrorCode = fseek(pF,Offset,SEEK_SET); // Gibt 0 bei Erfolg zurÃ¼ck
             if (Bitmap.uBytesPerPixel == 3) {
                 if (fread(puBlockbuf + uBlockPtr,1,16 * 3,pF) == 16 * 3) {
                     uBlockPtr = uBlockPtr + (16 * 3);
@@ -1715,11 +1714,11 @@ int Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf) {
 /*----------------------------------------------------------------------------
 Name:           GetElementByMD5
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt anhand eines MD5-Hashes ein zugehöriges Levelelement.
+Beschreibung: Ermittelt anhand eines MD5-Hashes ein zugehÃ¶riges Levelelement.
 Parameter
       Eingang: szMd5, char *, Zeiger auf MD5-Hash
       Ausgang: -
-Rückgabewert:  uint16_t, Level-Element, EMERALD_INVALID, wenn Hash nicht gefunden wurde
+RÃ¼ckgabewert:  uint16_t, Level-Element, EMERALD_INVALID, wenn Hash nicht gefunden wurde
 Seiteneffekte: g_szDC3_MD5[], g_DC3_Elements[]
 ------------------------------------------------------------------------------*/
 uint16_t GetElementByMD5(char *szMd5) {
@@ -1748,11 +1747,11 @@ uint16_t GetElementByMD5(char *szMd5) {
 /*----------------------------------------------------------------------------
 Name:           CheckImportLevelFiles
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt die Dateien für den DC3-Level-Import.
+Beschreibung: Ermittelt die Dateien fÃ¼r den DC3-Level-Import.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: ImportLevel.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int CheckImportLevelFiles(void) {
@@ -1761,7 +1760,7 @@ int CheckImportLevelFiles(void) {
 
     if (GetLevelFileList(EMERALD_IMPORTDC3_DIRECTORYNAME,"BMP",(LEVELFILESLIST*)&Dc3LevelFileList,&uFileCount) == 0) {
         ImportLevel.uDc3FileCount = uFileCount; // Zugriff sollte atomar (Thread) sein
-        // Filelisten für Level-Import (DC3) initialisieren
+        // Filelisten fÃ¼r Level-Import (DC3) initialisieren
         memset(MainMenu.uImportFileListDc3,0xFF,sizeof(MainMenu.uImportFileListDc3));
         for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDc3FileCount); I++) {
             MainMenu.uImportFileListDc3[I] = I;
@@ -1773,7 +1772,7 @@ int CheckImportLevelFiles(void) {
 }
 
 
-// Ab hier der Thread, der das DC3-Import-Verzeichnis überwacht
+// Ab hier der Thread, der das DC3-Import-Verzeichnis Ã¼berwacht
 SDL_Thread *g_pCheckDC3ImportDirectoryThreadHandle = NULL;
 bool g_CheckDC3ImportDirectoryThreadRunning = false;
 bool g_CheckDC3ImportDirectoryThreadExit = true;
@@ -1787,7 +1786,7 @@ Beschreibung: Thread, der alle 3000 ms das DC3-Importverzeichnis aktualisiert.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+RÃ¼ckgabewert:  -
 Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
 void CheckDC3ImportDirectoryThread(void) {
@@ -1814,7 +1813,7 @@ Beschreibung: Startet den Thread CheckDC3ImportDirectoryThread.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler durch Timeout bzw. bei Thread-Erstellung
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler durch Timeout bzw. bei Thread-Erstellung
 Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
 int StartCheckDC3ImportDirectoryThread(void) {
@@ -1848,7 +1847,7 @@ Beschreibung: Beendet den Thread CheckDC3ImportDirectoryThread.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler durch Timeout
+RÃ¼ckgabewert:  int, 0 = OK, sonst Fehler durch Timeout
 Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
 int CloseCheckDC3ImportDirectoryThread(void) {
@@ -1879,9 +1878,9 @@ Parameter
       Eingang: pszDirectoryName, char *, Zeiger auf Verzeichnisname
                pszFileExtension, char *, Zeiger auf Datei-Extension
                     (nur 3-stellig und ohne Punkt oder NULL)
-      Ausgang: pLevelFileList, LEVELFILESLIST *, Zeiger auf zu befüllende Fileliste
+      Ausgang: pLevelFileList, LEVELFILESLIST *, Zeiger auf zu befÃ¼llende Fileliste
                puFileCount, uint32_t *, Zeiger auf Anzahl Files, Zugriff sollte atomar (Thread) sein
-Rückgabewert:  int , 0 = OK, sonst Fehler
+RÃ¼ckgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount) {
@@ -1928,20 +1927,25 @@ int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESL
                     // SDL_Log("%s: Filename: %s",__FUNCTION__,entry->d_name);
                     strcpy(pLevelFileList[I].szFilename,entry->d_name);
                     strcpy(pLevelFileList[I].szShowFilename,entry->d_name);
+                    // Der folgende Block funktioniert unter Linux nicht korrekt. FÃ¼r die Umlaute werden dort 2 negative Bytes kodiert.
                     for (U = 0; U < uFilenameLen; U++) {
                         pLevelFileList[I].szShowFilename[U] = toupper(entry->d_name[U]);
-                        if ((pLevelFileList[I].szShowFilename[U] == 'ä') || (pLevelFileList[I].szShowFilename[U] == 'Ä')) {
+                        // Ã¤ oder Ã„
+                        if ((pLevelFileList[I].szShowFilename[U] == -28) || (pLevelFileList[I].szShowFilename[U] == -60)) {
                             pLevelFileList[I].szShowFilename[U] = 97;
-                        } else if ((pLevelFileList[I].szShowFilename[U] == 'ö') || (pLevelFileList[I].szShowFilename[U] == 'Ö')) {
+                        // Ã¶ oder Ã–
+                        } else if ((pLevelFileList[I].szShowFilename[U] == -10) || (pLevelFileList[I].szShowFilename[U] == -42)) {
                             pLevelFileList[I].szShowFilename[U] = 98;
-                        } else if ((pLevelFileList[I].szShowFilename[U] == 'ü') || (pLevelFileList[I].szShowFilename[U] == 'Ü')) {
+                        // Ã¼ oder Ãœ
+                        } else if ((pLevelFileList[I].szShowFilename[U] == -4) || (pLevelFileList[I].szShowFilename[U] == -36)) {
                             pLevelFileList[I].szShowFilename[U] = 99;
-                        } else if (pLevelFileList[I].szShowFilename[U] == 'ß') {
+                        // ÃŸ
+                        } else if (pLevelFileList[I].szShowFilename[U] == -33) {
                             pLevelFileList[I].szShowFilename[U] = 'S';
                         }
                     }
                     if (strlen(pLevelFileList[I].szShowFilename) > EMERALD_MAX_SHOWFILENAME_LEN) {
-                        pLevelFileList[I].szShowFilename[EMERALD_MAX_SHOWFILENAME_LEN] = 0; // Anzeige-Filename kürzen
+                        pLevelFileList[I].szShowFilename[EMERALD_MAX_SHOWFILENAME_LEN] = 0; // Anzeige-Filename kÃ¼rzen
                     }
                     I++;
                 }
