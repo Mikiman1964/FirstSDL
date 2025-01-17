@@ -1,5 +1,5 @@
 CC := gcc
-FLAGS := `sdl2-config --libs --cflags` --std=gnu18 -ggdb3 -Og -lm -Wall
+FLAGS := `sdl2-config --libs --cflags` --std=gnu18 -lm -Wall
 HDRS := $(wildcard *.h)
 SRCS := $(wildcard *.c)
 OBJS := $(SRCS:%.c=tmp/%.o) $(wildcard gfx/*.o) $(wildcard sfx/*.o)
