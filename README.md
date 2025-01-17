@@ -5,7 +5,7 @@ Compile under linux
 ===================
 -> Compile SDL2
 1) Download the SDL2 source code from github:  https://github.com/libsdl-org/SDL/releases/download/release-2.30.11/SDL2-2.30.11.tar.gz
-2) Decompress the tar.gz file, open a terminal and "cd" into directory "SDL-release-2.30.11"
+2) Decompress the tar.gz file, open a terminal and "cd" into directory "SDL2-2.30.11"
 3) Type "./configure" to configure the package for your system
 4) Type "sudo make install" to compile & install SDL2
 
