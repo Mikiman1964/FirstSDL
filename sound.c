@@ -1,94 +1,56 @@
 #include "config.h"
 #include "sound.h"
 #include "EmeraldMine.h"
+#include "miniz.h"
 #include "mySDL.h"
 #include "sdlmixer_SDL_mixer.h"
+#include "sfx/gamesound.h"
 
 GAMESOUND GameSound;
 extern PLAYFIELD Playfield;
 extern CONFIG Config;
+extern uint8_t _binary_gamesound_compressed_bin_start;extern uint8_t _binary_gamesound_compressed_bin_end;
 
-extern uint8_t _binary_sound_ping_wav_start;extern uint8_t _binary_sound_ping_wav_end;
-extern uint8_t _binary_sound_mine_wav_start;extern uint8_t _binary_sound_mine_wav_end;
-extern uint8_t _binary_sound_beetle_wav_start;extern uint8_t _binary_sound_beetle_wav_end;
-extern uint8_t _binary_sound_wheel_wav_start;extern uint8_t _binary_sound_wheel_wav_end;
-extern uint8_t _binary_sound_alien_wav_start;extern uint8_t _binary_sound_alien_wav_end;
-extern uint8_t _binary_sound_magic_wall_wav_start;extern uint8_t _binary_sound_magic_wall_wav_end;
-extern uint8_t _binary_sound_man_space_wav_start;extern uint8_t _binary_sound_man_space_wav_end;
-extern uint8_t _binary_sound_door_wav_start;extern uint8_t _binary_sound_door_wav_end;
-extern uint8_t _binary_sound_nut_wav_start;extern uint8_t _binary_sound_nut_wav_end;
-extern uint8_t _binary_sound_nut_crack_wav_start;extern uint8_t _binary_sound_nut_crack_wav_end;
-extern uint8_t _binary_sound_replicator_wav_start;extern uint8_t _binary_sound_replicator_wav_end;
-extern uint8_t _binary_sound_man_push_wav_start;extern uint8_t _binary_sound_man_push_wav_end;
-extern uint8_t _binary_sound_yam_wav_start;extern uint8_t _binary_sound_yam_wav_end;
-extern uint8_t _binary_sound_stone_wav_start;extern uint8_t _binary_sound_stone_wav_end;
-extern uint8_t _binary_sound_explosion_wav_start;extern uint8_t _binary_sound_explosion_wav_end;
-extern uint8_t _binary_sound_dynamite_tick_wav_start;extern uint8_t _binary_sound_dynamite_tick_wav_end;
-extern uint8_t _binary_sound_pool_blub_wav_start;extern uint8_t _binary_sound_pool_blub_wav_end;
-extern uint8_t _binary_sound_man_take_wav_start;extern uint8_t _binary_sound_man_take_wav_end;
-extern uint8_t _binary_sound_man_dig_wav_start;extern uint8_t _binary_sound_man_dig_wav_end;
-extern uint8_t _binary_sound_door_exit_wav_start;extern uint8_t _binary_sound_door_exit_wav_end;
-extern uint8_t _binary_sound_man_cry_wav_start;extern uint8_t _binary_sound_man_cry_wav_end;
-extern uint8_t _binary_sound_cheese_wav_start;extern uint8_t _binary_sound_cheese_wav_end;
-extern uint8_t _binary_sound_gong_wav_start;extern uint8_t _binary_sound_gong_wav_end;
-extern uint8_t _binary_sound_squeeze_wav_start;extern uint8_t _binary_sound_squeeze_wav_end;
-extern uint8_t _binary_sound_switch_wav_start;extern uint8_t _binary_sound_switch_wav_end;
-extern uint8_t _binary_sound_mole_wav_start;extern uint8_t _binary_sound_mole_wav_end;
-extern uint8_t _binary_sound_wheel_door_time_wav_start;extern uint8_t _binary_sound_wheel_door_time_wav_end;
-extern uint8_t _binary_sound_door_close_open_wav_start;extern uint8_t _binary_sound_door_close_open_wav_end;
-extern uint8_t _binary_sound_replicator_plop_wav_start;extern uint8_t _binary_sound_replicator_plop_wav_end;
-extern uint8_t _binary_sound_dynamite_start_wav_start;extern uint8_t _binary_sound_dynamite_start_wav_end;
-extern uint8_t _binary_sound_conveyorbelt_wav_start;extern uint8_t _binary_sound_conveyorbelt_wav_end;
-extern uint8_t _binary_sound_teleporter_wav_start;extern uint8_t _binary_sound_teleporter_wav_end;
-extern uint8_t _binary_sound_steel_wall_grow_wav_start;extern uint8_t _binary_sound_steel_wall_grow_wav_end;
-extern uint8_t _binary_sound_bomb_remote_wav_start;extern uint8_t _binary_sound_bomb_remote_wav_end;
-extern uint8_t _binary_sound_pipe_wav_start;extern uint8_t _binary_sound_pipe_wav_end;
-extern uint8_t _binary_sound_shield_end_wav_start;extern uint8_t _binary_sound_shield_end_wav_end;
-extern uint8_t _binary_sound_slime_slurp_wav_start;extern uint8_t _binary_sound_slime_slurp_wav_end;
-extern uint8_t _binary_sound_slime_move_wav_start;extern uint8_t _binary_sound_slime_move_wav_end;
-
-uint8_t* g_pSfxPointer_wav[] = {
+// Alle verfügbaren Gamesounds
 // Bit
-/*01*/    &_binary_sound_ping_wav_start,&_binary_sound_ping_wav_end,                        // Ping, Emerald oder Saphir fallen auf etwas Hartes
-/*02*/    &_binary_sound_mine_wav_start,&_binary_sound_mine_wav_end,                        // Mine
-/*03*/    &_binary_sound_beetle_wav_start,&_binary_sound_beetle_wav_end,                    // Käfer
-/*04*/    &_binary_sound_wheel_wav_start,&_binary_sound_wheel_wav_end,                      // Rad
-/*05*/    &_binary_sound_alien_wav_start,&_binary_sound_alien_wav_end,                      // Alien
-/*06*/    &_binary_sound_magic_wall_wav_start,&_binary_sound_magic_wall_wav_end,            // Magic Wall
-/*07*/    &_binary_sound_man_space_wav_start,&_binary_sound_man_space_wav_end,              // Man geht in Space
-/*08*/    &_binary_sound_door_wav_start,&_binary_sound_door_wav_end,                        // Man geht durch Tür
-/*09*/    &_binary_sound_nut_wav_start,&_binary_sound_nut_wav_end,                          // Nuss fällt auf Etwas
-/*10*/    &_binary_sound_nut_crack_wav_start,&_binary_sound_nut_crack_wav_end,              // Nuss wird geknackt
-/*11*/    &_binary_sound_replicator_wav_start,&_binary_sound_replicator_wav_end,            // Replikator läuft
-/*12*/    &_binary_sound_man_push_wav_start,&_binary_sound_man_push_wav_end,                // Man schiebt Etwas
-/*13*/    &_binary_sound_yam_wav_start,&_binary_sound_yam_wav_end,                          // Yam
-/*14*/    &_binary_sound_stone_wav_start,&_binary_sound_stone_wav_end,                      // Stein fällt auf Etwas
-/*15*/    &_binary_sound_explosion_wav_start,&_binary_sound_explosion_wav_end,              // Explosion
-/*16*/    &_binary_sound_dynamite_tick_wav_start,&_binary_sound_dynamite_tick_wav_end,      // Dynamit aktiv
-/*17*/    &_binary_sound_pool_blub_wav_start,&_binary_sound_pool_blub_wav_end,              // Etwas ist ins Säurebecken gefallen
-/*18*/    &_binary_sound_man_take_wav_start,&_binary_sound_man_take_wav_end,                // Man nimmt etwas auf
-/*19*/    &_binary_sound_man_dig_wav_start,&_binary_sound_man_dig_wav_end,                  // Man gräbt Sand
-/*20*/    &_binary_sound_door_exit_wav_start,&_binary_sound_door_exit_wav_end,              // Man geht in die Endtür
-/*21*/    &_binary_sound_man_cry_wav_start,&_binary_sound_man_cry_wav_end,                  // Man schreit
-/*22*/    &_binary_sound_cheese_wav_start,&_binary_sound_cheese_wav_end,                    // Käse breitet sich aus
-/*23*/    &_binary_sound_gong_wav_start,&_binary_sound_gong_wav_end,                        // Zeit ist bald um
-/*24*/    &_binary_sound_squeeze_wav_start,&_binary_sound_squeeze_wav_end,                  // Saphir gequetscht / Objekt durch blaue Wand
-/*25*/    &_binary_sound_switch_wav_start,&_binary_sound_switch_wav_end,                    // Ein Schalter wird betätigt
-/*26*/    &_binary_sound_mole_wav_start,&_binary_sound_mole_wav_end,                        // Maulwurf
-/*27*/    &_binary_sound_wheel_door_time_wav_start,&_binary_sound_wheel_door_time_wav_end,  // Rad für Zeit-Tür
-/*28*/    &_binary_sound_door_close_open_wav_start,&_binary_sound_door_close_open_wav_end,  // Tür schließen / öffnen
-/*29*/    &_binary_sound_replicator_plop_wav_start,&_binary_sound_replicator_plop_wav_end,  // Replikator erzeugt neues Objekt
-/*30*/    &_binary_sound_dynamite_start_wav_start,&_binary_sound_dynamite_start_wav_end,    // Dynamit wird gestartet
-/*31*/    &_binary_sound_conveyorbelt_wav_start,&_binary_sound_conveyorbelt_wav_end,        // Laufband
-/*32*/    &_binary_sound_teleporter_wav_start,&_binary_sound_teleporter_wav_end,            // Teleporter
-/*33*/    &_binary_sound_steel_wall_grow_wav_start,&_binary_sound_steel_wall_grow_wav_end,  // Mauer und Stahl wächst
-/*34*/    &_binary_sound_bomb_remote_wav_start,&_binary_sound_bomb_remote_wav_end,          // ferngesteuerte Bombe
-/*35*/    &_binary_sound_pipe_wav_start,&_binary_sound_pipe_wav_end,                        // Man läuft in Röhre
-/*36*/    &_binary_sound_shield_end_wav_start,&_binary_sound_shield_end_wav_end,            // Schutzschild geht zu Ende
-/*37*/    &_binary_sound_slime_slurp_wav_start,&_binary_sound_slime_slurp_wav_end,          // Schleim frisst etwas
-/*38*/    &_binary_sound_slime_move_wav_start,&_binary_sound_slime_move_wav_end,            // Schleim bewegt sich
-/*39*/    NULL,NULL,                                                                        // Endekennung
-};
+/*01*/      // Ping, Emerald oder Saphir fallen auf etwas Hartes
+/*02*/      // Mine
+/*03*/      // Käfer
+/*04*/      // Rad
+/*05*/      // Alien
+/*06*/      // Magic Wall
+/*07*/      // Man geht in Space
+/*08*/      // Man geht durch Tür
+/*09*/      // Nuss fällt auf Etwas
+/*10*/      // Nuss wird geknackt
+/*11*/      // Replikator läuft
+/*12*/      // Man schiebt Etwas
+/*13*/      // Yam
+/*14*/      // Stein fällt auf Etwas
+/*15*/      // Explosion
+/*16*/      // Dynamit aktiv
+/*17*/      // Etwas ist ins Säurebecken gefallen
+/*18*/      // Man nimmt etwas auf
+/*19*/      // Man gräbt Sand
+/*20*/      // Man geht in die Endtür
+/*21*/      // Man schreit
+/*22*/      // Käse breitet sich aus
+/*23*/      // Zeit ist bald um
+/*24*/      // Saphir gequetscht / Objekt durch blaue Wand
+/*25*/      // Ein Schalter wird betätigt
+/*26*/      // Maulwurf
+/*27*/      // Rad für Zeit-Tür
+/*28*/      // Tür schließen / öffnen
+/*29*/      // Replikator erzeugt neues Objekt
+/*30*/      // Dynamit wird gestartet
+/*31*/      // Laufband
+/*32*/      // Teleporter
+/*33*/      // Mauer und Stahl wächst
+/*34*/      // ferngesteuerte Bombe
+/*35*/      // Man läuft in Röhre
+/*36*/      // Schutzschild geht zu Ende
+/*37*/      // Schleim frisst etwas
+/*38*/      // Schleim bewegt sich
 
 Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];
 
@@ -97,19 +59,42 @@ Mix_Chunk *g_pChunk[MAX_WAV_CHUNKS];
 Name:           InitGameSound
 ------------------------------------------------------------------------------
 Beschreibung: Initialisiert das Soundsystem für das Spiel.
+              1) Auspacken der WAV-Dateien aus dem komprimierten Gesamtblock
+              2) Öffnen des Audio devices
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  -
+Rückgabewert:  int, 0 = alles OK, sonst Fehler
 Seiteneffekte: GameSound.x, g_pChunk[]
 ------------------------------------------------------------------------------*/
 int InitGameSound(void) {
     uint32_t I;
+    uint32_t uCompressedWavSize;
+    uint32_t uUnCompressedWavSize;
+    uint8_t *pCompressedWavStart;
+    int nMiniz;
 
+    memset(&GameSound,0,sizeof(GAMESOUND));
     for (I = 0; I < MAX_WAV_CHUNKS; I++) {
         g_pChunk[I] = NULL;
     }
     GameSound.uAllSounds = 0;
+    // Alle WAV-dateien entpacken und im Speicher Audioplayer.pMusicAll ablegen
+    pCompressedWavStart = &_binary_gamesound_compressed_bin_start;;
+    uCompressedWavSize = &_binary_gamesound_compressed_bin_end - &_binary_gamesound_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
+    uUnCompressedWavSize = *(uint32_t*)pCompressedWavStart;
+    GameSound.pWavAll = malloc(uUnCompressedWavSize);
+    if (GameSound.pWavAll == NULL) {
+        SDL_Log("%s: can not allocate memory for decompressed wav sounds (%u bytes)",__FUNCTION__,uUnCompressedWavSize);
+        return -1;
+    }
+    nMiniz = mz_uncompress(GameSound.pWavAll,(mz_ulong*)&uUnCompressedWavSize,pCompressedWavStart + 4,(mz_ulong)uCompressedWavSize);
+    if (nMiniz != MZ_OK) {
+        SDL_Log("%s: can not decompress wav sounds, error: %d",__FUNCTION__,nMiniz);
+        SAFE_FREE(GameSound.pWavAll);
+        return -1;
+    }
+    // Audio device für game sounds öffnen
     if (Mix_OpenAudio(44100,AUDIO_S16,2,1024) == 0) {       // Samplerate, Audioformat,Kanäle,Chunksize die in einem Stück verarbeitet wird
         Mix_AllocateChannels(MAX_WAV_CHUNKS);  // Die Allocation muss nach Mix_OpenAudio erfolgen, ansonsten bleibt es bei 8 Kanälen
         // SDL_Log("%s: allocated channels: %d",__FUNCTION__,Mix_AllocateChannels(-2));
@@ -197,7 +182,7 @@ int PlayAllSounds(void) {
     nRet = 0;
     uS = 0;
     for (uBit = 0; (uBit < 63) && (nRet == 0); uBit++) {
-        if ((uMask & GameSound.uAllSounds) != 0) {          // Soll der Sound abgespielt werden
+        if ((uMask & GameSound.uAllSounds) != 0) {          // Soll der Sound abgespielt werden?
             if (Mix_PlayChannel(uS, g_pChunk[uS],0) == -1) {
                 nRet = -1;
                 SDL_Log("%s: Mix_PlayChannel() failed, channel: %u",__FUNCTION__,uS);
@@ -223,7 +208,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: g_pChunk[], g_pSfxPointer_wav[]
+Seiteneffekte: g_pChunk[], gamesound[], GameSound.x
 ------------------------------------------------------------------------------*/
 int CreateWavChunks(void) {
     uint32_t I;
@@ -234,9 +219,9 @@ int CreateWavChunks(void) {
 
     I = 0;
     nErrorCode = 0;
-    while ((g_pSfxPointer_wav[I * 2] != NULL) && (g_pSfxPointer_wav[I * 2 + 1] != NULL) && (I < MAX_WAV_CHUNKS) && (nErrorCode == 0)) {
-        uSoundSize = g_pSfxPointer_wav[I * 2 + 1] - g_pSfxPointer_wav[I * 2];
-        pSDLStreamPointer = SDL_RWFromMem((void*)g_pSfxPointer_wav[I * 2],uSoundSize);// Erzeugt SDL-Speicherstruktur für Speicher (Stream)
+    while ((gamesound[I * 2] != 0xFFFFFFFF) && (I < MAX_WAV_CHUNKS) && (nErrorCode == 0)) {
+        uSoundSize = gamesound[I * 2 + 1];
+        pSDLStreamPointer = SDL_RWFromMem((void*)GameSound.pWavAll + gamesound[I * 2],uSoundSize);// Erzeugt SDL-Speicherstruktur für Speicher (Stream)
         if (pSDLStreamPointer != NULL) {
             pChunk = Mix_LoadWAV_RW(pSDLStreamPointer,1);
             if (pChunk != NULL) {

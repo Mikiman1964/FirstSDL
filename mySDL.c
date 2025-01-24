@@ -10,7 +10,7 @@
 #include "levelconverter.h"
 #include "RenderLevel.h"
 
-int g_nGfxCount = 0;         // gefundenen Grafiken
+int g_nGfxCount = 0;         // gefundene Grafiken
 uint8_t g_uIntensityProzent = 100;
 uint32_t g_LastRenderTicks;
 SDL_Texture **g_pTextures;   // Pointer Array für Texturen

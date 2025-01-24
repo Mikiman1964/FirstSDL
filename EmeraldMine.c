@@ -4,8 +4,10 @@ TODO
 * Leveleditor
     * Undo für Editor
 * Auf doppelte Spielgeschwindigkeit umschaltbar
-* Höhere Y-Auflösung für Hauptmenü und Levelliste nutzen
-* SDL_SetWindowDisplayMode() anwenden, um sicher zu sellen, dass richtige Framerate läuft
+* Höhere Y-Auflösung für Spiele-Hauptmenü und Levelliste nutzen
+* SDL_SetWindowDisplayMode() anwenden, um sicher zu stellen, dass richtige Framerate läuft
+* Wenn Level erneut geschafft, wird neuer Highscore nicht richtig sortiert
+
 
 Für V 1.11
 * SDL 2.30.11
@@ -21,6 +23,8 @@ Für V 1.11
 * Memory leaks in InitEditor() gefixt:    Playfield.pPipeLevel, Playfield.pSlimeElement, Playfield.pLastStatusAnimation, Playfield.pLastYamSlimeDirection
 * Memory leak in CleanUpHighScoreDir() gefixt: closedir() vergessen
 * Viele Speicherlecks im Zusammenhang mit ezxml_parse_str() gefixt. Der Speicher muss über ezxml_free(xml) freigegeben werden.
+* Rückkehr vom Leveleditor -> letzten Spieler auswählen
+* Musik und Gamesounds werden komprimiert und wie gfx zusammengefasst
 */
 
 #include "gfx/textures.h"

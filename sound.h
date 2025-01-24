@@ -46,6 +46,7 @@
 #define MAX_WAV_CHUNKS          64          // Maximale Anzahl von WAV-Chunks
 
 typedef struct {
+    uint8_t *pWavAll;                       // Alle WAV-Sounds in einem Speicherblock
     uint64_t uAllSounds;                    // OR-verknüpfte Sounds, die abgespielt werden sollen
 } GAMESOUND;
 

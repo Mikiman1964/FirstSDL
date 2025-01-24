@@ -35,6 +35,7 @@ extern LEVELGROUP SelectedLevelgroup;
 extern ACTUALPLAYER Actualplayer;
 extern HIGHSCOREFILE HighscoreFile;
 extern AUDIOPLAYER Audioplayer;
+extern GAMESOUND GameSound;
 extern GAMECONTROLLER GameController;
 extern JOYSTICK Joystick;
 extern SHOWABLEDISPLAYMODES ShowableDisplayModes;
@@ -1472,7 +1473,7 @@ Parameter
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
                SelectedLevelgroup.x, Config.x, Audioplayer.x, Actualplayer.x
-               ge_uXoffs, ge_uYoffs
+               ge_uXoffs, ge_uYoffs, GameSound.x
 ------------------------------------------------------------------------------*/
 int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int nErrorCode;
@@ -1495,10 +1496,17 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int nLastLevelgrouplistButton;
     int nNewHighscoreIndex;
     char szText[256];
+    char szLastPlayername[EMERALD_PLAYERNAME_LEN + 1];                       // Aktuellen Spielernamen merken
     SCROLLER Scroller;
-    uint8_t szMessage[] = {"START THE GAME WITH THE FIRE BUTTON (LEFT CTRL).  GAME MUSIC BY MAKTONE, VOYCE/DELIGHT AND JESPER KYD.  MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU).  \
-    DATA (DE)COMPRESSOR 'MINIZ' BY RICH GELDREICH AND TENACIOUS SOFTWARE LLC.  XML READER 'EZXML' BY AARON VOISINE.  BASE64 DECODER BY CAMERON HARPER.  \
-    GAME GRAPHICS AND SOUNDS TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.             PLEASE SEND YOUR OWN LEVELGROUP TO DIETER1964@GMX.NET           "};
+    uint8_t szMessage[] = {"START THE GAME WITH THE FIRE BUTTON (LEFT CTRL).  \
+    GAME MUSIC BY MAKTONE, VOYCE/DELIGHT AND JESPER KYD.  \
+    MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU).  \
+    XMPLAYER BY ROMAIN DALMASO/DAN SPENCER.  \
+    DATA (DE)COMPRESSOR 'MINIZ' BY RICH GELDREICH AND TENACIOUS SOFTWARE LLC.  \
+    XML READER 'EZXML' BY AARON VOISINE.  \
+    BASE64 DECODER BY CAMERON HARPER.  \
+    GAME GRAPHICS AND SOUNDS TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.             \
+    PLEASE SEND YOUR OWN LEVELGROUP TO DIETER1964@GMX.NET           "};
 
     InitTeleporter();
     InitClipboard();
@@ -1634,6 +1642,8 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
                                     // Welchen Grund hatte das Zurücksetzen des aktuellen Spielers?
                                     // Grund: Die alten Spielerdaten (vor Leveleditor-Aufruf) stehen dann im Menü.
+                                    strcpy(szLastPlayername,Actualplayer.szPlayername); // Aktuellen Spielernamen merken
+                                    // SDL_Log("Last Player:%s",szLastPlayername);
                                     memset(&Actualplayer,0,sizeof(Actualplayer));
                                     StartCheckDC3ImportDirectoryThread();   // Startet Thread, der das DC3-Import-Verzeichnis überwacht
                                     nErrorCode = PreEditorMenu(pRenderer);
@@ -1659,6 +1669,10 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                         return -1;
                                     }
                                     WaitNoKey();
+                                    // Spieler neu auswählen, damit Spielerdaten ggf. zurückgesetzt sind, wenn Levelgruppe geändert wurde
+                                    if (SelectName(szLastPlayername,SelectedLevelgroup.uMd5Hash) != 0) {
+                                        return -1;
+                                    }
                                 } else if (bStartSettings) {
                                     SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
                                     SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
@@ -1806,7 +1820,9 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     FreeCopper();
     SDL_CloseAudioDevice(Audioplayer.audio_device);
     SAFE_FREE(Audioplayer.pTheMusic);
+    SAFE_FREE(Audioplayer.pMusicAll);
     FreeWavChunks();
+    SAFE_FREE(GameSound.pWavAll);
     Mix_CloseAudio();
     FreeTextures();
     RestoreDesktop();

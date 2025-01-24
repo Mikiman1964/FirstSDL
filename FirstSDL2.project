@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="FirstSDL2" Version="11000">
+  <VirtualDirectory Name="SDL_mixer"/>
+  <VirtualDirectory Name="include">
+    <File Name="smileys.h"/>
+    <File Name="scroller.h"/>
+    <File Name="mystd.h"/>
+    <File Name="mySDL.h"/>
+    <File Name="modplay.h"/>
+    <File Name="miniz.h"/>
+    <File Name="md5.h"/>
+    <File Name="gamecontroller.h"/>
+    <File Name="ezxml.h"/>
+    <File Name="externalpointer.h"/>
+    <File Name="copper.h"/>
+    <File Name="buttons_checkboxes.h"/>
+    <File Name="asteroids.h"/>
+    <File Name="KeyboardMouse.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src">
+    <File Name="smileys.c"/>
+    <File Name="scroller.c"/>
+    <File Name="mystd.c"/>
+    <File Name="mySDL.c"/>
+    <File Name="modplay.c"/>
+    <File Name="miniz.c"/>
+    <File Name="md5.c"/>
+    <File Name="main.c"/>
+    <File Name="gamecontroller.c"/>
+    <File Name="ezxml.c"/>
+    <File Name="copper.c"/>
+    <File Name="buttons_checkboxes.c"/>
+    <File Name="asteroids.c"/>
+    <File Name="KeyboardMouse.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="EmeraldMine"/>
+  <Description/>
+  <Dependencies/>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g -Wall " C_Options="-g -Wall " Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../SDL2-2.30.9/x86_64-w64-mingw32/include"/>
+        <IncludePath Value="../SDL2-2.30.9/x86_64-w64-mingw32/include/SDL2"/>
+      </Compiler>
+      <Linker Options="gfx/*.o sfx/*.o " Required="yes">
+        <LibraryPath Value="../SDL2-2.30.9/x86_64-w64-mingw32/lib"/>
+        <Library Value="SDL2main"/>
+        <Library Value="SDL2"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="bin/Debug/FirstSDL2" IntermediateDirectory="./Debug" Command="./FirstSDL2" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="bin/Debug" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Workspace Settings&gt;" DbgSetName="&lt;Use Global Settings&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2 -Wall " C_Options="-O2 -Wall " Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../SDL2-2.30.9/x86_64-w64-mingw32/include"/>
+        <IncludePath Value="../SDL2-2.30.9/x86_64-w64-mingw32/include/SDL2"/>
+      </Compiler>
+      <Linker Options="-s gfx/*.o sfx/*.o " Required="yes">
+        <LibraryPath Value="../SDL2-2.30.9/x86_64-w64-mingw32/lib"/>
+        <Library Value="SDL2main"/>
+        <Library Value="SDL2"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="bin/Release/FirstSDL2" IntermediateDirectory="./Debug" Command="./FirstSDL2" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="bin/Release" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Workspace Settings&gt;" DbgSetName="&lt;Use Global Settings&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

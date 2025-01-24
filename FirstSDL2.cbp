@@ -6,7 +6,7 @@
 		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="EmeraldMine/;SDL_mixer/" />
+		<Option virtualFolders="EmeraldMine/;SDL_mixer/;xm/" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/FirstSDL2" prefix_auto="1" extension_auto="1" />
@@ -34,15 +34,15 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="../SDL2-2.30.9/x86_64-w64-mingw32/include" />
-			<Add directory="../SDL2-2.30.9/x86_64-w64-mingw32/include/SDL2" />
+			<Add directory="../SDL2-2.30.11/x86_64-w64-mingw32/include" />
+			<Add directory="../SDL2-2.30.11/x86_64-w64-mingw32/include/SDL2" />
 		</Compiler>
 		<Linker>
 			<Add option="gfx/*.o" />
 			<Add option="sfx/*.o" />
 			<Add library="SDL2main" />
 			<Add library="SDL2" />
-			<Add directory="../SDL2-2.30.9/x86_64-w64-mingw32/lib" />
+			<Add directory="../SDL2-2.30.11/x86_64-w64-mingw32/lib" />
 		</Linker>
 		<Unit filename="EmeraldMine.c">
 			<Option compilerVar="CC" />
@@ -376,6 +376,24 @@
 		</Unit>
 		<Unit filename="teleporter.h">
 			<Option virtualFolder="EmeraldMine/" />
+		</Unit>
+		<Unit filename="xm.h">
+			<Option virtualFolder="xm/" />
+		</Unit>
+		<Unit filename="xm_context.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="xm/" />
+		</Unit>
+		<Unit filename="xm_internal.h">
+			<Option virtualFolder="xm/" />
+		</Unit>
+		<Unit filename="xm_load.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="xm/" />
+		</Unit>
+		<Unit filename="xm_play.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="xm/" />
 		</Unit>
 		<Unit filename="yam.c">
 			<Option compilerVar="CC" />

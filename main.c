@@ -33,7 +33,7 @@ uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
 extern AUDIOPLAYER Audioplayer;
-
+extern GAMESOUND GameSound;
 
 int main(int argc, char *argv[]) {
     bool bRun;
@@ -326,6 +326,8 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     RestoreDesktop();
     SDL_CloseAudioDevice(Audioplayer.audio_device);
     SAFE_FREE(Audioplayer.pTheMusic);
+    SAFE_FREE(Audioplayer.pMusicAll);
+    SAFE_FREE(GameSound.pWavAll);
     FreeWavChunks();
     Mix_CloseAudio();
     FreeTextures();

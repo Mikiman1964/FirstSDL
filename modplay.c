@@ -2,58 +2,16 @@
 #include <string.h>
 #include <SDL2/SDL.h>
 #include "config.h"
+#include "miniz.h"
 #include "modplay.h"
+#include "sfx/music.h"
 
 ModPlayerStatus_t mp;
 AUDIOPLAYER Audioplayer;
 
 extern CONFIG Config;
+extern uint8_t _binary_music_compressed_bin_start;extern uint8_t _binary_music_compressed_bin_end;
 
-// Externe Pointer und Indexe
-extern uint8_t _binary_echoing2_mod_start;extern uint8_t _binary_echoing2_mod_end;                      // 1. Mod von banana
-extern uint8_t _binary_circus_time_2_1993_mod_start;extern uint8_t _binary_circus_time_2_1993_mod_end;  // 2. circus time 2 von voyce/delight
-extern uint8_t _binary_class01_mod_start;extern uint8_t _binary_class01_mod_end;                        // 3. class cracktro#15 Mod von maktone,1999
-extern uint8_t _binary_gtrash3f_mod_start;extern uint8_t _binary_gtrash3f_mod_end;                      // 4. global trash 3 V2 von Jesper Kyd, 1991
-extern uint8_t _binary_class11_mod_start;extern uint8_t _binary_class11_mod_end;                        // 5. class11.mod (class11.time flies) von Maktone
-extern uint8_t _binary_2kad04_mod_start;extern uint8_t _binary_2kad04_mod_end;                          // 6. 2kad04.mod (2000AD:cracktro:IV) von Maktone
-extern uint8_t _binary_2kad02_mod_start;extern uint8_t _binary_2kad02_mod_end;                          // 7. 2kad02.mod (2000AD cracktro02)  von Maktone
-extern uint8_t _binary_brewery_mod_start;extern uint8_t _binary_brewery_mod_end;                        // 8. brewery.mod (the brewery)  von Maktone
-extern uint8_t _binary_class05_1999_mod_start;extern uint8_t _binary_class05_1999_mod_end;              // 9. class05 von Maktone
-extern uint8_t _binary_softworld_mod_start;extern uint8_t _binary_softworld_mod_end;                    // 10. softworld von Maktone
-extern uint8_t _binary_heritage_xm_start;extern uint8_t _binary_heritage_xm_end;                        // 11. heritage von Maniac, ist ein xm und
-
-
-
-uint8_t* g_pMusicPointer[(MAX_MUSICINDEX + 1) * 2];          // 2 Pointer / Musik + Pärchen NULL-Pointer
-
-// Prototypen
-
-
-/*----------------------------------------------------------------------------
-Name:           InitMusicPointer
-------------------------------------------------------------------------------
-Beschreibung: Initialisiert das modulglobale MusicPointer-Array
-Parameter
-      Eingang: -
-      Ausgang: -
-Rückgabewert:  -
-Seiteneffekte:  g_pMusicPointer
-                alle externen Pointer auf die MOD-Musikstücke
-------------------------------------------------------------------------------*/
-void InitMusicPointer(void) {
-    g_pMusicPointer[0] = &_binary_echoing2_mod_start;g_pMusicPointer[1] = &_binary_echoing2_mod_end;
-    g_pMusicPointer[2] = &_binary_circus_time_2_1993_mod_start;g_pMusicPointer[3] = &_binary_circus_time_2_1993_mod_end;
-    g_pMusicPointer[4] = &_binary_class01_mod_start;g_pMusicPointer[5] = &_binary_class01_mod_end;
-    g_pMusicPointer[6] = &_binary_gtrash3f_mod_start;g_pMusicPointer[7] = &_binary_gtrash3f_mod_end;
-    g_pMusicPointer[8] = &_binary_class11_mod_start;g_pMusicPointer[9] = &_binary_class11_mod_end;
-    g_pMusicPointer[10] = &_binary_2kad04_mod_start;g_pMusicPointer[11] = &_binary_2kad04_mod_end;
-    g_pMusicPointer[12] = &_binary_2kad02_mod_start;g_pMusicPointer[13] = &_binary_2kad02_mod_end;
-    g_pMusicPointer[14] = &_binary_brewery_mod_start;g_pMusicPointer[15] = &_binary_brewery_mod_end;
-    g_pMusicPointer[16] = &_binary_class05_1999_mod_start;g_pMusicPointer[17] = &_binary_class05_1999_mod_end;
-    g_pMusicPointer[18] = &_binary_softworld_mod_start;g_pMusicPointer[19] = &_binary_softworld_mod_end;
-    g_pMusicPointer[20] = &_binary_heritage_xm_start;g_pMusicPointer[21] = &_binary_heritage_xm_end;
-    g_pMusicPointer[22] = NULL;g_pMusicPointer[23] = NULL;// Ende
-}
 
 /*----------------------------------------------------------------------------
 Name:           InitAudioplayerStruct
@@ -61,17 +19,47 @@ Name:           InitAudioplayerStruct
 Beschreibung: Initialisiert die Struktur Audioplayer.x und öffnet das
               Audiodevice für MODPlay und XM-Player.
               Darf nur einmal zum Programmstart aufgerufen werden.
+              Die Speicher pMusicAll und pTheMusic müssen zum Programmende
+              freigegeben werden.
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
-Seiteneffekte: Audioplayer.x
+Seiteneffekte: Audioplayer.x, music[].x
 ------------------------------------------------------------------------------*/
 int InitAudioplayerStruct(void) {
     int nErrorcode = -1;
+    uint8_t *pCompressedMusicStart;
+    uint32_t uUnCompressedMusicSize;
+    uint32_t uCompressedMusicSize;
+    uint32_t I;
+    int nMiniz;
 
-    InitMusicPointer();
     memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
+    // Alle Songs entpacken und im Speicher Audioplayer.pMusicAll ablegen
+    pCompressedMusicStart = &_binary_music_compressed_bin_start;
+    uCompressedMusicSize = &_binary_music_compressed_bin_end - &_binary_music_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
+    uUnCompressedMusicSize = *(uint32_t*)pCompressedMusicStart;
+    Audioplayer.pMusicAll = malloc(uUnCompressedMusicSize);
+    if (Audioplayer.pMusicAll == NULL) {
+        SDL_Log("%s: can not allocate memory for decompressed music (%u bytes)",__FUNCTION__,uUnCompressedMusicSize);
+        return -1;
+    }
+    nMiniz = mz_uncompress(Audioplayer.pMusicAll,(mz_ulong*)&uUnCompressedMusicSize,pCompressedMusicStart + 4,(mz_ulong)uCompressedMusicSize);
+    if (nMiniz != MZ_OK) {
+        SDL_Log("%s: can not decompress music, error: %d",__FUNCTION__,nMiniz);
+        SAFE_FREE(Audioplayer.pMusicAll);
+        return -1;
+    }
+    // Anzahl der Songs feststellen und in Audioplayer.nAvailableSongs ablegen
+    I = 0;
+    do {
+        if (music[I] != 0xFFFFFFFF) {
+            Audioplayer.nAvailableSongs++;
+        }
+        I = I + 2;
+    } while (music[I] != 0xFFFFFFFF);
+    // Audio device einstellen und öffnen
     Audioplayer.sdl_audio.freq = SAMPLERATE;
     Audioplayer.sdl_audio.format = AUDIO_S16;
     Audioplayer.sdl_audio.channels = 2;
@@ -97,8 +85,7 @@ Parameter
       Eingang: nMusicIndex, int, Index auf MOD-File, siehe oben "Externe Pointer und Indexe"
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
-Seiteneffekte: Audioplayer.x,
-               g_pMusicPointer[] (alle externen Pointer auf die MOD-Musikstücke)
+Seiteneffekte: Audioplayer.x, music[].x
 ------------------------------------------------------------------------------*/
 int SetModMusic(int nMusicIndex) {
     int nErrorCode;
@@ -109,21 +96,15 @@ int SetModMusic(int nMusicIndex) {
         Audioplayer.pCtxXm = NULL;
     }
     nErrorCode = -1;
-    if ( (nMusicIndex < 1) || (nMusicIndex > MAX_MUSICINDEX) ) {
+    if ( (nMusicIndex < 1) || (nMusicIndex > Audioplayer.nAvailableSongs) ) {
         nMusicIndex = 1;
     }
     nMusicIndex--; // Pointer-Array ab 0
     Audioplayer.nMusicIndex = nMusicIndex;
-    Audioplayer.pMusicStart = g_pMusicPointer[nMusicIndex * 2 + 0];
-    Audioplayer.pMusicEnd = g_pMusicPointer[nMusicIndex * 2 + 1];
+    Audioplayer.pMusicStart = Audioplayer.pMusicAll + music[nMusicIndex * 2 + 0];
+    Audioplayer.nMusicSize = music[nMusicIndex * 2 + 1];
     Audioplayer.nNextMusicIndex = 0;
-
-    if ( (Audioplayer.pMusicStart != NULL) && (Audioplayer.pMusicEnd != NULL) ) {
-        Audioplayer.nMusicSize = Audioplayer.pMusicEnd - Audioplayer.pMusicStart;
-    } else {
-        Audioplayer.nMusicSize = 0;
-    }
-    if (Audioplayer.nMusicSize > 0) {
+    if ((Audioplayer.pMusicStart != NULL) && (Audioplayer.nMusicSize > 0)) {
         Audioplayer.pTheMusic = (uint8_t*)realloc(Audioplayer.pTheMusic,Audioplayer.nMusicSize);
         if (Audioplayer.pTheMusic != NULL) {
             memcpy(Audioplayer.pTheMusic,Audioplayer.pMusicStart,Audioplayer.nMusicSize);
@@ -146,7 +127,7 @@ int SetModMusic(int nMusicIndex) {
             }
         }
     } else {
-        SDL_Log("%s: bad file size, MusicIndex: %d",__FUNCTION__,nMusicIndex + 1);
+        SDL_Log("%s: bad file size or bad start pointer: %p, MusicIndex: %d",__FUNCTION__,Audioplayer.pMusicStart,nMusicIndex + 1);
     }
     return nErrorCode;
 }
@@ -258,11 +239,6 @@ void CheckMusicSwitch(const Uint8 *pKeyboardArray) {
     if (pKeyboardArray[SDL_SCANCODE_0]) {
         if (Audioplayer.nNextMusicIndex == 0) {
             Audioplayer.nNextMusicIndex = 10;
-        }
-    }
-    if (pKeyboardArray[SDL_SCANCODE_G]) {
-        if (Audioplayer.nNextMusicIndex == 0) {
-            Audioplayer.nNextMusicIndex = 11;
         }
     }
 }
