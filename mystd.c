@@ -586,6 +586,8 @@ int CheckAndCreateDir(char *pszDirectoryName) {
             if (bTryToCreateDir) {
                 #ifdef __linux__
                     nErrorCode = mkdir(pszDirectoryName, 0777);
+                #elif __APPLE__
+                    nErrorCode = mkdir(pszDirectoryName, 0777);
                 #else
                     nErrorCode = mkdir(pszDirectoryName);
                 #endif
