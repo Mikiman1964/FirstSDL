@@ -584,12 +584,10 @@ int CheckAndCreateDir(char *pszDirectoryName) {
                 bTryToCreateDir = true;
             }
             if (bTryToCreateDir) {
-                #ifdef __linux__
-                    nErrorCode = mkdir(pszDirectoryName, 0777);
-                #elif __APPLE__
-                    nErrorCode = mkdir(pszDirectoryName, 0777);
+                #ifdef _WIN32
+                nErrorCode = mkdir(pszDirectoryName);
                 #else
-                    nErrorCode = mkdir(pszDirectoryName);
+                nErrorCode = mkdir(pszDirectoryName, 0777);
                 #endif
                 if (nErrorCode != 0) {
                     printf("can not create dir, error: %s\n",strerror(errno));
