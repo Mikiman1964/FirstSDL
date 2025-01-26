@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include <SDL2/SDL.h>
 #include "config.h"
 #include "miniz.h"
 #include "modplay.h"
 #include "sfx/music.h"
+#include "sfx/music_compressed.h"
 
 ModPlayerStatus_t mp;
 AUDIOPLAYER Audioplayer;
 
 extern CONFIG Config;
-extern uint8_t _binary_music_compressed_bin_start;extern uint8_t _binary_music_compressed_bin_end;
-
 
 /*----------------------------------------------------------------------------
 Name:           InitAudioplayerStruct
@@ -25,7 +25,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
-Seiteneffekte: Audioplayer.x, music[].x
+Seiteneffekte: Audioplayer.x, music[].x, music_compressed[]
 ------------------------------------------------------------------------------*/
 int InitAudioplayerStruct(void) {
     int nErrorcode = -1;
@@ -37,8 +37,8 @@ int InitAudioplayerStruct(void) {
 
     memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
     // Alle Songs entpacken und im Speicher Audioplayer.pMusicAll ablegen
-    pCompressedMusicStart = &_binary_music_compressed_bin_start;
-    uCompressedMusicSize = &_binary_music_compressed_bin_end - &_binary_music_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
+    pCompressedMusicStart = music_compressed;
+    uCompressedMusicSize = sizeof(music_compressed);
     uUnCompressedMusicSize = *(uint32_t*)pCompressedMusicStart;
     Audioplayer.pMusicAll = malloc(uUnCompressedMusicSize);
     if (Audioplayer.pMusicAll == NULL) {

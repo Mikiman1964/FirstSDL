@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "config.h"
 #include "sound.h"
 #include "EmeraldMine.h"
@@ -5,11 +6,12 @@
 #include "mySDL.h"
 #include "sdlmixer_SDL_mixer.h"
 #include "sfx/gamesound.h"
+#include "sfx/gamesound_compressed.h"
 
 GAMESOUND GameSound;
 extern PLAYFIELD Playfield;
 extern CONFIG Config;
-extern uint8_t _binary_gamesound_compressed_bin_start;extern uint8_t _binary_gamesound_compressed_bin_end;
+
 
 // Alle verfügbaren Gamesounds
 // Bit
@@ -65,7 +67,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = alles OK, sonst Fehler
-Seiteneffekte: GameSound.x, g_pChunk[]
+Seiteneffekte: GameSound.x, g_pChunk[], gamesound_compressed[]
 ------------------------------------------------------------------------------*/
 int InitGameSound(void) {
     uint32_t I;
@@ -80,8 +82,8 @@ int InitGameSound(void) {
     }
     GameSound.uAllSounds = 0;
     // Alle WAV-dateien entpacken und im Speicher Audioplayer.pMusicAll ablegen
-    pCompressedWavStart = &_binary_gamesound_compressed_bin_start;;
-    uCompressedWavSize = &_binary_gamesound_compressed_bin_end - &_binary_gamesound_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
+    pCompressedWavStart =gamesound_compressed;
+    uCompressedWavSize = sizeof(gamesound_compressed);
     uUnCompressedWavSize = *(uint32_t*)pCompressedWavStart;
     GameSound.pWavAll = malloc(uUnCompressedWavSize);
     if (GameSound.pWavAll == NULL) {

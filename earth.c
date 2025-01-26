@@ -92,10 +92,10 @@ void ControlGrass(uint32_t I) {
     int nDirectionRandom;
 
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) != EMERALD_ANIM_GRASS_SHRINK) {      // Gras entfernen bzw. wegschnippen hat Vorrang
-        if ((Playfield.pLevel[I - 1] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x08;    // Bit 3 setzen
-        if ((Playfield.pLevel[I + 1] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x04;    // Bit 2 setzen
-        if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x02;    // Bit 1 setzen
-        if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x01;    // Bit 0 setzen
+        if (Playfield.pLevel[I - 1] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x08;    // Bit 3 setzen
+        if (Playfield.pLevel[I + 1] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x04;    // Bit 2 setzen
+        if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x02;    // Bit 1 setzen
+        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x01;    // Bit 0 setzen
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_EARTH_0 + (uLeftRightUpDownGrass << 8);
     }
     nRandom = randn(1,9990);       // Ergibt Zufallszahl zwischen 1-9990
@@ -163,10 +163,10 @@ void ControlGrassComes(uint32_t I) {
         return;
     } else {
         Playfield.pLevel[I] = EMERALD_GRASS;
-        if ((Playfield.pLevel[I - 1] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x08;    // Bit 3 setzen
-        if ((Playfield.pLevel[I + 1] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x04;    // Bit 2 setzen
-        if ((Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x02;    // Bit 1 setzen
-        if ((Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_GRASS)) uLeftRightUpDownGrass |= 0x01;    // Bit 0 setzen
+        if (Playfield.pLevel[I - 1] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x08;    // Bit 3 setzen
+        if (Playfield.pLevel[I + 1] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x04;    // Bit 2 setzen
+        if (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x02;    // Bit 1 setzen
+        if (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x01;    // Bit 0 setzen
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_EARTH_0 + (uLeftRightUpDownGrass << 8);
     }
 }

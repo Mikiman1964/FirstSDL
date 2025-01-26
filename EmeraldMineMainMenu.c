@@ -1945,7 +1945,8 @@ int ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int nXpos, int nYpos, in
         nP++;
     }
     // Untere Linie
-    for (nX = nX; (nX > 0) && (nErrorCode == 0); nX--) {
+    // for (ohne init., da nX noch auf richtigem Wert)
+    for (; (nX > 0) && (nErrorCode == 0); nX--) {
         nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
         nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + ge_uXoffs, nYpos + nY + ge_uYoffs);
         nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + ge_uXoffs, nYpos + nY - 1 + ge_uYoffs);
@@ -1953,7 +1954,8 @@ int ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int nXpos, int nYpos, in
         nP++;
     }
     // Linke senkrechte Linie
-    for (nY = nY; (nY > 0) && (nErrorCode == 0); nY--) {
+    // for (ohne init., da nY noch auf richtigem Wert)
+    for (; (nY > 0) && (nErrorCode == 0); nY--) {
         nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
         nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + ge_uXoffs, nYpos + nY + ge_uYoffs);
         nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + 1 + ge_uXoffs, nYpos + nY + ge_uYoffs);

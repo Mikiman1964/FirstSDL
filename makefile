@@ -21,6 +21,9 @@ tmp/%.o: %.c
 .PHONY: clean, clear
 
 clean clear:
-	@rm -f bin/Release/FirstSDL2 && echo "[CL]  out/"
-	@rm -f tmp/* && echo "[CL]  tmp/"
+	@rm -f bin/Release/FirstSDL2 && echo "clean FirstSDL2"
+	@rm -f tmp/* && echo "clean tmp"
+	@rm -f gfx/*.o gfx/*.h gfx/creategfx gfx/objectzipper gfx/bin2c && echo "clean gfx"
+	@rm -f sfx/*.o sfx/*.h sfx/createsfx sfx/objectzipper sfx/bin2c && echo "clean sfx"
+	@rm -f creategfx/creategfx creategfx/*.o createsfx/createsfx createsfx/*.o objectzipper/objectzipper objectzipper/*.o bin2c/bin2c bin2c/*.o && echo "clean creategfx/createsfx/objectzipper/bin2c"
 

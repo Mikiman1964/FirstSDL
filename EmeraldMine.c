@@ -25,6 +25,7 @@ Für V 1.11
 * Viele Speicherlecks im Zusammenhang mit ezxml_parse_str() gefixt. Der Speicher muss über ezxml_free(xml) freigegeben werden.
 * Rückkehr vom Leveleditor -> letzten Spieler auswählen
 * Musik und Gamesounds werden komprimiert und wie gfx zusammengefasst
+* Grafiken, Gamesounds und Musik werden nun als Headerfile eingebunden und nicht mehr als Objectdatei -> objcopy wird nicht mehr benötigt
 */
 
 #include "gfx/textures.h"

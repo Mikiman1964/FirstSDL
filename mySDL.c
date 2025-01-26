@@ -1,4 +1,4 @@
-#include "gfx/textures.h"
+#include <stdint.h>
 #include <unistd.h>
 #include <SDL2/SDL.h>
 #include "config.h"
@@ -9,6 +9,8 @@
 #include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
 #include "levelconverter.h"
 #include "RenderLevel.h"
+#include "gfx/gfx_compressed.h"
+#include "gfx/textures.h"
 
 int g_nGfxCount = 0;         // gefundene Grafiken
 uint8_t g_uIntensityProzent = 100;
@@ -19,7 +21,6 @@ SHOWABLEDISPLAYMODES ShowableDisplayModes;
 
 extern SDL_DisplayMode ge_DisplayMode;
 extern SDL_Window *ge_pWindow;
-extern uint8_t _binary_gfx_compressed_bin_start;extern uint8_t _binary_gfx_compressed_bin_end;
 extern uint32_t Gfx[];
 extern CONFIG Config;
 extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
@@ -427,7 +428,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
       Rückgabewert:   int, 0 = alles OK, -1 = Fehler
-Seiteneffekte:  Gfx[], g_pTextures, g_nGfxCount
+Seiteneffekte:  Gfx[], g_pTextures, g_nGfxCount, gfx_compressed[]
 ------------------------------------------------------------------------------*/
 int LoadTextures(SDL_Renderer *pRenderer) {
     int nCount;                 // Anzahl vorhandener Grafiken
@@ -449,8 +450,8 @@ int LoadTextures(SDL_Renderer *pRenderer) {
     uint8_t *pStartCompressedGfx;
     int nMiniz;
 
-    pStartCompressedGfx = &_binary_gfx_compressed_bin_start;
-    uCompressedSize = &_binary_gfx_compressed_bin_end - &_binary_gfx_compressed_bin_start - 4;  // -4, da am Anfang die unkomprimierte Größe eingetragen wurde
+    pStartCompressedGfx = gfx_compressed;
+    uCompressedSize = sizeof(gfx_compressed);
     // SDL_Log("%s: compressed gfx packet size: %u",__FUNCTION__,uCompressedSize);
     uUnCompressedSize = *(uint32_t*)pStartCompressedGfx;
     // SDL_Log("%s: gfx packet size: %d Bytes / compressed: %d Bytes",__FUNCTION__,uUnCompressedSize,uCompressedSize);
