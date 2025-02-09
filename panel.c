@@ -13,7 +13,7 @@
 
 extern MANKEY ManKey;
 extern PLAYFIELD Playfield;
-extern SDL_DisplayMode ge_DisplayMode;
+extern SDL_DisplayMode ge_DesktopDisplayMode;
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
 
@@ -48,7 +48,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x, ge_DisplayMode.x, Config.x
+Seiteneffekte: Playfield.x, ge_DesktopDisplayMode.x, Config.x
 ------------------------------------------------------------------------------*/
 int ShowPanel(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
@@ -63,7 +63,7 @@ int ShowPanel(SDL_Renderer *pRenderer) {
     if (Playfield.uEmeraldsToCollect > 9999) {
         Playfield.uEmeraldsToCollect = 9999;
     }
-    uRemainingSeconds = Playfield.uTimeToPlay / ge_DisplayMode.refresh_rate;
+    uRemainingSeconds = Playfield.uTimeToPlay / ge_DesktopDisplayMode.refresh_rate;
     if (uRemainingSeconds > 9999) {
         uRemainingSeconds = 9999;
     }
@@ -77,7 +77,7 @@ int ShowPanel(SDL_Renderer *pRenderer) {
         return - 1;
     }
     if ((uRemainingSeconds > 0) && (uRemainingSeconds <= 10)) {
-        if ((Playfield.uFrameCounter % ge_DisplayMode.refresh_rate) == 0) {
+        if ((Playfield.uFrameCounter % ge_DesktopDisplayMode.refresh_rate) == 0) {
             nErrorCode = CopyColorRect(pRenderer,255,0,0,6,Config.uResY - 26,98,20,K_ABSOLUTE);
             PreparePlaySound(SOUND_END_BELL,0);
         } else {

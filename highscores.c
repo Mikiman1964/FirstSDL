@@ -131,7 +131,7 @@ int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) 
             // Die TopTwenty sind absteigend sortiert -> Prüfen, wo der aktuelle Score eingefügt werden kann
             bIndexFound =  false;
             for (I = 0; (I < EMERALD_HIGHSCORE_LISTLEN) && (!bIndexFound); I++) {
-                if (uScore >= HighscoreFile.TopTwenty[uLevel].uHighScore[I]) {
+                if (uScore >= (HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x7FFFFFFF)) {
                     S = I;
                     bIndexFound =  true;
                 }

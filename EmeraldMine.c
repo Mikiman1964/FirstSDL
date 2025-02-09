@@ -4,13 +4,11 @@ TODO
 * Leveleditor
     * Undo für Editor
 * Auf doppelte Spielgeschwindigkeit umschaltbar
-* Höhere Y-Auflösung für Spiele-Hauptmenü und Levelliste nutzen
 * SDL_SetWindowDisplayMode() anwenden, um sicher zu stellen, dass richtige Framerate läuft
-* Wenn Level erneut geschafft, wird neuer Highscore nicht richtig sortiert
-
 
 Für V 1.11
-* SDL 2.30.11
+* SDL 2.30.12
+* Höhere Y-Auflösung für Spiele-Hauptmenü und Levelliste nutzen
 * DC3-Importverzeichnis wird während der Verwendung des Leveleditors alle 3 s aktualisiert
 * Schließen-X funktioniert im Leveleditor jetzt wie Button "Quit"
 * 4 Ecken des markierten Stahls hinzugefügt, werden nur beim DC3-Levelimport verwendet und sind noch nicht im Leveleditor auswählbar
@@ -20,12 +18,18 @@ Für V 1.11
 * Musik-Player kann auch "xm Extended module"  abspielen
 * Falscher/unnötiger Aufruf von SDL_RenderPresent() in ShowButtons()
 * Framerate wird auf ca. 125 frames/sec begrenzt
-* Memory leaks in InitEditor() gefixt:    Playfield.pPipeLevel, Playfield.pSlimeElement, Playfield.pLastStatusAnimation, Playfield.pLastYamSlimeDirection
+* Memory leaks in InitEditor() gefixt:  Playfield.pPipeLevel, Playfield.pSlimeElement, Playfield.pLastStatusAnimation, Playfield.pLastYamSlimeDirection
 * Memory leak in CleanUpHighScoreDir() gefixt: closedir() vergessen
+* Memory leak in LevelgroupOperaton_RenameGroupname() gefixt.
 * Viele Speicherlecks im Zusammenhang mit ezxml_parse_str() gefixt. Der Speicher muss über ezxml_free(xml) freigegeben werden.
 * Rückkehr vom Leveleditor -> letzten Spieler auswählen
 * Musik und Gamesounds werden komprimiert und wie gfx zusammengefasst
 * Grafiken, Gamesounds und Musik werden nun als Headerfile eingebunden und nicht mehr als Objectdatei -> objcopy wird nicht mehr benötigt
+* Fehler im DC3-Levelimporter behoben, der beim Doppelklick auf den BMP-Dateinamen die Levelgruppe beschädigte.
+* Levelgruppen gefixt, die durch vorher beschriebenen Fehler beschädigt wurden. -> 2.6 MB eingespart
+* Levelgruppen- und Player- Listen können über die Pfeiltasten schnell gescrollt werden.
+* letzte Version MODPlay -> Valgrind-Hinweis "invalid read of 1 byte" gefixt
+* Wenn Level erneut geschafft, wurde neuer Highscore nicht richtig sortiert -> gefixt
 */
 
 #include "gfx/textures.h"
@@ -196,7 +200,7 @@ int Menu(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,468,491,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE,1);
         PrintLittleFont(pRenderer,468,506,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE,1);
         PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE,1);
-        nErrorCode = ShowButtons(pRenderer);
+        nErrorCode = ShowButtons(pRenderer,K_RELATIVE);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
             nChoose = 1;
         } else if (IsButtonPressed(BUTTONLABEL_CALL_DEMO)) {

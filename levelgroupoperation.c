@@ -16,6 +16,8 @@ extern ED Ed;
 extern INPUTSTATES InputStates;
 extern MAINMENU MainMenu;
 extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
+extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
+extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 
 
 /*----------------------------------------------------------------------------
@@ -674,14 +676,14 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
     nColorDimm = 0;
     uModVolume = 0;
     SetMenuBorderAndClear();
-    SetMenuText(MainMenu.uMenuScreen,"CHANGE LEVELGROUPNAME",10,4,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"CHANGE LEVELGROUPNAME",10,4,EMERALD_FONT_BLUE);
     // Mauer-Eingabefeld
     for (I = 0; I < EMERALD_GROUPNAME_LEN + 3; I++) {
-        MainMenu.uMenuScreen[6 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
-        MainMenu.uMenuScreen[8 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
+        MainMenu.pMenuScreen[6 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
+        MainMenu.pMenuScreen[8 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
     }
-    MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6] = EMERALD_WALL_CORNERED;
-    MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUPNAME_LEN + 2] = EMERALD_WALL_CORNERED;
+    MainMenu.pMenuScreen[7 * MainMenu.uXdim + 6] = EMERALD_WALL_CORNERED;
+    MainMenu.pMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUPNAME_LEN + 2] = EMERALD_WALL_CORNERED;
     while ((nErrorCode == 0) && (!bExit)) {
         UpdateInputStates();
         // Eingabe eines Zeichens für den Levelgruppennamen
@@ -690,22 +692,22 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
         if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
             MainMenu.uFlashIndex = 0;
         }
-        SetMenuText(MainMenu.uMenuScreen,"                         ",7,7,EMERALD_FONT_GREEN);
-        SetMenuText(MainMenu.uMenuScreen,szTempName,7,7,EMERALD_FONT_GREEN);
+        SetMenuText(MainMenu.pMenuScreen,"                         ",7,7,EMERALD_FONT_GREEN);
+        SetMenuText(MainMenu.pMenuScreen,szTempName,7,7,EMERALD_FONT_GREEN);
         if (!bPrepareExit) {
-            MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_STONE;
+            MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_STONE;
         }
         uKey = FilterBigFontKey(GetKey());
         if (uKey != 0) {
            if (uCursorPos < EMERALD_GROUPNAME_LEN) {
                 szTempName[uCursorPos] = uKey;
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                 uCursorPos++;
            }
         } else  if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
              if (uCursorPos > 0) {
                 szTempName[uCursorPos - 1] = 0;
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                 uCursorPos--;
              }
              do {
@@ -729,7 +731,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
             uModVolume = uModVolume + 4;
             SetModVolume(uModVolume);
         } else if (bPrepareExit) {
-            MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+            MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 4;
                 SetAllTextureColors(nColorDimm);
@@ -750,7 +752,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
         S = DynStringInit();
         if (S != NULL) {
             if ((pLevelgroupXml = ReadFile(SelectedLevelgroup.szFilename,&uXmlLen)) != NULL) {     // Levelgruppen-Datei einlesen
-                if ((puPart2 = (uint8_t*)strstr((char*)pLevelgroupXml,"</groupname>")) != NULL) {     // "Höchster" Pointer
+                if ((puPart2 = (uint8_t*)strstr((char*)pLevelgroupXml,"</groupname>")) != NULL) {  // "Höchster" Pointer
                     DynStringAdd(S,"<?xml version=\"1.0\"?>\r\n");
                     DynStringAdd(S,"<levelgroup>\r\n");
                     DynStringAdd(S,"<groupname>");
@@ -769,6 +771,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
                         }
                     }
                 }
+                SAFE_FREE(pLevelgroupXml);
             }
         }
         DynStringFree(S);
@@ -817,14 +820,14 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
         nColorDimm = 0;
         uModVolume = 0;
         SetMenuBorderAndClear();
-        SetMenuText(MainMenu.uMenuScreen,"SET LEVELGROUP PASSWORD",8,4,EMERALD_FONT_BLUE);
+        SetMenuText(MainMenu.pMenuScreen,"SET LEVELGROUP PASSWORD",8,4,EMERALD_FONT_BLUE);
         // Mauer-Eingabefeld
         for (I = 0; I < EMERALD_GROUP_PASSWORD_LEN + 3; I++) {
-            MainMenu.uMenuScreen[6 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
-            MainMenu.uMenuScreen[8 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
+            MainMenu.pMenuScreen[6 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
+            MainMenu.pMenuScreen[8 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
         }
-        MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6] = EMERALD_WALL_CORNERED;
-        MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUP_PASSWORD_LEN + 2] = EMERALD_WALL_CORNERED;
+        MainMenu.pMenuScreen[7 * MainMenu.uXdim + 6] = EMERALD_WALL_CORNERED;
+        MainMenu.pMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUP_PASSWORD_LEN + 2] = EMERALD_WALL_CORNERED;
         while ((nErrorCode == 0) && (!bExit)) {
             UpdateInputStates();
             // Eingabe eines Zeichens für den Levelgruppennamen
@@ -833,22 +836,22 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
             if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
                 MainMenu.uFlashIndex = 0;
             }
-            SetMenuText(MainMenu.uMenuScreen,"                         ",7,7,EMERALD_FONT_GREEN);
-            SetMenuText(MainMenu.uMenuScreen,szPassword,7,7,EMERALD_FONT_GREEN);
+            SetMenuText(MainMenu.pMenuScreen,"                         ",7,7,EMERALD_FONT_GREEN);
+            SetMenuText(MainMenu.pMenuScreen,szPassword,7,7,EMERALD_FONT_GREEN);
             if (!bPrepareExit) {
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_STONE;
+                MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_STONE;
             }
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                if (uCursorPos < EMERALD_GROUP_PASSWORD_LEN) {
                     szPassword[uCursorPos] = uKey;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                     uCursorPos++;
                }
             } else  if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
                  if (uCursorPos > 0) {
                     szPassword[uCursorPos - 1] = 0;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                     uCursorPos--;
                  }
                  do {
@@ -872,7 +875,7 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
                 uModVolume = uModVolume + 4;
                 SetModVolume(uModVolume);
             } else if (bPrepareExit) {
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                 if (nColorDimm > 0) {
                     nColorDimm = nColorDimm - 4;
                     SetAllTextureColors(nColorDimm);
@@ -976,14 +979,14 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
         nColorDimm = 0;
         uModVolume = 0;
         SetMenuBorderAndClear();
-        SetMenuText(MainMenu.uMenuScreen,"LEVELGROUP IS PASSWORD PROTECTED",4,4,EMERALD_FONT_BLUE);
+        SetMenuText(MainMenu.pMenuScreen,"LEVELGROUP IS PASSWORD PROTECTED",4,4,EMERALD_FONT_BLUE);
         // Mauer-Eingabefeld
         for (I = 0; I < EMERALD_GROUP_PASSWORD_LEN + 3; I++) {
-            MainMenu.uMenuScreen[6 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
-            MainMenu.uMenuScreen[8 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
+            MainMenu.pMenuScreen[6 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
+            MainMenu.pMenuScreen[8 * MainMenu.uXdim + I + 6] = EMERALD_WALL_CORNERED;
         }
-        MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6] = EMERALD_WALL_CORNERED;
-        MainMenu.uMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUP_PASSWORD_LEN + 2] = EMERALD_WALL_CORNERED;
+        MainMenu.pMenuScreen[7 * MainMenu.uXdim + 6] = EMERALD_WALL_CORNERED;
+        MainMenu.pMenuScreen[7 * MainMenu.uXdim + 6 + EMERALD_GROUP_PASSWORD_LEN + 2] = EMERALD_WALL_CORNERED;
         while ((nErrorCode == 0) && (!bExit)) {
             UpdateInputStates();
             // Eingabe eines Zeichens für den Levelgruppennamen
@@ -992,22 +995,22 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
             if (MainMenu.uFlashIndex > MainMenu.uMaxFlashIndex) {
                 MainMenu.uFlashIndex = 0;
             }
-            SetMenuText(MainMenu.uMenuScreen,"                         ",7,7,EMERALD_FONT_GREEN);
-            SetMenuText(MainMenu.uMenuScreen,szPassword,7,7,EMERALD_FONT_GREEN);
+            SetMenuText(MainMenu.pMenuScreen,"                         ",7,7,EMERALD_FONT_GREEN);
+            SetMenuText(MainMenu.pMenuScreen,szPassword,7,7,EMERALD_FONT_GREEN);
             if (!bPrepareExit) {
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_STONE;
+                MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_STONE;
             }
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                if (uCursorPos < EMERALD_GROUP_PASSWORD_LEN) {
                     szPassword[uCursorPos] = uKey;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                     uCursorPos++;
                }
             } else  if (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]) {
                  if (uCursorPos > 0) {
                     szPassword[uCursorPos - 1] = 0;
-                    MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                    MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                     uCursorPos--;
                  }
                  do {
@@ -1027,7 +1030,7 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
                 uModVolume = uModVolume + 4;
                 SetModVolume(uModVolume);
             } else if (bPrepareExit) {
-                MainMenu.uMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
+                MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                 if (nColorDimm > 0) {
                     nColorDimm = nColorDimm - 4;
                     SetAllTextureColors(nColorDimm);
@@ -1072,7 +1075,7 @@ Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x
+Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x, ge_uXoffs
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
@@ -1109,7 +1112,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
     nColorDimm = 0;
     uModVolume = 0;
     SetMenuBorderAndClear();
-    SetMenuText(MainMenu.uMenuScreen,"SELECT BITMAP TO IMPORT",-1,0,EMERALD_FONT_BLUE_STEEL);
+    SetMenuText(MainMenu.pMenuScreen,"SELECT BITMAP TO IMPORT",-1,0,EMERALD_FONT_BLUE_STEEL);
     while ((nErrorCode == 0) && (!bExit)) {
         UpdateInputStates();
 
@@ -1119,11 +1122,11 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
         // Import-Dateien auflisten
         for (I = 0; I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST; I++) {
             if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
-                PrintLittleFont(pRenderer,40,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_RELATIVE,1);
+                PrintLittleFont(pRenderer,40 + ge_uXoffs,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_ABSOLUTE,1);
             }
         }
         nErrorCode = ImportMenuSelectFile(pRenderer,&uBeamPosition);
-        if (uBeamPosition != 0xFFFFFFFF) {
+        if ((uBeamPosition != 0xFFFFFFFF) && (!bPrepareExit)) {
             strcpy(szFullFilename,EMERALD_IMPORTDC3_DIRECTORYNAME);
             strcat(szFullFilename,"/");             // Funktioniert auch unter Windows
             strcat(szFullFilename,Dc3LevelFileList[MainMenu.uImportFileListDc3[uBeamPosition]].szFilename);
@@ -1199,13 +1202,11 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
             }
             WaitNoKey();
         }
-        ShowButtons(pRenderer);
-        if ( (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES))) {
+        ShowButtons(pRenderer,K_ABSOLUTE);
+        if ( (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES)) || (InputStates.bQuit) ) {
             bPrepareExit = true;
         }
-
         RenderPresentAndClear(pRenderer);
-
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);

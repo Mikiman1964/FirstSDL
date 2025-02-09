@@ -16,7 +16,7 @@ MANKEY ManKey;
 extern PLAYFIELD Playfield;
 extern INPUTSTATES InputStates;
 extern char ge_szElementNames[][64];
-extern SDL_DisplayMode ge_DisplayMode;
+extern SDL_DisplayMode ge_DesktopDisplayMode;
 extern CONFIG Config;
 
 /*----------------------------------------------------------------------------
@@ -402,7 +402,7 @@ Parameter
                uAnimation, uint32_t, gewünschte Animation des Man
       Ausgang: -
 Rückgabewert:  uint32_t, tatsächlich ausgeführte Animation des Man
-Seiteneffekte: Playfield.x, ge_szElementNames[], ge_DisplayMode.refresh_rate,
+Seiteneffekte: Playfield.x, ge_szElementNames[], ge_DesktopDisplayMode.refresh_rate,
                ManKey.x
 ------------------------------------------------------------------------------*/
 uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimation) {
@@ -2290,7 +2290,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 PreparePlaySound(SOUND_ENDDOOR,uActPos);
                 Playfield.bWellDone = true;
                 // Zusätzlicher Score: (Restzeit * Timefaktor) / 10: siehe DC3
-                Playfield.uTotalScore = Playfield.uTotalScore + (Playfield.uTimeToPlay * Playfield.uTimeScoreFactor) / (ge_DisplayMode.refresh_rate * 10);
+                Playfield.uTotalScore = Playfield.uTotalScore + (Playfield.uTimeToPlay * Playfield.uTimeScoreFactor) / (ge_DesktopDisplayMode.refresh_rate * 10);
                 // Falls Score > 9999, wird das in ShowPanel() korrigiert
             }
             break;

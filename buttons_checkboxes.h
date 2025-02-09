@@ -51,7 +51,7 @@ int GetFreeButtonIndex(void);
 int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease);
 int SetButtonActivity(char *pszLabel, bool bActive);
 int SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos);
-int ShowButtons(SDL_Renderer *pRenderer);
-int ShowOtherButtons(SDL_Renderer *pRenderer);
+int ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute);
+int ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute);
 bool IsButtonPressed(char *pszLabel);
 #endif // BUTTONS_H_INCLUDED

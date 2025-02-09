@@ -41,7 +41,7 @@ extern JOYSTICK Joystick;
 extern SHOWABLEDISPLAYMODES ShowableDisplayModes;
 extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
 extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
-extern SDL_DisplayMode ge_DisplayMode;
+extern SDL_DisplayMode ge_DesktopDisplayMode;
 extern IMPORTLEVEL ImportLevel;
 
 /*----------------------------------------------------------------------------
@@ -136,7 +136,7 @@ int GetMainMenuButton(void) {
     nButton = 0;
     if (InputStates.bLeftMouseButton) {
         // Beide Level-Buttons auf selber Y-Position
-        if ((InputStates.nMouseYpos_Relative >= 192) && (InputStates.nMouseYpos_Relative < 224)) {
+        if ((InputStates.nMouseYpos_Absolute >= 192) && (InputStates.nMouseYpos_Absolute < 224)) {
             if ((InputStates.nMouseXpos_Relative >= 352) && (InputStates.nMouseXpos_Relative < 384)) {
                 nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
             } else if ((InputStates.nMouseXpos_Relative >= 384) && (InputStates.nMouseXpos_Relative < 416)) {
@@ -144,7 +144,7 @@ int GetMainMenuButton(void) {
             }
         }
         // Settings- und Exit-Button
-        else if ((MainMenu.nState == 0) && ((InputStates.nMouseYpos_Relative >= 0) && (InputStates.nMouseYpos_Relative < 32))) {
+        else if ((MainMenu.nState == 0) && ((InputStates.nMouseYpos_Absolute >= 0) && (InputStates.nMouseYpos_Absolute < 32))) {
             if ((InputStates.nMouseXpos_Relative >= 0) && (InputStates.nMouseXpos_Relative < 32)) {
                 nButton = EMERALD_STEEL_SETTINGS_PRESSED;
             } else if ((InputStates.nMouseXpos_Relative >= 1248) && (InputStates.nMouseXpos_Relative < 1280)) {
@@ -170,15 +170,16 @@ int GetPlayerListButton(void) {
     int nButton;
     bool bMouseInNamesArea;
 
-    bMouseInNamesArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 1088) && (InputStates.nMouseYpos_Relative >= 448) && (InputStates.nMouseYpos_Relative < 576));
+    bMouseInNamesArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 1088) &&
+                         (InputStates.nMouseYpos_Absolute >= 448) && (InputStates.nMouseYpos_Absolute < (448 + MAX_NAMES_IN_LIST * FONT_H)));
     nButton = 0;
     if (Names.uNameCount > MAX_NAMES_IN_LIST) {
         if (InputStates.bLeftMouseButton) {
             if  ((InputStates.nMouseXpos_Relative >= 1088) && (InputStates.nMouseXpos_Relative < (1088 + FONT_W))) {
                 // Button Levelgruppen Pfeil hoch
-                if ( (InputStates.nMouseYpos_Relative >= 448) && (InputStates.nMouseYpos_Relative < (448 + FONT_H))) {
+                if ( (InputStates.nMouseYpos_Absolute >= 448) && (InputStates.nMouseYpos_Absolute < (448 + FONT_H))) {
                     nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
-                } else if ( (InputStates.nMouseYpos_Relative >= 544) && (InputStates.nMouseYpos_Relative < (544 + FONT_H))) {
+                } else if ( (InputStates.nMouseYpos_Absolute >= 544) && (InputStates.nMouseYpos_Absolute < (544 + FONT_H))) {
                 // Button Levelgruppen Pfeil runter
                     nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
                 }
@@ -204,20 +205,21 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
-Seiteneffekte: InputStates.x, g_LevelgroupFilesCount
+Seiteneffekte: InputStates.x, g_LevelgroupFilesCount, MainMenu.x
 ------------------------------------------------------------------------------*/
 int GetLevelgroupListButton(void) {
     int nButton;
     bool bMouseInLevelgroup;
 
-    bMouseInLevelgroup = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 896) && (InputStates.nMouseYpos_Relative >= 608) && (InputStates.nMouseYpos_Relative < 736));
+    bMouseInLevelgroup = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 896) &&
+                          (InputStates.nMouseYpos_Absolute >= 608) && (InputStates.nMouseYpos_Absolute < (608 + MainMenu.uMaxLevelgroupsInList * FONT_H)));
     nButton = 0;
-    if (g_LevelgroupFilesCount > MAX_LEVELGROUPS_IN_LIST) {
+    if (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList) {
         if (InputStates.bLeftMouseButton) {
             if  ((InputStates.nMouseXpos_Relative >= 896) && (InputStates.nMouseXpos_Relative < (896 + FONT_W))) {
-                if ( (InputStates.nMouseYpos_Relative >= 608) && (InputStates.nMouseYpos_Relative < (608 + FONT_H))) { // Button Levelgruppen Pfeil hoch?
+                if ( (InputStates.nMouseYpos_Absolute >= 608) && (InputStates.nMouseYpos_Absolute < (608 + FONT_H))) { // Button Levelgruppen Pfeil hoch?
                     nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
-                } else if ( (InputStates.nMouseYpos_Relative >= 704) && (InputStates.nMouseYpos_Relative < (704 + FONT_H))) { // Button Levelgruppen Pfeil runter?
+                } else if ( (InputStates.nMouseYpos_Absolute >= 704) && (InputStates.nMouseYpos_Absolute < (704 + FONT_H))) { // Button Levelgruppen Pfeil runter?
                     nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
                 }
             }
@@ -812,7 +814,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: Actualplayer.x, SelectedLevelgroup.x, InputStates.x, MainMenu.x
+Seiteneffekte: Actualplayer.x, SelectedLevelgroup.x, InputStates.x, MainMenu.x, ge_uXoffs
 ------------------------------------------------------------------------------*/
 int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
@@ -821,9 +823,9 @@ int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
 
     uBeamPosition = GetLevelgroupBeamPosition();
     if (uBeamPosition != 0xFFFFFFFF) {
-        nErrorCode = DrawBeam(pRenderer,FONT_W,608 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 2 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_RELATIVE);
+        nErrorCode = DrawBeam(pRenderer,FONT_W + ge_uXoffs,608 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 2 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_ABSOLUTE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
-            if (SelectAlternativeLevelgroup(LevelgroupFiles[MainMenu.uLevelgroupList[uBeamPosition]].uMd5Hash,true) == 0) {
+            if (SelectAlternativeLevelgroup(LevelgroupFiles[MainMenu.pLevelgroupList[uBeamPosition]].uMd5Hash,true) == 0) {
             //if (SelectAlternativeLevelgroup(LevelgroupFiles[uBeamPosition].uMd5Hash,true) == 0) {
                 // SDL_Log("Select %s, OK",SelectedLevelgroup.szLevelgroupname);
                 if (Actualplayer.bValid) {  // Der aktuelle Name wird nochmals ausgewählt, damit dieser ggf. den Levelgruppen-Hash bekommt
@@ -857,7 +859,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: MainMenu.x, Names.x, SelectedLevelgroup.x, InputStates.x
+Seiteneffekte: MainMenu.x, Names.x, SelectedLevelgroup.x, InputStates.x, ge_uXoffs
 ------------------------------------------------------------------------------*/
 int MenuSelectName(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
@@ -865,7 +867,7 @@ int MenuSelectName(SDL_Renderer *pRenderer) {
 
     uBeamPosition = GetNamesBeamPosition();
     if (uBeamPosition != 0xFFFFFFFF) {
-        nErrorCode = DrawBeam(pRenderer,FONT_W,448 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 7 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_RELATIVE);
+        nErrorCode = DrawBeam(pRenderer,ge_uXoffs + FONT_W,448 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 7 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_ABSOLUTE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
             if (SelectName(Names.Name[MainMenu.uNamesList[uBeamPosition]].szName,SelectedLevelgroup.uMd5Hash) == 0) {
                 // SDL_Log("select name: %s, OK",Names.Name[MainMenu.uNamesList[uBeamPosition]].szName);
@@ -904,9 +906,9 @@ void InitLists(void) {
     uint32_t I;
 
     // Levelgruppenliste vorbereiten
-    memset(MainMenu.uLevelgroupList,0xFF,sizeof(MainMenu.uLevelgroupList));
-    for (I = 0; (I < MAX_LEVELGROUPS_IN_LIST) && (I < g_LevelgroupFilesCount); I++) {
-        MainMenu.uLevelgroupList[I] = I;
+    memset(MainMenu.pLevelgroupList,0xFF,MainMenu.uMaxLevelgroupsInList);
+    for (I = 0; (I < MainMenu.uMaxLevelgroupsInList) && (I < g_LevelgroupFilesCount); I++) {
+        MainMenu.pLevelgroupList[I] = I;
     }
     // Namensliste vorbereiten
     memset(MainMenu.uNamesList,0xFF,sizeof(MainMenu.uNamesList));
@@ -930,36 +932,113 @@ Seiteneffekte: MainMenu.x
 ------------------------------------------------------------------------------*/
 void ActivateInputPlayernameMode(void) {
     MainMenu.nState = 1; // Status auf Namen-Eingabemodus stellen
-    SetMenuText(MainMenu.uMenuScreen,"                               ",7,5,EMERALD_FONT_GREEN);
+    SetMenuText(MainMenu.pMenuScreen,"                               ",7,5,EMERALD_FONT_GREEN);
     SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,false);
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_SPACE;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_SPACE;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_SPACE;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           PreInitMainMenu
+------------------------------------------------------------------------------
+Beschreibung: Initialisiert den Menu-Screen-Speicher auf NULL und die aktuelle
+              Menu-Screen-Speichergröße auf 0.
+              Diese Funktion darf nur einmalig zu Programmstart aufgerufen werden.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: MainMenu.x
+------------------------------------------------------------------------------*/
+void PreInitMainMenu(void) {
+    MainMenu.pMenuScreen = NULL;
+    MainMenu.pLevelgroupList = NULL;
+    MainMenu.puLevelTitleList = NULL;
+    MainMenu.puLevelTitleListCopy = NULL;
+    MainMenu.uMaxLevelTitlesInList = 0;
+    MainMenu.uMaxLevelgroupsInList = 0;
+    MainMenu.bCenterDefault = false;
 }
 
 
 /*----------------------------------------------------------------------------
 Name:           InitMainMenu
 ------------------------------------------------------------------------------
-Beschreibung: Initialisiert die Struktur MainMenu.x
+Beschreibung: Initialisiert die Struktur MainMenu.x.
+              Diese Funktion alloziert Speicher für die Menu-Screens.
+              Dieser ist abhängig von der Y-Auflösung des Fensters/Screens.
 Parameter
-      Eingang: -
+      Eingang: bCenterDefault, bool, true = es handelt sich um ein zentriertes Default-Fenster (1280x768)
       Ausgang: -
-Rückgabewert:  -
+Rückgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: MainMenu.x, Config.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-void InitMainMenu(void) {
+int InitMainMenu(bool bCenterDefault) {
+    uint32_t uNewMenuScreenMemorySize;
+    int nErrorCode = 0;
+
+    MainMenu.bCenterDefault = bCenterDefault;
     MainMenu.uXdim = DEFAULT_WINDOW_W / FONT_W;
-    MainMenu.uYdim = DEFAULT_WINDOW_H / FONT_H;
-    MainMenu.nState = 0;             // 1 = Eingabe eines neuen Namens
-    ge_uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
-    ge_uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
-    memset(MainMenu.szTempName,0,sizeof(MainMenu.szTempName));
-    MainMenu.uFlashIndex = 0;
-    MainMenu.uCursorPos = 0;
-    MainMenu.uMaxFlashIndex = sizeof(MainMenu.uFlashBrightness) - 1;
-    memcpy(MainMenu.uFlashBrightness,"\x00\10\x14\x19\x1E\x28\x32\x4B\x5A\x5F\x64\x5F\x5A\x4B\x32\x28\x1E\x19\x14\x0A",sizeof(MainMenu.uFlashBrightness));// Für den Stein-Cursor
+    if (bCenterDefault) {
+        MainMenu.uYdim = DEFAULT_WINDOW_H / FONT_H;
+    } else {
+        MainMenu.uYdim = Config.uResY / FONT_H;
+    }
+    // Sicherheitsabfrage
+    if (MainMenu.uYdim >= DEFAULT_WINDOW_H / FONT_H) {
+        // Maximale Anzahl der zu sehenden Levelgruppen in der Liste
+        MainMenu.uMaxLevelgroupsInList = MIN_LEVELGROUPS_IN_LIST + MainMenu.uYdim - DEFAULT_WINDOW_H / FONT_H;
+        uNewMenuScreenMemorySize = ((DEFAULT_WINDOW_W / FONT_W) * (Config.uResY / FONT_H)) * sizeof(uint16_t);
+        MainMenu.pMenuScreen = realloc(MainMenu.pMenuScreen,uNewMenuScreenMemorySize);
+        if (MainMenu.pMenuScreen != NULL) {
+            MainMenu.pLevelgroupList = realloc(MainMenu.pLevelgroupList,MainMenu.uMaxLevelgroupsInList);
+            if (MainMenu.pLevelgroupList != NULL) {
+                MainMenu.nState = 0;             // 1 = Eingabe eines neuen Namens
+                ge_uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
+                ge_uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
+                memset(MainMenu.szTempName,0,sizeof(MainMenu.szTempName));
+                MainMenu.uFlashIndex = 0;
+                MainMenu.uCursorPos = 0;
+                MainMenu.uMaxFlashIndex = sizeof(MainMenu.uFlashBrightness) - 1;
+                memcpy(MainMenu.uFlashBrightness,"\x00\10\x14\x19\x1E\x28\x32\x4B\x5A\x5F\x64\x5F\x5A\x4B\x32\x28\x1E\x19\x14\x0A",sizeof(MainMenu.uFlashBrightness));// Für den Stein-Cursor
+                // Ab hier Anzahl Level-Titel berechnen für Levelauswahl
+                // - 4: Die ersten 3 Zeilen und letzte Zeile sind Mauer
+                // jeweils 10 Pixel oben und unten (20) Abstand halten
+                // Eine Zeile nimmt 20 Pixel ein
+                MainMenu.uMaxLevelTitlesInList = (((MainMenu.uYdim - 4) * FONT_H) - 20) / 20;
+                // Speicher für Level-Titel-Liste und Kopie allozieren
+                MainMenu.puLevelTitleList = realloc(MainMenu.puLevelTitleList,MainMenu.uMaxLevelTitlesInList * sizeof(uint16_t));
+                if (MainMenu.puLevelTitleList != NULL) {
+                    MainMenu.puLevelTitleListCopy = realloc(MainMenu.puLevelTitleListCopy,MainMenu.uMaxLevelTitlesInList * sizeof(uint16_t));
+                    if (MainMenu.puLevelTitleListCopy == NULL) {
+                        SDL_Log("%s: realloc() for leveltitle list [copy] failed, titles: %u",__FUNCTION__,MainMenu.uMaxLevelTitlesInList);
+                        nErrorCode = -1;
+                    }
+                } else {
+                    SDL_Log("%s: realloc() for leveltitle list failed, titles: %u",__FUNCTION__,MainMenu.uMaxLevelTitlesInList);
+                    nErrorCode = -1;
+                }
+            } else {
+                SDL_Log("%s: realloc() for levelgroup list failed: memory size: %u",__FUNCTION__,MainMenu.uMaxLevelgroupsInList);
+                nErrorCode = -1;
+            }
+        } else {
+            SDL_Log("%s: realloc() for menu screen failed: memory size: %u",__FUNCTION__,uNewMenuScreenMemorySize);
+            nErrorCode = -1;
+        }
+    } else {
+        // sollte nie eintreten, dann wäre die minimale Y-Auflösung unterschritten und zu wenig Platz
+        MainMenu.uMaxLevelgroupsInList = MIN_LEVELGROUPS_IN_LIST;
+        SDL_Log("%s: vertical resolution to small: %u",__FUNCTION__,Config.uResY);
+        nErrorCode = -1;
+    }
+
+    SDL_Log("%s: ErrorCode: %d",__FUNCTION__,nErrorCode);
+
+    return nErrorCode;
 }
 
 
@@ -977,21 +1056,21 @@ Seiteneffekte: MainMenu.x, g_LevelgroupFilesCount
 void ScrollLevelGroups(int nButton) {
     uint32_t I;
 
-    if (g_LevelgroupFilesCount > 4) {
+    if (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList) {
         if (nButton == EMERALD_STEEL_ARROW_UP_PRESSED) {            // Button Levelgruppen Pfeil hoch?
-            if (MainMenu.uLevelgroupList[0] > 0) {
-                for (I = 0; I < 4; I++) {
-                    if (MainMenu.uLevelgroupList[I] != 0xFF) {
-                        MainMenu.uLevelgroupList[I]--;
+            if (MainMenu.pLevelgroupList[0] > 0) {
+                for (I = 0; I < MainMenu.uMaxLevelgroupsInList; I++) {
+                    if (MainMenu.pLevelgroupList[I] != 0xFF) {
+                        MainMenu.pLevelgroupList[I]--;
                     }
                 }
             }
 
         } else if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {   // Button Levelgruppen Pfeil runter?
-            if (MainMenu.uLevelgroupList[3] < (g_LevelgroupFilesCount - 1)) {
-                for (I = 0; I < 4; I++) {
-                    if (MainMenu.uLevelgroupList[I] != 0xFF) {
-                        MainMenu.uLevelgroupList[I]++;
+            if (MainMenu.pLevelgroupList[MainMenu.uMaxLevelgroupsInList - 1] < (g_LevelgroupFilesCount - 1)) {
+                for (I = 0; I < MainMenu.uMaxLevelgroupsInList; I++) {
+                    if (MainMenu.pLevelgroupList[I] != 0xFF) {
+                        MainMenu.pLevelgroupList[I]++;
                     }
                 }
             }
@@ -1014,18 +1093,18 @@ Seiteneffekte: MainMenu.x, Names.x
 void ScrollPlayernames(int nButton) {
     uint32_t I;
 
-    if (Names.uNameCount > 4) {
+    if (Names.uNameCount > MAX_NAMES_IN_LIST) {
         if (nButton == EMERALD_STEEL_ARROW_UP_PRESSED) {  // Button Levelgruppen Pfeil hoch?
             if (MainMenu.uNamesList[0] > 0) {
-                for (I = 0; I < 4; I++) {
+                for (I = 0; I < MAX_NAMES_IN_LIST; I++) {
                     if (MainMenu.uNamesList[I] != 0xFF) {
                         MainMenu.uNamesList[I]--;
                     }
                 }
             }
         } else if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {   // Button Levelgruppen Pfeil runter?
-            if (MainMenu.uNamesList[3] < (Names.uNameCount - 1)) {
-                for (I = 0; I < 4; I++) {
+            if (MainMenu.uNamesList[MAX_NAMES_IN_LIST - 1] < (Names.uNameCount - 1)) {
+                for (I = 0; I < MAX_NAMES_IN_LIST; I++) {
                     if (MainMenu.uNamesList[I] != 0xFF) {
                         MainMenu.uNamesList[I]++;
                     }
@@ -1039,12 +1118,12 @@ void ScrollPlayernames(int nButton) {
 /*----------------------------------------------------------------------------
 Name:           RenderMenuElements
 ------------------------------------------------------------------------------
-Beschreibung: Alle Menü-Elemente im Menü-Screen uMenuScreen werden in den Renderer geschrieben.
+Beschreibung: Alle Menü-Elemente im Menü-Screen pMenuScreen werden in den Renderer geschrieben.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Playfield.x, MainMenu.x
+Seiteneffekte: Playfield.x, MainMenu.x, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
 int RenderMenuElements(SDL_Renderer *pRenderer) {
     uint32_t I;
@@ -1054,12 +1133,16 @@ int RenderMenuElements(SDL_Renderer *pRenderer) {
     float fAngle;
     SDL_Rect DestR;
 
-    for (I = 0; ((I < ((DEFAULT_WINDOW_W / FONT_W) * (DEFAULT_WINDOW_H / FONT_H))) && (nErrorCode == 0)); I++) {
+    for (I = 0; ((I < ((DEFAULT_WINDOW_W / FONT_W) * MainMenu.uYdim)) && (nErrorCode == 0)); I++) {
         X = I % MainMenu.uXdim;
         Y = I / MainMenu.uXdim;
-        uTextureIndex = GetTextureIndexByElement(MainMenu.uMenuScreen[I],Playfield.uFrameCounter % 16,&fAngle);
+        uTextureIndex = GetTextureIndexByElement(MainMenu.pMenuScreen[I],Playfield.uFrameCounter % 16,&fAngle);
         DestR.x = ge_uXoffs + X * FONT_W;
-        DestR.y = ge_uYoffs + Y * FONT_H;
+        if (MainMenu.bCenterDefault) {
+            DestR.y = ge_uYoffs + Y * FONT_H;
+        } else {
+            DestR.y = Y * FONT_H;
+        }
         DestR.w = FONT_W;
         DestR.h = FONT_H;
         if (nErrorCode == 0) {
@@ -1081,7 +1164,7 @@ Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung, sonst 0 bis 3 für einen der 4 Spieler Namen
+Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung, sonst 0 bis x für einen der Spieler Namen
 Seiteneffekte: InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 uint32_t GetNamesBeamPosition(void) {
@@ -1092,7 +1175,7 @@ uint32_t GetNamesBeamPosition(void) {
     // Prüfen, ob Mauspfeil über Spielernamen-Liste steht und ggf. Balken einblenden
     if ((InputStates.nMouseXpos_Relative >= FONT_W) && (InputStates.nMouseXpos_Relative < 1088)) {
         for (I = 0; (I < MAX_NAMES_IN_LIST) && (!bMouseFound); I++) {
-            if ((InputStates.nMouseYpos_Relative >= (448 + (I * FONT_H))) && (InputStates.nMouseYpos_Relative < (480 + (I * FONT_H)))) {
+            if ((InputStates.nMouseYpos_Absolute >= (448 + (I * FONT_H))) && (InputStates.nMouseYpos_Absolute < (480 + (I * FONT_H)))) {
                 if (MainMenu.uNamesList[I] != 0xFF) {
                     uBeamPosition = I;
                     bMouseFound =  true;
@@ -1112,7 +1195,7 @@ Beschreibung: Ermittelt, ob und wo ein Balken eingeblendet werden muss, wenn der
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung, sonst 0 bis 3 für einen der 4 Levelgruppen-Namen
+Rückgabewert:  uint32_t, 0xFFFFFFFF = keine Einblendung, sonst 0 bis x für einen der Levelgruppen-Namen
 Seiteneffekte: InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 uint32_t GetLevelgroupBeamPosition(void) {
@@ -1122,9 +1205,9 @@ uint32_t GetLevelgroupBeamPosition(void) {
 
     // Prüfen, ob Mauspfeil über Levelgruppenliste steht und ggf. Balken einblenden
     if ((InputStates.nMouseXpos_Relative >= FONT_W) && (InputStates.nMouseXpos_Relative < 896)) {
-        for (I = 0; (I < MAX_LEVELGROUPS_IN_LIST) && (!bMouseFound); I++) {
-            if ((InputStates.nMouseYpos_Relative >= (608 + (I * FONT_H))) && (InputStates.nMouseYpos_Relative < (640 + (I * FONT_H)))) {
-                if (MainMenu.uLevelgroupList[I] != 0xFF) {
+        for (I = 0; (I < MainMenu.uMaxLevelgroupsInList) && (!bMouseFound); I++) {
+            if ((InputStates.nMouseYpos_Absolute >= (608 + (I * FONT_H))) && (InputStates.nMouseYpos_Absolute < (640 + (I * FONT_H)))) {
+                if (MainMenu.pLevelgroupList[I] != 0xFF) {
                     uBeamPosition = I;
                     bMouseFound = true;
                 }
@@ -1150,17 +1233,17 @@ Seiteneffekte: MainMenu.x
 void SetMenuBorderAndClear(void) {
     uint32_t I;
 
-    for (I = 0; I < ((DEFAULT_WINDOW_W / FONT_W) * (DEFAULT_WINDOW_H / FONT_H));I++) {
-        MainMenu.uMenuScreen[I] = EMERALD_SPACE;
+    for (I = 0; I < ((DEFAULT_WINDOW_W / FONT_W) * MainMenu.uYdim); I++) {
+        MainMenu.pMenuScreen[I] = EMERALD_SPACE;
     }
     // Border zeichnen
     for (I = 0; I < MainMenu.uXdim; I++) {
-        MainMenu.uMenuScreen[I] = EMERALD_STEEL; // Stahl oben
-        MainMenu.uMenuScreen[I + MainMenu.uXdim * (MainMenu.uYdim - 1)] = EMERALD_STEEL; // Stahl unten
+        MainMenu.pMenuScreen[I] = EMERALD_STEEL; // Stahl oben
+        MainMenu.pMenuScreen[I + MainMenu.uXdim * (MainMenu.uYdim - 1)] = EMERALD_STEEL; // Stahl unten
     }
     for (I = 0; I < MainMenu.uYdim; I++) {
-        MainMenu.uMenuScreen[I * MainMenu.uXdim] = EMERALD_STEEL; // Stahl links
-        MainMenu.uMenuScreen[I * MainMenu.uXdim + MainMenu.uXdim - 1] = EMERALD_STEEL; // Stahl rechts
+        MainMenu.pMenuScreen[I * MainMenu.uXdim] = EMERALD_STEEL; // Stahl links
+        MainMenu.pMenuScreen[I * MainMenu.uXdim + MainMenu.uXdim - 1] = EMERALD_STEEL; // Stahl rechts
     }
 }
 
@@ -1177,56 +1260,60 @@ Rückgabewert:  -
 Seiteneffekte: SelectedLevelgroup.x, MainMenu.x, Config.x
 ------------------------------------------------------------------------------*/
 void SetStaticMenuElements(void) {
-    SetMenuBorderAndClear();
+    uint32_t I;
 
-    MainMenu.uMenuScreen[39] = EMERALD_STEEL_EXIT;
+    SetMenuBorderAndClear();
+    MainMenu.pMenuScreen[39] = EMERALD_STEEL_EXIT;
     // Rubine oben rechts/links
-    MainMenu.uMenuScreen[2 * MainMenu.uXdim + 2] = EMERALD_RUBY;
-    MainMenu.uMenuScreen[2 * MainMenu.uXdim + 3] = EMERALD_RUBY;
-    MainMenu.uMenuScreen[2 * MainMenu.uXdim + 4] = EMERALD_RUBY;
-    MainMenu.uMenuScreen[2 * MainMenu.uXdim + 35] = EMERALD_RUBY;
-    MainMenu.uMenuScreen[2 * MainMenu.uXdim + 36] = EMERALD_RUBY;
-    MainMenu.uMenuScreen[2 * MainMenu.uXdim + 37] = EMERALD_RUBY;
-    SetMenuText(MainMenu.uMenuScreen,"WELCOME TO EMERALD MINE SDL2",6,2,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"LEVELGROUP:",2,4,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,SelectedLevelgroup.szLevelgroupname,13,4,EMERALD_FONT_GREEN);
-    //SetMenuText(MainMenu.uMenuScreen,"1234567890123456789012345",13,4,EMERALD_FONT_GREEN);
-    SetMenuText(MainMenu.uMenuScreen,"NAME:",2,5,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"LEVEL:",2,6,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"TOTALSCORE:",2,7,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"GAMES PLAYED:",2,8,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"PLAYTIME:",2,9,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"GAMES WON:",2,10,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"HANDICAP:",2,11,EMERALD_FONT_BLUE);
+    MainMenu.pMenuScreen[2 * MainMenu.uXdim + 2] = EMERALD_RUBY;
+    MainMenu.pMenuScreen[2 * MainMenu.uXdim + 3] = EMERALD_RUBY;
+    MainMenu.pMenuScreen[2 * MainMenu.uXdim + 4] = EMERALD_RUBY;
+    MainMenu.pMenuScreen[2 * MainMenu.uXdim + 35] = EMERALD_RUBY;
+    MainMenu.pMenuScreen[2 * MainMenu.uXdim + 36] = EMERALD_RUBY;
+    MainMenu.pMenuScreen[2 * MainMenu.uXdim + 37] = EMERALD_RUBY;
+    SetMenuText(MainMenu.pMenuScreen,"WELCOME TO EMERALD MINE SDL2",6,2,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"LEVELGROUP:",2,4,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,SelectedLevelgroup.szLevelgroupname,13,4,EMERALD_FONT_GREEN);
+    //SetMenuText(MainMenu.pMenuScreen,"1234567890123456789012345",13,4,EMERALD_FONT_GREEN);
+    SetMenuText(MainMenu.pMenuScreen,"NAME:",2,5,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"LEVEL:",2,6,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"TOTALSCORE:",2,7,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"GAMES PLAYED:",2,8,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"PLAYTIME:",2,9,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"GAMES WON:",2,10,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"HANDICAP:",2,11,EMERALD_FONT_BLUE);
     // Seitenwand Levelgroup (ohne Pfeile)
-    MainMenu.uMenuScreen[20 * MainMenu.uXdim + 28] = EMERALD_STEEL;
-    MainMenu.uMenuScreen[21 * MainMenu.uXdim + 28] = EMERALD_STEEL;
-    MainMenu.uMenuScreen[22 * MainMenu.uXdim + 28] = EMERALD_STEEL;
+    MainMenu.pMenuScreen[20 * MainMenu.uXdim + 28] = EMERALD_STEEL;
+    MainMenu.pMenuScreen[21 * MainMenu.uXdim + 28] = EMERALD_STEEL;
+    MainMenu.pMenuScreen[22 * MainMenu.uXdim + 28] = EMERALD_STEEL;
+    for (I = 0; I < (MainMenu.uMaxLevelgroupsInList - MIN_LEVELGROUPS_IN_LIST); I++) {
+        MainMenu.pMenuScreen[(23 + I) * MainMenu.uXdim + 28] = EMERALD_STEEL;
+    }
     // Seitenwand Player (ohne Pfeile)
-    MainMenu.uMenuScreen[15 * MainMenu.uXdim + 34] = EMERALD_STEEL;
-    MainMenu.uMenuScreen[16 * MainMenu.uXdim + 34] = EMERALD_STEEL;
+    MainMenu.pMenuScreen[15 * MainMenu.uXdim + 34] = EMERALD_STEEL;
+    MainMenu.pMenuScreen[16 * MainMenu.uXdim + 34] = EMERALD_STEEL;
     // Button-Untergrund "CREATE PLAYER"
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
     // Button-Untergrund "LEVELEDITOR"
     if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
     } else {
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
-        MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
+        MainMenu.pMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
     }
     // Button-Untergrund "HIGHSCORES"
-    MainMenu.uMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-    MainMenu.uMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+    MainMenu.pMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
 }
 
 
@@ -1249,118 +1336,118 @@ int SetDynamicMenuElements(void) {
 
     bShowLeveleditorButton = (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR);
     sprintf(szText," AVAILABLE LEVELGROUPS:%03u    LEVELS  ",g_LevelgroupFilesCount);
-    SetMenuText(MainMenu.uMenuScreen,szText,1,18,EMERALD_FONT_BLUE_STEEL);
+    SetMenuText(MainMenu.pMenuScreen,szText,1,18,EMERALD_FONT_BLUE_STEEL);
     sprintf(szText,"      AVAILABLE PLAYERS:%03u           ",Names.uNameCount);
-    SetMenuText(MainMenu.uMenuScreen,szText,1,13,EMERALD_FONT_BLUE_STEEL);
-    // Zeigt bis zu 4 Levelgruppen mit Levelanzahl im unteren Bereich an
-    for (I = 0; I < 4; I++) {
-        if (MainMenu.uLevelgroupList[I] != 0xFF) {
-            SetMenuText(MainMenu.uMenuScreen,"                         ",2,19 + I,EMERALD_FONT_BLUE);
-            SetMenuText(MainMenu.uMenuScreen,LevelgroupFiles[MainMenu.uLevelgroupList[I]].szLevelgroupname,2,19 + I,EMERALD_FONT_BLUE);
-            sprintf(szText,"%04u",LevelgroupFiles[MainMenu.uLevelgroupList[I]].uLevelCount);
-            SetMenuText(MainMenu.uMenuScreen,szText,32,19 + I,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,szText,1,13,EMERALD_FONT_BLUE_STEEL);
+    // Zeigt mindestens 4 (MIN_LEVELGROUPS_IN_LIST) Levelgruppen mit Levelanzahl im unteren Bereich an
+    for (I = 0; I < MainMenu.uMaxLevelgroupsInList; I++) {
+        if (MainMenu.pLevelgroupList[I] != 0xFF) {
+            SetMenuText(MainMenu.pMenuScreen,"                         ",2,19 + I,EMERALD_FONT_BLUE);
+            SetMenuText(MainMenu.pMenuScreen,LevelgroupFiles[MainMenu.pLevelgroupList[I]].szLevelgroupname,2,19 + I,EMERALD_FONT_BLUE);
+            sprintf(szText,"%04u",LevelgroupFiles[MainMenu.pLevelgroupList[I]].uLevelCount);
+            SetMenuText(MainMenu.pMenuScreen,szText,32,19 + I,EMERALD_FONT_BLUE);
         }
     }
-    // Hier die Pfeile der Levelgruppenauswahl, wenn mehr als 4 Levelgruppen verfügbar sind
-    if (g_LevelgroupFilesCount > MAX_LEVELGROUPS_IN_LIST) {
-        MainMenu.uMenuScreen[19 * MainMenu.uXdim + 28] = EMERALD_STEEL_ARROW_UP;
-        MainMenu.uMenuScreen[22 * MainMenu.uXdim + 28] = EMERALD_STEEL_ARROW_DOWN;
+    // Hier die Pfeile der Levelgruppenauswahl, wenn mehr als anzeigbare Levelgruppen verfügbar sind
+    if (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList) {
+        MainMenu.pMenuScreen[19 * MainMenu.uXdim + 28] = EMERALD_STEEL_ARROW_UP;
+        MainMenu.pMenuScreen[22 * MainMenu.uXdim + 28] = EMERALD_STEEL_ARROW_DOWN;
     } else {
-        MainMenu.uMenuScreen[19 * MainMenu.uXdim + 28] = EMERALD_STEEL;
-        MainMenu.uMenuScreen[22 * MainMenu.uXdim + 28] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[19 * MainMenu.uXdim + 28] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[22 * MainMenu.uXdim + 28] = EMERALD_STEEL;
     }
     // Zeigt bis zu 4 Namen im mittleren Bereich an
-    //SetMenuText(MainMenu.uMenuScreen,"1234567890123456789012345678901",2,13,EMERALD_FONT_BLUE);
+    //SetMenuText(MainMenu.pMenuScreen,"1234567890123456789012345678901",2,13,EMERALD_FONT_BLUE);
     for (I = 0; I < MAX_NAMES_IN_LIST; I++) {
         if (MainMenu.uNamesList[I] != 0xFF) {
-            SetMenuText(MainMenu.uMenuScreen,"                               ",2,14 + I,EMERALD_FONT_BLUE);
-            SetMenuText(MainMenu.uMenuScreen,Names.Name[MainMenu.uNamesList[I]].szName,2,14 + I,EMERALD_FONT_BLUE);
+            SetMenuText(MainMenu.pMenuScreen,"                               ",2,14 + I,EMERALD_FONT_BLUE);
+            SetMenuText(MainMenu.pMenuScreen,Names.Name[MainMenu.uNamesList[I]].szName,2,14 + I,EMERALD_FONT_BLUE);
         } else {
-            SetMenuText(MainMenu.uMenuScreen,"                               ",2,14 + I,EMERALD_FONT_BLUE);
+            SetMenuText(MainMenu.pMenuScreen,"                               ",2,14 + I,EMERALD_FONT_BLUE);
         }
     }
     if (Names.uNameCount > MAX_NAMES_IN_LIST) {
-        MainMenu.uMenuScreen[14 * MainMenu.uXdim + 34] = EMERALD_STEEL_ARROW_UP;
-        MainMenu.uMenuScreen[17 * MainMenu.uXdim + 34] = EMERALD_STEEL_ARROW_DOWN;
+        MainMenu.pMenuScreen[14 * MainMenu.uXdim + 34] = EMERALD_STEEL_ARROW_UP;
+        MainMenu.pMenuScreen[17 * MainMenu.uXdim + 34] = EMERALD_STEEL_ARROW_DOWN;
     } else {
-        MainMenu.uMenuScreen[14 * MainMenu.uXdim + 34] = EMERALD_STEEL;
-        MainMenu.uMenuScreen[17 * MainMenu.uXdim + 34] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[14 * MainMenu.uXdim + 34] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[17 * MainMenu.uXdim + 34] = EMERALD_STEEL;
     }
-    SetMenuText(MainMenu.uMenuScreen,"-       ",8,6,EMERALD_FONT_GREEN);   // Level
-    SetMenuText(MainMenu.uMenuScreen,"-       ",13,7,EMERALD_FONT_GREEN);  // Totalscore
-    SetMenuText(MainMenu.uMenuScreen,"-       ",15,8,EMERALD_FONT_GREEN);  // Games Played
-    SetMenuText(MainMenu.uMenuScreen,"-                   ",11,9,EMERALD_FONT_GREEN);  // Playtime
-    SetMenuText(MainMenu.uMenuScreen,"-       ",12,10,EMERALD_FONT_GREEN); // Games Won
-    SetMenuText(MainMenu.uMenuScreen,"-       ",11,11,EMERALD_FONT_GREEN); // Handicap
-    SetMenuText(MainMenu.uMenuScreen,"                               ",7,5,EMERALD_FONT_GREEN); // ausgewählter Playername
+    SetMenuText(MainMenu.pMenuScreen,"-       ",8,6,EMERALD_FONT_GREEN);   // Level
+    SetMenuText(MainMenu.pMenuScreen,"-       ",13,7,EMERALD_FONT_GREEN);  // Totalscore
+    SetMenuText(MainMenu.pMenuScreen,"-       ",15,8,EMERALD_FONT_GREEN);  // Games Played
+    SetMenuText(MainMenu.pMenuScreen,"-                   ",11,9,EMERALD_FONT_GREEN);  // Playtime
+    SetMenuText(MainMenu.pMenuScreen,"-       ",12,10,EMERALD_FONT_GREEN); // Games Won
+    SetMenuText(MainMenu.pMenuScreen,"-       ",11,11,EMERALD_FONT_GREEN); // Handicap
+    SetMenuText(MainMenu.pMenuScreen,"                               ",7,5,EMERALD_FONT_GREEN); // ausgewählter Playername
     if (MainMenu.nState == 0) {
         if (Names.uNameCount > 0) {
             if (Actualplayer.bValid) {
-                SetMenuText(MainMenu.uMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
+                SetMenuText(MainMenu.pMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
                 sprintf(szText,"%u       ",Actualplayer.uLevel);
-                SetMenuText(MainMenu.uMenuScreen,szText,8,6,EMERALD_FONT_GREEN);
-                //MainMenu.uMenuScreen[6 * MainMenu.uXdim + 8] = EMERALD_FONT_STEEL_ARROW_LEFT;
-                //MainMenu.uMenuScreen[6 * MainMenu.uXdim + 12] = EMERALD_FONT_STEEL_ARROW_RIGHT;
-                MainMenu.uMenuScreen[6 * MainMenu.uXdim + 11] = EMERALD_STEEL_ARROW_DOWN;
-                MainMenu.uMenuScreen[6 * MainMenu.uXdim + 12] = EMERALD_STEEL_ARROW_UP;
+                SetMenuText(MainMenu.pMenuScreen,szText,8,6,EMERALD_FONT_GREEN);
+                //MainMenu.pMenuScreen[6 * MainMenu.uXdim + 8] = EMERALD_FONT_STEEL_ARROW_LEFT;
+                //MainMenu.pMenuScreen[6 * MainMenu.uXdim + 12] = EMERALD_FONT_STEEL_ARROW_RIGHT;
+                MainMenu.pMenuScreen[6 * MainMenu.uXdim + 11] = EMERALD_STEEL_ARROW_DOWN;
+                MainMenu.pMenuScreen[6 * MainMenu.uXdim + 12] = EMERALD_STEEL_ARROW_UP;
                 sprintf(szText,"%u       ",Actualplayer.uTotalScore);
-                SetMenuText(MainMenu.uMenuScreen,szText,13,7,EMERALD_FONT_GREEN);
+                SetMenuText(MainMenu.pMenuScreen,szText,13,7,EMERALD_FONT_GREEN);
                 sprintf(szText,"%u       ",Actualplayer.uGamesPlayed);
-                SetMenuText(MainMenu.uMenuScreen,szText,15,8,EMERALD_FONT_GREEN);
+                SetMenuText(MainMenu.pMenuScreen,szText,15,8,EMERALD_FONT_GREEN);
                 sprintf(szText,"%f DAYS      ",(float)Actualplayer.uPlayTimeS / 86400);
-                SetMenuText(MainMenu.uMenuScreen,szText,11,9,EMERALD_FONT_GREEN);
+                SetMenuText(MainMenu.pMenuScreen,szText,11,9,EMERALD_FONT_GREEN);
                 sprintf(szText,"%u       ",Actualplayer.uGamesWon);
-                SetMenuText(MainMenu.uMenuScreen,szText,12,10,EMERALD_FONT_GREEN);
+                SetMenuText(MainMenu.pMenuScreen,szText,12,10,EMERALD_FONT_GREEN);
                 sprintf(szText,"%u       ",Actualplayer.uHandicap);
-                SetMenuText(MainMenu.uMenuScreen,szText,11,11,EMERALD_FONT_GREEN);
+                SetMenuText(MainMenu.pMenuScreen,szText,11,11,EMERALD_FONT_GREEN);
                 SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
             } else {
-                SetMenuText(MainMenu.uMenuScreen,"PLEASE SELECT PLAYER",7,5,EMERALD_FONT_GREEN);
+                SetMenuText(MainMenu.pMenuScreen,"PLEASE SELECT PLAYER",7,5,EMERALD_FONT_GREEN);
                 SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_SPACE;
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_SPACE;
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_SPACE;
-                MainMenu.uMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+                MainMenu.pMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_SPACE;
             }
         } else {
-            SetMenuText(MainMenu.uMenuScreen,"PLEASE CREATE A PLAYER",7,5,EMERALD_FONT_GREEN);
+            SetMenuText(MainMenu.pMenuScreen,"PLEASE CREATE A PLAYER",7,5,EMERALD_FONT_GREEN);
             // Delete Player
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_SPACE;
             SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
         }
     } else if (MainMenu.nState == 1) {
         if (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) {  // Verlassen der Namens-Eingabe
             nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),100,100,100); // Cursor-Stein auf volle Helligkeit stellen
             SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
             if (bShowLeveleditorButton) {
                 SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
             } else {
                 SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
             }
             SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
             memset(MainMenu.szTempName,0,sizeof(MainMenu.szTempName));
             MainMenu.uCursorPos = 0;
             MainMenu.nState = 0;
@@ -1368,28 +1455,28 @@ int SetDynamicMenuElements(void) {
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_RETURN]) {
             nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),100,100,100);
             SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
             if (bShowLeveleditorButton) {
                 SetButtonActivity(BUTTONLABEL_LEVELEDITOR,true);
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
             } else {
                 SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
-                MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_LEVELEDITOR_MESSAGE_1_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_LEVELEDITOR_MESSAGE_2_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_LEVELEDITOR_MESSAGE_3_4;
+                MainMenu.pMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_LEVELEDITOR_MESSAGE_4_4;
             }
             SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_MAGIC_WALL;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_MAGIC_WALL;
             if (InsertNewName(MainMenu.szTempName) == 0) {
                 if (ReadNamesFile() == 0) {
                     InitLists();
@@ -1409,25 +1496,25 @@ int SetDynamicMenuElements(void) {
             SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
             SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
             // Create Player
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[13 * MainMenu.uXdim + 78] = EMERALD_SPACE;
             // Delete Player
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[14 * MainMenu.uXdim + 78] = EMERALD_SPACE;
             // Leveleditor
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[15 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[15 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[15 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[15 * MainMenu.uXdim + 78] = EMERALD_SPACE;
             // Highscores
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_SPACE;
-            MainMenu.uMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 75] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 76] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 77] = EMERALD_SPACE;
+            MainMenu.pMenuScreen[16 * MainMenu.uXdim + 78] = EMERALD_SPACE;
 
             // Eingabe eines Zeichens für den Spielernamen
             nErrorCode = SDL_SetTextureColorMod(GetTextureByIndex(TEX_STONE),MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex],MainMenu.uFlashBrightness[MainMenu.uFlashIndex]);
@@ -1452,9 +1539,9 @@ int SetDynamicMenuElements(void) {
                     UpdateInputStates();
                  } while (InputStates.pKeyboardArray[SDL_SCANCODE_BACKSPACE]);
             }
-            SetMenuText(MainMenu.uMenuScreen,"                                   ",7,5,EMERALD_FONT_GREEN); // löscht auch alte Cursorposition
-            SetMenuText(MainMenu.uMenuScreen,MainMenu.szTempName,7,5,EMERALD_FONT_GREEN);
-            MainMenu.uMenuScreen[5 * MainMenu.uXdim + 7 + MainMenu.uCursorPos] = EMERALD_STONE;    // Stein als Cursor setzen
+            SetMenuText(MainMenu.pMenuScreen,"                                   ",7,5,EMERALD_FONT_GREEN); // löscht auch alte Cursorposition
+            SetMenuText(MainMenu.pMenuScreen,MainMenu.szTempName,7,5,EMERALD_FONT_GREEN);
+            MainMenu.pMenuScreen[5 * MainMenu.uXdim + 7 + MainMenu.uCursorPos] = EMERALD_STONE;    // Stein als Cursor setzen
         }
     }
     return nErrorCode;
@@ -1473,14 +1560,15 @@ Parameter
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
                SelectedLevelgroup.x, Config.x, Audioplayer.x, Actualplayer.x
-               ge_uXoffs, ge_uYoffs, GameSound.x
+               ge_uXoffs, GameSound.x
 ------------------------------------------------------------------------------*/
 int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int nErrorCode;
     uint32_t uModVolume;
     uint32_t uHighscoreLevel;
-    uint32_t uXStart;
-    uint32_t uXEnd;
+    uint32_t uScrollerLeftPosX;
+    uint32_t uScrollerRightPosX;
+    uint32_t uScrollFastCounter;
     bool bMenuRun;
     bool bEndGame;
     bool bPrepareExit;
@@ -1510,13 +1598,13 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
 
     InitTeleporter();
     InitClipboard();
-    InitMainMenu();
-    uXStart = ge_uXoffs + FONT_W;
-    uXEnd = ge_uXoffs + DEFAULT_WINDOW_W - FONT_W;
-    if (InitScroller(&Scroller,1,uXStart,uXEnd,0,szMessage, 0,0,0,1,false,false) != 0) {
+    InitMainMenu(WINDOW_FULL_SIZE);
+    uScrollerLeftPosX = ge_uXoffs + FONT_W;
+    uScrollerRightPosX = ge_uXoffs + DEFAULT_WINDOW_W - FONT_W;
+    if (InitScroller(&Scroller,1,uScrollerLeftPosX,uScrollerRightPosX,0,szMessage, 0,0,0,1,false,false) != 0) {
         return -1;
     }
-    Scroller.nYpos = (Config.uResY / 2);
+    Scroller.nYpos = FONT_H * 12;   // Scroller in 13. Zeile (ab 0 gezählt) von oben
     // Namen einlesen
     if (ReadNamesFile() != 0) {
         return -1;
@@ -1524,13 +1612,13 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     if (SetModMusic(6) != 0) {  // 6. 2kad04.mod  von Maktone
         return -1;
     }
-    if (CreateButton(BUTTONLABEL_CREATE_PLAYER,"CREATE PLAYER",1127,454,true,false) != 0) {
+    if (CreateButton(BUTTONLABEL_CREATE_PLAYER,"CREATE PLAYER",1127 + ge_uXoffs,454,true,false) != 0) {
         return -1;
     }
-    if (CreateButton(BUTTONLABEL_DELETE_PLAYER,"DELETE PLAYER",1127,486,false,false) != 0) {
+    if (CreateButton(BUTTONLABEL_DELETE_PLAYER,"DELETE PLAYER",1127 + ge_uXoffs,486,false,false) != 0) {
         return -1;
     }
-    if (CreateButton(BUTTONLABEL_LEVELEDITOR,"LEVELEDITOR",1135,518,true,false) != 0) {
+    if (CreateButton(BUTTONLABEL_LEVELEDITOR,"LEVELEDITOR",1135 + ge_uXoffs,518,true,false) != 0) {
         return -1;
     }
     if (Config.uResY >= MIN_Y_RESOLUTION_FOR_LEVELEDITOR) {
@@ -1538,7 +1626,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     } else {
         SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
     }
-    if (CreateButton(BUTTONLABEL_HIGHSCORES,"HIGHSCORES",1139,550,true,false) != 0) {
+    if (CreateButton(BUTTONLABEL_HIGHSCORES,"HIGHSCORES",1139 + ge_uXoffs,550,true,false) != 0) {
         return -1;
     }
     SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
@@ -1560,6 +1648,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     nLevelgrouplistButton = 0;
     nLastLevelgrouplistButton = 0;
     nNewHighscoreIndex = -1;
+    uScrollFastCounter = 0;
     if (GetLevelgroupFiles() == 0) {    // Wenn das nicht funktioniert, kann nicht weitergemacht werden!
         if (CleanUpHighScoreDir() == 0) {
             if (CleanNameHashes() == 0) {
@@ -1678,15 +1767,23 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
                                     SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-                                    FreeScroller(&Scroller);    // Scroller muss nach Settings ggf. neu initialisiert und gestart werden
+                                    FreeScroller(&Scroller);    // Scroller muss nach Settings ggf. neu initialisiert und gestartet werden
                                     CloseJoystickOrGameController();
                                     nErrorCode = SettingsMenu(pRenderer);
-                                    uXStart = ge_uXoffs + FONT_W;
-                                    uXEnd = ge_uXoffs + DEFAULT_WINDOW_W - FONT_W;
-                                    if (InitScroller(&Scroller,1,uXStart,uXEnd,0,szMessage, 0,0,0,1,false,false) != 0) {
+                                    // Nach Settings wegen möglicher Auflösungsänderung MainMenu und Levelgroup-/Player-Listen neu aufbauen
+                                    InitMainMenu(WINDOW_FULL_SIZE);
+                                    InitLists();
+                                    // Buttons müssen wegen Auflösungsänderung ggf. neu positioniert werden
+                                    SetButtonPosition(BUTTONLABEL_CREATE_PLAYER,1127 + ge_uXoffs,454);
+                                    SetButtonPosition(BUTTONLABEL_DELETE_PLAYER,1127 + ge_uXoffs,486);
+                                    SetButtonPosition(BUTTONLABEL_LEVELEDITOR,1135 + ge_uXoffs,518);
+                                    SetButtonPosition(BUTTONLABEL_HIGHSCORES,1139 + ge_uXoffs,550);
+                                    uScrollerLeftPosX = ge_uXoffs + FONT_W;
+                                    uScrollerRightPosX = ge_uXoffs + DEFAULT_WINDOW_W - FONT_W;
+                                    if (InitScroller(&Scroller,1,uScrollerLeftPosX,uScrollerRightPosX,0,szMessage, 0,0,0,1,false,false) != 0) {
                                         return -1;
                                     }
-                                    Scroller.nYpos = (Config.uResY / 2);
+                                    Scroller.nYpos = FONT_H * 12;   // Scroller in 13. Zeile (ab 0 gezählt) von oben
                                     SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
                                     if (Actualplayer.bValid) {
                                         SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
@@ -1705,7 +1802,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     }
                                     WaitNoKey();
                                 } else if (nErrorCode == 0) {
-                                    // Ein erster Entwurf für Emerald Mine. Das Spielergebnis (Erfolg oder Versagen) kann in Playfield.x abgefragt werden.
+                                    // Das Spielergebnis (Erfolg oder Versagen) kann in Playfield.x abgefragt werden.
                                     // SDL_Log("Start Game with level %u",Actualplayer.uLevel);
                                     nErrorCode = RunGame(pRenderer,Actualplayer.uLevel);
                                     SDL_Log("%s: RunGame() ErrorCode: %u",__FUNCTION__,nErrorCode);
@@ -1750,17 +1847,26 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                 }
                                 nLastPlayerlistButton = nPlayerlistButton;
                                 nPlayerlistButton = GetPlayerListButton();
-                                if ((nLastPlayerlistButton == 0) && (nPlayerlistButton != 0)) {
-                                    ScrollPlayernames(nPlayerlistButton);
-                                }
                                 nLastLevelgrouplistButton = nLevelgrouplistButton;
                                 nLevelgrouplistButton = GetLevelgroupListButton();
-                                if ((nLastLevelgrouplistButton == 0) && (nLevelgrouplistButton != 0)) {
+                                // Für das schnelle Scrollen der Levelgruppen- und Player-Liste
+                                if ( ((nLastPlayerlistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) && (nPlayerlistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED)) ||
+                                     ((nLastPlayerlistButton == EMERALD_STEEL_ARROW_UP_PRESSED) && (nPlayerlistButton == EMERALD_STEEL_ARROW_UP_PRESSED)) ||
+                                     ((nLastLevelgrouplistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) && (nLevelgrouplistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED)) ||
+                                     ((nLastLevelgrouplistButton == EMERALD_STEEL_ARROW_UP_PRESSED) && (nLevelgrouplistButton == EMERALD_STEEL_ARROW_UP_PRESSED)) ) {
+                                    uScrollFastCounter++;
+                                } else {
+                                    uScrollFastCounter = 0;
+                                }
+                                if ( ((nLastPlayerlistButton == 0) || (uScrollFastCounter > 10)) && (nPlayerlistButton != 0) ) {
+                                    ScrollPlayernames(nPlayerlistButton);
+                                }
+                                if ( ((nLastLevelgrouplistButton == 0) || (uScrollFastCounter > 10)) && (nLevelgrouplistButton != 0) ) {
                                     ScrollLevelGroups(nLevelgrouplistButton);
                                 }
                             }
-                            SetMenuText(MainMenu.uMenuScreen,"                         ",13,4,EMERALD_FONT_GREEN);
-                            SetMenuText(MainMenu.uMenuScreen,SelectedLevelgroup.szLevelgroupname,13,4,EMERALD_FONT_GREEN);
+                            SetMenuText(MainMenu.pMenuScreen,"                         ",13,4,EMERALD_FONT_GREEN);
+                            SetMenuText(MainMenu.pMenuScreen,SelectedLevelgroup.szLevelgroupname,13,4,EMERALD_FONT_GREEN);
                             SetDynamicMenuElements();
                         }
                         nLastButton = nButton;
@@ -1776,7 +1882,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                 }
                             }
                             if (nButton != 0) {
-                                SetMenuText(MainMenu.uMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
+                                SetMenuText(MainMenu.pMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
                                 sprintf(szText,"%u       ",Actualplayer.uLevel);
                             }
                         }
@@ -1796,7 +1902,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                 nErrorCode = RenderSettingsbutton(pRenderer);
                             }
                         }
-                        ShowButtons(pRenderer);
+                        ShowButtons(pRenderer,K_ABSOLUTE);
                         if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_CREATE_PLAYER))) {
                             ActivateInputPlayernameMode();  // Eingabemodus für Namenseingabe aktivieren
                         }
@@ -1817,19 +1923,39 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     FreeButton(BUTTONLABEL_LEVELEDITOR);
     FreeButton(BUTTONLABEL_HIGHSCORES);
     FreeScroller(&Scroller);
-    FreeCopper();
+    CleanUpMemoryAndSDL(pRenderer);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CleanUpMemoryAndSDL
+------------------------------------------------------------------------------
+Beschreibung: Gibt allozierten Speicher und SDL-Resourcen (Renderer und Fenster)
+              wieder frei.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: ge_pWindow
+------------------------------------------------------------------------------*/
+void CleanUpMemoryAndSDL(SDL_Renderer *pRenderer) {
+    RestoreDesktop();
     SDL_CloseAudioDevice(Audioplayer.audio_device);
+    FreeWavChunks();
     SAFE_FREE(Audioplayer.pTheMusic);
     SAFE_FREE(Audioplayer.pMusicAll);
-    FreeWavChunks();
     SAFE_FREE(GameSound.pWavAll);
     Mix_CloseAudio();
     FreeTextures();
-    RestoreDesktop();
+    FreeCopper();
+    SAFE_FREE(MainMenu.pMenuScreen);
+    SAFE_FREE(MainMenu.pLevelgroupList);
+    SAFE_FREE(MainMenu.puLevelTitleList);
+    SAFE_FREE(MainMenu.puLevelTitleListCopy);
     SDL_DestroyRenderer(pRenderer);
     SDL_DestroyWindow(ge_pWindow);
     SDL_Quit();
-    return nErrorCode;
 }
 
 
@@ -1979,26 +2105,24 @@ Seiteneffekte: MainMenu.x
 void PrepareSettingsMenu(void) {
     uint32_t I;
 
-    SetMenuText(MainMenu.uMenuScreen,"INPUT DEVICES",2,1,EMERALD_FONT_BLUE);
+    InitMainMenu(WINDOW_CENTER_DEFAULT);
+    SetMenuBorderAndClear();
+
+    SetMenuText(MainMenu.pMenuScreen,"INPUT DEVICES",2,1,EMERALD_FONT_BLUE);
     for (I = 0; I < EMERALD_HIGHSCORE_LISTLEN + 2; I++) {
-        MainMenu.uMenuScreen[(I + 1) * MainMenu.uXdim + 16] = EMERALD_STEEL;    // Senkrechte zwischen Joysticks und anderen Settings
-        MainMenu.uMenuScreen[(I + 1) * MainMenu.uXdim + 28] = EMERALD_STEEL;    // Senkrechte zwischen Inputs-Settings und Video-Settings
+        MainMenu.pMenuScreen[(I + 1) * MainMenu.uXdim + 16] = EMERALD_STEEL;    // Senkrechte zwischen Joysticks und anderen Settings
+        MainMenu.pMenuScreen[(I + 1) * MainMenu.uXdim + 28] = EMERALD_STEEL;    // Senkrechte zwischen Inputs-Settings und Video-Settings
     }
     for (I = 0; I < 15; I++) {
-        MainMenu.uMenuScreen[2 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
-        MainMenu.uMenuScreen[7 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
-        MainMenu.uMenuScreen[12 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
-        MainMenu.uMenuScreen[17 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[2 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[7 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[12 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[17 * MainMenu.uXdim + 1 + I] = EMERALD_STEEL;
     }
     for (I = 0; I < 15; I++) {
-        MainMenu.uMenuScreen[(I + 3) * MainMenu.uXdim + 8] = EMERALD_STEEL;     // Senkrechte Abtrennung zwischen Controller & Joysticks
+        MainMenu.pMenuScreen[(I + 3) * MainMenu.uXdim + 8] = EMERALD_STEEL;     // Senkrechte Abtrennung zwischen Controller & Joysticks
     }
 }
-
-
-
-
-
 
 /*----------------------------------------------------------------------------
 Name:           SettingsMenu
@@ -2011,7 +2135,7 @@ Parameter
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x, Config.x,
                GameController.x, Joystick.x, *ge_pWindow, ShowableDisplayModes.x
-               ge_uXoffs, ge_uYoffs, ge_DisplayMode, g_uScanCodes[], g_ScanCodeNames[]
+               ge_uXoffs, ge_uYoffs, ge_DesktopDisplayMode, g_uScanCodes[], g_ScanCodeNames[]
 ------------------------------------------------------------------------------*/
 int SettingsMenu(SDL_Renderer *pRenderer) {
     SDL_Rect RecAxisButton;
@@ -2303,7 +2427,6 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
         return -1;
     }
     WaitNoKey();
-    SetMenuBorderAndClear();
     PrepareSettingsMenu();
     do {
         UpdateInputStates();
@@ -2703,11 +2826,11 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
                 Config.bFullScreen = false;
                 // Unter Ubuntu 16.04 (vielleicht auch bei anderen Linuxen) ist es wichtig, nach Ausschalten des Fullscreens wieder
                 // zunächst die ursprüngliche Desktop-Auflösung herzustellen.
-                SDL_SetWindowSize(ge_pWindow,ge_DisplayMode.w,ge_DisplayMode.h);    // Ist erst in SDL3 eine int-Funktion
+                SDL_SetWindowSize(ge_pWindow,ge_DesktopDisplayMode.w,ge_DesktopDisplayMode.h);    // Ist erst in SDL3 eine int-Funktion
                 nErrorCode = SDL_SetWindowFullscreen(ge_pWindow,0); //  0 = Fullscreen  ausschalten
                 SDL_SetWindowSize(ge_pWindow,Config.uResX,Config.uResY);            // Ist erst in SDL3 eine int-Funktion
                 nErrorCode = CenterWindow(Config.uResX,Config.uResY);
-                InitMainMenu();
+                InitMainMenu(WINDOW_CENTER_DEFAULT);
             }
             Checkbox_FullScreen.bChanged = false; // bestätigen
             nErrorCode = WriteConfigFile();
@@ -2730,7 +2853,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
                     // Fenstergröße ändern
                     SDL_SetWindowSize(ge_pWindow,Config.uResX,Config.uResY); // Ist erst in SDL3 eine int-Funktion
                     nErrorCode = CenterWindow(Config.uResX,Config.uResY);
-                    InitMainMenu();
+                    InitMainMenu(WINDOW_CENTER_DEFAULT);
                     nErrorCode = WriteConfigFile();
                     // Stern muss neu initialisiert und zentriert werden
                     CenterX = Config.uResX / 2;
@@ -3142,7 +3265,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
             nErrorCode = WriteConfigFile();
         }
         PlayMusic(false);
-        ShowButtons(pRenderer);
+        ShowButtons(pRenderer,K_RELATIVE);
         RenderPresentAndClear(pRenderer);
         SDL_Delay(5);
         Playfield.uFrameCounter++;
@@ -3333,14 +3456,14 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
 
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: MainMenu.x, ge_uXoffs, ge_uYoffs
+Seiteneffekte: MainMenu.x, ge_uXoffs
 ------------------------------------------------------------------------------*/
 int RenderSettingsbutton(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
     SDL_Rect DestR;
 
     DestR.x = ge_uXoffs + 1;
-    DestR.y = ge_uYoffs + 1;
+    DestR.y = 1;
     DestR.w = 30;
     DestR.h = 30;
     if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_SETTINGS),NULL,&DestR,MainMenu.fSettingsbuttonAngle,NULL, SDL_FLIP_NONE) != 0) {
@@ -3382,21 +3505,21 @@ int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
     uModVolume = 0;
     SetModVolume(uModVolume);
     SetAllTextureColors(nColorDimm);
-    SetMenuText(MainMenu.uMenuScreen,SelectedLevelgroup.szLevelgroupname,-1,1,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,SelectedLevelgroup.szLevelgroupname,-1,1,EMERALD_FONT_BLUE);
     for (I = 1; (I < (MainMenu.uXdim - 1)); I++) {
-        MainMenu.uMenuScreen[2 * MainMenu.uXdim + I] = EMERALD_STEEL;
-        MainMenu.uMenuScreen[12 * MainMenu.uXdim + I] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[2 * MainMenu.uXdim + I] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[12 * MainMenu.uXdim + I] = EMERALD_STEEL;
     }
-    SetMenuText(MainMenu.uMenuScreen,Playfield.szLevelTitle,-1,5,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,Playfield.szLevelTitle,-1,5,EMERALD_FONT_BLUE);
     sprintf(szText,"LEVEL:%03d",uLevel);
-    SetMenuText(MainMenu.uMenuScreen,szText,-1,7,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,szText,-1,7,EMERALD_FONT_BLUE);
     sprintf(szText,"BY:%s",Playfield.szLevelAuthor);
-    SetMenuText(MainMenu.uMenuScreen,szText,-1,9,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,szText,-1,9,EMERALD_FONT_BLUE);
 
-    MainMenu.uMenuScreen[16 * MainMenu.uXdim + 2] = EMERALD_EMERALD;
-    SetMenuText(MainMenu.uMenuScreen,"PRESS FIRE (LEFT CTRL) TO PLAY",4,16,EMERALD_FONT_BLUE);
-    MainMenu.uMenuScreen[19 * MainMenu.uXdim + 2] = EMERALD_RUBY;
-    SetMenuText(MainMenu.uMenuScreen,"PRESS ESC TO CANCEL",4,19,EMERALD_FONT_BLUE);
+    MainMenu.pMenuScreen[16 * MainMenu.uXdim + 2] = EMERALD_EMERALD;
+    SetMenuText(MainMenu.pMenuScreen,"PRESS FIRE (LEFT CTRL) TO PLAY",4,16,EMERALD_FONT_BLUE);
+    MainMenu.pMenuScreen[19 * MainMenu.uXdim + 2] = EMERALD_RUBY;
+    SetMenuText(MainMenu.pMenuScreen,"PRESS ESC TO CANCEL",4,19,EMERALD_FONT_BLUE);
 
     do {
         UpdateManKey();
@@ -3519,6 +3642,7 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     int nRed,nGreen,nBlue;
     uint8_t uRand;
 
+    InitMainMenu(WINDOW_CENTER_DEFAULT);
     nRed = 0;
     nGreen = 0;
     nBlue = 0xFF;
@@ -3538,34 +3662,34 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     uModVolume = 0;
     SetModVolume(uModVolume);
     SetAllTextureColors(nColorDimm);
-    SetMenuText(MainMenu.uMenuScreen,"TOP TWENTY",-1,0,EMERALD_FONT_BLUE_STEEL);
+    SetMenuText(MainMenu.pMenuScreen,"TOP TWENTY",-1,0,EMERALD_FONT_BLUE_STEEL);
     sprintf(szText,"%s/LEVEL:%03u",SelectedLevelgroup.szLevelgroupname,uLevel);
-    SetMenuText(MainMenu.uMenuScreen,szText,-1,1,EMERALD_FONT_BLUE);
-    SetMenuText(MainMenu.uMenuScreen,"   NAME                          SCORE",1,2,EMERALD_FONT_BLUE_STEEL);
+    SetMenuText(MainMenu.pMenuScreen,szText,-1,1,EMERALD_FONT_BLUE);
+    SetMenuText(MainMenu.pMenuScreen,"   NAME                          SCORE",1,2,EMERALD_FONT_BLUE_STEEL);
     for (I = 0; I < EMERALD_HIGHSCORE_LISTLEN; I++) {
         sprintf(szNum,"%02d",I + 1);    // Positionsnummer
-        SetMenuText(MainMenu.uMenuScreen,szNum,1,I + 3,EMERALD_FONT_BLUE);  // Positionsnummer
-        MainMenu.uMenuScreen[(I + 3) * MainMenu.uXdim + 3] = EMERALD_STEEL; // Senkrechte Abtrennung Pos.Nr zu Name
-        MainMenu.uMenuScreen[(I + 3) * MainMenu.uXdim + 33] = EMERALD_STEEL;// Senkrechte Abtrennung Name zu Score
+        SetMenuText(MainMenu.pMenuScreen,szNum,1,I + 3,EMERALD_FONT_BLUE);  // Positionsnummer
+        MainMenu.pMenuScreen[(I + 3) * MainMenu.uXdim + 3] = EMERALD_STEEL; // Senkrechte Abtrennung Pos.Nr zu Name
+        MainMenu.pMenuScreen[(I + 3) * MainMenu.uXdim + 33] = EMERALD_STEEL;// Senkrechte Abtrennung Name zu Score
         // Namen und Score
         if (strlen(HighscoreFile.TopTwenty[uLevel].szTopTwenty[I]) > 0) {
-            SetMenuText(MainMenu.uMenuScreen,HighscoreFile.TopTwenty[uLevel].szTopTwenty[I],4,I + 3,EMERALD_FONT_BLUE);
+            SetMenuText(MainMenu.pMenuScreen,HighscoreFile.TopTwenty[uLevel].szTopTwenty[I],4,I + 3,EMERALD_FONT_BLUE);
         } else {
-            SetMenuText(MainMenu.uMenuScreen,"-",4,I + 3,EMERALD_FONT_BLUE);
+            SetMenuText(MainMenu.pMenuScreen,"-",4,I + 3,EMERALD_FONT_BLUE);
         }
 
         uScore = HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x7FFFFFFF;    // WellDone-Flag ausmaskieren
         bWellDone = ((HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x80000000) != 0);
         sprintf(szNum,"%04u",uScore);
-        SetMenuText(MainMenu.uMenuScreen,szNum,35,I + 3,EMERALD_FONT_BLUE);
+        SetMenuText(MainMenu.pMenuScreen,szNum,35,I + 3,EMERALD_FONT_BLUE);
         if (bWellDone) {
-            MainMenu.uMenuScreen[(I + 3) * MainMenu.uXdim + 39] = EMERALD_STEEL_PLAYERHEAD;
+            MainMenu.pMenuScreen[(I + 3) * MainMenu.uXdim + 39] = EMERALD_STEEL_PLAYERHEAD;
         }
     }
     // Markierung eines neuen Highscores durchführen
     if ((nNewHighScoreIndex >= 0) && (nNewHighScoreIndex < EMERALD_HIGHSCORE_LISTLEN)) {
-        MainMenu.uMenuScreen[(nNewHighScoreIndex + 3) * MainMenu.uXdim + 3] = EMERALD_WHEEL; // Senkrechte Abtrennung Pos.Nr zu Name
-        MainMenu.uMenuScreen[(nNewHighScoreIndex + 3) * MainMenu.uXdim + 33] = EMERALD_WHEEL; // Senkrechte Abtrennung Name zu HighScore
+        MainMenu.pMenuScreen[(nNewHighScoreIndex + 3) * MainMenu.uXdim + 3] = EMERALD_WHEEL; // Senkrechte Abtrennung Pos.Nr zu Name
+        MainMenu.pMenuScreen[(nNewHighScoreIndex + 3) * MainMenu.uXdim + 33] = EMERALD_WHEEL; // Senkrechte Abtrennung Name zu HighScore
     }
     do {
         for (I = 0; I < EMERALD_HIGHSCORE_LISTLEN; I++) {
@@ -3604,7 +3728,7 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
                 bMenuRun = false;
             }
         }
-        ShowButtons(pRenderer);
+        ShowButtons(pRenderer,K_RELATIVE);
         RenderPresentAndClear(pRenderer);
         Playfield.uFrameCounter++;
     } while (bMenuRun);
@@ -3613,5 +3737,7 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     }
     FreeButton(BUTTONLABEL_EXIT_HIGHSCORES);
     WaitNoKey();
+    InitMainMenu(WINDOW_FULL_SIZE);
+    InitLists();
     return nErrorCode;
 }

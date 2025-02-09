@@ -482,20 +482,30 @@ Beschreibung: Zeigt alle erzeugten und aktiven Buttons an. Funktion muss in
               einer Event-Hauptschleife zyklisch aufgerufen werden.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-int ShowButtons(SDL_Renderer *pRenderer) {
+int ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
     int nErrorCode;
     uint32_t I;
     uint32_t uXpos;
     uint32_t uYpos;
+    uint32_t uXoffs;
+    uint32_t uYoffs;
     uint32_t uButtonW;
     uint32_t uButtonH;
     bool bButtonArea;
     float fIntensityProzent;
 
+    if (bAbsolute == K_RELATIVE) {
+        uXoffs = ge_uXoffs;
+        uYoffs = ge_uYoffs;
+    } else {
+        uXoffs = 0;
+        uYoffs = 0;
+    }
     fIntensityProzent = (float)g_uIntensityProzent / 100;
     nErrorCode = 0;
     for (I = 0; (I < MAX_BUTTONS) && (nErrorCode == 0); I++) {
@@ -505,39 +515,49 @@ int ShowButtons(SDL_Renderer *pRenderer) {
             uYpos = Buttons[I].uYpos;
             uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W;
             uButtonH = BUTTON_H;
-            bButtonArea = ((InputStates.nMouseXpos_Relative >= uXpos) && (InputStates.nMouseXpos_Relative <= (uXpos + uButtonW)) &&
-                           (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
+            if (bAbsolute == K_RELATIVE) {
+                bButtonArea =   ((InputStates.nMouseXpos_Relative >= uXpos) && (InputStates.nMouseXpos_Relative <= (uXpos + uButtonW)) &&
+                                (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
+            } else {
+                bButtonArea =   ((InputStates.nMouseXpos_Absolute >= uXpos) && (InputStates.nMouseXpos_Absolute <= (uXpos + uButtonW)) &&
+                                (InputStates.nMouseYpos_Absolute >= uYpos) && (InputStates.nMouseYpos_Absolute <= (uYpos + uButtonH)));
+            }
             if  (InputStates.bLeftMouseButton && bButtonArea) {
                 // Buttonfläche erzeugen
                 Buttons[I].bPressed = true;
-                nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
-                nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
-                ShowOtherButtons(pRenderer);
+                nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
+                nErrorCode = PrintLittleFont(pRenderer,uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
+                ShowOtherButtons(pRenderer,bAbsolute);
                 // SDL_RenderPresent(pRenderer);   // Renderer anzeigen
                 if (Buttons[I].bWaitRelease) {
                     WaitNoKey();
                 }
                 // Falls Maus vom Button gezogen wurde, während die linke Maustaste gedrückt wurde
-                Buttons[I].bPressed = ((InputStates.nMouseXpos_Relative >= uXpos) && (InputStates.nMouseXpos_Relative <= (uXpos + uButtonW)) &&
-                                       (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
+                if (bAbsolute == K_RELATIVE) {
+                    Buttons[I].bPressed =   ((InputStates.nMouseXpos_Relative >= uXpos) && (InputStates.nMouseXpos_Relative <= (uXpos + uButtonW)) &&
+                                            (InputStates.nMouseYpos_Relative >= uYpos) && (InputStates.nMouseYpos_Relative <= (uYpos + uButtonH)));
+                } else {
+                    Buttons[I].bPressed =   ((InputStates.nMouseXpos_Absolute >= uXpos) && (InputStates.nMouseXpos_Absolute <= (uXpos + uButtonW)) &&
+                                            (InputStates.nMouseYpos_Absolute >= uYpos) && (InputStates.nMouseYpos_Absolute <= (uYpos + uButtonH)));
+                }
             } else {
                 // Buttonfläche erzeugen
-                nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
+                nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
             }
             // Weißer Button-Rand oben und links zeichnen
             SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + ge_uYoffs); // oben
-            SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // links
+            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uYoffs); // oben
+            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uXoffs, uYpos + uButtonH + 1 + uYoffs); // links
             // Grauen Button-Rand unten und rechts zeichnen
             SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // rechts
+            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // unten
+            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
             SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // rechts
+            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + 1 + uYoffs); // unten
+            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs); // rechts
             SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
-            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
+            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
         }
     }
     return nErrorCode;
@@ -550,19 +570,29 @@ Name:           ShowOtherButtons
 Beschreibung: Zeigt alle erzeugten und aktiven Buttons während einer Haltephase (WaitNoKey) an.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, ge_uXoffs, ge_uYoffs
 ------------------------------------------------------------------------------*/
-int ShowOtherButtons(SDL_Renderer *pRenderer) {
+int ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
     int nErrorCode;
     uint32_t I;
     uint32_t uXpos;
     uint32_t uYpos;
     uint32_t uButtonW;
     uint32_t uButtonH;
+    uint32_t uXoffs;
+    uint32_t uYoffs;
     float fIntensityProzent;
 
+    if (bAbsolute == K_RELATIVE) {
+        uXoffs = ge_uXoffs;
+        uYoffs = ge_uYoffs;
+    } else {
+        uXoffs = 0;
+        uYoffs = 0;
+    }
     fIntensityProzent = (float)g_uIntensityProzent / 100;
     nErrorCode = 0;
     for (I = 0; (I < MAX_BUTTONS) && (nErrorCode == 0); I++) {
@@ -572,21 +602,21 @@ int ShowOtherButtons(SDL_Renderer *pRenderer) {
             uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W;
             uButtonH = BUTTON_H;
             // Buttonfläche erzeugen
-            nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos,uYpos,uButtonW,uButtonH,K_RELATIVE);
+            nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
             // Weißer Button-Rand oben und links zeichnen
             SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + ge_uYoffs); // oben
-            SDL_RenderDrawLine(pRenderer, uXpos + ge_uXoffs, uYpos + ge_uYoffs, uXpos + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // links
+            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uYoffs); // oben
+            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uXoffs, uYpos + uButtonH + 1 + uYoffs); // links
             // Grauen Button-Rand unten und rechts zeichnen
             SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + ge_uYoffs); // rechts
+            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // unten
+            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
             SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs, uXpos + uButtonW + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + 1 + ge_uYoffs, uXpos + uButtonW + 1 + ge_uXoffs, uYpos + uButtonH + 1 + ge_uYoffs); // rechts
+            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + 1 + uYoffs); // unten
+            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs); // rechts
             SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
-            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4,uYpos + 2,1,Buttons[I].pszText,K_RELATIVE,1);
+            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
         }
     }
     return nErrorCode;

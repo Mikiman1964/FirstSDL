@@ -19,7 +19,7 @@ SDL_Texture **g_pTextures;   // Pointer Array für Texturen
 USABLEDISPLAYMODES UsableDisplayModes;
 SHOWABLEDISPLAYMODES ShowableDisplayModes;
 
-extern SDL_DisplayMode ge_DisplayMode;
+extern SDL_DisplayMode ge_DesktopDisplayMode;
 extern SDL_Window *ge_pWindow;
 extern uint32_t Gfx[];
 extern CONFIG Config;
@@ -87,13 +87,13 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
 Name:           GetDesktopDisplayMode
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt den aktuellen Desktop-Anzeigemodus und die Fensterposition.
-              Das Modus wird in ge_DisplayMode zurückgegeben.
+              Das Modus wird in ge_DesktopDisplayMode zurückgegeben.
               Zusätzlich wird die Anzahl der verfügbaren Displays ermittelt
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = Modus konnte ermittelt werden, sonst nicht
-Seiteneffekte: ge_DisplayMode, Config.x
+Seiteneffekte: ge_DesktopDisplayMode, Config.x
 ------------------------------------------------------------------------------*/
 int GetDesktopDisplayMode(void) {
     int nRet;
@@ -110,9 +110,9 @@ int GetDesktopDisplayMode(void) {
             }
             // SDL_Log("%s: display: %u is not available ... use display: %u",__FUNCTION__,Config.uDisplay,Config.uDisplayUse);
         }
-        nRet = SDL_GetDesktopDisplayMode(Config.uDisplayUse,&ge_DisplayMode);
+        nRet = SDL_GetDesktopDisplayMode(Config.uDisplayUse,&ge_DesktopDisplayMode);
         if (nRet == 0) {
-            // SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,ge_DisplayMode.w,ge_DisplayMode.h,ge_DisplayMode.refresh_rate);
+            // SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,ge_DesktopDisplayMode.w,ge_DesktopDisplayMode.h,ge_DesktopDisplayMode.refresh_rate);
         } else {
             SDL_Log("%s: SDL_GetDesktopDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -122,8 +122,8 @@ int GetDesktopDisplayMode(void) {
         nRet = -1;
     }
     // Das Schlimmste verhindern
-    if ( (nRet != 0) || (ge_DisplayMode.refresh_rate == 0) ) {
-        ge_DisplayMode.refresh_rate = 60;
+    if ( (nRet != 0) || (ge_DesktopDisplayMode.refresh_rate == 0) ) {
+        ge_DesktopDisplayMode.refresh_rate = 60;
     }
     return nRet;
 }
@@ -139,10 +139,10 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: ge_pWindow, ge_DisplayMode
+Seiteneffekte: ge_pWindow, ge_DesktopDisplayMode
 ------------------------------------------------------------------------------*/
 void RestoreDesktop(void) {
-    SDL_SetWindowSize(ge_pWindow,ge_DisplayMode.w,ge_DisplayMode.h);
+    SDL_SetWindowSize(ge_pWindow,ge_DesktopDisplayMode.w,ge_DesktopDisplayMode.h);
     SDL_SetWindowFullscreen(ge_pWindow,0); //  0 = Fullscreen  ausschalten
 }
 
@@ -158,23 +158,23 @@ Parameter
                uHeight, uint32_t, Fensterhöhe
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: ge_pWindow, ge_DisplayMode (Desktop-Größe)
+Seiteneffekte: ge_pWindow, ge_DesktopDisplayMode (Desktop-Größe)
 ------------------------------------------------------------------------------*/
 int CenterWindow(uint32_t uWidth, uint32_t uHeight) {
     int nErrorCode = -1;
     int x,y;
 
-    if ((ge_pWindow != NULL) && (ge_DisplayMode.w > 0) && (ge_DisplayMode.h > 0)) {
+    if ((ge_pWindow != NULL) && (ge_DesktopDisplayMode.w > 0) && (ge_DesktopDisplayMode.h > 0)) {
 
         // X-Zentrierung
-        if (ge_DisplayMode.w > uWidth) {
-            x = (ge_DisplayMode.w - uWidth) / 2;
+        if (ge_DesktopDisplayMode.w > uWidth) {
+            x = (ge_DesktopDisplayMode.w - uWidth) / 2;
         } else {
             x = 0;
         }
         // Y-Zentrierung
-        if (ge_DisplayMode.h > uHeight) {
-            y = (ge_DisplayMode.h - uHeight) / 2;
+        if (ge_DesktopDisplayMode.h > uHeight) {
+            y = (ge_DesktopDisplayMode.h - uHeight) / 2;
         } else {
             y = 0;
         }
