@@ -12,7 +12,7 @@
 #define MAX_CHECKBOXTEXT_LEN    100
 
 #define CHK_USE                 true
-#define  CHK_UNUSE               false
+#define CHK_UNUSE               false
 
 typedef struct {
     bool      bActive;

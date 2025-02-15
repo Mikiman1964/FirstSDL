@@ -1,14 +1,13 @@
 #include "buttons_checkboxes.h"
 #include "KeyboardMouse.h"
+#include "mySDL.h"
 #include "mystd.h"
 
 CHECKBOX *Checkboxes[MAX_CHECKBOXES];
 BUTTON Buttons[MAX_BUTTONS];
 extern INPUTSTATES InputStates;
 extern uint8_t g_uIntensityProzent;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
-
+extern VIDEO Video;
 
 /*----------------------------------------------------------------------------
 Name:           InitCheckboxes
@@ -120,7 +119,7 @@ Parameter
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Checkboxes[], InputStates.x, ge_uXoffs, ge_uYoffs
+Seiteneffekte: Checkboxes[], InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
 int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute) {
     int nErrorCode = 0;
@@ -137,8 +136,8 @@ int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute) {
         uXoffs = 0;
         uYoffs = 0;
     } else {
-        uXoffs = ge_uXoffs;
-        uYoffs = ge_uYoffs;
+        uXoffs = Video.uXoffs;
+        uYoffs = Video.uYoffs;
     }
     Rect.w = 20;
     Rect.h = 20;
@@ -485,7 +484,7 @@ Parameter
                 bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, ge_uXoffs, ge_uYoffs
+Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, Video.x
 ------------------------------------------------------------------------------*/
 int ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
     int nErrorCode;
@@ -500,8 +499,8 @@ int ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
     float fIntensityProzent;
 
     if (bAbsolute == K_RELATIVE) {
-        uXoffs = ge_uXoffs;
-        uYoffs = ge_uYoffs;
+        uXoffs = Video.uXoffs;
+        uYoffs = Video.uYoffs;
     } else {
         uXoffs = 0;
         uYoffs = 0;
@@ -573,7 +572,7 @@ Parameter
                 bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, ge_uXoffs, ge_uYoffs
+Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, Video.x
 ------------------------------------------------------------------------------*/
 int ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
     int nErrorCode;
@@ -587,8 +586,8 @@ int ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
     float fIntensityProzent;
 
     if (bAbsolute == K_RELATIVE) {
-        uXoffs = ge_uXoffs;
-        uYoffs = ge_uYoffs;
+        uXoffs = Video.uXoffs;
+        uYoffs = Video.uYoffs;
     } else {
         uXoffs = 0;
         uYoffs = 0;

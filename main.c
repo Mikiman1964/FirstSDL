@@ -22,19 +22,14 @@
 #include "scroller.h"
 
 void TestFunction(uint32_t I);
-
 void PrintSDLVersion(void);
-
-SDL_DisplayMode ge_DesktopDisplayMode;
-SDL_Window *ge_pWindow = NULL;
-uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
 extern AUDIOPLAYER Audioplayer;
 extern GAMESOUND GameSound;
 extern MAINMENU MainMenu;
+extern VIDEO Video;
 
 int main(int argc, char *argv[]) {
     bool bRun;
@@ -88,10 +83,11 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     uint8_t uBallonsGfx = 0;
 
     PrintSDLVersion();
-    ge_uXoffs = 0;
-    ge_uYoffs = 0;
-    ge_pWindow = NULL;
+    Video.uXoffs = 0;
+    Video.uYoffs = 0;
+    Video.pWindow = NULL;
     InitXorShift();
+    memset(&Video,0,sizeof(Video));
     if (ReadConfigFile() != 0) {            // Konfigurationsfile wird für Fenstergröße bzw. Bildschirmauflösung früh eingelesen.
         return -1;
     }
@@ -112,20 +108,27 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     if (InitInputStates() != 0) {
         return -1;
     }
-    ge_pWindow = InitSDL_Window(Config.uResX, Config.uResY, WINDOW_TITLE);     // SDL_Init() und Fenster erzeugen
-    if (ge_pWindow == NULL) {
+    Video.pWindow = InitSDL_Window(Config.uResX, Config.uResY, WINDOW_TITLE);     // SDL_Init() und Fenster erzeugen
+    if (Video.pWindow == NULL) {
         return -1;
     }
-    if (Config.bFullScreen) {
-        if (SDL_SetWindowFullscreen(ge_pWindow,SDL_WINDOW_FULLSCREEN) != 0) {
+    if (Video.bMustUseFullScreen) {
+        SDL_SetWindowFullscreen(Video.pWindow,SDL_WINDOW_FULLSCREEN);
+        if (SetWindowDisplayMode(Config.uResX,Config.uResY,Video.DesktopDisplayMode.format,60) != 0) {
             RestoreDesktop();
-            SDL_DestroyWindow(ge_pWindow);
+            SDL_DestroyWindow(Video.pWindow);
+            return -1;
+        }
+    } else if (Config.bFullScreen) {
+        if (SDL_SetWindowFullscreen(Video.pWindow,SDL_WINDOW_FULLSCREEN) != 0) {
+            RestoreDesktop();
+            SDL_DestroyWindow(Video.pWindow);
             return -1;
         }
     }
     DetectJoystickAndGameController();
     OpenJoystickOrGameController();
-    pRenderer = CreateRenderer(ge_pWindow);        // Renderer für erzeugtes Fenster erstellen
+    pRenderer = CreateRenderer(Video.pWindow);        // Renderer für erzeugtes Fenster erstellen
     if (pRenderer == NULL) {
         RestoreDesktop();
         return -1;
@@ -156,11 +159,11 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop() und räumt Speicher auf;
     }
     // Ab hier SDL2-Demo
-    if (SetModMusic(3) != 0) {        // Mit MOD 3 class_cracktro#15 starten
+    if (SetModMusic(3) != 0) {                  // Mit MOD 3 class_cracktro#15 starten
         RestoreDesktop();
         return -1;
     }
-    SDL_WarpMouseInWindow(ge_pWindow,10,10);
+    SDL_WarpMouseInWindow(Video.pWindow,10,10);
     do {
         UpdateInputStates();
     }  while(InputStates.bQuit);

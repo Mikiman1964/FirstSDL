@@ -19,7 +19,7 @@
 
 
 extern PLAYFIELD Playfield;
-extern SDL_DisplayMode ge_DesktopDisplayMode;
+extern VIDEO Video;
 extern CONFIG Config;
 
 uint32_t g_LevelgroupFilesCount;
@@ -483,7 +483,7 @@ Parameter
       Ausgang: -
                -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x
+Seiteneffekte: Playfield.x, Video.x
 ------------------------------------------------------------------------------*/
 int GetLevelTimesFromXml(ezxml_t xml) {
     int nErrorCode;
@@ -499,32 +499,32 @@ int GetLevelTimesFromXml(ezxml_t xml) {
             if (node != NULL) {
                 pAttr = node->txt;
                 nNum = strtol(pAttr,NULL,10);
-                Playfield.uTimeToPlay = (uint32_t)nNum * ge_DesktopDisplayMode.refresh_rate;
+                Playfield.uTimeToPlay = (uint32_t)nNum * Video.DesktopDisplayMode.refresh_rate;
                 node = ezxml_child(times,"wheel_rotation");
                 if (node != NULL) {
                     pAttr = node->txt;
                     nNum = strtol(pAttr,NULL,10);
-                    Playfield.uTimeWheelRotation = (uint32_t)nNum * ge_DesktopDisplayMode.refresh_rate;
+                    Playfield.uTimeWheelRotation = (uint32_t)nNum * Video.DesktopDisplayMode.refresh_rate;
                     node = ezxml_child(times,"magic_wall");
                     if (node != NULL) {
                         pAttr = node->txt;
                         nNum = strtol(pAttr,NULL,10);
-                        Playfield.uTimeMagicWall = (uint32_t)nNum * ge_DesktopDisplayMode.refresh_rate;
+                        Playfield.uTimeMagicWall = (uint32_t)nNum * Video.DesktopDisplayMode.refresh_rate;
                         node = ezxml_child(times,"light");
                         if (node != NULL) {
                             pAttr = node->txt;
                             nNum = strtol(pAttr,NULL,10);
-                            Playfield.uTimeLight = (uint32_t)nNum * ge_DesktopDisplayMode.refresh_rate;
+                            Playfield.uTimeLight = (uint32_t)nNum * Video.DesktopDisplayMode.refresh_rate;
                             node = ezxml_child(times,"timedoor");
                             if (node != NULL) {
                                 pAttr = node->txt;
                                 nNum = strtol(pAttr,NULL,10);
-                                Playfield.uTimeDoorTime = (uint32_t)nNum * ge_DesktopDisplayMode.refresh_rate;
+                                Playfield.uTimeDoorTime = (uint32_t)nNum * Video.DesktopDisplayMode.refresh_rate;
                                 node = ezxml_child(times,"timecoin");
                                 if (node != NULL) {
                                     pAttr = node->txt;
                                     nNum = strtol(pAttr,NULL,10);
-                                    Playfield.uAdditonalTimeCoinTime = (uint32_t)nNum * ge_DesktopDisplayMode.refresh_rate;
+                                    Playfield.uAdditonalTimeCoinTime = (uint32_t)nNum * Video.DesktopDisplayMode.refresh_rate;
                                     nErrorCode = 0;
                                     // Der folgende Zeitwert für die Schildmünze wurde später eingeführt. Damit alte Levels kompatibel bleiben,
                                     // wird der ShieldCoin-Zeitwert ohne Fehlerrückgabe ausgelesen. Ist ein Auslesen nicht

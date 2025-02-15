@@ -4,8 +4,7 @@
 
 CONFIG Config;
 extern ACTUALPLAYER Actualplayer;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern VIDEO Video;
 
 /*----------------------------------------------------------------------------
 Name:           ShowConfigFile
@@ -295,7 +294,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Config.x, Actualplayer.x, ge_uXoffs, ge_uYoffs
+Seiteneffekte: Config.x, Actualplayer.x, Video.x
 ------------------------------------------------------------------------------*/
 int ReadConfigFile(void) {
     ezxml_t xml = NULL;
@@ -365,8 +364,8 @@ int ReadConfigFile(void) {
                                                                     // Auflösung checken
                                                                     if ((Config.uResX >= DEFAULT_WINDOW_W) && (Config.uResY >= DEFAULT_WINDOW_H)) {
                                                                         // ggf. die abgerundeten Werte in die Konfiguration übernehmen
-                                                                        ge_uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
-                                                                        ge_uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
+                                                                        Video.uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
+                                                                        Video.uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
                                                                         inputdevice = ezxml_child(xml,"input_device");
                                                                         if (inputdevice != NULL) {
                                                                             devicename = ezxml_child(inputdevice,"device_name");

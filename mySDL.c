@@ -16,45 +16,43 @@ int g_nGfxCount = 0;         // gefundene Grafiken
 uint8_t g_uIntensityProzent = 100;
 uint32_t g_LastRenderTicks;
 SDL_Texture **g_pTextures;   // Pointer Array für Texturen
-USABLEDISPLAYMODES UsableDisplayModes;
-SHOWABLEDISPLAYMODES ShowableDisplayModes;
-
-extern SDL_DisplayMode ge_DesktopDisplayMode;
-extern SDL_Window *ge_pWindow;
+VIDEO Video;
+FPS Fps;
 extern uint32_t Gfx[];
 extern CONFIG Config;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+
 
 /*----------------------------------------------------------------------------
 Name:           InitSDL_Window
 ------------------------------------------------------------------------------
 Beschreibung: Initialisiert die SDL-Umgebung und erzeugt ein Fenster.
+              Funktion darf nur einmalig aufgerufen werden.
 Parameter
       Eingang: nWindowW, int, Breite des Fensters in Pixeln
                nWindowH, int, Höhe des Fensters in Pixeln
                pszWindowTitle, const char *, Zeiger auf Text für Fenster-Titel
       Ausgang: -
 Rückgabewert:  SDL_Window * , Zeiger auf Fenster-Handle, NULL = Fehler
-Seiteneffekte: ShowableDisplayModes.x, Config.x, ge_uXoffs, ge_uYoffs
+Seiteneffekte: Config.x, Video.x
 ------------------------------------------------------------------------------*/
 SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitle) {
     SDL_Window *pWindow = NULL;
+    int nClosestWindowSizeIndex;
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) == 0) {
         if (GetDesktopDisplayMode() == 0) { // Stellt auch die Anzahl der Displays fest und das zu verwendene Display (Config.uDisplayUse)
             if (GetUsableDisplayModes(Config.uDisplayUse) == 0) {
                 // Falls die Konfigurationsdatei von einem anderen Rechner übernommen wurde, kann es sein, dass die eingestellte Fenstergröße,
-                // die maximal Unterstützte überschreitet.
-                if ((nWindowW > ShowableDisplayModes.nW[0]) || (nWindowH > ShowableDisplayModes.nH[0])) {
-                    SDL_Log("%s: adjust config resolution from %u x %u to %u x %u",__FUNCTION__,nWindowW,nWindowH,ShowableDisplayModes.nW[0],ShowableDisplayModes.nH[0]);
-                    // korrigieren
-                    nWindowW = ShowableDisplayModes.nW[0];
-                    nWindowH = ShowableDisplayModes.nH[0];
-                    Config.uResX = nWindowW;
-                    Config.uResY = nWindowH;
-                    ge_uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
-                    ge_uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
+                // die maximal Unterstützte überschreitet oder allgemein ungültig ist.
+                nClosestWindowSizeIndex = GetClosestWindowSize(nWindowW,nWindowH);
+                if (nClosestWindowSizeIndex >= 0) {
+                    if ((nWindowW != Video.pUsableModes[nClosestWindowSizeIndex].nW) || (nWindowH != Video.pUsableModes[nClosestWindowSizeIndex].nH)) {
+                        SDL_Log("%s: adjust config resolution from %u x %u to %u x %u",__FUNCTION__,nWindowW,nWindowH,Video.pUsableModes[nClosestWindowSizeIndex].nW,Video.pUsableModes[nClosestWindowSizeIndex].nH);
+                    }
+                    Config.uResX = Video.pUsableModes[nClosestWindowSizeIndex].nW;
+                    Config.uResY = Video.pUsableModes[nClosestWindowSizeIndex].nH;
+                    Video.uXoffs = (Config.uResX - DEFAULT_WINDOW_W) / 2;
+                    Video.uYoffs = (Config.uResY - DEFAULT_WINDOW_H) / 2;
                     if (WriteConfigFile() != 0) {
                         return NULL;
                     }
@@ -63,8 +61,8 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
                           pszWindowTitle,             // window title
                           SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewählt
                           SDL_WINDOWPOS_CENTERED_DISPLAY(Config.uDisplayUse),    // Falls Display 1 nicht vorhanden, wird ohne Fehler 0 ausgewählt
-                          nWindowW,                   // width, in pixels
-                          nWindowH,                   // height, in pixels
+                          Config.uResX,               // width, in pixels
+                          Config.uResY,               // height, in pixels
                           0                           // Flags
                 );
                 if (pWindow == NULL) {
@@ -84,16 +82,57 @@ SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char *pszWindowTitl
 
 
 /*----------------------------------------------------------------------------
+Name:           GetClosestWindowSize
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt anhand einer gegebenen Fenstergröße eine passende Fenstergröße,
+              die ggf. auch im Fullscreen-Modus läuft.
+              Die Auswahl einer passenden Größe erfolgt über die Liste
+              Video.pUsableModes.
+              Der Rückgabewert ist ein Index auf Video.pUsableModes.
+
+              Hinweis: Video.pUsableModes ist absteigend sortiert
+
+Parameter
+      Eingang: nWindowW, int, Breite des Fensters in Pixeln
+               nWindowH, int, Höhe des Fensters in Pixeln
+      Ausgang: -
+Rückgabewert:  int, >=0  Modus konnte ermittelt werden, ansonsten -1 bei Fehler
+Seiteneffekte: Video.x
+------------------------------------------------------------------------------*/
+int GetClosestWindowSize(int nWindowW, int nWindowH) {
+    uint32_t uMode;
+    int nIndex = -1;
+
+    SDL_Log("%s: input: w: %d  h: %d",__FUNCTION__,nWindowW,nWindowH);
+    if ((Video.nUsableDisplayModeCount > 0) && (nWindowW > 0) && (nWindowH > 0)) {
+        for (uMode = Video.nUsableDisplayModeCount - 1; (uMode != -1) && (nIndex == -1); uMode--) {
+            if ((Video.pUsableModes[uMode].nW >= nWindowW) && (Video.pUsableModes[uMode].nH >= nWindowH)) {
+                nIndex = uMode;
+            }
+        }
+        // Falls nichts Passendes gefunden wurde, dann die höchstmögliche Fenstergröße wählen
+        if (nIndex == -1) {
+            SDL_Log("%s: nothing found, use index 0",__FUNCTION__);
+            nIndex = 0;
+        }
+    } else {
+        SDL_Log("%s: no useable display mode available",__FUNCTION__);
+    }
+    return nIndex;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           GetDesktopDisplayMode
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt den aktuellen Desktop-Anzeigemodus und die Fensterposition.
-              Das Modus wird in ge_DesktopDisplayMode zurückgegeben.
+              Das Modus wird in Video.DesktopDisplayMode zurückgegeben.
               Zusätzlich wird die Anzahl der verfügbaren Displays ermittelt
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int, 0 = Modus konnte ermittelt werden, sonst nicht
-Seiteneffekte: ge_DesktopDisplayMode, Config.x
+Seiteneffekte: Video.x, Config.x
 ------------------------------------------------------------------------------*/
 int GetDesktopDisplayMode(void) {
     int nRet;
@@ -110,9 +149,11 @@ int GetDesktopDisplayMode(void) {
             }
             // SDL_Log("%s: display: %u is not available ... use display: %u",__FUNCTION__,Config.uDisplay,Config.uDisplayUse);
         }
-        nRet = SDL_GetDesktopDisplayMode(Config.uDisplayUse,&ge_DesktopDisplayMode);
+        nRet = SDL_GetDesktopDisplayMode(Config.uDisplayUse,&Video.DesktopDisplayMode);
         if (nRet == 0) {
-            // SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,ge_DesktopDisplayMode.w,ge_DesktopDisplayMode.h,ge_DesktopDisplayMode.refresh_rate);
+            SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,Video.DesktopDisplayMode.w,Video.DesktopDisplayMode.h,Video.DesktopDisplayMode.refresh_rate);
+            Video.bMustUseFullScreen = (Video.DesktopDisplayMode.refresh_rate != 60);
+            //Video.bMustUseFullScreen = false;
         } else {
             SDL_Log("%s: SDL_GetDesktopDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -122,8 +163,8 @@ int GetDesktopDisplayMode(void) {
         nRet = -1;
     }
     // Das Schlimmste verhindern
-    if ( (nRet != 0) || (ge_DesktopDisplayMode.refresh_rate == 0) ) {
-        ge_DesktopDisplayMode.refresh_rate = 60;
+    if ( (nRet != 0) || (Video.DesktopDisplayMode.refresh_rate == 0) ) {
+        Video.DesktopDisplayMode.refresh_rate = 60;
     }
     return nRet;
 }
@@ -139,18 +180,51 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: ge_pWindow, ge_DesktopDisplayMode
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
 void RestoreDesktop(void) {
-    SDL_SetWindowSize(ge_pWindow,ge_DesktopDisplayMode.w,ge_DesktopDisplayMode.h);
-    SDL_SetWindowFullscreen(ge_pWindow,0); //  0 = Fullscreen  ausschalten
+    SDL_SetWindowSize(Video.pWindow,Video.DesktopDisplayMode.w,Video.DesktopDisplayMode.h);
+    SDL_SetWindowFullscreen(Video.pWindow,0); //  0 = Fullscreen  ausschalten
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SetWindowDisplayMode
+------------------------------------------------------------------------------
+Beschreibung: Setzt den Display-Modus für ein Fenster, das sich im Vollbild-Modus
+              befindet.
+
+
+Parameter
+      Eingang: nWidth, int, Display-Breite
+               nHeight, int, Display-Höhe
+               uFormat, Uint32, Pixelformat, z.B. SDL_PIXELFORMAT_RGB888
+               nRefreshrate, int, Bildwiederholrate
+      Ausgang: -
+Rückgabewert:  int , 0 = Alles OK, sonst Fehler
+Seiteneffekte: Video.x für Fenster-Handle
+------------------------------------------------------------------------------*/
+int SetWindowDisplayMode(int nWidth, int nHeight, Uint32 uFormat, int nRefreshRate) {
+    SDL_DisplayMode NewDisplayMode;
+    int nErrorCode;
+
+    NewDisplayMode.format = uFormat;
+    NewDisplayMode.w = nWidth;
+    NewDisplayMode.h = nHeight;
+    NewDisplayMode.refresh_rate = nRefreshRate;
+    NewDisplayMode.driverdata = NULL;
+    nErrorCode = SDL_SetWindowDisplayMode(Video.pWindow,&NewDisplayMode); // anwenden, um sicher zu stellen, dass richtige Framerate läuft
+    if (nErrorCode != 0) {
+        SDL_Log("%s: SDL_SetWindowDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
+    }
+    return nErrorCode;
 }
 
 
 /*----------------------------------------------------------------------------
 Name:           CenterWindow
 ------------------------------------------------------------------------------
-Beschreibung: Zentriert das Fenster (ge_pWindow) auf dem Desktop.
+Beschreibung: Zentriert das Fenster (Video.pWindow) auf dem Desktop.
 
 
 Parameter
@@ -158,27 +232,26 @@ Parameter
                uHeight, uint32_t, Fensterhöhe
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: ge_pWindow, ge_DesktopDisplayMode (Desktop-Größe)
+Seiteneffekte: Video.x für Desktop-Größe
 ------------------------------------------------------------------------------*/
 int CenterWindow(uint32_t uWidth, uint32_t uHeight) {
     int nErrorCode = -1;
     int x,y;
 
-    if ((ge_pWindow != NULL) && (ge_DesktopDisplayMode.w > 0) && (ge_DesktopDisplayMode.h > 0)) {
-
+    if ((Video.pWindow != NULL) && (Video.DesktopDisplayMode.w > 0) && (Video.DesktopDisplayMode.h > 0)) {
         // X-Zentrierung
-        if (ge_DesktopDisplayMode.w > uWidth) {
-            x = (ge_DesktopDisplayMode.w - uWidth) / 2;
+        if (Video.DesktopDisplayMode.w > uWidth) {
+            x = (Video.DesktopDisplayMode.w - uWidth) / 2;
         } else {
             x = 0;
         }
         // Y-Zentrierung
-        if (ge_DesktopDisplayMode.h > uHeight) {
-            y = (ge_DesktopDisplayMode.h - uHeight) / 2;
+        if (Video.DesktopDisplayMode.h > uHeight) {
+            y = (Video.DesktopDisplayMode.h - uHeight) / 2;
         } else {
             y = 0;
         }
-        SDL_SetWindowPosition(ge_pWindow,x,y); // Ist erst in SDL3 eine int-Funktion
+        SDL_SetWindowPosition(Video.pWindow,x,y); // Ist erst in SDL3 eine int-Funktion
         nErrorCode = 0;
     }
     return nErrorCode;
@@ -200,7 +273,7 @@ Parameter
       Eingang: uDisplay, uint32_t, Display (0 = primary oder 1 = secondary), welches genutzt werden soll
       Ausgang: -
 Rückgabewert:  int , 0 = Alles OK, sonst Fehler
-Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x
+Seiteneffekte: ShowableDisplayModes.x, Video.x
 ------------------------------------------------------------------------------*/
 int GetUsableDisplayModes(uint32_t uDisplay) {
     int nModeIndex;
@@ -208,46 +281,55 @@ int GetUsableDisplayModes(uint32_t uDisplay) {
     SDL_DisplayMode DisplayMode;
     Uint32 uFormat;
 
-    UsableDisplayModes.nDisplayModeCount = 0;
+    Video.nUsableDisplayModeCount = 0;
     nDisplayModeCount = SDL_GetNumDisplayModes(uDisplay);
     if (nDisplayModeCount < 1) {
         SDL_Log("%s: SDL_GetNumDisplayModes failed: %s",__FUNCTION__,SDL_GetError());
         return -1;
     }
-    for (nModeIndex = 0; (nModeIndex < nDisplayModeCount) && (UsableDisplayModes.nDisplayModeCount < MAX_USABLE_DISPLAYMODES); nModeIndex++) {
+    for (nModeIndex = 0; (nModeIndex < nDisplayModeCount); nModeIndex++) {
         if (SDL_GetDisplayMode(uDisplay,nModeIndex,&DisplayMode) != 0) {
             SDL_Log("%s: SDL_GetDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
             return -1;
         }
         uFormat = DisplayMode.format;
-        if ((DisplayMode.refresh_rate == 60) &&
-            (DisplayMode.w >= DEFAULT_WINDOW_W) &&
-            (DisplayMode.h >= DEFAULT_WINDOW_H) &&
-            (SDL_BITSPERPIXEL(uFormat) == 24)) {
-            UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount] = DisplayMode.w;
-            UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount] = DisplayMode.h;
-            UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount] = nModeIndex;
-            UsableDisplayModes.nDisplayModeCount++;
+        if ((DisplayMode.refresh_rate == 60) && (DisplayMode.w >= DEFAULT_WINDOW_W) && (DisplayMode.h >= DEFAULT_WINDOW_H) && (SDL_BITSPERPIXEL(uFormat) == 24)) {
+            Video.nUsableDisplayModeCount++;
+            Video.pUsableModes = realloc(Video.pUsableModes,Video.nUsableDisplayModeCount * sizeof(Video));
+            if (Video.pUsableModes != NULL) {
+                Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nW = DisplayMode.w;
+                Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nH = DisplayMode.h;
+                Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nModeIndex = nModeIndex;
+            } else {
+                SDL_Log("%s: realloc() failed:",__FUNCTION__);
+                return -1;
+            }
         }
     }
     // Bis hier ist alles gut gegangen -> ShowableDisplayModes.x befüllen
-    //SDL_Log("%s: usable display modes: %d",__FUNCTION__,UsableDisplayModes.nDisplayModeCount);
     /*
-    for (int I = 0; I < UsableDisplayModes.nDisplayModeCount; I++) {
-        SDL_Log("%04d X %04d",UsableDisplayModes.nW[I],UsableDisplayModes.nH[I]);
+    SDL_Log("%s: UsableDisplayModeCount: %d",__FUNCTION__,Video.nUsableDisplayModeCount);
+    for (nModeIndex = 0; nModeIndex < Video.nUsableDisplayModeCount; nModeIndex++) {
+        SDL_Log("%s: Index: %02u    XRES: %04d    YRES: %04d",__FUNCTION__,Video.pUsableModes[nModeIndex].nModeIndex,Video.pUsableModes[nModeIndex].nW,Video.pUsableModes[nModeIndex].nH);
     }
     */
-    if (UsableDisplayModes.nDisplayModeCount > 0) {
+    if (Video.nUsableDisplayModeCount > 0) {
         return GetShowableDisplayModes();
     } else {
 		// nDisplayModeCount ist hier mindestens 1
 		// SDL2 hat bei bestimmten Umgebungen Probleme die DisplayModes zu bestimmen (bei HDMI-Anschluss?)
 		// In diesem Fall Minimal-Konfiguration anbieten
-		UsableDisplayModes.nW[0] = DEFAULT_WINDOW_W;
-        UsableDisplayModes.nH[0] = DEFAULT_WINDOW_H;
-        UsableDisplayModes.nModeIndex[0] = 0;
-        UsableDisplayModes.nDisplayModeCount = 1;
-		return GetShowableDisplayModes();
+        Video.pUsableModes = realloc(Video.pUsableModes,sizeof(Video));
+        if (Video.pUsableModes != NULL) {
+            Video.pUsableModes[0].nW = DEFAULT_WINDOW_W;
+            Video.pUsableModes[0].nH = DEFAULT_WINDOW_H;
+            Video.pUsableModes[0].nModeIndex = 0;
+            Video.nUsableDisplayModeCount = 1;
+            return GetShowableDisplayModes();
+        } else {
+            SDL_Log("%s: realloc() failed:",__FUNCTION__);
+            return -1;
+        }
     }
 }
 
@@ -261,13 +343,13 @@ Beschreibung: Ermittelt aus den nutzbaren/brauchbaren Display-Einstellungen
 
               Vor Aufruf dieser Funktion muss das Video-Subsystem (SDL_Init)
               bereits initialisiert und die Struktur
-              UsableDisplayModes.x durch die Funktion GetUsableDisplayModes()
+              Video.x durch die Funktion GetUsableDisplayModes()
               befüllt worden sein.
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int , 0 = Alles OK, sonst Fehler
-Seiteneffekte: UsableDisplayModes.x, ShowableDisplayModes.x
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
 int GetShowableDisplayModes(void) {
     int nErrorCode = -1;
@@ -278,47 +360,47 @@ int GetShowableDisplayModes(void) {
     int nW;
     int nH;
 
-    if (UsableDisplayModes.nDisplayModeCount > 0) {
+    if (Video.nUsableDisplayModeCount > 0) {
         nErrorCode = 0;
         // Können alle brauchbaren Modi in die Anzeigeliste übernommen werden?
-        if (UsableDisplayModes.nDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES) {
-            ShowableDisplayModes.nDisplayModeCount = 0;
-            for (I = 0; I < UsableDisplayModes.nDisplayModeCount; I++) {
-                ShowableDisplayModes.nW[I] = UsableDisplayModes.nW[I];
-                ShowableDisplayModes.nH[I] = UsableDisplayModes.nH[I];
-                ShowableDisplayModes.nModeIndex[I] = UsableDisplayModes.nModeIndex[I];
+        if (Video.nUsableDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES) {
+            Video.nShowableDisplayModeCount = 0;
+            for (I = 0; I < Video.nUsableDisplayModeCount; I++) {
+                Video.ShowableDisplayModes[I].nW = Video.pUsableModes[I].nW;
+                Video.ShowableDisplayModes[I].nH = Video.pUsableModes[I].nH;
+                Video.ShowableDisplayModes[I].nModeIndex = Video.pUsableModes[I].nModeIndex;
             }
-            ShowableDisplayModes.nDisplayModeCount = UsableDisplayModes.nDisplayModeCount;
+            Video.nShowableDisplayModeCount = Video.nUsableDisplayModeCount;
         } else {
-            ShowableDisplayModes.nW[0] = UsableDisplayModes.nW[0];
-            ShowableDisplayModes.nH[0] = UsableDisplayModes.nH[0];
-            ShowableDisplayModes.nModeIndex[0] = UsableDisplayModes.nModeIndex[0];  // Displaymode mit der höchsten Auflösung übernehmen
-            ShowableDisplayModes.nDisplayModeCount = 1;
+            Video.ShowableDisplayModes[0].nW = Video.pUsableModes[0].nW;
+            Video.ShowableDisplayModes[0].nH = Video.pUsableModes[0].nH;
+            Video.ShowableDisplayModes[0].nModeIndex = Video.pUsableModes[0].nModeIndex;  // Displaymode mit der höchsten Auflösung übernehmen
+            Video.nShowableDisplayModeCount = 1;
             nToChoose = MAX_SHOWABLE_DISPLAYMODES - 2;
-            nDistance = (UsableDisplayModes.nDisplayModeCount - 2) / nToChoose;
+            nDistance = (Video.nUsableDisplayModeCount - 2) / nToChoose;
             I = 1;  // Index für Usable
             S = 1;  // Index für Showable
-            while ((nToChoose > 0) && (S < MAX_SHOWABLE_DISPLAYMODES) && (I < MAX_USABLE_DISPLAYMODES)) {
-                nW = UsableDisplayModes.nW[I];
-                nH = UsableDisplayModes.nH[I];
-                ShowableDisplayModes.nW[S] = nW;
-                ShowableDisplayModes.nH[S] = nH;
-                ShowableDisplayModes.nModeIndex[S] = UsableDisplayModes.nModeIndex[I];
+            while ((nToChoose > 0) && (S < MAX_SHOWABLE_DISPLAYMODES) && (I < Video.nUsableDisplayModeCount)) {
+                nW = Video.pUsableModes[I].nW;
+                nH = Video.pUsableModes[I].nH;
+                Video.ShowableDisplayModes[S].nW = nW;
+                Video.ShowableDisplayModes[S].nH = nH;
+                Video.ShowableDisplayModes[S].nModeIndex = Video.pUsableModes[I].nModeIndex;
                 S++;
-                ShowableDisplayModes.nDisplayModeCount++;
+                Video.nShowableDisplayModeCount++;
                 I = I + nDistance;
                 nToChoose--;
             }
             if (S < MAX_SHOWABLE_DISPLAYMODES) {
-                ShowableDisplayModes.nW[S] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nH[S] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nModeIndex[S] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nDisplayModeCount++;
+                Video.ShowableDisplayModes[S].nW = Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nW;  // Displaymode mit der niedrigsten Auflösung übernehmen
+                Video.ShowableDisplayModes[S].nH = Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nH;  // Displaymode mit der niedrigsten Auflösung übernehmen
+                Video.ShowableDisplayModes[S].nModeIndex = Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nModeIndex;  // Displaymode mit der niedrigsten Auflösung übernehmen
+                Video.nShowableDisplayModeCount++;
             } else {
-                ShowableDisplayModes.nW[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nW[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nH[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nH[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                ShowableDisplayModes.nModeIndex[MAX_SHOWABLE_DISPLAYMODES - 1] = UsableDisplayModes.nModeIndex[UsableDisplayModes.nDisplayModeCount - 1];  // Displaymode mit der niedrigsten Auflösung übernehmen
-                // Letzter Eintrag wird überschrieben, daher ShowableDisplayModes.nDisplayModeCount nicht erhöhen
+                Video.ShowableDisplayModes[MAX_SHOWABLE_DISPLAYMODES - 1].nW = Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nW;  // Displaymode mit der niedrigsten Auflösung übernehmen
+                Video.ShowableDisplayModes[MAX_SHOWABLE_DISPLAYMODES - 1].nH = Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nH;  // Displaymode mit der niedrigsten Auflösung übernehmen
+                Video.ShowableDisplayModes[MAX_SHOWABLE_DISPLAYMODES - 1].nModeIndex = Video.pUsableModes[Video.nUsableDisplayModeCount - 1].nModeIndex;  // Displaymode mit der niedrigsten Auflösung übernehmen
+                // Letzter Eintrag wird überschrieben, daher Video.nShowableDisplayModeCount nicht erhöhen
             }
         }
     }
@@ -388,7 +470,7 @@ int RenderPresentAndClear(SDL_Renderer *pRenderer) {   // Renderer anzeigen, lä
 
     if (uDiffTicks < 8) {   // Kann auch durch Verschieben des Fensters auftreten
         SDL_Delay(8 - uDiffTicks);
-        // SDL_Log("%s:DiffTicks: %u",__FUNCTION__,uDiffTicks);
+        SDL_Log("%s:DiffTicks: %u",__FUNCTION__,uDiffTicks);
     }
     g_LastRenderTicks = uTicks;
     SDL_RenderPresent(pRenderer);       // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen, hat keinen Rückgabewert
@@ -589,7 +671,7 @@ Parameter
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
       Rückgabewert:   int, 0 = alles OK, sonst Fehler
-Seiteneffekte:  ge_uXoffs, ge_uYoffs
+Seiteneffekte:  Video.x
 ------------------------------------------------------------------------------*/
 int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH, bool bAbsolute) {
     int nErrorCode;
@@ -599,8 +681,8 @@ int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int 
         rect.x = nXpos;
         rect.y = nYpos;
     } else {
-        rect.x = nXpos + ge_uXoffs;
-        rect.y = nYpos + ge_uYoffs;
+        rect.x = nXpos + Video.uXoffs;
+        rect.y = nYpos + Video.uYoffs;
     }
     rect.w = uW;
     rect.h = uH;
@@ -707,7 +789,7 @@ Parameter
                fSizeFactor, float, Vergrößerung- bzw. Verkleinerungsfaktor
       Ausgang: -
       Rückgabewert: 0 = OK, sonst Fehler
-Seiteneffekte: ge_uXoffs, ge_uYoffs
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
 int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText, bool bAbsolute, float fSizeFactor) {
     // Der komplette Zeichensatz liegt in Texture 347 vor. Für ein Darstellung eines Zeichens, muss die "richtige" Stelle ausgewählt werden.
@@ -784,8 +866,8 @@ int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFon
                     DestR.x = nPrintXpos;
                     DestR.y = nPrintYpos;
                 } else {
-                    DestR.x = nPrintXpos + ge_uXoffs;
-                    DestR.y = nPrintYpos + ge_uYoffs;
+                    DestR.x = nPrintXpos + Video.uXoffs;
+                    DestR.y = nPrintYpos + Video.uYoffs;
                 }
                 DestR.w = uFontW * fSizeFactor;
                 DestR.h = uFontH * fSizeFactor;
@@ -1019,7 +1101,7 @@ Parameter
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: ge_uXoffs, ge_uYoffs
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
 int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute) {
     int nErrorCode = -1;
@@ -1030,8 +1112,8 @@ int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uW
         DestR.x = uXpos;
         DestR.y = uYpos;
     } else {
-        DestR.x = uXpos + ge_uXoffs;
-        DestR.y = uYpos + ge_uYoffs;
+        DestR.x = uXpos + Video.uXoffs;
+        DestR.y = uYpos + Video.uYoffs;
     }
     DestR.w = uWidth;
     DestR.h = uHeight;
@@ -1060,7 +1142,7 @@ Parameter
                uGridSpace, uint32_t, Zeilen- und Spaltenabstand der Gitter-Linien
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: ge_uXoffs, ge_uYoffs
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
 int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace) {
     int nErrorCode = 0;
@@ -1069,11 +1151,179 @@ int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t u
     nErrorCode = SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uAlpha);
     // Vertikale Linien zeichnen
     for (X = uXpos; (X <= (uXpos + uWidth)) && (nErrorCode == 0); X = X + uGridSpace) {
-        nErrorCode = SDL_RenderDrawLine(pRenderer,X + ge_uXoffs, uYpos + ge_uYoffs, X + ge_uXoffs, uYpos + uHeight + ge_uYoffs);
+        nErrorCode = SDL_RenderDrawLine(pRenderer,X + Video.uXoffs, uYpos + Video.uYoffs, X + Video.uXoffs, uYpos + uHeight + Video.uYoffs);
     }
     // Horizontale Linien zeichnen
     for (Y = uYpos; (Y <= (uYpos + uHeight)) && (nErrorCode == 0); Y = Y + uGridSpace) {
-        nErrorCode = SDL_RenderDrawLine(pRenderer,uXpos + ge_uXoffs, Y + ge_uYoffs, uXpos + uWidth + ge_uXoffs, Y + ge_uYoffs);
+        nErrorCode = SDL_RenderDrawLine(pRenderer,uXpos + Video.uXoffs, Y + Video.uYoffs, uXpos + uWidth + Video.uXoffs, Y + Video.uYoffs);
     }
     return nErrorCode;
 }
+
+
+/*----------------------------------------------------------------------------
+Name:           MeasureFps
+------------------------------------------------------------------------------
+Beschreibung: Misst die aaktuelle Framerate. Diese Funkton wird innerhalb einer
+              Anzeigeschleife aufgerufen und ist nicht threadsicher!
+              Vor Verwendung dieser Funktion sollte ein
+              memset(&Fps,0,sizeof(Fps));
+              erfolgen.
+Parameter
+      Eingang: -
+      Ausgang: Fps.x -> Fps.fFramesPerSecond
+Rückgabewert:  -
+Seiteneffekte: Fps.x
+------------------------------------------------------------------------------*/
+void MeasureFps(void) {
+    uint32_t uActTicks;
+    float fDiffTimeSeconds;
+
+    Fps.uFrameCount++;
+    if (Fps.uFrameCount == 100) {     // 100 Frames abwarten
+        uActTicks = SDL_GetTicks();
+        fDiffTimeSeconds = ((float)uActTicks - (float)Fps.uLastTicks) / (Fps.uFrameCount * 1000);
+        if (fDiffTimeSeconds > 0) {
+            Fps.fFramesPerSecond = 1 / fDiffTimeSeconds;
+            sprintf(Fps.szFrameaPerSecond,"FRAMERATE: %.2f",Fps.fFramesPerSecond);
+        }
+        Fps.uLastTicks = uActTicks;
+        Fps.uFrameCount = 0;
+    }
+}
+
+
+/*
+void ShowFormat(Uint32 uFormat) {
+    switch (uFormat) {
+        case (SDL_PIXELFORMAT_UNKNOWN):
+            SDL_Log("SDL_PIXELFORMAT_UNKNOWN");
+            break;
+        case (SDL_PIXELFORMAT_INDEX1LSB):
+            SDL_Log("SDL_PIXELFORMAT_INDEX1LSB");
+            break;
+        case (SDL_PIXELFORMAT_INDEX1MSB):
+            SDL_Log("SDL_PIXELFORMAT_INDEX1MSB");
+            break;
+        case (SDL_PIXELFORMAT_INDEX4LSB):
+            SDL_Log("SDL_PIXELFORMAT_INDEX4LSB");
+            break;
+        case (SDL_PIXELFORMAT_INDEX4MSB):
+            SDL_Log("SDL_PIXELFORMAT_INDEX4MSB");
+            break;
+        case (SDL_PIXELFORMAT_INDEX8):
+            SDL_Log("SDL_PIXELFORMAT_INDEX8");
+            break;
+        case (SDL_PIXELFORMAT_RGB332):
+            SDL_Log("SDL_PIXELFORMAT_RGB332");
+            break;
+        case (SDL_PIXELFORMAT_RGB444):
+            SDL_Log("SDL_PIXELFORMAT_RGB444");
+            break;
+        case (SDL_PIXELFORMAT_RGB555):
+            SDL_Log("SDL_PIXELFORMAT_RGB555");
+            break;
+        case (SDL_PIXELFORMAT_BGR555):
+            SDL_Log("SDL_PIXELFORMAT_BGR555");
+            break;
+        case (SDL_PIXELFORMAT_ARGB4444):
+            SDL_Log("SDL_PIXELFORMAT_ARGB4444");
+            break;
+        case (SDL_PIXELFORMAT_RGBA4444):
+            SDL_Log("SDL_PIXELFORMAT_RGBA4444");
+            break;
+        case (SDL_PIXELFORMAT_ABGR4444):
+            SDL_Log("SDL_PIXELFORMAT_ABGR4444");
+            break;
+        case (SDL_PIXELFORMAT_BGRA4444):
+            SDL_Log("SDL_PIXELFORMAT_BGRA4444");
+            break;
+        case (SDL_PIXELFORMAT_ARGB1555):
+            SDL_Log("SDL_PIXELFORMAT_ARGB1555");
+            break;
+        case (SDL_PIXELFORMAT_RGBA5551):
+            SDL_Log("SDL_PIXELFORMAT_RGBA5551");
+            break;
+        case (SDL_PIXELFORMAT_ABGR1555):
+            SDL_Log("SDL_PIXELFORMAT_ABGR1555");
+            break;
+        case (SDL_PIXELFORMAT_BGRA5551):
+            SDL_Log("SDL_PIXELFORMAT_BGRA5551");
+            break;
+        case (SDL_PIXELFORMAT_RGB565):
+            SDL_Log("SDL_PIXELFORMAT_RGB565");
+            break;
+        case (SDL_PIXELFORMAT_BGR565):
+            SDL_Log("SDL_PIXELFORMAT_BGR565");
+            break;
+        case (SDL_PIXELFORMAT_RGB24):
+            SDL_Log("SDL_PIXELFORMAT_RGB24");
+            break;
+        case (SDL_PIXELFORMAT_BGR24):
+            SDL_Log("SDL_PIXELFORMAT_BGR24");
+            break;
+        case (SDL_PIXELFORMAT_RGB888):
+            SDL_Log("SDL_PIXELFORMAT_RGB888");
+            break;
+        case (SDL_PIXELFORMAT_RGBX8888):
+            SDL_Log("SDL_PIXELFORMAT_RGBX8888");
+            break;
+        case (SDL_PIXELFORMAT_BGR888):
+            SDL_Log("SDL_PIXELFORMAT_BGR888");
+            break;
+        case (SDL_PIXELFORMAT_BGRX8888):
+            SDL_Log("SDL_PIXELFORMAT_BGRX8888");
+            break;
+        case (SDL_PIXELFORMAT_ARGB8888):
+            SDL_Log("SDL_PIXELFORMAT_ARGB8888");
+            break;
+        case (SDL_PIXELFORMAT_RGBA8888):
+            SDL_Log("SDL_PIXELFORMAT_RGBA8888");
+            break;
+        case (SDL_PIXELFORMAT_ABGR8888):
+            SDL_Log("SDL_PIXELFORMAT_ABGR8888");
+            break;
+        case (SDL_PIXELFORMAT_BGRA8888):
+            SDL_Log("SDL_PIXELFORMAT_BGRA8888");
+            break;
+        case (SDL_PIXELFORMAT_ARGB2101010):
+            SDL_Log("SDL_PIXELFORMAT_ARGB2101010");
+            break;
+//      case (SDL_PIXELFORMAT_RGBA32):
+//          SDL_Log("SDL_PIXELFORMAT_RGBA32");
+//          break;
+//        case (SDL_PIXELFORMAT_ARGB32):
+//           SDL_Log("SDL_PIXELFORMAT_ARGB32");
+//           break;
+//        case (SDL_PIXELFORMAT_BGRA32):
+//           SDL_Log("SDL_PIXELFORMAT_BGRA32");
+//           break;
+//        case (SDL_PIXELFORMAT_ABGR32):
+//           SDL_Log("SDL_PIXELFORMAT_ABGR32");
+//           break;
+        case (SDL_PIXELFORMAT_YV12):
+            SDL_Log("SDL_PIXELFORMAT_YV12");
+            break;
+        case (SDL_PIXELFORMAT_IYUV):
+            SDL_Log("SDL_PIXELFORMAT_IYUV");
+            break;
+        case (SDL_PIXELFORMAT_YUY2):
+            SDL_Log("SDL_PIXELFORMAT_YUY2");
+            break;
+        case (SDL_PIXELFORMAT_UYVY):
+            SDL_Log("SDL_PIXELFORMAT_UYVY");
+            break;
+        case (SDL_PIXELFORMAT_YVYU):
+            SDL_Log("SDL_PIXELFORMAT_YVYU");
+            break;
+        case (SDL_PIXELFORMAT_NV12):
+            SDL_Log("SDL_PIXELFORMAT_NV12");
+            break;
+        case (SDL_PIXELFORMAT_NV21):
+            SDL_Log("SDL_PIXELFORMAT_NV21");
+            break;
+        default:
+            SDL_Log("unknown");
+    }
+}
+*/

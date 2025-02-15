@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
 #include "KeyboardMouse.h"
-
+#include "mySDL.h"
 
 char g_ScanCodeNames[][64] =
                          {  "0",
@@ -449,8 +449,7 @@ uint32_t g_uScanCodes[] = {
 
 
 INPUTSTATES InputStates;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern VIDEO Video;
 
 /*----------------------------------------------------------------------------
 Name:           InitInputStates
@@ -459,7 +458,7 @@ Beschreibung: Initialisiert die Eingangsgeräte (Keyboard / Maus)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = alles OK, sonst Fehler 
+Rückgabewert:  int, 0 = alles OK, sonst Fehler
 Seiteneffekte: InputsStates.x
 ------------------------------------------------------------------------------*/
 int InitInputStates(void) {
@@ -482,7 +481,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: InputStates.x, ge_uXoffs, ge_uYoffs
+Seiteneffekte: InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
 void UpdateInputStates(void) {
     Uint32 uMouseButtons;
@@ -504,8 +503,8 @@ void UpdateInputStates(void) {
         }
     }
     uMouseButtons = SDL_GetMouseState(&InputStates.nMouseXpos_Absolute,&InputStates.nMouseYpos_Absolute);    // Maus abfragen
-    InputStates.nMouseXpos_Relative = InputStates.nMouseXpos_Absolute - ge_uXoffs;
-    InputStates.nMouseYpos_Relative = InputStates.nMouseYpos_Absolute - ge_uYoffs;
+    InputStates.nMouseXpos_Relative = InputStates.nMouseXpos_Absolute - Video.uXoffs;
+    InputStates.nMouseYpos_Relative = InputStates.nMouseYpos_Absolute - Video.uYoffs;
     InputStates.bLeftMouseButton = ((uMouseButtons & SDL_BUTTON_LMASK) != 0);
     InputStates.bMidMouseButton = ((uMouseButtons & SDL_BUTTON_MMASK) != 0);
     InputStates.bRightMouseButton = ((uMouseButtons & SDL_BUTTON_RMASK) != 0);

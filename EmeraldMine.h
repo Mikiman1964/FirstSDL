@@ -21,6 +21,9 @@
 #define EMERALD_MD5_STRING_LEN                      32            // MD5-Stringlänge
 #define EMERALD_MAX_YAM_EXPLOSIONS                  100           // Maximale Anzahl an verschiedenen YAM-Explosionen
 
+#define GAMESPEED_NORMAL                            0             // 2 Pixel / Frame
+#define GAMESPEED_FAST                              1             // 4 Pixel / Frame
+
 // Level-Elemente
 #define EMERALD_NONE                                0x0000        // kein Element, auch kein Space
 #define EMERALD_STONE                               0x0001        // Stein
@@ -716,7 +719,7 @@
 #define EMERALD_ANIM_DYNAMITE_ON_P3                 0x36000000    // Dynamit aktiv, Phase 3
 #define EMERALD_ANIM_DYNAMITE_ON_P4                 0x37000000    // Dynamit aktiv, Phase 4
 #define EMERALD_ANIM_MAN_DIES_P1                    0x38000000    // Man stirbt, Phase 1
-#define EMERALD_ANIM_MAN_DIES_P2                    0x39000000    // Man stirbt, Phase 1
+#define EMERALD_ANIM_MAN_DIES_P2                    0x39000000    // Man stirbt, Phase 2
 #define EMERALD_ANIM_MONSTER_KILLS_UP               0x3A000000    // Monster (Alien oder Yam) tötet nach oben
 #define EMERALD_ANIM_MONSTER_KILLS_LEFT             0x3B000000    // Monster (Alien oder Yam) tötet nach links
 #define EMERALD_ANIM_MONSTER_KILLS_RIGHT            0x3C000000    // Monster (Alien oder Yam) tötet nach rechts
@@ -742,9 +745,6 @@
 #define EMERALD_ANIM_STONE_SLOW_QUICKSAND3          0x50000000    // Stein versinkt/durchsackt, Phase 3, langsamer Treibsand
 #define EMERALD_ANIM_STONE_SLOW_QUICKSAND4          0x51000000    // Stein versinkt/durchsackt, Phase 4, langsamer Treibsand
 #define EMERALD_ANIM_STONE_SLOW_QUICKSAND5          0x52000000    // Stein durchsackt, Phase 5 (Beim Durchsacken eine Phase mehr)
-
-
-
 
 
 #define EMERALD_STANDARD_SPEED                      false
@@ -941,5 +941,5 @@ void PostControlBombExplosions(void);
 bool IsElementAlive(uint16_t uElement);
 bool IsSteel(uint16_t uElement);
 int CheckGameDirectorys(void);
-
+void SetGameSpeed(int nGameSpeed);
 #endif // TESTSURFACE_H_INCLUDED

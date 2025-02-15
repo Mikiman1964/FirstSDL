@@ -8,6 +8,7 @@
 #include "loadlevel.h"
 #include "md5.h"
 #include "modplay.h"
+#include "mySDL.h"
 
 extern CLIPBOARD Clipboard;
 extern LEVELGROUP SelectedLevelgroup;
@@ -16,8 +17,7 @@ extern ED Ed;
 extern INPUTSTATES InputStates;
 extern MAINMENU MainMenu;
 extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern VIDEO Video;
 
 
 /*----------------------------------------------------------------------------
@@ -1075,7 +1075,7 @@ Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  0 = Alles OK, sonst Fehler
-Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x, ge_uXoffs
+Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x, Video.x
 ------------------------------------------------------------------------------*/
 int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
@@ -1122,7 +1122,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
         // Import-Dateien auflisten
         for (I = 0; I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST; I++) {
             if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
-                PrintLittleFont(pRenderer,40 + ge_uXoffs,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_ABSOLUTE,1);
+                PrintLittleFont(pRenderer,40 + Video.uXoffs,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_ABSOLUTE,1);
             }
         }
         nErrorCode = ImportMenuSelectFile(pRenderer,&uBeamPosition);

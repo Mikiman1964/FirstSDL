@@ -13,9 +13,10 @@
 
 extern MANKEY ManKey;
 extern PLAYFIELD Playfield;
-extern SDL_DisplayMode ge_DesktopDisplayMode;
+extern VIDEO Video;
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
+extern int g_nGameSpeed;
 
 /*----------------------------------------------------------------------------
 Name:           CheckPlayTime
@@ -29,10 +30,14 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: Playfield.x
+Seiteneffekte: Playfield.x, g_nGameSpeed
 ------------------------------------------------------------------------------*/
 void CheckPlayTime(void) {
-    Playfield.uFrameCounter++;
+    if (g_nGameSpeed == GAMESPEED_FAST) {
+        Playfield.uFrameCounter = Playfield.uFrameCounter + 2;
+    } else {
+        Playfield.uFrameCounter++;
+    }
     if (Playfield.uTimeToPlay > 0) {
         Playfield.uTimeToPlay--;
     }
@@ -48,7 +53,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x, ge_DesktopDisplayMode.x, Config.x
+Seiteneffekte: Playfield.x, Video.x, Config.x
 ------------------------------------------------------------------------------*/
 int ShowPanel(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
@@ -63,7 +68,7 @@ int ShowPanel(SDL_Renderer *pRenderer) {
     if (Playfield.uEmeraldsToCollect > 9999) {
         Playfield.uEmeraldsToCollect = 9999;
     }
-    uRemainingSeconds = Playfield.uTimeToPlay / ge_DesktopDisplayMode.refresh_rate;
+    uRemainingSeconds = Playfield.uTimeToPlay / Video.DesktopDisplayMode.refresh_rate;
     if (uRemainingSeconds > 9999) {
         uRemainingSeconds = 9999;
     }
@@ -77,7 +82,7 @@ int ShowPanel(SDL_Renderer *pRenderer) {
         return - 1;
     }
     if ((uRemainingSeconds > 0) && (uRemainingSeconds <= 10)) {
-        if ((Playfield.uFrameCounter % ge_DesktopDisplayMode.refresh_rate) == 0) {
+        if ((Playfield.uFrameCounter % Video.DesktopDisplayMode.refresh_rate) == 0) {
             nErrorCode = CopyColorRect(pRenderer,255,0,0,6,Config.uResY - 26,98,20,K_ABSOLUTE);
             PreparePlaySound(SOUND_END_BELL,0);
         } else {

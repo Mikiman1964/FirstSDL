@@ -3,8 +3,7 @@ TODO
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen, DC3 hat gleiches Problem
 * Leveleditor
     * Undo für Editor
-* Auf doppelte Spielgeschwindigkeit umschaltbar
-* SDL_SetWindowDisplayMode() anwenden, um sicher zu stellen, dass richtige Framerate läuft
+* int SDL_SetWindowDisplayMode(SDL_Window * window, const SDL_DisplayMode * mode); anwenden, um sicher zu stellen, dass richtige Framerate läuft
 
 Für V 1.11
 * SDL 2.30.12
@@ -15,7 +14,7 @@ Für V 1.11
 * Doppeltes Sterben/Schreien und nachträglicher Explosionssound im Zusammenhang mit gezündetem Dynamit gefixt
 * Source in UTF-8 kodiert
 * Speicherlecks beim Beenden des Spiels gefixt
-* Musik-Player kann auch "xm Extended module"  abspielen
+* Musik-Player kann auch "xm Extended module" abspielen
 * Falscher/unnötiger Aufruf von SDL_RenderPresent() in ShowButtons()
 * Framerate wird auf ca. 125 frames/sec begrenzt
 * Memory leaks in InitEditor() gefixt:  Playfield.pPipeLevel, Playfield.pSlimeElement, Playfield.pLastStatusAnimation, Playfield.pLastYamSlimeDirection
@@ -30,6 +29,7 @@ Für V 1.11
 * Levelgruppen- und Player- Listen können über die Pfeiltasten schnell gescrollt werden.
 * letzte Version MODPlay -> Valgrind-Hinweis "invalid read of 1 byte" gefixt
 * Wenn Level erneut geschafft, wurde neuer Highscore nicht richtig sortiert -> gefixt
+* Auf doppelte Spielgeschwindigkeit umschaltbar
 */
 
 #include "gfx/textures.h"
@@ -78,6 +78,7 @@ Für V 1.11
 #include "yam.h"
 
 PLAYFIELD Playfield;
+int g_nGameSpeed;
 extern GAMESOUND GameSound;
 extern INPUTSTATES InputStates;
 extern MANKEY ManKey;
@@ -88,8 +89,8 @@ extern SMILEY Smileys[MAX_SMILEYS];
 extern LEVELGROUP SelectedLevelgroup;
 extern MAINMENU MainMenu;
 extern AUDIOPLAYER Audioplayer;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
+extern VIDEO Video;
+extern FPS Fps;
 
 /*----------------------------------------------------------------------------
 Name:           Menu
@@ -100,7 +101,7 @@ Parameter
       Ausgang: -
 Rückgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
 Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
-               ge_uXoffs, ge_uYoffs
+               Video.x, Fps.x
 ------------------------------------------------------------------------------*/
 int Menu(SDL_Renderer *pRenderer) {
     uint32_t uModVolume;
@@ -160,7 +161,10 @@ int Menu(SDL_Renderer *pRenderer) {
     SetModVolume(uModVolume);
     nColorDimm = 0;
     SetAllTextureColors(nColorDimm);
+
+    memset(&Fps,0,sizeof(Fps));
     while (((nErrorCode == 0) && (nChoose == -1)) || (nColorDimm > 0) ) {
+        MeasureFps();
         MoveSmileys(pRenderer);
         UpdateInputStates();
         if ((nChoose == -1) && (nColorDimm < 100)) {
@@ -172,8 +176,8 @@ int Menu(SDL_Renderer *pRenderer) {
         PlayMusic(true);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],uFrameCounter % 16,&fAngle);
-            DestR.x = 128 + ge_uXoffs + uPositionsAndElements[I * 3 + 0];
-            DestR.y = ge_uYoffs + uPositionsAndElements[I * 3 + 1];
+            DestR.x = 128 + Video.uXoffs + uPositionsAndElements[I * 3 + 0];
+            DestR.y = Video.uYoffs + uPositionsAndElements[I * 3 + 1];
             DestR.w = FONT_W;
             DestR.h = FONT_H;
             if (nErrorCode == 0) {
@@ -200,6 +204,11 @@ int Menu(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,468,491,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE,1);
         PrintLittleFont(pRenderer,468,506,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE,1);
         PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE,1);
+        // Framerate anzeigen
+        if (strlen(Fps.szFrameaPerSecond) > 0) {
+            PrintLittleFont(pRenderer,32,744,0,Fps.szFrameaPerSecond,K_RELATIVE,1);
+            PrintLittleFont(pRenderer,33,745,3,Fps.szFrameaPerSecond,K_RELATIVE,1);
+        }
         nErrorCode = ShowButtons(pRenderer,K_RELATIVE);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
             nChoose = 1;
@@ -237,22 +246,24 @@ Parameter
       Ausgang: -
 
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x,
+Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x, g_nGameSpeed
 ------------------------------------------------------------------------------*/
 int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bLevelRun;
     bool bPrepareLevelExit;
     bool bPause;
+    bool bF1,bF2;       // F1 oder F2 wurde gedrückt
     int nColorDimm;
     int nCheckLevelCount;
     uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
     uint32_t uKey;
     uint32_t I;
     bool bDimmIn = true;
-    bool bDebug = false;
     uint32_t uQuitTime;
     int nRet;
 
+    bF1 = false;
+    bF2 = false;
     bPause = false;
     nRet = 0;
     nColorDimm = 0;
@@ -296,30 +307,27 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 bPrepareLevelExit = true;
             }
         }
-
-        //// DEBUG-Code
-        if (InputStates.pKeyboardArray[SDL_SCANCODE_X]) {
-            bDebug = !bDebug;
-            if (bDebug) {
-                SDL_Log("Debugmode = on");
-            } else {
-                SDL_Log("Debugmode = off");
-            }
-            WaitNoSpecialKey(SDL_SCANCODE_X);
-        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_I]) {
-            PrintPlayfieldValues();
+        if (InputStates.pKeyboardArray[SDL_SCANCODE_F1]) {
+            bF1 = true;
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_F2]) {
+            bF2 = true;
         }
-        //// DEBUG-Code Ende
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_P]) || ((bPause) && (ManKey.bFire))) {
             bPause = !bPause;
             if (!bPause) {
                 bDimmIn = true; // Nach Pause wieder aufdimmen
             }
-            do {
-                UpdateManKey();
-            } while ((InputStates.pKeyboardArray[SDL_SCANCODE_P]) || (ManKey.bFire));
+            WaitNoSpecialKey(SDL_SCANCODE_P);   // warten, dass "P" wieder losgelassen wird
         }
         if ((nCheckLevelCount == 0) && (!bPause)) {
+            if (bF1) {
+                SetGameSpeed(GAMESPEED_NORMAL);
+                bF1 = false;
+            }
+            if (bF2) {
+                SetGameSpeed(GAMESPEED_FAST);
+                bF2 = false;
+            }
             if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= 15)) {
                 // SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
                 uKey = ManKey.uLastActiveDirection;
@@ -337,12 +345,14 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         }
         if (!bPause) {
             // SDL_Log("Y: %u",Playfield.uManYpos);
-            ScrollAndCenterLevel(uManDirection);
-            CheckRunningWheel();
-            CheckRunningMagicWall();
-            CheckLight();
-            CheckTimeDoorOpen();
-            CheckPlayTime();
+            for (I = 0; I < (g_nGameSpeed + 1); I++) {
+                ScrollAndCenterLevel(uManDirection);
+                CheckRunningWheel();
+                CheckRunningMagicWall();
+                CheckLight();
+                CheckTimeDoorOpen();
+                CheckPlayTime();    // erhöht auch Playfield.uFrameCounter
+            }
         } else {
             // Pause abdimmen
             if (nColorDimm > 20) {
@@ -351,9 +361,12 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             }
         }
         RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);  // nCheckLevelCount 0 ... 15
-        if (bDebug) PrintLittleFont(pRenderer,400,700,0,"DEBUG MODE ON, PRESS X TO TOGGLE",K_ABSOLUTE,1);
         if (!bPause) {
-            nCheckLevelCount++;
+            if (g_nGameSpeed == GAMESPEED_FAST) {
+                nCheckLevelCount = nCheckLevelCount + 2;
+            } else {
+                nCheckLevelCount++;
+            }
         }
         if (nCheckLevelCount == 16) {
             nCheckLevelCount = 0;
@@ -381,7 +394,6 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             ConfirmMessage(pRenderer);  // Spiel pausiert hier, bis Nachricht bestätigt wurde
         }
         RenderPresentAndClear(pRenderer);
-        if (bDebug) SDL_Delay(200);
     }
     SDL_ShowCursor(SDL_ENABLE);    // Mauspfeil verstecken
     Playfield.uPlayTimeEnd = SDL_GetTicks();
@@ -1940,4 +1952,22 @@ int CheckGameDirectorys(void) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Directory problem","Can not create directory!\nPlease check write permissions.",NULL);
     }
     return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           SetGameSpeed
+------------------------------------------------------------------------------
+Beschreibung: Setzt die Spielgeschwindigkeit. Die Geschwindigkeit sollte/darf nur
+              außerhalb eines Animationsablaufes geändert werden.
+Parameter
+      Eingang: nGameSpeed, int, zur Zeit sind folgende Geschwindigkeiten möglich:
+                    GAMESPEED_NORMAL (2 Pixel / Frame)
+                    GAMESPEED_FAST   (4 Pixel / Frame)
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: g_nGameSpeed
+------------------------------------------------------------------------------*/
+void SetGameSpeed(int nGameSpeed) {
+    g_nGameSpeed = nGameSpeed;
 }

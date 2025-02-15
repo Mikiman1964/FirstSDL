@@ -25,13 +25,11 @@ CLIPBOARD Clipboard;
 extern MANKEY ManKey;
 extern PLAYFIELD Playfield;
 extern INPUTSTATES InputStates;
-extern SDL_DisplayMode ge_DesktopDisplayMode;
+extern VIDEO Video;
 extern CONFIG Config;
 extern LEVELGROUP SelectedLevelgroup;
 extern MAINMENU MainMenu;
 extern IMPORTLEVEL ImportLevel;
-extern uint32_t ge_uXoffs;             // X-Offset für die Zentrierung von Elementen
-extern uint32_t ge_uYoffs;             // X-Offset für die Zentrierung von Elementen
 
 uint8_t g_PanelColorPatterns[] = {
 //                           R    G    B
@@ -1323,7 +1321,7 @@ Parameter
                -
       Ausgang: -
 Rückgabewert:  int, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Playfield.x, Ed.x, ge_DesktopDisplayMode.x
+Seiteneffekte: Playfield.x, Ed.x, Video.x
 ------------------------------------------------------------------------------*/
 int CopyPlayfieldValueToEditor(void) {
     uint32_t I;
@@ -1390,13 +1388,13 @@ int CopyPlayfieldValueToEditor(void) {
         Ed.uGreenCheeseSpreadSpeed = Playfield.uGreenCheeseSpreadSpeed;
         Ed.uYellowCheeseSpreadSpeed = Playfield.uYellowCheeseSpreadSpeed;
         Ed.uGrassSpreadSpeed = Playfield.uGrassSpreadSpeed;;
-        Ed.uTimeToPlay = Playfield.uTimeToPlay / ge_DesktopDisplayMode.refresh_rate;
-        Ed.uAdditonalTimeCoinTime = Playfield.uAdditonalTimeCoinTime / ge_DesktopDisplayMode.refresh_rate;
-        Ed.uTimeWheelRotation = Playfield.uTimeWheelRotation / ge_DesktopDisplayMode.refresh_rate;
+        Ed.uTimeToPlay = Playfield.uTimeToPlay / Video.DesktopDisplayMode.refresh_rate;
+        Ed.uAdditonalTimeCoinTime = Playfield.uAdditonalTimeCoinTime / Video.DesktopDisplayMode.refresh_rate;
+        Ed.uTimeWheelRotation = Playfield.uTimeWheelRotation / Video.DesktopDisplayMode.refresh_rate;
         Ed.uShieldCoinTime = Playfield.uShieldCoinTime;
-        Ed.uTimeDoorTime = Playfield.uTimeDoorTime / ge_DesktopDisplayMode.refresh_rate;
-        Ed.uTimeMagicWall = Playfield.uTimeMagicWall / ge_DesktopDisplayMode.refresh_rate;
-        Ed.uTimeLight = Playfield.uTimeLight / ge_DesktopDisplayMode.refresh_rate;
+        Ed.uTimeDoorTime = Playfield.uTimeDoorTime / Video.DesktopDisplayMode.refresh_rate;
+        Ed.uTimeMagicWall = Playfield.uTimeMagicWall / Video.DesktopDisplayMode.refresh_rate;
+        Ed.uTimeLight = Playfield.uTimeLight / Video.DesktopDisplayMode.refresh_rate;
         Ed.uDynamiteCount = Playfield.uDynamiteCount;
         Ed.uHammerCount = Playfield.uHammerCount;
         Ed.uWhiteKeyCount = Playfield.uWhiteKeyCount;
@@ -3830,7 +3828,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, MainMenu.x, ge_uXoffs
+Seiteneffekte: Ed.x, MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
 int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
     int nErrorCode;
@@ -3903,14 +3901,14 @@ int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
     nErrorCode = RenderMenuElements(pRenderer);
     if (nErrorCode == 0) {
         // 20 Pixel Zeilenabstand für LittleFont
-        nErrorCode = PrintLittleFont(pRenderer,364 + ge_uXoffs,234,0,"LEVEL DIMENSION WAS CHANGED FROM",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(pRenderer,364 + Video.uXoffs,234,0,"LEVEL DIMENSION WAS CHANGED FROM",K_ABSOLUTE,1);
         sprintf(szText,"%d X %d  TO  %d X %d.",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,Ed.uTmpLevel_X_Dimension,Ed.uTmpLevel_Y_Dimension);
-        PrintLittleFont(pRenderer,364 + ge_uXoffs,254,0,szText,K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + ge_uXoffs,294,0,"COPY EXISTING LEVEL DATA FROM UPPER LEFT TO",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + ge_uXoffs,314,0,"NEW LEVEL (AS MUCH AS POSSIBLE)",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + ge_uXoffs,354,0,"CLEAR NEW LEVEL",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + ge_uXoffs,394,0,"DON'T CHANGE LEVEL DIMENSION AND",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + ge_uXoffs,414,0,"KEEP EXISTING LEVEL DATA",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,364 + Video.uXoffs,254,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,404 + Video.uXoffs,294,0,"COPY EXISTING LEVEL DATA FROM UPPER LEFT TO",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,404 + Video.uXoffs,314,0,"NEW LEVEL (AS MUCH AS POSSIBLE)",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,404 + Video.uXoffs,354,0,"CLEAR NEW LEVEL",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,404 + Video.uXoffs,394,0,"DON'T CHANGE LEVEL DIMENSION AND",K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,404 + Video.uXoffs,414,0,"KEEP EXISTING LEVEL DATA",K_ABSOLUTE,1);
     }
     return nErrorCode;
 }
@@ -3924,7 +3922,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Config.x, ge_uXoffs, ge_uYoffs
+Seiteneffekte: Config.x, Video.x
 ------------------------------------------------------------------------------*/
 int CreateEditorButtons(void) {
     int nErrors;
@@ -3940,9 +3938,9 @@ int CreateEditorButtons(void) {
     nErrors = nErrors + CreateButton(BUTTONLABEL_TIME_AND_SCORES,"Time+Scores",Config.uResX - 104,Config.uResY - 126,true,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_TEXT,"Text",Config.uResX - 94,Config.uResY - 100,true,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_STD,"Std.",Config.uResX - 49,Config.uResY - 100,false,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_1,"-->",362 + ge_uXoffs,290,false,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_2,"-->",362 + ge_uXoffs,350,false,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_3,"-->",362 + ge_uXoffs,390,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_1,"-->",362 + Video.uXoffs,290,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_2,"-->",362 + Video.uXoffs,350,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_3,"-->",362 + Video.uXoffs,390,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_SAVE_MESSAGE,"Save message",(Config.uResX / 2) - 100 ,736,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_CANCEL_MESSAGE,"Cancel",(Config.uResX / 2) + 100 ,736,false,true);
     return nErrors;
@@ -4753,7 +4751,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: MainMenu.x, InputStates.x, ge_uXoffs
+Seiteneffekte: MainMenu.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
 int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
     int nErrorCode = -1;
@@ -4764,7 +4762,7 @@ int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
         *puBeamPosition = 0xFFFFFFFF;
         uBeamPosition = GetLevelnameBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
-            nErrorCode = DrawBeam(pRenderer,FONT_W + ge_uXoffs,107 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
+            nErrorCode = DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
                 *puBeamPosition = uBeamPosition;
             }
@@ -4784,7 +4782,7 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
 Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: MainMenu.x, InputStates.x, ge_uXoffs
+Seiteneffekte: MainMenu.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
 int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
     int nErrorCode = -1;
@@ -4795,7 +4793,7 @@ int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
         *puBeamPosition = 0xFFFFFFFF;
         uBeamPosition = GetImportFilesBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
-            nErrorCode = DrawBeam(pRenderer,FONT_W + ge_uXoffs,35 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
+            nErrorCode = DrawBeam(pRenderer,FONT_W + Video.uXoffs,35 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
                 *puBeamPosition = uBeamPosition;
             }
@@ -5002,7 +5000,7 @@ Parameter
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: InputStates.x, SelectedLevelgroup, MainMenu.x, Playfield.x
-               ImportLevel.x, ManKey.x, Clipboard.x, ge_uXoffs
+               ImportLevel.x, ManKey.x, Clipboard.x, Video.x
 ------------------------------------------------------------------------------*/
 int PreEditorMenu(SDL_Renderer *pRenderer) {
     uint32_t I;
@@ -5051,7 +5049,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     } else if (nRet == -2) {   // Passwort falsch?
         return 0;
     }
-    if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1102 + ge_uXoffs,MainMenu.uYdim * FONT_H - 26,true,false) != 0) {
+    if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1102 + Video.uXoffs,MainMenu.uYdim * FONT_H - 26,true,false) != 0) {
         return -1;
     }
     ImportLevel.uDc3FileCount = 0;
@@ -5067,12 +5065,12 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         // Hervorhebung für ausgewähltes Level: Balken nicht anzeigen, wenn abgedimmt (PrepareExit) wird.
         if ((nSelectedBeamPosition >= 0) && (nSelectedBeamPosition < MainMenu.uMaxLevelTitlesInList) && (!bPrepareExit)) {
             if (nMoveState == 0) {
-                DrawBeam(pRenderer,FONT_W + ge_uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0x20,0x20,0x60,K_ABSOLUTE);
+                DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0x20,0x20,0x60,K_ABSOLUTE);
             } else {
                 if (((Playfield.uFrameCounter >> 4) & 0x01) == 0) {
-                    DrawBeam(pRenderer,FONT_W + ge_uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0xF0,0x20,0x60,K_ABSOLUTE);
+                    DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0xF0,0x20,0x60,K_ABSOLUTE);
                 } else {
-                    DrawBeam(pRenderer,FONT_W + ge_uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0xF0,0x20,0x60,K_ABSOLUTE);
+                    DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0xF0,0x20,0x60,K_ABSOLUTE);
                 }
             }
         }
@@ -5249,8 +5247,8 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         for (I = 0; I < MainMenu.uMaxLevelTitlesInList; I++) {
             if (MainMenu.puLevelTitleList[I] != 0xFFFF) {
                 sprintf(szText,"%03u",MainMenu.puLevelTitleList[I]);
-                PrintLittleFont(pRenderer,62 + ge_uXoffs,110 + I * 20,0,szText,K_ABSOLUTE,1);
-                PrintLittleFont(pRenderer,176 + ge_uXoffs,110 + I * 20,0,SelectedLevelgroup.szLevelTitle[MainMenu.puLevelTitleList[I]],K_ABSOLUTE,1);
+                PrintLittleFont(pRenderer,62 + Video.uXoffs,110 + I * 20,0,szText,K_ABSOLUTE,1);
+                PrintLittleFont(pRenderer,176 + Video.uXoffs,110 + I * 20,0,SelectedLevelgroup.szLevelTitle[MainMenu.puLevelTitleList[I]],K_ABSOLUTE,1);
             }
         }
         nErrorCode = MenuSelectLevelname(pRenderer,&uBeamPosition);
@@ -5336,15 +5334,15 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
             if ((Playfield.uFrameCounter % 10) == 0) {
                 bColorToggle = !bColorToggle;
             }
-            PrintLittleFont(pRenderer,100,5,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_RELATIVE,1.5);
+            PrintLittleFont(pRenderer,100 + Video.uXoffs,5,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_ABSOLUTE,1.5);
         }
         if (Clipboard.pLevelXml != NULL) {
             strcpy(szText,Clipboard.szLevelTitle);
         } else {
             strcpy(szText,"CLIPBOARD IS EMPTY");
         }
-        PrintLittleFont(pRenderer,176 + ge_uXoffs,MainMenu.uYdim * FONT_H - 26,0,szText,K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,177 + ge_uXoffs,MainMenu.uYdim * FONT_H - 25,3,szText,K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,176 + Video.uXoffs,MainMenu.uYdim * FONT_H - 26,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,177 + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,3,szText,K_ABSOLUTE,1);
         if ((IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES)) ||  ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || InputStates.bQuit)) {
             bPrepareExit = true;
         }
