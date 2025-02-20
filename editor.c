@@ -4861,7 +4861,8 @@ int HandlePreEditorButtons(int nSelectedLevel) {
     bool bMouseInLevelArea;
 
     bButtonFound = false;
-    bMouseInLevelArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 512) && (InputStates.nMouseYpos_Relative >= 96) && (InputStates.nMouseYpos_Relative < 736));
+    bMouseInLevelArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 512) &&
+                         (InputStates.nMouseYpos_Absolute >= 96) && (InputStates.nMouseYpos_Absolute < ((MainMenu.uYdim - 1) * FONT_H)) );
     memset(bButtons,false,sizeof(bButtons));
     // Die folgenden Buttons werden unabhängig eines ausgewählten levels angezeigt
     MainMenu.pMenuScreen[4 * MainMenu.uXdim + 18] = EMERALD_STEEL_ADD_LEVELGROUP;

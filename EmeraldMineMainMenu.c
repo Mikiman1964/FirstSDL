@@ -3663,8 +3663,9 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
     SetMenuBorderAndClear();
     nColorDimm = 0;
-    uRand = randn(0,1);             // Zufallszahl 0 oder 1
-    if (SetModMusic(7 + uRand) != 0) {      // 7. 2kad02.mod (2000AD cracktro02) oder 8. the brewery  keweils von Maktone
+    uRand = randn(0,3);             // Zufallszahl 0 bis 3
+    // 7. 2kad02.mod (2000AD cracktro02), 8. the brewery.mod, 9. class05_1999.mod oder 10. softworld.mod jeweils von Maktone
+    if (SetModMusic(7 + uRand) != 0) {
         return -1;
     }
     if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1100,742,true,false) != 0) {

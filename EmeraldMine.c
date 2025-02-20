@@ -3,33 +3,10 @@ TODO
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen, DC3 hat gleiches Problem
 * Leveleditor
     * Undo für Editor
-* int SDL_SetWindowDisplayMode(SDL_Window * window, const SDL_DisplayMode * mode); anwenden, um sicher zu stellen, dass richtige Framerate läuft
 
-Für V 1.11
-* SDL 2.30.12
-* Höhere Y-Auflösung für Spiele-Hauptmenü und Levelliste nutzen
-* DC3-Importverzeichnis wird während der Verwendung des Leveleditors alle 3 s aktualisiert
-* Schließen-X funktioniert im Leveleditor jetzt wie Button "Quit"
-* 4 Ecken des markierten Stahls hinzugefügt, werden nur beim DC3-Levelimport verwendet und sind noch nicht im Leveleditor auswählbar
-* Doppeltes Sterben/Schreien und nachträglicher Explosionssound im Zusammenhang mit gezündetem Dynamit gefixt
-* Source in UTF-8 kodiert
-* Speicherlecks beim Beenden des Spiels gefixt
-* Musik-Player kann auch "xm Extended module" abspielen
-* Falscher/unnötiger Aufruf von SDL_RenderPresent() in ShowButtons()
-* Framerate wird auf ca. 125 frames/sec begrenzt
-* Memory leaks in InitEditor() gefixt:  Playfield.pPipeLevel, Playfield.pSlimeElement, Playfield.pLastStatusAnimation, Playfield.pLastYamSlimeDirection
-* Memory leak in CleanUpHighScoreDir() gefixt: closedir() vergessen
-* Memory leak in LevelgroupOperaton_RenameGroupname() gefixt.
-* Viele Speicherlecks im Zusammenhang mit ezxml_parse_str() gefixt. Der Speicher muss über ezxml_free(xml) freigegeben werden.
-* Rückkehr vom Leveleditor -> letzten Spieler auswählen
-* Musik und Gamesounds werden komprimiert und wie gfx zusammengefasst
-* Grafiken, Gamesounds und Musik werden nun als Headerfile eingebunden und nicht mehr als Objectdatei -> objcopy wird nicht mehr benötigt
-* Fehler im DC3-Levelimporter behoben, der beim Doppelklick auf den BMP-Dateinamen die Levelgruppe beschädigte.
-* Levelgruppen gefixt, die durch vorher beschriebenen Fehler beschädigt wurden. -> 2.6 MB eingespart
-* Levelgruppen- und Player- Listen können über die Pfeiltasten schnell gescrollt werden.
-* letzte Version MODPlay -> Valgrind-Hinweis "invalid read of 1 byte" gefixt
-* Wenn Level erneut geschafft, wurde neuer Highscore nicht richtig sortiert -> gefixt
-* Auf doppelte Spielgeschwindigkeit umschaltbar
+Für V 1.12
+* Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
+* Bug fix: Mausrad funktionierte nicht im richtigen Bereich der Level-Auswahlliste beim Levellistenscrolling
 */
 
 #include "gfx/textures.h"
@@ -666,7 +643,6 @@ uint32_t ControlGame(uint32_t uDirection) {
     if (Playfield.uDynamitePos != 0xFFFFFFFF) {
         ControlManWithDynamiteOn(Playfield.uDynamitePos);
     }
-
     for (I = 0; I < Playfield.uLevel_XY_Dimension; I++) {
         uLevelElement = Playfield.pLevel[I];
         switch (uLevelElement) {
