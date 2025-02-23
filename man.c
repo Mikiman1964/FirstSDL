@@ -917,32 +917,41 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
         case (EMERALD_DOOR_WHITE_WOOD):
         case (EMERALD_DOOR_GREY_WHITE):
             if (((Playfield.bHasGeneralKey) || (Playfield.uWhiteKeyCount > 0)) && (!ManKey.bFire)) {
-                if (!Playfield.bHasGeneralKey) {
-                    Playfield.uWhiteKeyCount--;
-                }
                 switch (uAnimation) {
                     case (EMERALD_ANIM_UP):
                         if (IS_SPACE(uActPos - 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_UP_DOUBLESPEED;
                             ManGoUp(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                            if (!Playfield.bHasGeneralKey) {
+                                Playfield.uWhiteKeyCount--;
+                            }
                         }
                         break;
                     case (EMERALD_ANIM_DOWN):
                         if (IS_SPACE(uActPos + 2 * Playfield.uLevel_X_Dimension)) {
                             uRetAnimation = EMERALD_ANIM_DOWN_DOUBLESPEED;
                             ManGoDown(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                            if (!Playfield.bHasGeneralKey) {
+                                Playfield.uWhiteKeyCount--;
+                            }
                         }
                         break;
                     case (EMERALD_ANIM_LEFT):
                         if (IS_SPACE(uActPos - 2)) {
                             uRetAnimation = EMERALD_ANIM_LEFT_DOUBLESPEED;
                             ManGoLeft(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                            if (!Playfield.bHasGeneralKey) {
+                                Playfield.uWhiteKeyCount--;
+                            }
                         }
                         break;
                     case (EMERALD_ANIM_RIGHT):
                         if (IS_SPACE(uActPos + 2)) {
                             uRetAnimation = EMERALD_ANIM_RIGHT_DOUBLESPEED;
                             ManGoRight(uActPos,EMERALD_NO_ADDITIONAL_ANIMSTATUS,EMERALD_DOUBLE_SPEED);
+                            if (!Playfield.bHasGeneralKey) {
+                                Playfield.uWhiteKeyCount--;
+                            }
                         }
                         break;
                 }

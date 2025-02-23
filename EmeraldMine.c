@@ -7,6 +7,7 @@ TODO
 Für V 1.12
 * Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
 * Bug fix: Mausrad funktionierte nicht im richtigen Bereich der Level-Auswahlliste beim Levellistenscrolling
+* Bug fix: Ein weißer Schlüssel wurde abgezogen, wenn gegen eine versperrte weiße Tür gedrückt wurde.
 */
 
 #include "gfx/textures.h"
