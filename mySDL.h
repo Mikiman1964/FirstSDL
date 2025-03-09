@@ -94,7 +94,7 @@ SDL_Texture *GetTextureByIndex(int nIndex);
 int SetAllTextureColors(uint8_t uIntensityProzent);
 int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText,bool bAbsolute,float fSizeFactor);
 void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, char *pszText);
-int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText);
+int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText);
 int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute);
 int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace);
 void RestoreDesktop(void);

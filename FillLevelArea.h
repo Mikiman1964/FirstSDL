@@ -7,15 +7,15 @@
 
 // Für die iterative Füllroutine
 typedef struct {
-int nX;
-int nY;
+    int nX;
+    int nY;
 } KOORDS;
 
 
 typedef struct {
-KOORDS Koords[FILLSTACK_SIZE];
-uint32_t uP;
-uint32_t uMaxP;
+    KOORDS Koords[FILLSTACK_SIZE];
+    uint32_t uP;
+    uint32_t uMaxP;
 } FILLSTACK;
 
 void InitFillStack(void);

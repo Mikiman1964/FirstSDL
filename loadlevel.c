@@ -2227,7 +2227,7 @@ Parameter
 Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-void PrintPlayfieldValues() {
+void PrintPlayfieldValues(void) {
     uint32_t I;
 
     if (Playfield.bInitOK) {

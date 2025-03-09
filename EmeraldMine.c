@@ -3,6 +3,8 @@ TODO
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen, DC3 hat gleiches Problem
 * Leveleditor
     * Undo für Editor
+    * Hint an Mauspfeil über gezeichnetes Element
+* Quick-Load/Save
 
 Für V 1.12
 * Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
@@ -43,6 +45,7 @@ Für V 1.12
 #include "nut.h"
 #include "panel.h"
 #include "perl.h"
+#include "quicksaveloadgame.h"
 #include "RenderLevel.h"
 #include "replicator.h"
 #include "ruby.h"
@@ -230,7 +233,6 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bLevelRun;
     bool bPrepareLevelExit;
     bool bPause;
-    bool bF1,bF2;       // F1 oder F2 wurde gedrückt
     int nColorDimm;
     int nCheckLevelCount;
     uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
@@ -239,9 +241,9 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bDimmIn = true;
     uint32_t uQuitTime;
     int nRet;
+    uint32_t uShowQuickSaveMessageTicks;
 
-    bF1 = false;
-    bF2 = false;
+    uShowQuickSaveMessageTicks = 0xFFFFFFFF;
     bPause = false;
     nRet = 0;
     nColorDimm = 0;
@@ -271,6 +273,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     ManKey.bExit = false;
     SDL_ShowCursor(SDL_DISABLE);    // Mauspfeil verstecken
     SetTreasureChestStart();
+    ClearFkeys();
     while (bLevelRun) {
         UpdateManKey();
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bExit)) {
@@ -285,11 +288,8 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 bPrepareLevelExit = true;
             }
         }
-        if (InputStates.pKeyboardArray[SDL_SCANCODE_F1]) {
-            bF1 = true;
-        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_F2]) {
-            bF2 = true;
-        }
+        GetFkeys();
+
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_P]) || ((bPause) && (ManKey.bFire))) {
             bPause = !bPause;
             if (!bPause) {
@@ -297,14 +297,21 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             }
             WaitNoSpecialKey(SDL_SCANCODE_P);   // warten, dass "P" wieder losgelassen wird
         }
+
         if ((nCheckLevelCount == 0) && (!bPause)) {
-            if (bF1) {
+            if (InputStates.bFkey[1]) {
                 SetGameSpeed(GAMESPEED_NORMAL);
-                bF1 = false;
-            }
-            if (bF2) {
+                InputStates.bFkey[1] = false;
+            } else if (InputStates.bFkey[2]) {
                 SetGameSpeed(GAMESPEED_FAST);
-                bF2 = false;
+                InputStates.bFkey[2] = false;
+            } else if (InputStates.bFkey[9]) {
+                QuickSaveGame();
+                InputStates.bFkey[9] = false;
+                uShowQuickSaveMessageTicks = SDL_GetTicks();
+            } else if (InputStates.bFkey[10]) {
+                //SDL_Log("F10 pressed ! QuickLoadGame");
+                InputStates.bFkey[10] = false;
             }
             if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= 15)) {
                 // SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
@@ -339,6 +346,13 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             }
         }
         RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);  // nCheckLevelCount 0 ... 15
+        if (uShowQuickSaveMessageTicks != 0xFFFFFFFF) {
+            if (SDL_GetTicks() - uShowQuickSaveMessageTicks < 5000) {
+                CreateMessageWindow(pRenderer, 10,10, 0, "GAME SAVED");
+            } else {
+                uShowQuickSaveMessageTicks = 0xFFFFFFFF;
+            }
+        }
         if (!bPause) {
             if (g_nGameSpeed == GAMESPEED_FAST) {
                 nCheckLevelCount = nCheckLevelCount + 2;

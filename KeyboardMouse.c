@@ -555,6 +555,61 @@ uint32_t GetKey(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           ClearFkeys
+------------------------------------------------------------------------------
+Beschreibung: Setzt alle Zustände der F-Tasten auf "nicht gedrückt".
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: InputStates.x
+------------------------------------------------------------------------------*/
+void ClearFkeys(void) {
+    uint32_t uKeyNum;
+
+    for (uKeyNum = 1; uKeyNum <= 12; uKeyNum++) {
+        InputStates.bFkey[uKeyNum] = false;
+        InputStates.uLastFkeyTime[uKeyNum] = SDL_GetTicks();
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetFkeys
+------------------------------------------------------------------------------
+Beschreibung: Fragt den Zustand der F-Tasten ab und setzt im Array InputStates.bFkey[x] den
+              entsprechenden Wert auf true, wenn die Taste gedrückt ist.
+
+              Hinweis 1: Der boolsche Wert InputStates.bFkey[x] muss beim Lesen entsprechend
+              bestätigt werden, indem dieser auf false gesetzt wird.
+
+              Hinweis 2: Vor Aufruf dieser Funktion muss UpdateInputStates() oder UpdateManKey()
+              aufgerufen worden sein.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: InputStates.x
+------------------------------------------------------------------------------*/
+void GetFkeys(void) {
+    uint32_t uKeyNum;
+    uint32_t uTicks;
+
+    uTicks = SDL_GetTicks();
+    for (uKeyNum = 1; uKeyNum <= 12; uKeyNum++) {
+        if (InputStates.pKeyboardArray[SDL_SCANCODE_F1 + uKeyNum - 1]) {
+            if (uTicks - InputStates.uLastFkeyTime[uKeyNum] > 200) {
+                InputStates.bFkey[uKeyNum] = true;
+            }
+            InputStates.uLastFkeyTime[uKeyNum] = uTicks;
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           FilterBigFontKey
 ------------------------------------------------------------------------------
 Beschreibung: Filtert einen Tastencode, der aus GetKey() stammt, für den

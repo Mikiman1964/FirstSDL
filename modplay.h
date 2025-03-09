@@ -111,7 +111,7 @@ typedef struct {
 
 ModPlayerStatus_t *InitMOD(const uint8_t *mod, uint32_t samplerate);
 ModPlayerStatus_t *RenderMOD(short *buf, int len);
-ModPlayerStatus_t *ProcessMOD();
+ModPlayerStatus_t *ProcessMOD(void);
 
 
 

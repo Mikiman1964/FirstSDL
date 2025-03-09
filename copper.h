@@ -26,7 +26,7 @@ typedef struct {
 } COPPERSEGMENT;
 
 
-int InitVisibibleCopperSegments();
+int InitVisibibleCopperSegments(void);
 void CalculateColorFlow(int nMaxRed, int nMaxGreen, int nMaxBlue);
 void PrecalculateSegments(int nMaxRed, int nMaxGreen, int nMaxBlue);
 void ScrollVisibleSegments(void);

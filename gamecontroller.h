@@ -79,7 +79,7 @@ typedef struct {
     JOYSTICK_VALUES Value[MAX_JOYSTICKS];
 } JOYSTICK;
 
-void DetectJoystickAndGameController();
+void DetectJoystickAndGameController(void);
 int OpenJoystickOrGameController(void);
 int GetJoystickOrGameControllerStatus(MAN_DIRECTIONS *pManDirections);
 bool IsGameController(int nJoystickIndex, bool *pbJoystickAsGameController);

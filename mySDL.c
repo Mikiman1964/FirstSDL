@@ -6,9 +6,9 @@
 #include "miniz.h"
 #include "mySDL.h"
 #include "mystd.h"
-#include "externalpointer.h" // für die einzubindenen Objektdateien (Grafiken, Sounds)
 #include "levelconverter.h"
 #include "RenderLevel.h"
+#include "gfx/gfx.h"
 #include "gfx/gfx_compressed.h"
 #include "gfx/textures.h"
 
@@ -968,13 +968,13 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                nXpos, int, Start-X-Position der oberen linke Ecke des Fensters, -1 = auf Fenster horizontal zentrieren
                nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes, -1 = auf Fenster vertikal zentrieren
-               uColor, uint32_t, Farbe des Zeichensatzes, wird noch nicht berücksichtigt
+               uFont, uint32_t, Zeichensatz
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
       Ausgang: -
       Rückgabewert: 0 = OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
-int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uColor, char *pszText) {
+int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText) {
     int nErrorCode;
     uint32_t X,Y;
     uint32_t uWinW;                     // benötigte Fensterbreite in Elementen
@@ -1070,7 +1070,7 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
             if (nErrorCode == 0) {
                 nXoffset = ((uWinH * (FONT_H / 2)) - (uLines * FONT_LITTLE_H)) / 2;
                 //SDL_Log("Lines: %u    WinH: %u    XOffset: %d",uLines,uWinH,nXoffset);
-                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, 0,pszText,K_ABSOLUTE,1);
+                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, uFont ,pszText,K_ABSOLUTE,1);
             } else {
                 SDL_Log("%s: SDL_RenderFillRect() failed: %s",__FUNCTION__,SDL_GetError());
             }

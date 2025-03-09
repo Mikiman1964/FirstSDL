@@ -308,7 +308,7 @@ void _RecalculateWaveform(Oscillator_t *oscillator) {
 
 
 /*
- * ModPlayerStatus_t *ProcessMOD();
+ * ModPlayerStatus_t *ProcessMOD(void);
  *
  * Advances to the next tick of the MOD file.
  *
@@ -327,7 +327,7 @@ void _RecalculateWaveform(Oscillator_t *oscillator) {
  * on system with actual hardware samplers (such as the Commodore Amiga
  * or the Sony PlayStation).
  */
-ModPlayerStatus_t *ProcessMOD() {
+ModPlayerStatus_t *ProcessMOD(void) {
 	if(mp.tick == 0) {
 		mp.skiporderrequest = -1;
 

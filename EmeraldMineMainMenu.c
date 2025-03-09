@@ -823,7 +823,6 @@ int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
         nErrorCode = DrawBeam(pRenderer,FONT_W + Video.uXoffs,608 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 2 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_ABSOLUTE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
             if (SelectAlternativeLevelgroup(LevelgroupFiles[MainMenu.pLevelgroupList[uBeamPosition]].uMd5Hash,true) == 0) {
-            //if (SelectAlternativeLevelgroup(LevelgroupFiles[uBeamPosition].uMd5Hash,true) == 0) {
                 // SDL_Log("Select %s, OK",SelectedLevelgroup.szLevelgroupname);
                 if (Actualplayer.bValid) {  // Der aktuelle Name wird nochmals ausgewählt, damit dieser ggf. den Levelgruppen-Hash bekommt
                     strcpy(szPlayername,Actualplayer.szPlayername); // Muss kopiert werden, da Selectname die Struktur Actualplayer.x löscht

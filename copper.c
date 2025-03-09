@@ -45,7 +45,7 @@ Rückgabewert:  int, 0 = Alles OK, sonst Fehler
 Seiteneffekte: g_nPrecalculatedSegmentCount, g_nColorPattern, g_bReady,
                VisibleCopperSegments, uCopperVisibleSegments, Config.x
 ------------------------------------------------------------------------------*/
-int InitVisibibleCopperSegments() {
+int InitVisibibleCopperSegments(void) {
     int nErrorCode;
 
     nErrorCode = -1;

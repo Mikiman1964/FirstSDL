@@ -1,5 +1,5 @@
-#ifndef BUTTONS_H_INCLUDED
-#define BUTTONS_H_INCLUDED
+#ifndef BUTTONS_CHECKBOXES_H_INCLUDED
+#define BUTTONS_CHECKBOXES_H_INCLUDED
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -54,4 +54,4 @@ int SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos);
 int ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute);
 int ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute);
 bool IsButtonPressed(char *pszLabel);
-#endif // BUTTONS_H_INCLUDED
+#endif // BUTTONS_CHECKBOXES_H_INCLUDED

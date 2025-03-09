@@ -1,7 +1,6 @@
 #ifndef MAN_H_INCLUDED
 #define MAN_H_INCLUDED
 
-
 #define     MANKEY_NONE                    0x00000000
 #define     MANKEY_RIGHT                   0x00000001
 #define     MANKEY_LEFT                    0x00000002

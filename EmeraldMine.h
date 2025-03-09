@@ -1,5 +1,5 @@
-#ifndef TESTSURFACE_H_INCLUDED
-#define TESTSURFACE_H_INCLUDED
+#ifndef EMERALD_MINE_H_INCLUDED
+#define EMERALD_MINE_H_INCLUDED
 
 #include <SDL2/SDL.h>
 #include <stdbool.h>
@@ -787,11 +787,20 @@ typedef struct {
     uint16_t        *pPipeLevel;
     uint32_t        *pStatusAnimation;
     uint32_t        *pLastStatusAnimation;                      // Wird für Explosionen benötigt, damit entsprechende Felder auf Space gesetzt werden können
-    POSTANIMATION   *pPostAnimation;
-    uint32_t        uRollUnderground[65536];                    // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
-    uint16_t        *pInvalidElement;
+    POSTANIMATION   *pPostAnimation;                            // wird bisher nur für "Splash" des Säurebeckens verwendet
+    uint16_t        *pInvalidElement;                           // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
     uint16_t        *pSlimeElement;                             // Element, welches der Schleim gefressen hat
     uint8_t         *pLastYamSlimeDirection;
+    char            *pMessage[EMERALD_MAX_MESSAGES];            // 8 Nachrichtentexte
+    uint32_t        *puTeleporterRedCoordinates;                // lineare Koordinaten, rote Teleporter
+    uint32_t        *puTeleporterYellowCoordinates;             // lineare Koordinaten, gelbe Teleporter
+    uint32_t        *puTeleporterGreenCoordinates;              // lineare Koordinaten, grüne Teleporter
+    uint32_t        *puTeleporterBlueCoordinates;               // lineare Koordinaten, blaue Teleporter
+    uint32_t        uTeleporterRedCounter;                      // Anzahl roter Teleporter
+    uint32_t        uTeleporterYellowCounter;                   // Anzahl gelber Teleporter
+    uint32_t        uTeleporterGreenCounter;                    // Anzahl grüner Teleporter
+    uint32_t        uTeleporterBlueCounter;                     // Anzahl blauer Teleporter
+    uint32_t        uRollUnderground[65536];                    // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
     int             nCentralExplosionCoordinates[8];            // Koordinaten um Zentrum einer 3x3-Explosion
     int             nCentralMegaExplosionCoordinates[20];       // Koordinaten um Zentrum einer Mega-Explosion
     int             nCheckReplicatorForYamExplosionTop[5];      // Für Yam-Explosion mit Replikator (obere Hälfte)
@@ -847,7 +856,6 @@ typedef struct {
     char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "DER BUNKER"
     char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "MIKIMAN"
     char            szMd5String[EMERALD_MD5_STRING_LEN + 1];    // MD5-Prüfsumme als String für komprimierte Leveldaten, d.h. ohne Header
-    char            *pMessage[EMERALD_MAX_MESSAGES];            // 8 Nachrichtentexte
     uint16_t        uTreasureChestElement[EMERALD_MAX_TREASURECHESTS];
     bool            bTreasureChestWarn[EMERALD_MAX_TREASURECHESTS]; // Warnt den Spieler davor, dass in der Truhe etwas Gefährliches sein könnte
     uint32_t        uScoreEmerald;
@@ -915,15 +923,8 @@ typedef struct {
     uint32_t        uPlayTimeStart;                             // Zeitpunkt, wann Level gestartet wurde
     uint32_t        uPlayTimeEnd;                               // Zeitpunkt, wann Level beendet wurde
     YAMEXPLOSION    YamExplosions[EMERALD_MAX_YAM_EXPLOSIONS];
-    uint32_t        uTeleporterRedCounter;                      // Anzahl roter Teleporter
-    uint32_t        *puTeleporterRedCoordinates;                // lineare Koordinaten, rote Teleporter
-    uint32_t        uTeleporterYellowCounter;                   // Anzahl gelber Teleporter
-    uint32_t        *puTeleporterYellowCoordinates;             // lineare Koordinaten, gelbe Teleporter
-    uint32_t        uTeleporterGreenCounter;                    // Anzahl grüner Teleporter
-    uint32_t        *puTeleporterGreenCoordinates;              // lineare Koordinaten, grüne Teleporter
-    uint32_t        uTeleporterBlueCounter;                     // Anzahl blauer Teleporter
-    uint32_t        *puTeleporterBlueCoordinates;               // lineare Koordinaten, blaue Teleporter
 } PLAYFIELD;
+
 
 void SetElementToNextPosition(uint32_t I,uint32_t uStatusAnimation, uint32_t uNextStatusAnimation, uint16_t uInvalidElement);
 uint32_t ControlGame(uint32_t uDirection);
@@ -942,4 +943,4 @@ bool IsElementAlive(uint16_t uElement);
 bool IsSteel(uint16_t uElement);
 int CheckGameDirectorys(void);
 void SetGameSpeed(int nGameSpeed);
-#endif // TESTSURFACE_H_INCLUDED
+#endif // EMERALD_MINE_H_INCLUDED

@@ -87,7 +87,7 @@ typedef struct {
 } LEVELGROUP;
 
 
-void PrintPlayfieldValues();
+void PrintPlayfieldValues(void);
 ezxml_t GetLevelTag(ezxml_t xml,uint32_t uLevelNumber);
 int GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY);
 int GetTitleAuthorVersionHashFromXml(ezxml_t xml);
