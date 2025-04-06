@@ -187,8 +187,9 @@ Seiteneffekte: Playfield.x, ManKey.x, Config.x
 ------------------------------------------------------------------------------*/
 uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     uint32_t uRetDirection;
-    uint32_t uDangerousPos;
-    uint16_t uDangerousElement;
+    uint32_t uDangerousPosition[4];
+    uint16_t uDangerousElement[4];
+    uint32_t K;
 
     uRetDirection = EMERALD_ANIM_STAND;
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_MAN_GOES_ENDDOOR) {
@@ -197,7 +198,7 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
     if ((Playfield.bManDead) || (Playfield.bWellDone))  {
         return uRetDirection;
     }
-    if ((!Playfield.bManProtected) && (IsDangerousEnemyAround(I,&uDangerousPos,&uDangerousElement))) {
+    if ((!Playfield.bManProtected) && (IsDangerousEnemyAround(I,uDangerousPosition,uDangerousElement))) {
         if (Playfield.uShieldCoinTimeLeft == 0) {
             if (!Playfield.bManDead) {  // Doppeltes Sterben/Schreien verhindern
                 Playfield.pLevel[I] = EMERALD_CENTRAL_EXPLOSION;
@@ -206,10 +207,14 @@ uint32_t ControlMan(uint32_t I, uint32_t uDirection) {
             }
             return uRetDirection;
         } else {    // Man hat noch Schutzschild aktiv
-            if (uDangerousElement == EMERALD_MINE_LEFT) {   // Mine oder Standmine
-                Playfield.pLevel[uDangerousPos] = EMERALD_CENTRAL_EXPLOSION;
-            } else {
-                Playfield.pLevel[uDangerousPos] = EMERALD_CENTRAL_EXPLOSION_BEETLE;
+            for (K = 0; K < 4; K++) {
+                if (uDangerousPosition[K] != 0xFFFFFFFF) {
+                    if (uDangerousElement[K] == EMERALD_MINE_LEFT) {   // Mine oder Standmine
+                        Playfield.pLevel[uDangerousPosition[K]] = EMERALD_CENTRAL_EXPLOSION;
+                    } else {
+                        Playfield.pLevel[uDangerousPosition[K]] = EMERALD_CENTRAL_EXPLOSION_BEETLE;
+                    }
+                }
             }
         }
     }

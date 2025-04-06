@@ -25,6 +25,8 @@
 void TestFunction(uint32_t I);
 void PrintSDLVersion(void);
 
+int test_main();
+
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
 extern AUDIOPLAYER Audioplayer;

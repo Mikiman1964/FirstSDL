@@ -1312,119 +1312,97 @@ void CheckYamContents(uint32_t I,uint16_t *YamElements) {
 /*----------------------------------------------------------------------------
 Name:           IsDangerousEnemyAround
 ------------------------------------------------------------------------------
-Beschreibung: Prüft, ob sich eine "gefährlicher" Feind (Standmine, Käfer oder Mine)
+Beschreibung: Prüft, ob sich ein "gefährlicher" Feind (Standmine, Käfer oder Mine)
               um Position I befindet. Die Funktion wird nur in ControlMan() aufgerufen.
 Parameter
       Eingang: I, uint32_t, Index im Level, Position, an der geprüft werden soll
-      Ausgang: puDangerPos, uint32_t *, Zeiger auf Position des gefärlichen Elements, darf NULL sein
-               puElement, uint16_t *, Zeiger auf Gefährlichkeitstyp, darf NULL sein
+      Ausgang: puDangerPos, uint32_t *, Zeiger auf Positionen der gefährlichen Elemente
+                            Speicher für mindestens 4 uint32_t
+                            Falls Position = 0xFFFFFFFF, dann ungültig
+               puElement, uint16_t *, Zeiger auf Gefährlichkeits-Element,
+                            Speicher für mindestens 4 uint16_t
                         EMERALD_BEETLE_LEFT
                         EMERALD_MINE_LEFT (auch für EMERALD_STANDMINE)
-Rückgabewert:  bool, true = "gefährlicher" Feind  hat Kontakt mit Position I
+Rückgabewert:  bool, true = "gefährlicher" Feind hat Kontakt mit Position I
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 bool IsDangerousEnemyAround(uint32_t I, uint32_t *puDangerPos,uint16_t *puElement) {
+    uint32_t K;
+
+    if ((puDangerPos == NULL) || (puElement == NULL)) {
+        return false;
+    }
+
+    for (K = 0; K < 4; K++) {
+        puDangerPos[K] = 0xFFFFFFFF;
+        puElement[K] = EMERALD_INVALID;
+    }
+    K = 0;
     if ( (Playfield.pLevel[I - 1] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I - 1] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I - 1] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I - 1] == EMERALD_MINE_LEFT) ||
          (Playfield.pLevel[I - 1] == EMERALD_MINE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I - 1;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_MINE_LEFT;
-            }
-            return true;
+            puDangerPos[K] = I - 1;
+            puElement[K] = EMERALD_MINE_LEFT;
+            K++;
+    } else if ( (Playfield.pLevel[I - 1] == EMERALD_BEETLE_DOWN) ||
+                (Playfield.pLevel[I - 1] == EMERALD_BEETLE_UP) ||
+                (Playfield.pLevel[I - 1] == EMERALD_BEETLE_LEFT) ||
+                (Playfield.pLevel[I - 1] == EMERALD_BEETLE_RIGHT) ) {
+            puDangerPos[K] = I - 1;
+            puElement[K] = EMERALD_BEETLE_LEFT;
+            K++;
     }
     if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) ||
          (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I - Playfield.uLevel_X_Dimension;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_MINE_LEFT;
-            }
-            return true;
+            puDangerPos[K] = I - Playfield.uLevel_X_Dimension;
+            puElement[K] = EMERALD_MINE_LEFT;
+            K++;
+    } else if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) ||
+                (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||
+                (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) ||
+                (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) ) {
+            puDangerPos[K] = I - Playfield.uLevel_X_Dimension;
+            puElement[K] = EMERALD_BEETLE_LEFT;
+            K++;
     }
     if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_LEFT) ||
          (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_MINE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I + Playfield.uLevel_X_Dimension;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_MINE_LEFT;
-            }
-            return true;
+            puDangerPos[K] = I + Playfield.uLevel_X_Dimension;
+            puElement[K] = EMERALD_MINE_LEFT;
+            K++;
+    } else if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) ||
+                (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||
+                (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) ||
+                (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) ) {
+            puDangerPos[K] = I + Playfield.uLevel_X_Dimension;
+            puElement[K] = EMERALD_BEETLE_LEFT;
+            K++;
     }
     if ( (Playfield.pLevel[I + 1] == EMERALD_MINE_CONTACT) ||
          (Playfield.pLevel[I + 1] == EMERALD_MINE_DOWN) ||
          (Playfield.pLevel[I + 1] == EMERALD_MINE_UP) ||
          (Playfield.pLevel[I + 1] == EMERALD_MINE_LEFT) ||
          (Playfield.pLevel[I + 1] == EMERALD_MINE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I + 1;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_MINE_LEFT;
-            }
-            return true;
-    }
-    if ( (Playfield.pLevel[I - 1] == EMERALD_BEETLE_DOWN) ||
-         (Playfield.pLevel[I - 1] == EMERALD_BEETLE_UP) ||
-         (Playfield.pLevel[I - 1] == EMERALD_BEETLE_LEFT) ||
-         (Playfield.pLevel[I - 1] == EMERALD_BEETLE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I - 1;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_BEETLE_LEFT;
-            }
-            return true;
-    }
-    if ( (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) ||
-         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||
-         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) ||
-         (Playfield.pLevel[I - Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I - Playfield.uLevel_X_Dimension;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_BEETLE_LEFT;
-            }
-            return true;
-    }
-    if ( (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_DOWN) ||
-         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_UP) ||
-         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_LEFT) ||
-         (Playfield.pLevel[I + Playfield.uLevel_X_Dimension] == EMERALD_BEETLE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I + Playfield.uLevel_X_Dimension;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_BEETLE_LEFT;
-            }
-            return true;
-    }
-    if ( (Playfield.pLevel[I + 1] == EMERALD_BEETLE_DOWN) ||
+            puDangerPos[K] = I + 1;
+            puElement[K] = EMERALD_MINE_LEFT;
+            K++;
+    } else if ( (Playfield.pLevel[I + 1] == EMERALD_BEETLE_DOWN) ||
          (Playfield.pLevel[I + 1] == EMERALD_BEETLE_UP) ||
          (Playfield.pLevel[I + 1] == EMERALD_BEETLE_LEFT) ||
          (Playfield.pLevel[I + 1] == EMERALD_BEETLE_RIGHT) ) {
-            if (puDangerPos != NULL) {
-                *puDangerPos = I + 1;
-            }
-            if (puElement != NULL) {
-                *puElement = EMERALD_BEETLE_LEFT;
-            }
-            return true;
+            puDangerPos[K] = I + 1;
+            puElement[K] = EMERALD_BEETLE_LEFT;
+            K++;
     }
-    return false;
+    return (K > 0);
 }
 
 

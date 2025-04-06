@@ -5,11 +5,14 @@ TODO
     * Undo für Editor
     * Hint an Mauspfeil über gezeichnetes Element
 * Quick-Load/Save
+* Replikatoren als "Ganzes" setzbar
 
 Für V 1.12
 * Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
 * Bug fix: Mausrad funktionierte nicht im richtigen Bereich der Level-Auswahlliste beim Levellistenscrolling
 * Bug fix: Ein weißer Schlüssel wurde abgezogen, wenn gegen eine versperrte weiße Tür gedrückt wurde.
+* Bug fix: Wenn Man zeitgleich von mehr als einem Feind (Käfer, Mine, Standmine) umgeben ist und ein Schutzschild hat, wird nur eine Explosion (über Man) ausgeführt.
+* Vom Vormenü kann mit dem Feuerknopf direkt ins Spiel gesprungen werden.
 */
 
 #include "gfx/textures.h"
@@ -82,7 +85,7 @@ Parameter
       Ausgang: -
 Rückgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
 Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
-               Video.x, Fps.x
+               Video.x, Fps.x, ManKey.x
 ------------------------------------------------------------------------------*/
 int Menu(SDL_Renderer *pRenderer) {
     uint32_t uModVolume;
@@ -147,7 +150,7 @@ int Menu(SDL_Renderer *pRenderer) {
     while (((nErrorCode == 0) && (nChoose == -1)) || (nColorDimm > 0) ) {
         MeasureFps();
         MoveSmileys(pRenderer);
-        UpdateInputStates();
+        UpdateManKey();
         if ((nChoose == -1) && (nColorDimm < 100)) {
             nColorDimm++;
             SetAllTextureColors(nColorDimm);
@@ -191,7 +194,7 @@ int Menu(SDL_Renderer *pRenderer) {
             PrintLittleFont(pRenderer,33,745,3,Fps.szFrameaPerSecond,K_RELATIVE,1);
         }
         nErrorCode = ShowButtons(pRenderer,K_RELATIVE);
-        if (IsButtonPressed(BUTTONLABEL_CALL_GAME)) {
+        if (IsButtonPressed(BUTTONLABEL_CALL_GAME) || (ManKey.bFire)) {
             nChoose = 1;
         } else if (IsButtonPressed(BUTTONLABEL_CALL_DEMO)) {
             nChoose = 2;
