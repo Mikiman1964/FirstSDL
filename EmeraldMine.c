@@ -13,6 +13,8 @@ Für V 1.12
 * Bug fix: Ein weißer Schlüssel wurde abgezogen, wenn gegen eine versperrte weiße Tür gedrückt wurde.
 * Bug fix: Wenn Man zeitgleich von mehr als einem Feind (Käfer, Mine, Standmine) umgeben ist und ein Schutzschild hat, wird nur eine Explosion (über Man) ausgeführt.
 * Vom Vormenü kann mit dem Feuerknopf direkt ins Spiel gesprungen werden.
+* Sandminen sind besser erkennbar.
+* Edelsteine rollen jetzt von Stahl Playerhead 2.
 */
 
 #include "gfx/textures.h"
@@ -1261,6 +1263,7 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_STEEL_ACID] = 0xEB;                              // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_HEART] = 0xEB;                             // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_PLAYERHEAD] = 0xEB;                        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_PLAYERHEAD_2] = 0xEB;                        // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_NO_ENTRY] = 0xEB;                          // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_GIVE_WAY] = 0xEB;                          // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_YING] = 0xEB;                              // Nur Steine und Bomben rollen hier nicht herunter
