@@ -1,6 +1,7 @@
 #ifndef MUSICPLAY_H_INCLUDED
 #define MUSICPLAY_H_INCLUDED
 
+#include <SDL2/SDL.h>
 #include <stdint.h>
 #include "xm.h"
 
@@ -10,6 +11,7 @@
 #define MODULE_TYPE_UNKNOWN         0                   // unbekannter Modultyp
 #define MODULE_TYPE_MOD             1                   // MOD
 #define MODULE_TYPE_XM              2                   // XM (Extended Module)
+#define MODULE_TYPE_SID             3                   // SID (C64)
 
 typedef struct {
     int nAvailableSongs;                    // Anzahl der verfügbaren Songs (mod/xm)
@@ -25,14 +27,15 @@ typedef struct {
     uint8_t *pTheMusic;                     // Zeiger auf Kopie eines Songs, da durch das Abspielen die Daten verändert werden
     xm_context_t *pCtxXm;                   // Context für XM-Player
     int nModulType;                         // Modul-Typ (MOD, XM) oder unbekannt
+    uint8_t uMusicVolumePercent;            // Musiklautstärke in Prozent
 }AUDIOPLAYER;
 
 void InitMusicPointer(void);
 int InitAudioplayerStruct(void);
-int SetModMusic(int nMusicIndex);
+int SetMusic(int nMusicIndex);
 int PlayMusic(bool bIgnoreConfig);
 void CheckMusicSwitch(const Uint8 *pKeyboardArray);
-void SetModVolume(uint8_t uVolumePercent);
+void SetMusicVolume(uint8_t uVolumePercent);
 
 
 

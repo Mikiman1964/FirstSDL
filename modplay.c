@@ -7,6 +7,7 @@
 #include "modplay.h"
 #include "sfx/music.h"
 #include "sfx/music_compressed.h"
+#include "tinysid.h"
 
 // ModPlayerStatus_t mp;
 AUDIOPLAYER Audioplayer;
@@ -17,7 +18,7 @@ extern CONFIG Config;
 Name:           InitAudioplayerStruct
 ------------------------------------------------------------------------------
 Beschreibung: Initialisiert die Struktur Audioplayer.x und öffnet das
-              Audiodevice für MODPlay und XM-Player.
+              Audiodevice für MODPlay und XM-Player und SID-Player.
               Darf nur einmal zum Programmstart aufgerufen werden.
               Die Speicher pMusicAll und pTheMusic müssen zum Programmende
               freigegeben werden.
@@ -66,6 +67,7 @@ int InitAudioplayerStruct(void) {
     Audioplayer.sdl_audio.samples = AUDIO_BUFFERSIZE;
     Audioplayer.sdl_audio.callback = NULL;
     Audioplayer.audio_device = SDL_OpenAudioDevice(NULL, 0, &Audioplayer.sdl_audio, NULL, 0);
+    Audioplayer.uMusicVolumePercent = 100;
     if (Audioplayer.audio_device > 0) {
         SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
         nErrorcode = 0;
@@ -77,17 +79,17 @@ int InitAudioplayerStruct(void) {
 
 
 /*----------------------------------------------------------------------------
-Name:           SetModMusic
+Name:           SetMusic
 ------------------------------------------------------------------------------
-Beschreibung: Stellt ein MOD-File für MODPlay zum Abspielen bereit.
+Beschreibung: Stellt ein MOD-/XM-/SID-File zum Abspielen bereit.
 
 Parameter
-      Eingang: nMusicIndex, int, Index auf MOD-File, siehe oben "Externe Pointer und Indexe"
+      Eingang: nMusicIndex, int, Index auf Song, siehe oben "Externe Pointer und Indexe"
       Ausgang: -
 Rückgabewert:  int, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x, music[].x
 ------------------------------------------------------------------------------*/
-int SetModMusic(int nMusicIndex) {
+int SetMusic(int nMusicIndex) {
     int nErrorCode;
 
     Audioplayer.nModulType = MODULE_TYPE_UNKNOWN;
@@ -117,6 +119,13 @@ int SetModMusic(int nMusicIndex) {
                     SDL_Log("%s: invalid xm file, data size: %d",__FUNCTION__,Audioplayer.nMusicSize);
                     Audioplayer.pCtxXm = NULL;
                 }
+
+            } else if (memcmp(Audioplayer.pTheMusic,"PSID",4) == 0) {
+                c64Init();
+                InitSidSong(Audioplayer.pTheMusic,Audioplayer.nMusicSize);
+                ShowSidSong();
+                nErrorCode = 0;
+                Audioplayer.nModulType = MODULE_TYPE_SID;
             } else {
                 if (InitMOD(Audioplayer.pTheMusic, Audioplayer.sdl_audio.freq) != NULL) {
                     nErrorCode = 0;
@@ -155,7 +164,9 @@ Seiteneffekte: Audioplayer.x, Config.x
 int PlayMusic(bool bIgnoreConfig) {
     int nErrorCode = 0;
     uint32_t k;
+    uint32_t uSamples;
 
+    uSamples = Audioplayer.sdl_audio.samples;   // für mod und xm
     if ((Config.bGameMusic) || (bIgnoreConfig)) {
         if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) < Audioplayer.sdl_audio.samples * sizeof(short) * 2) {
             if (Audioplayer.nModulType == MODULE_TYPE_MOD) {
@@ -165,12 +176,14 @@ int PlayMusic(bool bIgnoreConfig) {
                 for (k = 0; k < AUDIO_BUFFERSIZE; ++k) {
                     Audioplayer.audiobuffer[k] = Audioplayer.xm_audiobuffer[k] * 32767; // floats in short umrechnen
                 }
-             } else {
+            } else if (Audioplayer.nModulType == MODULE_TYPE_SID) {
+                uSamples = RenderSid(Audioplayer.audiobuffer,4);    // 4 Blöcke -> 882 * 4 * 2 = 7056 Samples
+            } else {
                 SDL_Log("%s: unknown module type: %d",__FUNCTION__,Audioplayer.nModulType);
                 nErrorCode = -1; // unbekanntes Modul
             }
             if (nErrorCode == 0) {
-                nErrorCode = SDL_QueueAudio(Audioplayer.audio_device,Audioplayer.audiobuffer, Audioplayer.sdl_audio.samples * sizeof(short)); // 2 channels, 2 bytes/sample
+                nErrorCode = SDL_QueueAudio(Audioplayer.audio_device,Audioplayer.audiobuffer,uSamples * sizeof(short)); // 2 channels, 2 bytes/sample
             }
             if (nErrorCode != 0) {
                 SDL_Log("%s: SDL_QueueAudio() failed: %s",__FUNCTION__,SDL_GetError());
@@ -746,11 +759,9 @@ ModPlayerStatus_t *ProcessMOD(void) {
 						sample2 * pch->currentsubptr) * pch->volume / 65536;
 
                     // MIK: externe Lautstärkeregelung
-                    if (mp.uVolumePercent < 100) {
-                        sample = (short)(((int)sample * mp.uVolumePercent) / 100);
+                    if (Audioplayer.uMusicVolumePercent < 100) {
+                        sample = (short)(((int)sample * Audioplayer.uMusicVolumePercent) / 100);
                     }
-
-
 
 					// Distribute the rendered sample across both output channels
 
@@ -875,14 +886,23 @@ ModPlayerStatus_t *InitMOD(const uint8_t *mod, uint32_t samplerate) {
 	for(int i = 0; i < mp.channels; i++) {
 		mp.ch[i].samplegen.age = INT32_MAX;
 	}
-    mp.uVolumePercent = 100; // MIK
-
+    SetMusicVolume(100); // MIK
 	return &mp;
 }
 
-// MIK
-void SetModVolume(uint8_t uVolumePercent) {
+
+/*----------------------------------------------------------------------------
+Name:           SetMusicVolume
+------------------------------------------------------------------------------
+Beschreibung: Setzt die Lautstärke der abzuspielenden Musik in Prozent.
+Parameter
+      Eingang: uVolumePercent, uint8_t, Lautstärke in Prozent (0 = leise, 100 maximale Lautstärke)
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Audioplayer.x
+------------------------------------------------------------------------------*/
+void SetMusicVolume(uint8_t uVolumePercent) {
     if (uVolumePercent <= 100) {
-        mp.uVolumePercent = uVolumePercent;
+        Audioplayer.uMusicVolumePercent = uVolumePercent;
     }
 }

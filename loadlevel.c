@@ -1024,6 +1024,41 @@ int GetLetterMessagesFromXml(ezxml_t xml) {
 
 
 /*----------------------------------------------------------------------------
+Name:           GetQuicksaveFromXml
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt für ein Level, ob Quicksave / Quickload möglich ist
+              und trägt diese Information in die Struktur Playfield.x (bQuicksaveAllowed) ein.
+              Kann der Wert nicht ermittelt werden, so bleibt bQuicksaveAllowed
+              auf false.
+Parameter
+      Eingang: xml, ezxml_t, gültiges XML-Handle
+      Ausgang: -
+               -
+Rückgabewert:  int , 0 = OK, sonst Fehler
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+int GetQuicksaveFromXml(ezxml_t xml) {
+    int nErrorCode;
+    char *pAttr;
+    int nNum;
+    ezxml_t node;
+
+    nErrorCode = -1;
+    Playfield.bQuicksaveAllowed = false;    // Default setzen
+    if (xml != NULL) {
+        node = ezxml_child(xml,"quicksave_allowed");
+        if (node != NULL) {
+            pAttr = node->txt;
+            nNum = strtol(pAttr,NULL,10);
+            Playfield.bQuicksaveAllowed = (nNum == 1);
+            nErrorCode = 0;
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           GetTreasureChestElementsFromXml
 ------------------------------------------------------------------------------
 Beschreibung: Ermittelt alle Elemente für das Element 'Schatztruhe', EMERALD_TREASURECHEST_1 bis EMERALD_TREASURECHEST_8
@@ -1333,6 +1368,9 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
                                                                                 if (Playfield.bInitOK) {
                                                                                     GetTreasureChestElementsFromXml(level);
                                                                                     SetTreasureChests();
+                                                                                    // Quicksave ist ebenfalls später dazu gekommen. Kann der Wert nicht ausgelesen
+                                                                                    // werden, ist Quicksave nicht möglich
+                                                                                    GetQuicksaveFromXml(level);
                                                                                 }
                                                                             }
                                                                         }

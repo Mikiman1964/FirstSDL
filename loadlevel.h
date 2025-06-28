@@ -98,6 +98,7 @@ int GetReplicatorLighbarrierSettingsFromXml(ezxml_t xml);
 int GetConveyorBeltSettingsFromXml(ezxml_t xml);
 int GetLetterMessagesFromXml(ezxml_t xml);
 int GetTreasureChestElementsFromXml(ezxml_t xml);
+int GetQuicksaveFromXml(ezxml_t xml);
 int GetYamExplosionsFromXml(ezxml_t xml);
 int GetLeveldataFromXml(ezxml_t xml);
 int GetMemoryForPlayfield(void);

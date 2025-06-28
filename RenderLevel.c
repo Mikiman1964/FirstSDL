@@ -189,6 +189,11 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
 
     uTicks = SDL_GetTicks();
 
+
+    if (Playfield.bLightAlwaysOn) {
+        Playfield.bLightOn = true;//raus
+    }
+
     if (uTicks - g_TreasureChestTicks > TREASURECHEST_TIMER) {
         g_TreasureChestTicks = uTicks;
         g_TreasureChestOpenTicks = uTicks;

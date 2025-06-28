@@ -359,7 +359,7 @@ int ConfirmMessage(SDL_Renderer *pRenderer) {
     nErrorCode = -1;
     uFireState = 0;
     uSpaceState = 0;
-    if (CreateMessageWindow(pRenderer,-1,-1,0,pszMessage) == 0) {
+    if (CreateMessageWindow(pRenderer,-1,-1,0,pszMessage,NULL,NULL) == 0) {
         nErrorCode = 0;
         SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         do {

@@ -11,10 +11,14 @@ Für V 1.12
 * Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
 * Bug fix: Mausrad funktionierte nicht im richtigen Bereich der Level-Auswahlliste beim Levellistenscrolling
 * Bug fix: Ein weißer Schlüssel wurde abgezogen, wenn gegen eine versperrte weiße Tür gedrückt wurde.
-* Bug fix: Wenn Man zeitgleich von mehr als einem Feind (Käfer, Mine, Standmine) umgeben ist und ein Schutzschild hat, wird nur eine Explosion (über Man) ausgeführt.
+* Bug fix: Wenn Man zeitgleich von mehr als einem Feind (Käfer, Mine, Standmine) umgeben ist und ein Schutzschild hat, wurde nur eine Explosion (über Man) ausgeführt.
 * Vom Vormenü kann mit dem Feuerknopf direkt ins Spiel gesprungen werden.
 * Sandminen sind besser erkennbar.
 * Edelsteine rollen jetzt von Stahl Playerhead 2.
+* Musikplayer unterstützt SID (C64).
+* Leveleditor: Messageditor zeigt Messagenummer an, Buttons "Save message" und "cancel" an unteren Bildschirmrand, da Buttons sont Messagebox überdecken können
+* Leveleditor: Quicksave-Allowed-Checkbox
+* Steuerung für "double game speed" optimiert
 */
 
 #include "gfx/textures.h"
@@ -90,7 +94,7 @@ Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
                Video.x, Fps.x, ManKey.x
 ------------------------------------------------------------------------------*/
 int Menu(SDL_Renderer *pRenderer) {
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     int nErrorCode;
     int nChoose;
     int nColorDimm;
@@ -141,10 +145,10 @@ int Menu(SDL_Renderer *pRenderer) {
     nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",320,228,true,false);
     nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",320,292,true,false);
     nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",320,580,true,false);
-    nErrorCode = nErrorCode + SetModMusic(5);
+    nErrorCode = nErrorCode + SetMusic(5);
     SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
-    uModVolume = 0;
-    SetModVolume(uModVolume);
+    uMusicVolume = 0;
+    SetMusicVolume(uMusicVolume);
     nColorDimm = 0;
     SetAllTextureColors(nColorDimm);
 
@@ -156,8 +160,8 @@ int Menu(SDL_Renderer *pRenderer) {
         if ((nChoose == -1) && (nColorDimm < 100)) {
             nColorDimm++;
             SetAllTextureColors(nColorDimm);
-            uModVolume++;
-            SetModVolume(uModVolume);
+            uMusicVolume++;
+            SetMusicVolume(uMusicVolume);
         }
         PlayMusic(true);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
@@ -206,8 +210,8 @@ int Menu(SDL_Renderer *pRenderer) {
         if ((nChoose != -1) && (nColorDimm > 0)) {
             nColorDimm--;
             SetAllTextureColors(nColorDimm);
-            uModVolume--;
-            SetModVolume(uModVolume);
+            uMusicVolume--;
+            SetMusicVolume(uMusicVolume);
         }
         RenderPresentAndClear(pRenderer);
         uFrameCounter++;
@@ -218,6 +222,7 @@ int Menu(SDL_Renderer *pRenderer) {
     FreeButton(BUTTONLABEL_CALL_DEMO);
     FreeButton(BUTTONLABEL_CALL_QUIT);
     SetAllTextureColors(100);
+    SetMusicVolume(100);
     return nChoose;
 }
 
@@ -303,6 +308,13 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             WaitNoSpecialKey(SDL_SCANCODE_P);   // warten, dass "P" wieder losgelassen wird
         }
 
+
+        // Diesen Abschnitt wieder raus
+        if (InputStates.pKeyboardArray[SDL_SCANCODE_L]) {
+            Playfield.bLightAlwaysOn = true;
+            WaitNoSpecialKey(SDL_SCANCODE_L);   // warten, dass "P" wieder losgelassen wird
+        }
+
         if ((nCheckLevelCount == 0) && (!bPause)) {
             if (InputStates.bFkey[1]) {
                 SetGameSpeed(GAMESPEED_NORMAL);
@@ -318,7 +330,7 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 //SDL_Log("F10 pressed ! QuickLoadGame");
                 InputStates.bFkey[10] = false;
             }
-            if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= 15)) {
+            if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= (15 * (g_nGameSpeed + 1)))) {
                 // SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
                 uKey = ManKey.uLastActiveDirection;
             } else {
@@ -353,7 +365,11 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);  // nCheckLevelCount 0 ... 15
         if (uShowQuickSaveMessageTicks != 0xFFFFFFFF) {
             if (SDL_GetTicks() - uShowQuickSaveMessageTicks < 5000) {
-                CreateMessageWindow(pRenderer, 10,10, 0, "GAME SAVED");
+                if (Playfield.bQuicksaveAllowed) {
+                    CreateMessageWindow(pRenderer, 10,10, 0, "GAME SAVED",NULL,NULL);
+                } else {
+                    CreateMessageWindow(pRenderer, 10,10, 0, "QUICKSAVE NOT ALLOWED",NULL,NULL);
+                }
             } else {
                 uShowQuickSaveMessageTicks = 0xFFFFFFFF;
             }

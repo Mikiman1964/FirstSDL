@@ -809,6 +809,7 @@ typedef struct {
     int             nCheckAcidPoolForYamExplosionButtom[6];     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
     bool            bUnlimtedTime;                              // keine Zeitbegrenzung
     bool            bInitOK;
+    bool            bQuicksaveAllowed;                          // Quicksave im aktuellen Level erlaubt
     bool            bReadyToGo;                                 // Man hat genug Diamanten eingesammelt
     bool            bHasRedKey;
     bool            bHasGreenKey;
@@ -819,6 +820,9 @@ typedef struct {
     bool            bMagicWallRunning;
     bool            bMagicWallWasOn;                            // Magic Wall war mal an
     bool            bLightOn;                                   // Licht ist an -> unsichtbare Mauern/Stahl sind sichtbar
+
+    bool bLightAlwaysOn; // wieder rausnehmen
+
     bool            bPushStone;                                 // wenn true, kann Man sofort (Stone, Nut, Bomb) schieben
     bool            bManDead;
     bool            bWellDone;                                  // Level wurde geschafft

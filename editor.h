@@ -120,6 +120,7 @@ typedef struct {
     uint32_t        uTmpLevel_X_Dimension;
     uint32_t        uTmpLevel_Y_Dimension;
     uint32_t        uLevel_XY_Dimension;                        // X * Y
+    bool            bQuicksaveAllowed;                          // Quicksave im aktuellen Level erlaubt
     bool            bLightBarrierRedOn;
     bool            bLightBarrierGreenOn;
     bool            bLightBarrierBlueOn;

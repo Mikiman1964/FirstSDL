@@ -970,11 +970,12 @@ Parameter
                nYpos, int, Start-Y-Position der oberen linke Ecke des Textfeldes, -1 = auf Fenster vertikal zentrieren
                uFont, uint32_t, Zeichensatz
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
-      Ausgang: -
+      Ausgang: pnXpos, int *, berechnete X-Position des Fensters, wenn Zentrierung aktiv, darf NULL sein
+               pnXpos, int *, berechnete XYPosition des Fensters, wenn Zentrierung aktiv, darf NULL sein
       Rückgabewert: 0 = OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
-int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText) {
+int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText, int *pnXpos, int *pnYpos) {
     int nErrorCode;
     uint32_t X,Y;
     uint32_t uWinW;                     // benötigte Fensterbreite in Elementen
@@ -998,6 +999,12 @@ int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t 
         }
         nPrintXpos = nXpos;
         nPrintYpos = nYpos;
+        if (pnXpos != NULL) {
+            *pnXpos = nPrintXpos;
+        }
+        if (pnYpos != NULL) {
+            *pnYpos = nPrintYpos;
+        }
         // Oberste Zeile des Fensters zeichnen
         for (X = 0; X < uWinW && (nErrorCode == 0); X++) {
             if (X == 0) {

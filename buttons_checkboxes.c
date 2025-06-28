@@ -116,7 +116,7 @@ Beschreibung: Zeigt alle registrierten Checkboxen an. Funktion muss in
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                nDimm, int, Helligkeit der Checkboxen
-               bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keinte Umrechnung
+               bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[], InputStates.x, Video.x

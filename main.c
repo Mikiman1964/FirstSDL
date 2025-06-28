@@ -84,6 +84,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     bool bCopperScoll = false;
     uint8_t uAsteroidsGfx = 0;
     uint8_t uBallonsGfx = 0;
+    uint8_t uMusicVolume = 100;
 
     PrintSDLVersion();
     Video.uXoffs = 0;
@@ -143,6 +144,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         RestoreDesktop();
         return -1;
     }
+
     if (InitGameSound() != 0) {
         RestoreDesktop();
         return -1;
@@ -163,7 +165,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop() und räumt Speicher auf;
     }
     // Ab hier SDL2-Demo
-    if (SetModMusic(3) != 0) {                  // Mit MOD 3 class_cracktro#15 starten
+    if (SetMusic(3) != 0) {                  // Mit MOD 3 class_cracktro#15 starten
         RestoreDesktop();
         return -1;
     }
@@ -228,6 +230,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
             }
             uLastKeyTime = SDL_GetTicks();
         }
+
         // Mittlere Ballon-Grafik  Asteroids/Ballons/Smileys toggeln
         if (InputStates.pKeyboardArray[SDL_SCANCODE_B]) {
             if (SDL_GetTicks() - uLastKeyTime > 200) {
@@ -318,12 +321,14 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
             if (nBallonSize > 1600) {
                 bRun = false;
             }
+            uMusicVolume = uMusicVolume - 1;
+            SetMusicVolume(uMusicVolume);
         }
         // MOD wechseln
         CheckMusicSwitch(InputStates.pKeyboardArray);
         if (Audioplayer.nNextMusicIndex != 0) {
             if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) == 0) {    // Etwas warten, bis Callback-Funktion nicht mehr aufgerufen wird
-                if (SetModMusic(Audioplayer.nNextMusicIndex) != 0) {
+                if (SetMusic(Audioplayer.nNextMusicIndex) != 0) {
                     return -1;
                 }
             }

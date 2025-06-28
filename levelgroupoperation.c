@@ -656,7 +656,7 @@ Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
     int nColorDimm;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     bool bExit = false;
     bool bPrepareExit = false;
     bool bChangeLevelgroupname = false;
@@ -674,7 +674,7 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
     strcpy(szTempName,SelectedLevelgroup.szLevelgroupname);
     uCursorPos = strlen(szTempName);
     nColorDimm = 0;
-    uModVolume = 0;
+    uMusicVolume = 0;
     SetMenuBorderAndClear();
     SetMenuText(MainMenu.pMenuScreen,"CHANGE LEVELGROUPNAME",10,4,EMERALD_FONT_BLUE);
     // Mauer-Eingabefeld
@@ -728,15 +728,15 @@ int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);
-            uModVolume = uModVolume + 4;
-            SetModVolume(uModVolume);
+            uMusicVolume = uMusicVolume + 4;
+            SetMusicVolume(uMusicVolume);
         } else if (bPrepareExit) {
             MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 4;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume -4;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume -4;
+                SetMusicVolume(uMusicVolume);
             } else {
                 bExit = true;
             }
@@ -795,7 +795,7 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
     int nErrorCode = 0;
     int nColorDimm;
     uint32_t I;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     uint32_t uCursorPos;
     uint32_t uKey;
     uint32_t uXmlLen;
@@ -818,7 +818,7 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
         memset(szPassword,0,sizeof(szPassword));
         uCursorPos = 0;
         nColorDimm = 0;
-        uModVolume = 0;
+        uMusicVolume = 0;
         SetMenuBorderAndClear();
         SetMenuText(MainMenu.pMenuScreen,"SET LEVELGROUP PASSWORD",8,4,EMERALD_FONT_BLUE);
         // Mauer-Eingabefeld
@@ -872,15 +872,15 @@ int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
             if ((!bPrepareExit) && (nColorDimm < 100)) {
                 nColorDimm = nColorDimm + 4;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume + 4;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume + 4;
+                SetMusicVolume(uMusicVolume);
             } else if (bPrepareExit) {
                 MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                 if (nColorDimm > 0) {
                     nColorDimm = nColorDimm - 4;
                     SetAllTextureColors(nColorDimm);
-                    uModVolume = uModVolume -4;
-                    SetModVolume(uModVolume);
+                    uMusicVolume = uMusicVolume -4;
+                    SetMusicVolume(uMusicVolume);
                 } else {
                     bExit = true;
                 }
@@ -963,7 +963,7 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
     int nColorDimm;
     uint32_t I;
     uint32_t uCursorPos;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     uint32_t uKey;
     uint8_t uLevelgroupPasswordHash[16];
     char szLevelgroupPasswordHash[32 + 1];
@@ -977,7 +977,7 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
         memset(szPassword,0,sizeof(szPassword));
         uCursorPos = 0;
         nColorDimm = 0;
-        uModVolume = 0;
+        uMusicVolume = 0;
         SetMenuBorderAndClear();
         SetMenuText(MainMenu.pMenuScreen,"LEVELGROUP IS PASSWORD PROTECTED",4,4,EMERALD_FONT_BLUE);
         // Mauer-Eingabefeld
@@ -1027,15 +1027,15 @@ int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
             if ((!bPrepareExit) && (nColorDimm < 100)) {
                 nColorDimm = nColorDimm + 4;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume + 4;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume + 4;
+                SetMusicVolume(uMusicVolume);
             } else if (bPrepareExit) {
                 MainMenu.pMenuScreen[7 * MainMenu.uXdim + uCursorPos + 7] = EMERALD_SPACE;  // alten Cursor löschen
                 if (nColorDimm > 0) {
                     nColorDimm = nColorDimm - 4;
                     SetAllTextureColors(nColorDimm);
-                    uModVolume = uModVolume -4;
-                    SetModVolume(uModVolume);
+                    uMusicVolume = uMusicVolume -4;
+                    SetMusicVolume(uMusicVolume);
                 } else {
                     bExit = true;
                 }
@@ -1082,7 +1082,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
     int nColorDimm;
     int nNewLevelCount = 0;
     uint32_t uBeamPosition;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     uint32_t I;
     bool bExit = false;
     bool bPrepareExit = false;
@@ -1110,7 +1110,7 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
         return -1;
     }
     nColorDimm = 0;
-    uModVolume = 0;
+    uMusicVolume = 0;
     SetMenuBorderAndClear();
     SetMenuText(MainMenu.pMenuScreen,"SELECT BITMAP TO IMPORT",-1,0,EMERALD_FONT_BLUE_STEEL);
     while ((nErrorCode == 0) && (!bExit)) {
@@ -1210,14 +1210,14 @@ int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);
-            uModVolume = uModVolume + 4;
-            SetModVolume(uModVolume);
+            uMusicVolume = uMusicVolume + 4;
+            SetMusicVolume(uMusicVolume);
         } else if (bPrepareExit) {
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 4;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume -4;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume -4;
+                SetMusicVolume(uMusicVolume);
             } else {
                 bExit = true;
             }

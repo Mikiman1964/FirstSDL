@@ -1557,7 +1557,7 @@ Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int nErrorCode;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     uint32_t uHighscoreLevel;
     uint32_t uScrollerLeftPosX;
     uint32_t uScrollerRightPosX;
@@ -1604,7 +1604,7 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     if (ReadNamesFile() != 0) {
         return -1;
     }
-    if (SetModMusic(6) != 0) {  // 6. 2kad04.mod  von Maktone
+    if (SetMusic(6) != 0) {  // 6. 2kad04.mod  von Maktone
         return -1;
     }
     if (CreateButton(BUTTONLABEL_CREATE_PLAYER,"CREATE PLAYER",1127 + Video.uXoffs,454,true,false) != 0) {
@@ -1626,8 +1626,8 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     }
     SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
     SetStaticMenuElements();
-    uModVolume = 0;
-    SetModVolume(uModVolume);
+    uMusicVolume = 0;
+    SetMusicVolume(uMusicVolume);
     nErrorCode = 0;
     nColorDimm = 0;
     bPrepareExit = false;
@@ -1690,8 +1690,8 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                             if (nColorDimm > 0) {
                                 nColorDimm = nColorDimm - 4;
                                 SetAllTextureColors(nColorDimm);
-                                uModVolume = uModVolume - 4;
-                                SetModVolume(uModVolume);
+                                uMusicVolume = uMusicVolume - 4;
+                                SetMusicVolume(uMusicVolume);
                             } else {
                                 if (bEndGame) {
                                     bMenuRun = false;
@@ -1712,10 +1712,10 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetStaticMenuElements();
                                     bPrepareExit = false;
                                     nColorDimm = 0;
-                                    uModVolume = 0;
+                                    uMusicVolume = 0;
                                     SetAllTextureColors(nColorDimm);
-                                    SetModVolume(uModVolume);
-                                    if (SetModMusic(6) != 0) {
+                                    SetMusicVolume(uMusicVolume);
+                                    if (SetMusic(6) != 0) {
                                         return -1;
                                     }
                                     bShowHighscores = false;
@@ -1746,11 +1746,11 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     }
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
                                     nColorDimm = 0;
-                                    uModVolume = 0;
+                                    uMusicVolume = 0;
                                     SetStaticMenuElements();
                                     bPrepareExit = false;
                                     bStartEditor = false;
-                                    if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
+                                    if (SetMusic(6) != 0) {      // MOD 6, 2kad04
                                         return -1;
                                     }
                                     WaitNoKey();
@@ -1789,11 +1789,11 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     }
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,true);
                                     nColorDimm = 0;
-                                    uModVolume = 0;
+                                    uMusicVolume = 0;
                                     SetStaticMenuElements();
                                     bPrepareExit = false;
                                     bStartSettings = false;
-                                    if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
+                                    if (SetMusic(6) != 0) {      // MOD 6, 2kad04
                                         return -1;
                                     }
                                     WaitNoKey();
@@ -1824,10 +1824,10 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetStaticMenuElements();
                                     bPrepareExit = false;
                                     nColorDimm = 0;
-                                    uModVolume = 0;
+                                    uMusicVolume = 0;
                                     SetAllTextureColors(nColorDimm);
-                                    SetModVolume(uModVolume);
-                                    if (SetModMusic(6) != 0) {      // MOD 6, 2kad04
+                                    SetMusicVolume(uMusicVolume);
+                                    if (SetMusic(6) != 0) {      // MOD 6, 2kad04
                                         return -1;
                                     }
                                     WaitNoKey();
@@ -1888,8 +1888,8 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                         if ((!bPrepareExit) && (nColorDimm < 100)) {
                             nColorDimm = nColorDimm + 4;
                             SetAllTextureColors(nColorDimm);
-                            uModVolume = uModVolume + 4;
-                            SetModVolume(uModVolume);
+                            uMusicVolume = uMusicVolume + 4;
+                            SetMusicVolume(uMusicVolume);
                         }
                         PlayMusic(false);
                         if (nErrorCode == 0) {
@@ -2156,7 +2156,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
     int nRec1PixelCount;
     int nRec2PixelCount;
     int nScanCodeIndex;
-    uint32_t uModVolume = 0;
+    uint8_t uMusicVolume = 0;
     uint32_t I, II;
     uint32_t uRainbowColor;
     uint32_t uLastDetectionTime;    // letzter Zeitpunkt der Joystick-/Gamecontroller-Erkennung
@@ -2425,7 +2425,7 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
     if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1100,742,true,false) != 0) {
         return -1;
     }
-    if (SetModMusic(2) != 0) {
+    if (SetMusic(2) != 0) {
         return -1;
     }
     WaitNoKey();
@@ -3170,14 +3170,14 @@ int SettingsMenu(SDL_Renderer *pRenderer) {
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);
-            uModVolume = uModVolume + 4;
-            SetModVolume(uModVolume);
+            uMusicVolume = uMusicVolume + 4;
+            SetMusicVolume(uMusicVolume);
         } else if (bPrepareExit) {
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 4;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume -4;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume -4;
+                SetMusicVolume(uMusicVolume);
             } else {
                 bExit = true;
             }
@@ -3501,7 +3501,7 @@ int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
     int nColorDimm;
     char szText[EMERALD_AUTHOR_LEN + 128];
     uint32_t I;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     bool bMenuRun;
     bool bPrepareExit;
     bool bPlayGame;
@@ -3512,8 +3512,8 @@ int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
     SetMenuBorderAndClear();
     nColorDimm = 0;
-    uModVolume = 0;
-    SetModVolume(uModVolume);
+    uMusicVolume = 0;
+    SetMusicVolume(uMusicVolume);
     SetAllTextureColors(nColorDimm);
     SetMenuText(MainMenu.pMenuScreen,SelectedLevelgroup.szLevelgroupname,-1,1,EMERALD_FONT_BLUE);
     for (I = 1; (I < (MainMenu.uXdim - 1)); I++) {
@@ -3550,8 +3550,8 @@ int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 4;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume - 4;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume - 4;
+                SetMusicVolume(uMusicVolume);
             } else {
                 bMenuRun = false;
             }
@@ -3582,16 +3582,16 @@ Seiteneffekte: MainMenu.x
 int DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
     int nColorDimm;
     int nErrorCode = 0;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
 
     if (bDimmUp) {
         nColorDimm = 0;
-        uModVolume = 0;
+        uMusicVolume = 0;
         do {
             nColorDimm = nColorDimm + 2;
-            uModVolume = uModVolume + 2;
+            uMusicVolume = uMusicVolume + 2;
             SetAllTextureColors(nColorDimm);
-            SetModVolume(uModVolume);
+            SetMusicVolume(uMusicVolume);
             PlayMusic(false);
             nErrorCode = RenderMenuElements(pRenderer);
             if (nErrorCode == 0) {
@@ -3602,12 +3602,12 @@ int DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
          } while ((nErrorCode == 0) && (nColorDimm < 100));
     } else {
         nColorDimm = 100;
-        uModVolume = 100;
+        uMusicVolume = 100;
         do {
             nColorDimm = nColorDimm - 2;
-            uModVolume = uModVolume - 2;
+            uMusicVolume = uMusicVolume - 2;
             SetAllTextureColors(nColorDimm);
-            SetModVolume(uModVolume);
+            SetMusicVolume(uMusicVolume);
             PlayMusic(false);
             nErrorCode = RenderMenuElements(pRenderer);
             if (nErrorCode == 0) {
@@ -3642,7 +3642,7 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     char szText[1024];
     char szNum[16];
     uint32_t I;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     uint32_t uRainBowRGB;
     uint32_t uScore;
     bool bMenuRun;
@@ -3664,14 +3664,14 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     nColorDimm = 0;
     uRand = randn(0,3);             // Zufallszahl 0 bis 3
     // 7. 2kad02.mod (2000AD cracktro02), 8. the brewery.mod, 9. class05_1999.mod oder 10. softworld.mod jeweils von Maktone
-    if (SetModMusic(7 + uRand) != 0) {
+    if (SetMusic(7 + uRand) != 0) {
         return -1;
     }
     if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1100,742,true,false) != 0) {
         return -1;
     }
-    uModVolume = 0;
-    SetModVolume(uModVolume);
+    uMusicVolume = 0;
+    SetMusicVolume(uMusicVolume);
     SetAllTextureColors(nColorDimm);
     SetMenuText(MainMenu.pMenuScreen,"TOP TWENTY",-1,0,EMERALD_FONT_BLUE_STEEL);
     sprintf(szText,"%s/LEVEL:%03u",SelectedLevelgroup.szLevelgroupname,uLevel);
@@ -3718,8 +3718,8 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 2;
             SetAllTextureColors(nColorDimm);
-            uModVolume = uModVolume + 2;
-            SetModVolume(uModVolume);
+            uMusicVolume = uMusicVolume + 2;
+            SetMusicVolume(uMusicVolume);
         }
         if (nColorDimm == 100) {
             if ((ManKey.bFire) || (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES))) {
@@ -3733,8 +3733,8 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 2;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume - 2;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume - 2;
+                SetMusicVolume(uMusicVolume);
             } else {
                 bMenuRun = false;
             }

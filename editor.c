@@ -22,6 +22,7 @@
 
 ED Ed;
 CLIPBOARD Clipboard;
+CHECKBOX g_Checkbox_QuicksaveAllowed;
 extern MANKEY ManKey;
 extern PLAYFIELD Playfield;
 extern INPUTSTATES InputStates;
@@ -902,6 +903,12 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     DynStringAdd(XML,"  <title>");DynStringAdd(XML,Ed.szLevelTitle);DynStringAdd(XML,"</title>\r\n");
     DynStringAdd(XML,"  <author>");DynStringAdd(XML,Ed.szLevelAuthor);DynStringAdd(XML,"</author>\r\n");
     DynStringAdd(XML,"  <version>");DynStringAdd(XML,Ed.szVersion);DynStringAdd(XML,"</version>\r\n");
+    if (Ed.bQuicksaveAllowed) {
+        strcpy(szNum,"1");
+    } else {
+        strcpy(szNum,"0");
+    }
+    DynStringAdd(XML,"  <quicksave_allowed>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</quicksave_allowed>\r\n");
     DynStringAdd(XML,"  <values>\r\n");
     sprintf(szNum,"%u",Ed.uEmeraldsToCollect);
     DynStringAdd(XML,"    <emeralds_to_collect>");DynStringAdd(XML,szNum);DynStringAdd(XML,"</emeralds_to_collect>\r\n");
@@ -1335,6 +1342,7 @@ int CopyPlayfieldValueToEditor(void) {
         Ed.uLevel_XY_Dimension = Playfield.uLevel_XY_Dimension;
         Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
         Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
+        Ed.bQuicksaveAllowed = Playfield.bQuicksaveAllowed;
         Ed.bLightBarrierRedOn = Playfield.bLightBarrierRedOn;
         Ed.bLightBarrierGreenOn = Playfield.bLightBarrierGreenOn;
         Ed.bLightBarrierBlueOn = Playfield.bLightBarrierBlueOn;
@@ -2695,10 +2703,12 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int , 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, InputStates.x
+Seiteneffekte: Ed.x, InputStates.x, g_Checkbox_QuicksaveAllowed
 ------------------------------------------------------------------------------*/
 int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
     int nErrorCode;
+    int nXposMW;                // X-Position, Message Window
+    int nYposMW;                // Y-Position, Message Window
     uint32_t uKey;
     uint32_t I;
     uint32_t uCursorPos;
@@ -2919,6 +2929,16 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                                         816,864,EMERALD_STEEL_ARROW_DOWN,
                                         848,864,EMERALD_STEEL_ARROW_DOWN,
                                         880,864,EMERALD_STEEL_ARROW_DOWN,
+                                        // QUICKSAVE
+                                        32,720,EMERALD_FONT_BLUE_Q,
+                                        64,720,EMERALD_FONT_BLUE_U,
+                                        96,720,EMERALD_FONT_BLUE_I,
+                                        128,720,EMERALD_FONT_BLUE_C,
+                                        160,720,EMERALD_FONT_BLUE_K,
+                                        192,720,EMERALD_FONT_BLUE_S,
+                                        224,720,EMERALD_FONT_BLUE_A,
+                                        256,720,EMERALD_FONT_BLUE_V,
+                                        288,720,EMERALD_FONT_BLUE_E,
                                         };
                 // Aufbau:  Xmin,Xmax,Ymin,Ymax
     uint32_t uSwitches[] = {100,109,60,70,110,119,60,70,120,129,60,70,130,139,60,70, // ++++ Emerald
@@ -3007,29 +3027,47 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
     // Rahmen und Füllung für Level-Title und Level Author zeichnen
     // Rechtecke in Farbe 20,200,20 zeichnen
     if (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_MESSAGE) {
+        if (ShowCheckboxes(pRenderer,100,true) != 0) {
+            return -1;
+        }
+        Ed.bQuicksaveAllowed = g_Checkbox_QuicksaveAllowed.bActive;
         SDL_SetRenderDrawColor(pRenderer,20,200,20, SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
         DestR.x = 28;
-        DestR.y = 764;
+        DestR.y = 840;
         DestR.w = (EMERALD_TITLE_LEN + 15) * FONT_LITTLE_W;
         DestR.h = FONT_LITTLE_H + 8;
         SDL_RenderDrawRect(pRenderer,&DestR);
         DestR.x = 28;
-        DestR.y = 860;
+        DestR.y = 904;
         DestR.w = (EMERALD_AUTHOR_LEN + 15) * FONT_LITTLE_W;
         DestR.h = FONT_LITTLE_H + 8;
         nErrorCode = SDL_RenderDrawRect(pRenderer,&DestR);
         // Senkrechte Linien hinter Doppelpunkt setzen
-        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,764,31 + 13 *FONT_LITTLE_W,764 + FONT_LITTLE_H + 6); // Level-Title
-        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,860,31 + 13 *FONT_LITTLE_W,860 + FONT_LITTLE_H + 6); // Level-Author
+        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,840,31 + 13 *FONT_LITTLE_W,840 + FONT_LITTLE_H + 6); // Level-Title
+        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,904,31 + 13 *FONT_LITTLE_W,904 + FONT_LITTLE_H + 6); // Level-Author
         // Untergründe für Title und Author (vor Doppelunkt) zeichnen
-        DrawBeam(pRenderer,29, 765, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
-        DrawBeam(pRenderer,29, 861, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,29, 841, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,29, 905, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
         // Untergründe für Title und Author (nach Doppelunkt) zeichnen
-        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 765, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
-        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 861, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 841, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 905, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
     }
     if (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_MESSAGE) {
-        nErrorCode = CreateMessageWindow(pRenderer,-1,-1,0,Ed.MessageEditor.szMessageEditorMem);
+        nErrorCode = CreateMessageWindow(pRenderer,-1,-1,0,Ed.MessageEditor.szMessageEditorMem,&nXposMW,&nYposMW);
+        // Message 1 - 8 über Messagebox anzeigen
+        if ((Ed.MessageEditor.nEditMessage >= 0) && (Ed.MessageEditor.nEditMessage < EMERALD_MAX_MESSAGES)) {
+            uTextureIndex = GetTextureIndexByElement(EMERALD_MESSAGE_1 + Ed.MessageEditor.nEditMessage,0,&fAngle);
+            DestR.x = nXposMW - FONT_W;
+            DestR.y = nYposMW - FONT_H;
+            DestR.w = FONT_W;
+            DestR.h = FONT_H;
+            if (nErrorCode == 0) {
+                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+                    nErrorCode = -1;
+                    SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
+                }
+            }
+        }
         if (Ed.MessageEditor.bInsert) {
             PrintLittleFont(pRenderer,10,10,0,"MODE: INSERT",K_ABSOLUTE,1);
         } else {
@@ -3336,7 +3374,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         sprintf(szText,"%04d",Ed.uShieldCoinTime);
         PrintLittleFont(pRenderer,260,393,0,szText,K_ABSOLUTE,1);
         // Remaining Time factor
-        nErrorCode = PrintLittleFont(pRenderer,350,395,0,"REMAINING TIME FACTOR:",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(pRenderer,350,393,0,"REMAINING TIME FACTOR:",K_ABSOLUTE,1);
         PrintLittleFont(pRenderer,580,380,0,"++++",K_ABSOLUTE,1);
         PrintLittleFont(pRenderer,580,406,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeScoreFactor);
@@ -3379,11 +3417,11 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         sprintf(szText,"%04d",Ed.uEmeraldsToCollect);
         PrintLittleFont(pRenderer,260,649,0,szText,K_ABSOLUTE,1);
         // Level-Title
-        PrintLittleFont(pRenderer,32,768,0,"LEVEL-TITLE :",K_ABSOLUTE,1);
-        nErrorCode = PrintLittleFont(pRenderer,164,768,0,Ed.szLevelTitle,K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,32,844,0,"LEVEL-TITLE :",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(pRenderer,164,844,0,Ed.szLevelTitle,K_ABSOLUTE,1);
         // Level-Author
-        PrintLittleFont(pRenderer,32,864,0,"LEVEL-AUTHOR:",K_ABSOLUTE,1);
-        nErrorCode = PrintLittleFont(pRenderer,164,864,0,Ed.szLevelAuthor,K_ABSOLUTE,1);
+        PrintLittleFont(pRenderer,32,908,0,"LEVEL-AUTHOR:",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(pRenderer,164,908,0,Ed.szLevelAuthor,K_ABSOLUTE,1);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],Ed.uFrameCounter % 16,&fAngle);
             DestR.x = uPositionsAndElements[I * 3 + 0];
@@ -3450,9 +3488,9 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             }
             // Mausklick in Level-Title oder Level-Author?
             if ((InputStates.nMouseXpos_Absolute >= 166) && (InputStates.nMouseXpos_Absolute < 483)) {
-                if ((InputStates.nMouseYpos_Absolute >= 768) && (InputStates.nMouseYpos_Absolute < 781)) {
+                if ((InputStates.nMouseYpos_Absolute >= 844) && (InputStates.nMouseYpos_Absolute < 857)) {
                     Ed.uMenuState = MENUSTATE_TIME_AND_SCORES_EDIT_TITLE;
-                } else if ((InputStates.nMouseYpos_Absolute >= 864) && (InputStates.nMouseYpos_Absolute < 877)) {
+                } else if ((InputStates.nMouseYpos_Absolute >= 908) && (InputStates.nMouseYpos_Absolute < 921)) {
                     Ed.uMenuState = MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR;
                 }
             }
@@ -3465,7 +3503,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 szCursor[0] = 102;  // Cursor an
             }
             szCursor[1] = 0;
-            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),768,0,szCursor,K_ABSOLUTE,1);
+            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),844,0,szCursor,K_ABSOLUTE,1);
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                if (uCursorPos < EMERALD_TITLE_LEN) {
@@ -3489,7 +3527,7 @@ int EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 szCursor[0] = 102;  // Cursor an
             }
             szCursor[1] = 0;
-            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),864,0,szCursor,K_ABSOLUTE,1);
+            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),908,0,szCursor,K_ABSOLUTE,1);
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                 if (uCursorPos < EMERALD_AUTHOR_LEN) {
@@ -3941,8 +3979,8 @@ int CreateEditorButtons(void) {
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_1,"-->",362 + Video.uXoffs,290,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_2,"-->",362 + Video.uXoffs,350,false,true);
     nErrors = nErrors + CreateButton(BUTTONLABEL_EDITOR_OPTION_3,"-->",362 + Video.uXoffs,390,false,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_SAVE_MESSAGE,"Save message",(Config.uResX / 2) - 100 ,736,false,true);
-    nErrors = nErrors + CreateButton(BUTTONLABEL_CANCEL_MESSAGE,"Cancel",(Config.uResX / 2) + 100 ,736,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_SAVE_MESSAGE,"Save message",(Config.uResX / 2) - 100 ,Config.uResY - 100,false,true);
+    nErrors = nErrors + CreateButton(BUTTONLABEL_CANCEL_MESSAGE,"Cancel",(Config.uResX / 2) + 100 ,Config.uResY - 100,false,true);
     return nErrors;
 }
 
@@ -4140,7 +4178,7 @@ int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel) {
     int nErrorCode;
 
     nErrorCode = -1;
-    memset(&Ed,0,sizeof(Ed));
+    memset(&Ed,0,sizeof(Ed));                               // setzt auch alle boolschen Werte auf false
     Ed.uPanelW = 192;                                       // Breite des Panels im Editor
     Ed.uPanelH = Config.uResX;                              // Höhe des Panels im Editor
     Ed.uPanelXpos = Config.uResX - Ed.uPanelW;              // X-Positionierung des Panels im Editor
@@ -4263,12 +4301,13 @@ Parameter
                nLevel, int, Levelnummer innerhalb einer gewählten Levelgruppe, -1 = Level wird nicht verwendet
       Ausgang: -
 Rückgabewert:  DYNSTRING , XML-Daten des Levels, NULL = Fehler oder Quit
-Seiteneffekte: Ed.x, InputStates.x, Config.x, ge_uXoffs, ge_uYoffs
+Seiteneffekte: Ed.x, InputStates.x, Config.x, ge_uXoffs, ge_uYoffs, g_Checkbox_QuicksaveAllowed
 ------------------------------------------------------------------------------*/
 DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
     uint32_t uMouseElement;             // Levelelement, auf das Mauspfeil zeigt
     uint32_t I;
     DYNSTRING *XML = NULL;
+    bool bCheckboxRegistered = false;
 
     Ed.nXpos = 0;
     Ed.nYpos = 0;
@@ -4279,6 +4318,10 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
     }
     if (Ed.bEditorRun) {
         Ed.bEditorRun = (CreateEditorButtons() == 0);
+    }
+    if (Ed.bEditorRun) {
+        Ed.bEditorRun = (RegisterCheckbox(&g_Checkbox_QuicksaveAllowed, Ed.bQuicksaveAllowed, "QUICKSAVE ALLOWED", 28, 780, false, true) == 0);
+        bCheckboxRegistered = Ed.bEditorRun;
     }
     PreCalcYamCoords();
     SetAllTextureColors(100);
@@ -4489,6 +4532,9 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel) {
         SDL_Delay(5);
     }
     FreeEditorButtons();
+    if (bCheckboxRegistered) {
+        DeRegisterCheckbox(&g_Checkbox_QuicksaveAllowed);
+    }
     SAFE_FREE(Ed.pLevel);
     for (I = 0; I <EMERALD_MAX_MESSAGES; I++) {
         if (Ed.pMessage[I] != NULL) {
@@ -5015,7 +5061,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     int nMoveState = 0;
     int nMoveSrcLevel = -1;
     int nMoveDestLevel = -1;
-    uint32_t uModVolume;
+    uint8_t uMusicVolume;
     uint32_t uBeamPosition;
     int nSelectedBeamPosition = -1;
     bool bPrepareExit = false;
@@ -5039,9 +5085,9 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
     bColorToggle = false;
     uScrollFastCounter = 0;
     InitLevelTitleList();
-    uModVolume = 0;
-    SetModVolume(uModVolume);
-    if (SetModMusic(4) != 0) {
+    uMusicVolume = 0;
+    SetMusicVolume(uMusicVolume);
+    if (SetMusic(4) != 0) {
         return -1;
     }
     nRet = LevelgroupOperaton_AskPassword(pRenderer);
@@ -5099,7 +5145,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     DimmMainMenu(pRenderer,false);
                     LevelgroupOperaton_NewGroup();
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     bWarnDefaultLevelGroup = false;
@@ -5113,7 +5159,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     LevelgroupOperaton_RenameGroupname(pRenderer);
                     PreparePreEditormenu();
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     break;
@@ -5126,7 +5172,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nErrorCode = LevelgroupOperaton_Password(pRenderer);
                     PreparePreEditormenu();
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     break;
@@ -5139,7 +5185,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     nErrorCode = RunGame(pRenderer,nSelectedLevel);
                     PreparePreEditormenu();
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     break;
                 case (5):
                     nMoveState = 0;
@@ -5160,7 +5206,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     // Beim "Edit" bleibt die Anzahl in der Leveliste konstant, d.h. sie kann wieder mit derselben Position angezeigt werden
                     memcpy(MainMenu.puLevelTitleList,MainMenu.puLevelTitleListCopy,MainMenu.uMaxLevelTitlesInList * sizeof(uint16_t));
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     break;
                 case (6):
                     // SDL_Log("%s:   move level",__FUNCTION__);
@@ -5185,7 +5231,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,true);
                     PreparePreEditormenu();
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     break;
@@ -5201,7 +5247,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,true);
                     PreparePreEditormenu();
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
                     break;
@@ -5225,7 +5271,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                     InitLevelTitleList();
                     PreparePreEditormenu();
                     nColorDimm = 0;
-                    uModVolume = 0;
+                    uMusicVolume = 0;
                     break;
                 case (11):
                     // SDL_Log("%s:   level list up",__FUNCTION__);
@@ -5288,7 +5334,7 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
                 SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,true);
                 PreparePreEditormenu();
                 nColorDimm = 0;
-                uModVolume = 0;
+                uMusicVolume = 0;
                 nSelectedBeamPosition = -1;
                 nSelectedLevel = -1;
                 nMoveState = 0;
@@ -5309,14 +5355,14 @@ int PreEditorMenu(SDL_Renderer *pRenderer) {
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);
-            uModVolume = uModVolume + 4;
-            SetModVolume(uModVolume);
+            uMusicVolume = uMusicVolume + 4;
+            SetMusicVolume(uMusicVolume);
         } else if (bPrepareExit) {
             if (nColorDimm > 0) {
                 nColorDimm = nColorDimm - 4;
                 SetAllTextureColors(nColorDimm);
-                uModVolume = uModVolume -4;
-                SetModVolume(uModVolume);
+                uMusicVolume = uMusicVolume -4;
+                SetMusicVolume(uMusicVolume);
             } else {
                 bExit = true;
             }
