@@ -14,26 +14,26 @@
 #define MODULE_TYPE_SID             3                   // SID (C64)
 
 typedef struct {
-    int nAvailableSongs;                    // Anzahl der verfügbaren Songs (mod/xm)
+    int32_t nAvailableSongs;                // Anzahl der verfügbaren Songs (mod/xm)
     SDL_AudioDeviceID audio_device;
     SDL_AudioSpec sdl_audio;
     short audiobuffer[AUDIO_BUFFERSIZE];    // Puffer für beide Kanäle
     float xm_audiobuffer[AUDIO_BUFFERSIZE]; // Zwischenpuffer für Extended Module
     uint8_t *pMusicStart;
-    int nMusicSize;
-    int nMusicIndex;
-    int nNextMusicIndex;                    // wird nur in main() zum Umschalten der Musik verwendet
+    int32_t nMusicSize;
+    int32_t nMusicIndex;
+    int32_t nNextMusicIndex;                // wird nur in main() zum Umschalten der Musik verwendet
     uint8_t *pMusicAll;                     // Alle Songs in einem Speicherblock
     uint8_t *pTheMusic;                     // Zeiger auf Kopie eines Songs, da durch das Abspielen die Daten verändert werden
     xm_context_t *pCtxXm;                   // Context für XM-Player
-    int nModulType;                         // Modul-Typ (MOD, XM) oder unbekannt
+    int32_t nModulType;                     // Modul-Typ (MOD, XM) oder unbekannt
     uint8_t uMusicVolumePercent;            // Musiklautstärke in Prozent
 }AUDIOPLAYER;
 
 void InitMusicPointer(void);
-int InitAudioplayerStruct(void);
-int SetMusic(int nMusicIndex);
-int PlayMusic(bool bIgnoreConfig);
+int32_t InitAudioplayerStruct(void);
+int32_t SetMusic(int32_t nMusicIndex);
+int32_t PlayMusic(bool bIgnoreConfig);
 void CheckMusicSwitch(const Uint8 *pKeyboardArray);
 void SetMusicVolume(uint8_t uVolumePercent);
 

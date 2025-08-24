@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>TRAINING</groupname>
-<create_timestamp>20250615_161149</create_timestamp>
+<create_timestamp>20250824_124311</create_timestamp>
 <levelcount>80</levelcount>
 <level000>
   <title>FIRST CONTACT</title>
@@ -9,7 +9,7 @@
   <version>01.12</version>
   <quicksave_allowed>0</quicksave_allowed>
   <values>
-    <emeralds_to_collect>9985</emeralds_to_collect>
+    <emeralds_to_collect>185</emeralds_to_collect>
     <score_time_factor>10</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
     <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
@@ -49,9 +49,9 @@
     <shieldcoin>9999</shieldcoin>
   </times>
   <inventory>
-    <dynamite>9800</dynamite>
-    <hammer>8888</hammer>
-    <white_key>9980</white_key>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
   </inventory>
   <replicators>
     <red>
@@ -11272,5 +11272,5 @@
   <leveldata_md5_hash>0C88F23760465C256A9F1C189A407F94</leveldata_md5_hash>
 </level079>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>3FD2A795AF03D1F2473C5901FAD90BDD</levelgroup_md5_hash>
+<levelgroup_md5_hash>6EB86506750D22BE591C74F94D5C2D56</levelgroup_md5_hash>
 </levelgroup>

@@ -25,9 +25,9 @@ Rückgabewert:  -
 Seiteneffekte: Joystick.x, GameController.x
 ------------------------------------------------------------------------------*/
 void DetectJoystickAndGameController(void) {
-    int I;
-    int nStickCount;                // Das können Joysticks oder GameController sein
-    bool bJoystickAsGameController; // Bei Joystick als GameController die Tasten tauschen
+    int32_t I;
+    int32_t nStickCount;                // Das können Joysticks oder GameController sein
+    bool bJoystickAsGameController;     // Bei Joystick als GameController die Tasten tauschen
 
     memset(&GameController,0,sizeof(GameController));
     for (I = 0; I < MAX_GAMECONTROLLERS; I++) {
@@ -73,12 +73,12 @@ Beschreibung:   Eigene und erweiterte Abfrage, ob es sich beim Gerät um einen
                 Joystick COMPETITION PRO wird unter Linux als Gamecontroller erkannt, lässt sich aber als Joystick öffnen.
                 Unter Windows wird der COMPETITION PRO als Joystick erkannt, lässt sich aber nicht als GameController öffnen
 Parameter
-      Eingang: nJoystickIndex, int, 0 - SDL_NumJoysticks() - 1
+      Eingang: nJoystickIndex, int32_t, 0 - SDL_NumJoysticks() - 1
       Ausgang: pbJoystickAsGameController, bool, Joystick läuft als Gamecontroller
 Rückgabewert:  bool, true = Gerät ist Gamecontroller, false = Joystick
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-bool IsGameController(int nJoystickIndex, bool *pbJoystickAsGameController) {
+bool IsGameController(int32_t nJoystickIndex, bool *pbJoystickAsGameController) {
     bool bIsGameController = false;
     const char *pName;
 
@@ -117,11 +117,11 @@ Beschreibung:   Öffnet einen Joystick oder Gamecontroller in Abhängig der gesp
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = gewünschtes Gerät konnte geöffnet werden, sonst Fehler
+Rückgabewert:  int32_t, 0 = gewünschtes Gerät konnte geöffnet werden, sonst Fehler
 Seiteneffekte: Joystick.x, GameController.x, Config.x
 ------------------------------------------------------------------------------*/
-int OpenJoystickOrGameController(void) {
-    int nErrorCode = -1;
+int32_t OpenJoystickOrGameController(void) {
+    int32_t nErrorCode = -1;
 
     if (Config.uInputdevice == 1) {        // Joystick?
         if (Config.uDeviceIndex < MAX_JOYSTICKS) {
@@ -174,15 +174,15 @@ Beschreibung:   Fragt einen Joystick oder Gamecontroller ab und legt die
 Parameter
       Eingang: -
       Ausgang: pManDirections, MAN_DIRECTIONS *, Richtungszustände für Man-Bewegung
-Rückgabewert:  int, 0 = Statusabfrage OK, sonst Fehler bzw. keine Abfrage durchgeführt
+Rückgabewert:  int32_t, 0 = Statusabfrage OK, sonst Fehler bzw. keine Abfrage durchgeführt
 Seiteneffekte: Joystick.x, GameController.x, Config.x
 ------------------------------------------------------------------------------*/
-int GetJoystickOrGameControllerStatus(MAN_DIRECTIONS *pManDirections) {
-    int nErrorCode = -1;
+int32_t GetJoystickOrGameControllerStatus(MAN_DIRECTIONS *pManDirections) {
+    int32_t nErrorCode = -1;
     SDL_GameController *pGCHandle;
     SDL_Joystick *pJoyHandle;
-    int nJoyAxis0;
-    int nJoyAxis1;
+    int32_t nJoyAxis0;
+    int32_t nJoyAxis1;
 
     if (Config.uInputdevice == 1) {         // Joystick?
         pJoyHandle = Joystick.Value[Config.uDeviceIndex].pActualJoystickIdentifier;
@@ -373,7 +373,7 @@ Beschreibung:   Schließt das Geräthandle eines Joysticks oder Gamecontrollers.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = gewünschtes Gerät konnte geöffnet werden, sonst Fehler
+Rückgabewert:  -
 Seiteneffekte: Joystick.x, GameController.x, Config.x
 ------------------------------------------------------------------------------*/
 void CloseJoystickOrGameController(void) {

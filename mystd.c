@@ -21,7 +21,7 @@ Rückgabewert:  -
 Seiteneffekte: XorShift.x
 ------------------------------------------------------------------------------*/
 void InitXorShift(void) {
-    int nErrorCode;
+    int32_t nErrorCode;
     uint32_t I;
 
     nErrorCode = -1;
@@ -76,11 +76,11 @@ Parameter
       Eingang: DynString, DYNSTRING *, Zeiger auf String-Objekt
                pszString, char *, String, der dazu addiert wird.
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int DynStringAdd(DYNSTRING *DynString, char *pszString) {
-    int nErrorCode = -1;
+int32_t DynStringAdd(DYNSTRING *DynString, char *pszString) {
+    int32_t nErrorCode = -1;
     size_t uActualStringLen;
     size_t uAddStringLen;
 
@@ -106,11 +106,11 @@ Beschreibung: Gibt den Speicher für ein String-Objekt wieder frei.
 Parameter
       Eingang: DynString, DYNSTRING *, Zeiger auf String-Objekt
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int DynStringFree(DYNSTRING *DynString) {
-    int nErrorCode = -1;
+int32_t DynStringFree(DYNSTRING *DynString) {
+    int32_t nErrorCode = -1;
 
     if (DynString != NULL) {
         if (DynString->pszString != NULL) {
@@ -238,13 +238,13 @@ Beschreibung: Erzeugt Integer-Zufallszahl zwischen low und high.
               Vorsicht: Der Bereich sollte nicht um den Nullpunkt gelegt werden, da es ansonsten falsche Ergebnisse gibt.
               Quelle: https://mixable.blog/java-zufallszahlen-in-einem-bestimmten-bereich-erstellen/
 Parameter
-      Eingang: low, int, unterer Bereich für Zufallszahl (einschließlich low)
-      Ausgang: high, int, oberer Bereich für Zufallszahl (einschließlich high)
-Rückgabewert:  int, Zufallswert
+      Eingang: low, int32_t, unterer Bereich für Zufallszahl (einschließlich low)
+      Ausgang: high, int32_t, oberer Bereich für Zufallszahl (einschließlich high)
+Rückgabewert:  int32_t, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int randn(int low, int high) {
-    return (int)((myrandom() * ((high - low) + 1)) + low);
+int32_t randn(int32_t low, int32_t high) {
+    return (int32_t)((myrandom() * ((high - low) + 1)) + low);
 }
 
 
@@ -314,16 +314,16 @@ Name:           DumpMem
 Beschreibung: Macht Speicherdump auf stdout.
 Parameter
       Eingang: pcMem, uint8_t *, Start-Zeiger auf Speicher
-               nLen, int, Anzahl der auszugebenen Bytes ab Start-Zeiger
+               nLen, int32_t, Anzahl der auszugebenen Bytes ab Start-Zeiger
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-void DumpMem(uint8_t *pcMem, int nLen)
+void DumpMem(uint8_t *pcMem, int32_t nLen)
 {
     uint8_t *pcEnd;			// Letzte gültige Adresse
-    int nX;
-    int nY;
+    int32_t nX;
+    int32_t nY;
 
     if ( (nLen > 0) && (pcMem != NULL) ) {
         nY = 0;
@@ -431,13 +431,12 @@ Parameter
                uLen, uint32_t, Anzahl Bytes, die geschrieben werde
                bAppend, bool, TRUE = Daten werden an bestehende Daten angehängt
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
-int WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppend)
-{
+int32_t WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppend) {
     char szMode[8];
-    int nErrorCode;
+    int32_t nErrorCode;
     FILE *Writefile;
     nErrorCode = -1;
 
@@ -473,11 +472,11 @@ Beschreibung: Zählt die Zeilenumbrüche (0x0A) in einem Text.
 Parameter
       Eingang: pszText, char *, Zeiger auf Text
       Ausgang: -
-Rückgabewert:  int, Anzahl LineFeeds
+Rückgabewert:  int32_t, Anzahl LineFeeds
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
-int GetLineFeedCount(char *pszText) {
-    int nLineFeeds;
+int32_t GetLineFeedCount(char *pszText) {
+    int32_t nLineFeeds;
     uint32_t I;
 
     nLineFeeds = 0;
@@ -499,20 +498,20 @@ Beschreibung: Ermittelt die aktuelle Zeilenlänge, in der der Cursor steht.
 
 Parameter
       Eingang: pszText, char *, Zeiger auf Text
-               nCursorPos, int, Cursorposition im Text
+               nCursorPos, int32_t, Cursorposition im Text
       Ausgang: -
-Rückgabewert:  int, Anzahl LineFeeds
+Rückgabewert:  int32_t, Anzahl LineFeeds
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
-int GetLineLen(char *pszText, int nCursorPos) {
-    int nLineLen;
-    int nTextLen;
-    int nI;
+int32_t GetLineLen(char *pszText, int32_t nCursorPos) {
+    int32_t nLineLen;
+    int32_t nTextLen;
+    int32_t nI;
     bool bEnd;
 
     nLineLen = 0;
     if (pszText != NULL) {
-        nTextLen = (int)strlen(pszText);
+        nTextLen = (int32_t)strlen(pszText);
         // Liegt Cursorposition innerhalb des Textes?
         if ((nTextLen > 0) && (nCursorPos >= 0) && (nCursorPos < nTextLen)) {
             // Falls Cursor auf Linefeed steht, dann werden nur die Zeichen >vor< dem Cursor gezählt
@@ -562,11 +561,11 @@ Parameter
       Eingang: pszDirectoryName, char *, Zeiger auf Directory-namen
       Ausgang: -
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CheckAndCreateDir(char *pszDirectoryName) {
-    int nErrorCode;
+int32_t CheckAndCreateDir(char *pszDirectoryName) {
+    int32_t nErrorCode;
     DIR *dir;
     bool bTryToCreateDir;
 
@@ -759,8 +758,7 @@ int decode_char(uint8_t in)
     }
 }
 
-int Base64ToBin(uint8_t *pcBinary, uint8_t *pcBase64, uint32_t uBase64Len, uint32_t *puBinaryLen)
-{
+int Base64ToBin(uint8_t *pcBinary, uint8_t *pcBase64, uint32_t uBase64Len, uint32_t *puBinaryLen) {
     uint8_t c, acc = 0;
     uint32_t i;
     uint32_t uCharCount;

@@ -14,13 +14,13 @@ Beschreibung: Holt den entsprechenden Texture-Index anhand eines Elements und de
               Animations-Schrittes
 Parameter
       Eingang: uElement, uint16_t, Element, z.B. EMERALD_MINE_RIGHT
-               nAnimationCount, int, Animationsschritt
+               nAnimationCount, int32_t, Animationsschritt
       Ausgang: pfAngle, float *, Winkel, darf NULL sein
 Rückgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
                 SPACE (EMERALD_SPACE) zurückgegeben.
 Seiteneffekte: Playfield.x, ge_ExitDoorSequence[]
 ------------------------------------------------------------------------------*/
-uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *pfAngle) {
+uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,float *pfAngle) {
     uint32_t uTextureIndex;
     uint32_t K;
     float fAngle;

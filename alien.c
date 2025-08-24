@@ -20,7 +20,7 @@ Seiteneffekte: Playfield.x
 void ControlAlien(uint32_t I) {
     uint32_t uXpos;
     uint32_t uYpos;
-    int  nRandom;
+    int32_t  nRandom;
     uint32_t uCatchXpos;
     uint32_t uCatchYpos;
     uint32_t uManSelfStatus;

@@ -34,8 +34,8 @@ void ControlBomb(uint32_t I) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     }
 
-    if (    ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) ||
-            ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2)  ) {
+    if (  ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN1) ||
+          ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BORN2)  ) {
         // Bombe kann vom Replikator geboren werden, dann hier nichts machen
         return;
     } else if (IS_SPACE(uHitCoordinate)) {   // Ist nach unten frei?

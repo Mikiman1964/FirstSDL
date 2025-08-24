@@ -70,14 +70,14 @@ Parameter
       Eingang: pszLevel, uint8_t *, XML-Daten eines Levels
       Ausgang: pszLevelTitle, uint8_t *, Zeiger auf Speicher für Leveltitel, mindestens
                EMERALD_TITLE_LEN + 1 Bytes Speicher
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int GetLevelTitleFromLevel(uint8_t *pszLevel, uint8_t *pszLevelTitle) {
-    int nErrorCode = -1;
+int32_t GetLevelTitleFromLevel(uint8_t *pszLevel, uint8_t *pszLevelTitle) {
+    int32_t nErrorCode = -1;
     uint8_t *pStart;
     uint8_t *pEnd;
-    int nSize;
+    int32_t nSize;
 
     if ((pszLevel != NULL) && (pszLevelTitle != NULL)) {
         pStart = (uint8_t*)strstr((char*)pszLevel,"<title>");
@@ -104,11 +104,11 @@ Parameter
       Eingang: uLevelNumber, uint32_t, Levelnummer
                NewLevel, DYNSTRING *, Zeiger auf Struktur für neue XML-Leveldaten
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_Edit(uint32_t uLevelNumber, DYNSTRING *NewLevel) {
-    int nErrorCode = -1;
+int32_t LevelgroupOperaton_Edit(uint32_t uLevelNumber, DYNSTRING *NewLevel) {
+    int32_t nErrorCode = -1;
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *puLastTag;
@@ -183,12 +183,12 @@ Beschreibung: Kopiert einen Level innerhalb einer Levelgruppe. Wird zum Beispiel
 Parameter
       Eingang: uLevelNumber, uint32_t, Levelnummer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
-    int nErrorCode = -1;
-    int nNewLevelCount = 0;
+int32_t LevelgroupOperaton_Copy(uint32_t uLevelNumber) {
+    int32_t nErrorCode = -1;
+    int32_t nNewLevelCount = 0;
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *puLastTag;
@@ -299,12 +299,12 @@ Beschreibung: Kopiert einen Level aus dem Clipboard hinter das ausgewählte Leve
 Parameter
       Eingang: uLevelNumber, uint32_t, Levelnummer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Clipboard.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber) {
-    int nErrorCode = -1;
-    int nNewLevelCount = 0;
+int32_t LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber) {
+    int32_t nErrorCode = -1;
+    int32_t nNewLevelCount = 0;
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *puLastTag;
@@ -394,12 +394,12 @@ Beschreibung: Löscht einen Level innerhalb einer Levelgruppe. Wird zum Beispiel
 Parameter
       Eingang: uLevelNumber, uint32_t, Levelnummer -> Level, dass gelöscht werden soll
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_Delete(uint32_t uLevelNumber) {
-    int nErrorCode = -1;
-    int nNewLevelCount = 0;
+int32_t LevelgroupOperaton_Delete(uint32_t uLevelNumber) {
+    int32_t nErrorCode = -1;
+    int32_t nNewLevelCount = 0;
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *puLastTag;
@@ -492,15 +492,15 @@ Parameter
       Eingang: uSrcLevelNumber, uint32_t, Levelnummer -> Level, dass verschoben werden soll
                uDestLevelNumber, uint32_t, Levelnummer -> an diese Position wird verschoben
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_Move(uint32_t uSrcLevelNumber,uint32_t uDestLevelNumber) {
+int32_t LevelgroupOperaton_Move(uint32_t uSrcLevelNumber,uint32_t uDestLevelNumber) {
     uint32_t I;
     bool bOK;
-    int nLevels[EMERALD_MAX_LEVELCOUNT];    // Dieses Array enthält die neue Levelsortierung
-    int nErrorCode = -1;
-    int nNewLevelCount = 0;
+    int32_t nLevels[EMERALD_MAX_LEVELCOUNT];    // Dieses Array enthält die neue Levelsortierung
+    int32_t nErrorCode = -1;
+    int32_t nNewLevelCount = 0;
     uint32_t uXmlLen;
     uint8_t *pLevelgroupXml = NULL;
     uint8_t *pszlevel = NULL;
@@ -594,11 +594,11 @@ Beschreibung: Erzeugt eine neue Levelgruppe mit einem Level.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, ge_new_levelgroup[]
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_NewGroup(void) {
-    int nErrorCode = -1;
+int32_t LevelgroupOperaton_NewGroup(void) {
+    int32_t nErrorCode = -1;
     uint8_t *pszlevel = NULL;
     uint8_t uLevelgroupHash[16];
     uint8_t *upGroupnameStartTag = NULL;
@@ -650,12 +650,12 @@ Beschreibung: Benennt den Levelgruppennamen um und bietet hierfür eine Eingabe
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
-    int nErrorCode = 0;
-    int nColorDimm;
+int32_t LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode = 0;
+    int32_t nColorDimm;
     uint8_t uMusicVolume;
     bool bExit = false;
     bool bPrepareExit = false;
@@ -788,12 +788,12 @@ Beschreibung: Setzt oder lösct ein Levelgruppenpasswort. Falls ein Passwort
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
-    int nErrorCode = 0;
-    int nColorDimm;
+int32_t LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode = 0;
+    int32_t nColorDimm;
     uint32_t I;
     uint8_t uMusicVolume;
     uint32_t uCursorPos;
@@ -953,14 +953,14 @@ Beschreibung: Falls eine Levelgruppe passwortgeschützt ist, kommt die folgende
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK
-               -1 = Fehler
-               -2 = Kennwort falsch
+Rückgabewert:  int32_t, 0 = Alles OK
+                       -1 = Fehler
+                       -2 = Kennwort falsch
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
-    int nErrorCode = 0;
-    int nColorDimm;
+int32_t LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode = 0;
+    int32_t nColorDimm;
     uint32_t I;
     uint32_t uCursorPos;
     uint8_t uMusicVolume;
@@ -1074,13 +1074,13 @@ Beschreibung: Bietet eine Dateiauswahl für den DC3-Levelimport an.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x, Video.x
 ------------------------------------------------------------------------------*/
-int LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
-    int nErrorCode = 0;
-    int nColorDimm;
-    int nNewLevelCount = 0;
+int32_t LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode = 0;
+    int32_t nColorDimm;
+    int32_t nNewLevelCount = 0;
     uint32_t uBeamPosition;
     uint8_t uMusicVolume;
     uint32_t I;

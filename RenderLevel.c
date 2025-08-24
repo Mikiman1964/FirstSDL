@@ -68,14 +68,14 @@ Parameter
                uPipeElement, uint16_t, Röhren-Element
                uX, uint32_t, X-Position im Level
                uY, uint32_t, Y-Position im Level
-               nXpos, int , Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
-               nYpos, int , Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
+               nXpos, int32_t , Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
+               nYpos, int32_t , Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
 
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, ge_ExitDoorSequence[], g_uCheeseRandom[]
 ------------------------------------------------------------------------------*/
-int RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32_t uX, uint32_t uY, int nXpos, int nYpos) {
-    int nErrorCode;
+int32_t RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32_t uX, uint32_t uY, int32_t nXpos, int32_t nYpos) {
+    int32_t nErrorCode;
     uint32_t uTextureIndex;
     SDL_Rect DestR;                     // Zum Kopieren in den Renderer
 
@@ -137,18 +137,17 @@ Name:           RenderLevel
 Beschreibung: Kopiert den sichtbaren Teil des Levels in den Renderer
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               pnXpos, int *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
-               pnYpos, int *, Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
-               nAnimationCount, int, 0 - 15 für Animationsstufe
-      Ausgang: pnXpos, int *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
-               pnYpos, int *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
-Rückgabewert:  int , 0 = OK, sonst Fehler
+               pnXpos, int32_t *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
+               pnYpos, int32_t *, Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
+               nAnimationCount, int32_t, 0 - 15 für Animationsstufe
+      Ausgang: pnXpos, int32_t *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
+               pnYpos, int32_t *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Config.x, g_TreasureChestTicks, g_TreasureChestOpenTicks, g_bTreasureChestOpen
 
 ------------------------------------------------------------------------------*/
-int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount)
-{
-    int nErrorCode;
+int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
+    int32_t nErrorCode;
     uint32_t uX;
     uint32_t uY;
     uint32_t I;                         // Levelindex
@@ -163,8 +162,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     /////// Standard
     uint32_t uTextureIndex;
     uint16_t uLevelElement;
-    int nXoffs;                         // Animations-Offset X
-    int nYoffs;                         // Animations-Offset Y
+    int32_t nXoffs;                         // Animations-Offset X
+    int32_t nYoffs;                         // Animations-Offset Y
     SDL_RendererFlip Flip;
     float fAngle;
     float fAngleOffs;
@@ -173,8 +172,8 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     /////// Erweitert: dieses Element wird >zuerst<, also unter das Standard-Element auf derselben Position gezeichnet
     uint32_t uTextureIndex_0;
     bool bExtendedElement;
-    int nXoffs_0;                        // Animations-Offset X
-    int nYoffs_0;                        // Animations-Offset Y
+    int32_t nXoffs_0;                        // Animations-Offset X
+    int32_t nYoffs_0;                        // Animations-Offset Y
     SDL_RendererFlip Flip_0;
     float fAngle_0;
     float fAngleOffs_0;
@@ -188,11 +187,6 @@ int RenderLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimatio
     uint32_t uTicks;
 
     uTicks = SDL_GetTicks();
-
-
-    if (Playfield.bLightAlwaysOn) {
-        Playfield.bLightOn = true;//raus
-    }
 
     if (uTicks - g_TreasureChestTicks > TREASURECHEST_TIMER) {
         g_TreasureChestTicks = uTicks;

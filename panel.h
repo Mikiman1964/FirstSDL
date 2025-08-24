@@ -2,10 +2,10 @@
 #define PANEL_H_INCLUDED
 
 void CheckPlayTime(void);
-int ShowPanel(SDL_Renderer *pRenderer);
-int WritePanelText(SDL_Renderer *pRenderer, const char *szText, int nXpos, int nYpos, int nFontSize, uint32_t uFont);
-int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer);
-int WriteShieldValue(SDL_Renderer *pRenderer);
-int ConfirmMessage(SDL_Renderer *pRenderer);
+int32_t ShowPanel(SDL_Renderer *pRenderer);
+int32_t WritePanelText(SDL_Renderer *pRenderer, const char *szText, int32_t nXpos, int32_t nYpos, int32_t nFontSize, uint32_t uFont);
+int32_t WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer);
+int32_t WriteShieldValue(SDL_Renderer *pRenderer);
+int32_t ConfirmMessage(SDL_Renderer *pRenderer);
 
 #endif // PANEL_H_INCLUDED

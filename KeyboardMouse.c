@@ -458,10 +458,10 @@ Beschreibung: Initialisiert die Eingangsgeräte (Keyboard / Maus)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: InputsStates.x
 ------------------------------------------------------------------------------*/
-int InitInputStates(void) {
+int32_t InitInputStates(void) {
     memset(&InputStates,0,sizeof(InputStates));
     InputStates.pKeyboardArray = SDL_GetKeyboardState(NULL);
     if (InputStates.pKeyboardArray) {
@@ -500,6 +500,12 @@ void UpdateInputStates(void) {
         } else if (InputStates.pKeyboardArray[SDL_SCANCODE_RETURN]) {
             InputStates.uLastKey0 = 0x0A;
             InputStates.uLastKey1 = 0;
+        } else if (Event.type == SDL_WINDOWEVENT) {
+            if (Event.window.event == SDL_WINDOWEVENT_ENTER) {
+                InputStates.bMouseInWindow = true;
+            } else if (Event.window.event == SDL_WINDOWEVENT_LEAVE) {
+                InputStates.bMouseInWindow = false;
+            }
         }
     }
     uMouseButtons = SDL_GetMouseState(&InputStates.nMouseXpos_Absolute,&InputStates.nMouseYpos_Absolute);    // Maus abfragen
@@ -706,16 +712,16 @@ Beschreibung: Ermittelt anhand einer gedrückten Taste den ScanCodeIndex. Dieser
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, ScanCodeIndex, -1 = keine Taste gedrückt, sonst Index
+Rückgabewert:  int32_t, ScanCodeIndex, -1 = keine Taste gedrückt, sonst Index
 Seiteneffekte: InputStates.x, g_uScanCodes[]
 ------------------------------------------------------------------------------*/
-int GetScancodeIndex() {
-    uint32_t I;
-    int  nIndex = -1;
+int32_t GetScancodeIndex() {
+    int32_t nI;
+    int32_t nIndex = -1;
 
-    for (I = 0; I < (sizeof(g_uScanCodes) / sizeof(uint32_t)); I++) {
-        if (InputStates.pKeyboardArray[g_uScanCodes[I]]) {
-            nIndex = (int)I;
+    for (nI = 0; nI < (sizeof(g_uScanCodes) / sizeof(uint32_t)); nI++) {
+        if (InputStates.pKeyboardArray[g_uScanCodes[nI]]) {
+            nIndex = nI;
             break;
         }
     }
@@ -732,16 +738,16 @@ Beschreibung: Ermittelt anhand eines SDL_ScanCodes den zugehörigen Namen.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, ScanCodeIndex, -1 = kein gültiger Index
+Rückgabewert:  int32_t, ScanCodeIndex, -1 = kein gültiger Index
 Seiteneffekte: InputStates.x, g_uScanCodes[]
 ------------------------------------------------------------------------------*/
-int GetSdlScanCodeNameIndex(uint32_t uSDL_ScanCode) {
-    int nIndex = -1;
-    uint32_t I;
+int32_t GetSdlScanCodeNameIndex(uint32_t uSDL_ScanCode) {
+    int32_t nIndex = -1;
+    int32_t nI;
 
-    for (I = 0; I < (sizeof(g_uScanCodes) / sizeof(uint32_t)); I++) {
-        if (uSDL_ScanCode == g_uScanCodes[I]) {
-            nIndex = (int)I;
+    for (nI = 0; nI < (sizeof(g_uScanCodes) / sizeof(uint32_t)); nI++) {
+        if (uSDL_ScanCode == g_uScanCodes[nI]) {
+            nIndex = nI;
             break;
         }
     }

@@ -8,16 +8,16 @@
 
 
 typedef struct {
-    int nRed;
-    int nGreen;
-    int nBlue;
+    int32_t nRed;
+    int32_t nGreen;
+    int32_t nBlue;
 } COLORFLOW;
 
 
 typedef struct {
-    int nRed;
-    int nGreen;
-    int nBlue;
+    int32_t nRed;
+    int32_t nGreen;
+    int32_t nBlue;
 } COPPERLINE;
 
 
@@ -26,10 +26,10 @@ typedef struct {
 } COPPERSEGMENT;
 
 
-int InitVisibibleCopperSegments(void);
-void CalculateColorFlow(int nMaxRed, int nMaxGreen, int nMaxBlue);
-void PrecalculateSegments(int nMaxRed, int nMaxGreen, int nMaxBlue);
+int32_t InitVisibibleCopperSegments(void);
+void CalculateColorFlow(int32_t nMaxRed, int32_t nMaxGreen, int32_t nMaxBlue);
+void PrecalculateSegments(int32_t nMaxRed, int32_t nMaxGreen, int32_t nMaxBlue);
 void ScrollVisibleSegments(void);
-int DoCopper(SDL_Renderer *pRenderer,bool bScroll);
+int32_t DoCopper(SDL_Renderer *pRenderer,bool bScroll);
 void FreeCopper(void);
 #endif // COPPER_H_INCLUDED

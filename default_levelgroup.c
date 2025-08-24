@@ -909,11 +909,11 @@ Beschreibung: Schreibt die Default-Levelgruppe. Wenn das nicht funktioniert,
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: g_default_levelgroup
 ------------------------------------------------------------------------------*/
-int WriteDefaultLevelgroup(void) {
-    int nErrorCode;
+int32_t WriteDefaultLevelgroup(void) {
+    int32_t nErrorCode;
     char szFullFilename[512];
 
     sprintf(szFullFilename,"%s/%s",EMERALD_LEVELGROUPS_DIRECTORYNAME,EMERALD_DEFAULT_LEVELGROUP_FILENAME);

@@ -31,13 +31,13 @@ Name:           PushFillstack
 ------------------------------------------------------------------------------
 Beschreibung: Legt eine Koordinate auf dem Fillstack ab.
 Parameter
-      Eingang: nX, int, X-Position
-               nY, int, Y-Position
+      Eingang: nX, int32_t, X-Position
+               nY, int32_t, Y-Position
       Ausgang: -
-Rückgabewert:  0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Fillstack.x
 ------------------------------------------------------------------------------*/
-int PushFillstack(int nX, int nY) {
+int32_t PushFillstack(int32_t nX, int32_t nY) {
     if (Fillstack.uP < FILLSTACK_SIZE) {
         Fillstack.Koords[Fillstack.uP].nX = nX;
         Fillstack.Koords[Fillstack.uP].nY = nY;
@@ -58,13 +58,13 @@ Name:           PopFillstack
 ------------------------------------------------------------------------------
 Beschreibung: Holt eine Koordinate aus dem Fillstack ab.
 Parameter
-      Eingang: pnX, int *, X-Position
-               pnY, int *, Y-Position
+      Eingang: pnX, int32_t *, X-Position
+               pnY, int32_t *, Y-Position
       Ausgang: -
-Rückgabewert:  0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Fillstack.x
 ------------------------------------------------------------------------------*/
-int PopFillstack(int *pnX, int *pnY) {
+int32_t PopFillstack(int32_t *pnX, int32_t *pnY) {
     if ((pnX != NULL) && (pnY != NULL) && (Fillstack.uP > 0)) {
         Fillstack.uP--;
         *pnX = Fillstack.Koords[Fillstack.uP].nX;
@@ -108,15 +108,15 @@ Beschreibung: Füllt einen (begrenzten) Levelbereich mit einem bestimmten Elemen
                         }
                     }
 Parameter
-      Eingang: nX, int, X-Position im Level
-               nY, int, Y-Position im Level
+      Eingang: nX, int32_t, X-Position im Level
+               nY, int32_t, Y-Position im Level
                uFillElement, uint16_t, Element, mit dem gefüllt werden soll
                uGroundElement, uint16_t, Grund-Element, dass ersetzt werden soll
-Rückgabewert:  0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
-int FillLevelArea(int nX,int nY,uint16_t uFillElement,uint16_t uGroundElement) {
-    int nErrorCode;
+int32_t FillLevelArea(int32_t nX,int32_t nY,uint16_t uFillElement,uint16_t uGroundElement) {
+    int32_t nErrorCode;
 
     InitFillStack();
     nErrorCode = PushFillstack(nX,nY);

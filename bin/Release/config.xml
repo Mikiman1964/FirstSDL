@@ -4,8 +4,8 @@
   <!--primary display is num 0, second display 1-->
   <display_num>0</display_num>
   <resolution>
-    <x>1680</x>
-    <y>1050</y>
+    <x>1280</x>
+    <y>960</y>
   </resolution>
   <fullscreen>0</fullscreen>
 </screen>

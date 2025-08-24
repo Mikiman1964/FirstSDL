@@ -105,9 +105,9 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlCheese(uint32_t I) {
-    int nRandom;
-    int nLoops;
-    int nDirectionRandom;
+    int32_t nRandom;
+    int32_t nLoops;
+    int32_t nDirectionRandom;
     uint16_t uCheeseElement;            // kann grüner oder gelber Käse sein
     uint16_t uCheeseComesElement;       // Element, wenn grüner oder gelber Käse entsteht
     uint32_t uCheeseSpreadSpeed;        // grüner und gelber Käse können unterschiedliche Ausbreitungsgeschwindigkeiten haben

@@ -5,8 +5,8 @@
 
 void PrintTeleporters(void);
 void InitTeleporter(void);
-int  SearchTeleporter(void);
-int  AddTeleporterCoordinate(uint16_t uTeleporterElement,uint32_t uCoordinate);
+int32_t  SearchTeleporter(void);
+int32_t  AddTeleporterCoordinate(uint16_t uTeleporterElement,uint32_t uCoordinate);
 void FreeTeleporterCoordinates(void);
 uint32_t GetDestinationTeleporterCoordinate(uint32_t uSourceCoordinate, uint32_t uAnimation);
 

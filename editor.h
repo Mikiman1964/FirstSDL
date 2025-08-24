@@ -6,6 +6,9 @@
 #include "mySDL.h"
 #include "mystd.h"
 
+
+#define SHOW_HINT_MS                            3000        // Hint nach x ms auf Element anzeigen
+
 #define MIN_Y_RESOLUTION_FOR_LEVELEDITOR        960
 
 #define MAX_PANEL_ELEMENTS                      (8 * 36)     // (8 * 36)
@@ -50,7 +53,7 @@
 
 
 typedef struct {
-    int             nEditMessage;                               // -1 = ungültig, sonst 0 bis EMERALD_MAX_MESSAGES - 1
+    int32_t         nEditMessage;                               // -1 = ungültig, sonst 0 bis EMERALD_MAX_MESSAGES - 1
     uint32_t        uMessageLen;                                // Länge der aktuellen Nachricht
     char            szMessageEditorMem[EDITOR_MEM_SIZE];        // Speicher für Message-Editor.
     char            cCharAtCursor;                              // Zeichen, das für Cursor zwischengespeichert werden muss;
@@ -102,16 +105,19 @@ typedef struct {
     uint32_t        uScrollPixelFastY;                          // Scrollt bei Tastendruck x Pixel vertikal in hoher Geschwindigkeit
     uint32_t        uFont_W;
     uint32_t        uFont_H;
-    int             nMaxXpos;                                   // Für maximale X-Positionierung
-    int             nMaxYpos;                                   // Für maximale Y-Positionierung
-    int             nXpos;                                      // Aktuelle X-Positionierung
-    int             nYpos;                                      // Aktuelle Y-Positionierung
-    int             nMinXLevel;                                 // Minimale X-Position innerhalb des Levela
-    int             nMaxXLevel;                                 // Maximale X-Position innerhalb des Levela
-    int             nMinYLevel;                                 // Minimale Y-Position innerhalb des Levela
-    int             nMaxYLevel;                                 // Maximale Y-Position innerhalb des Levela
+    int32_t         nMaxXpos;                                   // Für maximale X-Positionierung
+    int32_t         nMaxYpos;                                   // Für maximale Y-Positionierung
+    int32_t         nXpos;                                      // Aktuelle X-Positionierung
+    int32_t         nYpos;                                      // Aktuelle Y-Positionierung
+    int32_t         nMinXLevel;                                 // Minimale X-Position innerhalb des Levela
+    int32_t         nMaxXLevel;                                 // Maximale X-Position innerhalb des Levela
+    int32_t         nMinYLevel;                                 // Minimale Y-Position innerhalb des Levela
+    int32_t         nMaxYLevel;                                 // Maximale Y-Position innerhalb des Levela
     uint32_t        uFrameCounter;                              // Bildzähler
     uint32_t        uMenuState;                                 // Menü-Status, siehe oben
+    uint32_t        uTimeSameCoordinate;                        // Zeitpunkt, seit wann X/Y-Position im Editor gleich (für Hint)
+    uint32_t        uLastLevelX;                                // letzte X-Level-Position
+    uint32_t        uLastLevelY;                                // letzte X-Level-Position
     MESSAGEEDITOR   MessageEditor;                              // Nachrichten-Editor
     // Leveldaten
     uint16_t        *pLevel;
@@ -187,49 +193,53 @@ typedef struct {
 
 
 void InitClipboard(void);
-int PutLevelToClipboard(int nDestLevelNumber);
+int32_t PutLevelToClipboard(int32_t nDestLevelNumber);
 void FreeClipboard(void);
 void ShowClipboard(void);
-int UpdateLevelgroupHash(uint8_t *pszInput, uint8_t *puCalculatedHash);
-int UpdateCreateTimestamp(uint8_t *pszInput);
+int32_t UpdateLevelgroupHash(uint8_t *pszInput, uint8_t *puCalculatedHash);
+int32_t UpdateCreateTimestamp(uint8_t *pszInput);
 uint8_t *GetStartOrEndLevelTag(uint8_t *pszInput, uint8_t *pEndpointer, bool bStart);
-int RenumLevelgroup(uint8_t *pszXml);
+int32_t RenumLevelgroup(uint8_t *pszXml);
 void SetPanelElements(uint32_t uMenuState);
 void ShowEditorStatus(void);
 void ClearOldMan(void);
-int InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int nLevel);
-DYNSTRING *Editor(SDL_Renderer *pRenderer, int nLevel);
+int32_t InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int32_t nLevel);
+DYNSTRING *Editor(SDL_Renderer *pRenderer, int32_t nLevel);
 void InitMessageEditor(void);
 void CalcEditorViewArea(void);
-int CreateEditorButtons(void);
+int32_t CreateEditorButtons(void);
 void FreeEditorButtons(void);
-int CopyPlayfieldValueToEditor(void);
-int SetLevelBorder(uint16_t *pLevel, bool bClear, bool bAlwaysSteel);
+int32_t CopyPlayfieldValueToEditor(void);
+int32_t SetLevelBorder(uint16_t *pLevel, bool bClear, bool bAlwaysSteel);
 uint32_t GetLevelnameBeamPosition(void);
 uint32_t GetImportFilesBeamPosition(void);
-int MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
-int ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
+int32_t MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
+int32_t ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition);
 void InitLevelTitleList(void);
-int HandlePreEditorButtons(int nSelectedLevel);
+int32_t HandlePreEditorButtons(int32_t nSelectedLevel);
 void PreparePreEditormenu(void);
-int PreEditorMenu(SDL_Renderer *pRenderer);
-int DrawEditorPanel(SDL_Renderer *pRenderer);
-int FillPanel(SDL_Renderer *pRenderer);
-uint16_t GetElementByMouseposition(int nMouseXpos, int nMouseYpos);
-int RenderEditorLevel(SDL_Renderer *pRenderer, int *pnXpos, int *pnYpos, int nAnimationCount);
+int32_t PreEditorMenu(SDL_Renderer *pRenderer);
+int32_t DrawEditorPanel(SDL_Renderer *pRenderer);
+int32_t FillPanel(SDL_Renderer *pRenderer);
+uint16_t GetElementByMouseposition(int32_t nMouseXpos, int32_t nMouseYpos);
+int32_t RenderEditorLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount);
 DYNSTRING *GetLevelXmlFromEditor(void);
-int EditorStateLevel(SDL_Renderer *pRenderer);
-int EditorStateYams(SDL_Renderer *pRenderer);
-int EditorStateMachines(SDL_Renderer *pRenderer);
-int EditorStateTreasureChests(SDL_Renderer *pRenderer);
-int EditorStateTimeAndScores(SDL_Renderer *pRenderer);
-int EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer);
+int32_t EditorStateLevel(SDL_Renderer *pRenderer);
+void SetCompleteReplicator(uint16_t uReplicatorElement,uint32_t uLevelPosX, uint32_t uLevelPosY);
+void SetAcidPool(uint16_t uElement, uint32_t uLevelPosX, uint32_t uLevelPosY);
+int32_t GetCompleteReplicator(uint16_t uReplicatorElement, uint16_t *pCompleteReplicator);
+void SetLastLevelMousePosInvalid(void);
+int32_t EditorStateYams(SDL_Renderer *pRenderer);
+int32_t EditorStateMachines(SDL_Renderer *pRenderer);
+int32_t EditorStateTreasureChests(SDL_Renderer *pRenderer);
+int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer);
+int32_t EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer);
 void PreCalcYamCoords(void);
-int GetYamExplosionFromMousepointer(uint8_t *puElementIndex);
-int GetTimeScoresSwitchfieldAndOffset(uint32_t uSwitch,uint32_t *puSwitchOffset);
-void ChangeTimeScoresValue(int nSwitchField,uint32_t uSwitchOffset);
+int32_t GetYamExplosionFromMousepointer(uint8_t *puElementIndex);
+int32_t GetTimeScoresSwitchfieldAndOffset(uint32_t uSwitch,uint32_t *puSwitchOffset);
+void ChangeTimeScoresValue(int32_t nSwitchField,uint32_t uSwitchOffset);
 uint32_t IncreaseOrDecreaseTimeScoreValue(uint32_t uValue, uint32_t uSwitchOffset);
-int CreateNewLevel(bool bCopyOldLeveldata);
-int SaveNewMessage(void);
-int ScrollLevelTitleList(int nButton);
+int32_t CreateNewLevel(bool bCopyOldLeveldata);
+int32_t SaveNewMessage(void);
+int32_t ScrollLevelTitleList(int32_t nButton);
 #endif // EDITOR_H_INCLUDED

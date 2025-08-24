@@ -25,16 +25,16 @@ Beschreibung: Initialisiert die Struktur Audioplayer.x und öffnet das
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x, music[].x, music_compressed[]
 ------------------------------------------------------------------------------*/
-int InitAudioplayerStruct(void) {
-    int nErrorcode = -1;
+int32_t InitAudioplayerStruct(void) {
+    int32_t nErrorCode = -1;
     uint8_t *pCompressedMusicStart;
     uint32_t uUnCompressedMusicSize;
     uint32_t uCompressedMusicSize;
     uint32_t I;
-    int nMiniz;
+    int32_t nMiniz;
 
     memset(&Audioplayer,0,sizeof(AUDIOPLAYER));
     // Alle Songs entpacken und im Speicher Audioplayer.pMusicAll ablegen
@@ -70,11 +70,11 @@ int InitAudioplayerStruct(void) {
     Audioplayer.uMusicVolumePercent = 100;
     if (Audioplayer.audio_device > 0) {
         SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
-        nErrorcode = 0;
+        nErrorCode = 0;
     } else {
         SDL_Log("%s: SDL_OpenAudioDevice() failed: %s",__FUNCTION__,SDL_GetError());
     }
-    return nErrorcode;
+    return nErrorCode;
 }
 
 
@@ -84,13 +84,13 @@ Name:           SetMusic
 Beschreibung: Stellt ein MOD-/XM-/SID-File zum Abspielen bereit.
 
 Parameter
-      Eingang: nMusicIndex, int, Index auf Song, siehe oben "Externe Pointer und Indexe"
+      Eingang: nMusicIndex, int32_t, Index auf Song, siehe oben "Externe Pointer und Indexe"
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x, music[].x
 ------------------------------------------------------------------------------*/
-int SetMusic(int nMusicIndex) {
-    int nErrorCode;
+int32_t SetMusic(int32_t nMusicIndex) {
+    int32_t nErrorCode;
 
     Audioplayer.nModulType = MODULE_TYPE_UNKNOWN;
     if (Audioplayer.pCtxXm != NULL) {
@@ -158,11 +158,11 @@ Beschreibung: Spielt ein MOD-File ab. Diese Funktion muss zyklisch aufgerufen we
 Parameter
       Eingang: bIgnoreConfig, bool, true = Config.bGameMusic wird ignoriert
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Audioplayer.x, Config.x
 ------------------------------------------------------------------------------*/
-int PlayMusic(bool bIgnoreConfig) {
-    int nErrorCode = 0;
+int32_t PlayMusic(bool bIgnoreConfig) {
+    int32_t nErrorCode = 0;
     uint32_t k;
     uint32_t uSamples;
 
@@ -760,7 +760,7 @@ ModPlayerStatus_t *ProcessMOD(void) {
 
                     // MIK: externe Lautstärkeregelung
                     if (Audioplayer.uMusicVolumePercent < 100) {
-                        sample = (short)(((int)sample * Audioplayer.uMusicVolumePercent) / 100);
+                        sample = (short)(((int32_t)sample * Audioplayer.uMusicVolumePercent) / 100);
                     }
 
 					// Distribute the rendered sample across both output channels

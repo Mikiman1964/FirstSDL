@@ -19,7 +19,7 @@ Seiteneffekte: Playfield.x
 void ControlSlime(uint32_t I) {
     uint32_t uAnimStatus;
     uint32_t uSelfStatus;
-    int nRandom;
+    int32_t nRandom;
 
     uAnimStatus = Playfield.pStatusAnimation[I] & 0x0000FF00;
     uSelfStatus = Playfield.pStatusAnimation[I] & 0xFF000000;

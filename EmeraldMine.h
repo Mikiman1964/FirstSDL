@@ -801,12 +801,12 @@ typedef struct {
     uint32_t        uTeleporterGreenCounter;                    // Anzahl grüner Teleporter
     uint32_t        uTeleporterBlueCounter;                     // Anzahl blauer Teleporter
     uint32_t        uRollUnderground[65536];                    // Bit 0 = Emerald, Bit 1 = Saphir, Bit 2 = Stone, Bit 3 = Nut, Bit 4 = Bomb, Bit 5 = Rubin, Bit 6 = Kristall, Bit 7 = Perle, Bit 8 = Megabombe
-    int             nCentralExplosionCoordinates[8];            // Koordinaten um Zentrum einer 3x3-Explosion
-    int             nCentralMegaExplosionCoordinates[20];       // Koordinaten um Zentrum einer Mega-Explosion
-    int             nCheckReplicatorForYamExplosionTop[5];      // Für Yam-Explosion mit Replikator (obere Hälfte)
-    int             nCheckReplicatorForYamExplosionButtom[5];   // Für Yam-Explosion mit Replikator (untere Hälfte)
-    int             nCheckAcidPoolForYamExplosionTop[6];        // Für Yam-Explosion mit Säurebecken (obere Hälfte)
-    int             nCheckAcidPoolForYamExplosionButtom[6];     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
+    int32_t         nCentralExplosionCoordinates[8];            // Koordinaten um Zentrum einer 3x3-Explosion
+    int32_t         nCentralMegaExplosionCoordinates[20];       // Koordinaten um Zentrum einer Mega-Explosion
+    int32_t         nCheckReplicatorForYamExplosionTop[5];      // Für Yam-Explosion mit Replikator (obere Hälfte)
+    int32_t         nCheckReplicatorForYamExplosionButtom[5];   // Für Yam-Explosion mit Replikator (untere Hälfte)
+    int32_t         nCheckAcidPoolForYamExplosionTop[6];        // Für Yam-Explosion mit Säurebecken (obere Hälfte)
+    int32_t         nCheckAcidPoolForYamExplosionButtom[6];     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
     bool            bUnlimtedTime;                              // keine Zeitbegrenzung
     bool            bInitOK;
     bool            bQuicksaveAllowed;                          // Quicksave im aktuellen Level erlaubt
@@ -820,9 +820,6 @@ typedef struct {
     bool            bMagicWallRunning;
     bool            bMagicWallWasOn;                            // Magic Wall war mal an
     bool            bLightOn;                                   // Licht ist an -> unsichtbare Mauern/Stahl sind sichtbar
-
-    bool bLightAlwaysOn; // wieder rausnehmen
-
     bool            bPushStone;                                 // wenn true, kann Man sofort (Stone, Nut, Bomb) schieben
     bool            bManDead;
     bool            bWellDone;                                  // Level wurde geschafft
@@ -905,8 +902,8 @@ typedef struct {
     uint32_t        uLevel_X_Dimension;
     uint32_t        uLevel_Y_Dimension;
     uint32_t        uLevel_XY_Dimension;                        // X * Y
-    int             nTopLeftXpos;                               // aktuelle X-Pixel-Position (obere linke sichtbare Ecke)
-    int             nTopLeftYpos;                               // aktuelle Y-Pixel-Position (obere linke sichtbare Ecke)
+    int32_t         nTopLeftXpos;                               // aktuelle X-Pixel-Position (obere linke sichtbare Ecke)
+    int32_t         nTopLeftYpos;                               // aktuelle Y-Pixel-Position (obere linke sichtbare Ecke)
     uint32_t        uTotalScore;
     uint32_t        uVisibleX;                                  // Anzahl der sichtbaren Elemente-Spalten
     uint32_t        uVisibleY;                                  // Anzahl der sichtbaren Elemente-Zeilen (ohne unteres Panel)
@@ -914,8 +911,8 @@ typedef struct {
     uint32_t        uVisibleCenterY;                            // Zentrum X des sichtbaren Bereichs (ohne unteres Panel)
     uint32_t        uShiftLevelXpix;                            // Anzahl Pixel, die das Level nach rechts geshiftet wird, da es kleiner bzw. gleich der Anzeigebreite ist
     uint32_t        uShiftLevelYpix;                            // Anzahl Pixel, die das Level nach unten geshiftet wird, da es kleiner bzw. gleich der Anzeigehöhe ist
-    int             nMaxXpos;                                   // Für maximale X-Positionierung
-    int             nMaxYpos;                                   // Für maximale Y-Positionierung
+    int32_t         nMaxXpos;                                   // Für maximale X-Positionierung
+    int32_t         nMaxYpos;                                   // Für maximale Y-Positionierung
     uint32_t        uManXpos;                                   // X-Element-Position des Man
     uint32_t        uManYpos;                                   // Y-Element-Position des Man
     uint32_t        uFrameCounter;                              // Bildzähler
@@ -932,10 +929,10 @@ typedef struct {
 
 void SetElementToNextPosition(uint32_t I,uint32_t uStatusAnimation, uint32_t uNextStatusAnimation, uint16_t uInvalidElement);
 uint32_t ControlGame(uint32_t uDirection);
-uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCount, float *pfAngle);
+uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int32_t nAnimationCount, float *pfAngle);
 void ScrollAndCenterLevel(uint32_t uManDirection);
-int Menu(SDL_Renderer *pRenderer);
-int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel);
+int32_t Menu(SDL_Renderer *pRenderer);
+int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel);
 void InitRollUnderground(void);
 uint8_t GetFreeRollDirections(uint32_t I);
 uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation);
@@ -943,8 +940,6 @@ void ControlPreElements(void);
 void ControlTimeDoor(uint32_t I);
 void PostControlSwitchDoors(void);
 void PostControlBombExplosions(void);
-bool IsElementAlive(uint16_t uElement);
-bool IsSteel(uint16_t uElement);
-int CheckGameDirectorys(void);
-void SetGameSpeed(int nGameSpeed);
+int32_t CheckGameDirectorys(void);
+void SetGameSpeed(int32_t nGameSpeed);
 #endif // EMERALD_MINE_H_INCLUDED

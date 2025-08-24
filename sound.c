@@ -66,15 +66,15 @@ Beschreibung: Initialisiert das Soundsystem für das Spiel.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: GameSound.x, g_pChunk[], gamesound_compressed[]
 ------------------------------------------------------------------------------*/
-int InitGameSound(void) {
+int32_t InitGameSound(void) {
     uint32_t I;
     uint32_t uCompressedWavSize;
     uint32_t uUnCompressedWavSize;
     uint8_t *pCompressedWavStart;
-    int nMiniz;
+    int32_t nMiniz;
 
     memset(&GameSound,0,sizeof(GAMESOUND));
     for (I = 0; I < MAX_WAV_CHUNKS; I++) {
@@ -171,11 +171,11 @@ Parameter
 Rückgabewert:  -
 Seiteneffekte: GameSound.x, g_pChunk[]
 ------------------------------------------------------------------------------*/
-int PlayAllSounds(void) {
+int32_t PlayAllSounds(void) {
     uint64_t uBit;
     uint64_t uMask;
     uint32_t uS;    // Wave-Chunk und Channel
-    int nRet;
+    int32_t nRet;
 
     if (GameSound.uAllSounds == 0) {
         return 0;       // Beenden, wenn es nichts abzuspielen gibt
@@ -209,13 +209,13 @@ Beschreibung: Erzeugt WAV-Chunks aus WAV-Dateien. Die WAV-Chunks können mit
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: g_pChunk[], gamesound[], GameSound.x
 ------------------------------------------------------------------------------*/
-int CreateWavChunks(void) {
+int32_t CreateWavChunks(void) {
     uint32_t I;
     uint32_t uSoundSize;
-    int nErrorCode = 0;
+    int32_t nErrorCode = 0;
     Mix_Chunk * pChunk;
     SDL_RWops* pSDLStreamPointer; // Streampointer, um Sounds einzulesen
 

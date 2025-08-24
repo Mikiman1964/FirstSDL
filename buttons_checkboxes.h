@@ -15,43 +15,43 @@
 #define CHK_UNUSE               false
 
 typedef struct {
-    bool      bActive;
-    bool      bPressed;
-    bool      bWaitRelease;
-    char      *pszLabel;
-    char      *pszText;
-    uint32_t  uXpos;
-    uint32_t  uYpos;
+    bool        bActive;
+    bool        bPressed;
+    bool        bWaitRelease;
+    char        *pszLabel;
+    char        *pszText;
+    uint32_t    uXpos;
+    uint32_t    uYpos;
 } BUTTON;
 
 
 typedef struct {
-    int     nRegisterIndex;
-    bool    bUse;
-    bool    bActive;
-    bool    bPressed;
-    bool    bChanged;
-    bool    bRadio;
-    char    szText[MAX_CHECKBOXTEXT_LEN + 1];
-    int     nXpos;
-    int     nYpos;
+    int32_t     nRegisterIndex;
+    bool        bUse;
+    bool        bActive;
+    bool        bPressed;
+    bool        bChanged;
+    bool        bRadio;
+    char        szText[MAX_CHECKBOXTEXT_LEN + 1];
+    int32_t     nXpos;
+    int32_t     nYpos;
 } CHECKBOX;
 
 
 void InitCheckboxes(void);
-int RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int nXpos, int nYpos, bool bRadio, bool bUse);
-int DeRegisterCheckbox(CHECKBOX *pCheckbox);
-int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute);
+int32_t RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int32_t nXpos, int32_t nYpos, bool bRadio, bool bUse);
+int32_t DeRegisterCheckbox(CHECKBOX *pCheckbox);
+int32_t ShowCheckboxes(SDL_Renderer *pRenderer, int32_t nDimm, bool bAbsolute);
 
 void InitButtons(void);
 void FreeButton(char *pszLabel);
 void FreeAllButtons(void);
-int GetButtonIndex(char *pszLabel);
-int GetFreeButtonIndex(void);
-int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease);
-int SetButtonActivity(char *pszLabel, bool bActive);
-int SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos);
-int ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute);
-int ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute);
+int32_t GetButtonIndex(char *pszLabel);
+int32_t GetFreeButtonIndex(void);
+int32_t CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease);
+int32_t SetButtonActivity(char *pszLabel, bool bActive);
+int32_t SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos);
+int32_t ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute);
+int32_t ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute);
 bool IsButtonPressed(char *pszLabel);
 #endif // BUTTONS_CHECKBOXES_H_INCLUDED

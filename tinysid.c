@@ -1245,11 +1245,11 @@ Beschreibung: Initialisiert die Struktur SidSong.x durch ein angegebenen
 Parameter
       Eingang: pSidSong, uint8_t *, Zeiger auf Sid-Song
                uLen, uint16_t, Länge des Sid-Songs in Bytes
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: SidSong.x
 ------------------------------------------------------------------------------*/
-int InitSidSong(uint8_t *pSidSong, uint16_t uLen) {
-    int nErrorCode;
+int32_t InitSidSong(uint8_t *pSidSong, uint16_t uLen) {
+    int32_t nErrorCode;
     uint8_t data_file_offset;
 
     if ((pSidSong != NULL) && (uLen > 0)) {

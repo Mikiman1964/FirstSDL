@@ -19,7 +19,7 @@ typedef struct
   uint8_t *puBuffer;            // uScrollerBufferLen Elemente
   float *pfAngles;              // uScrollerBufferLen Elemente
   uint32_t uScrolltextPointer;  // Zeiger auf Zeichen im Scrolltext
-  int nYpos;                    // Y-Position
+  int32_t nYpos;                // Y-Position
   float fXfreq;                 // X-Frequenz der Sinusfrequenz
   float fYfreq;                 // Y-Frequenz der Sinusfrequenz
   float fYamplitude;            // Y-Amplitude des Sinus
@@ -29,8 +29,8 @@ typedef struct
 }SCROLLER;
 
 
-int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont);
-int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller);
+int32_t InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int32_t nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont);
+int32_t DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller);
 void FreeScroller(SCROLLER *pScroller);
 
 #endif // SCROLLER_H_INCLUDED

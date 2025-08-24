@@ -2305,7 +2305,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
                 Playfield.bWellDone = true;
                 // Zusätzlicher Score: (Restzeit * Timefaktor) / 10: siehe DC3
                 Playfield.uTotalScore = Playfield.uTotalScore + (Playfield.uTimeToPlay * Playfield.uTimeScoreFactor) / (Video.DesktopDisplayMode.refresh_rate * 10);
-                // Falls Score > 9999, wird das in ShowPanel() korrigiert
+                // Falls Score > 99999, wird das in ShowPanel() korrigiert
             }
             break;
         default:

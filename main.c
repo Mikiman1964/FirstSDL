@@ -25,8 +25,6 @@
 void TestFunction(uint32_t I);
 void PrintSDLVersion(void);
 
-int test_main();
-
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
 extern AUDIOPLAYER Audioplayer;
@@ -42,7 +40,7 @@ int main(int argc, char *argv[]) {
     float fSin2;
     float fAngle3 = 0;
     float fSin3;
-    int nBallonSize = 0;
+    int32_t nBallonSize = 0;
     SDL_Rect DestR_Ballon;
 
     // @ = Teller/at
@@ -52,7 +50,7 @@ int main(int argc, char *argv[]) {
     // | = Ö
     // { = Ä
     // } = Ü
-    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - MAY 2025. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - AUGUST 2025. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS15, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
@@ -79,7 +77,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     bool bAsteroidsStarted = false;
     uint32_t uAsteroidsTimer;
     uint32_t X;
-    int nMenuChoose;
+    int32_t nMenuChoose;
     uint32_t uCopperTimer;
     bool bCopperScoll = false;
     uint8_t uAsteroidsGfx = 0;
@@ -269,7 +267,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         // Scroller2 mit Sinus-Verlauf
         fAngle2 = fAngle2 + 0.01;
         fSin2 = sin(fAngle2) * (Config.uResY / 2.1);
-        Scroller2.nYpos = ((Config.uResY - FONT_H) / 2) + (int)fSin2;
+        Scroller2.nYpos = ((Config.uResY - FONT_H) / 2) + (int32_t)fSin2;
 
         // Scroller3 mit Sinus-Verlauf
         // Steigungsumkehr des sinus 3 für Scroller 3 erkennen -> Steigung für Sinus ist erste Ableitung, also Cosinus
@@ -278,7 +276,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         fAngle3 = fAngle3 + 0.02;
         fScroller3NeueSteigung = cos(fAngle3);
         fSin3 = sin(fAngle3) * (Config.uResY / 1.9);
-        Scroller3.nYpos = ((Config.uResY - FONT_H) / 2) + (int)fSin3;
+        Scroller3.nYpos = ((Config.uResY - FONT_H) / 2) + (int32_t)fSin3;
         if ( ((fScroller3AlteSteigung > 0) && (fScroller3NeueSteigung < 0)) || ((fScroller3AlteSteigung < 0) && (fScroller3NeueSteigung > 0)) ) {
             bScroller3Vor = !bScroller3Vor;     // Scroller 3 umkreist den Rest
         }

@@ -92,11 +92,11 @@ Beschreibung: Sucht und zählt im Spielfeld die Teleporter und legt die Koordina
               Spielfeld enthalten und die Level-Dimension muss bekannt sein.
 Parameter
       Eingang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int SearchTeleporter(void) {
-    int nErrorCode = 0;
+int32_t SearchTeleporter(void) {
+    int32_t nErrorCode = 0;
     uint32_t I;             // lineare Koordinate
     uint16_t uElement;
 
@@ -126,11 +126,11 @@ Parameter
                     EMERALD_TELEPORTER_YELLOW,
                     EMERALD_TELEPORTER_GREEN,
                     EMERALD_TELEPORTER_BLUE
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int AddTeleporterCoordinate(uint16_t uTeleporterElement,uint32_t uCoordinate) {
-    int nErrorCode;
+int32_t AddTeleporterCoordinate(uint16_t uTeleporterElement,uint32_t uCoordinate) {
+    int32_t nErrorCode;
 
     if (uCoordinate < Playfield.uLevel_XY_Dimension) {
         switch (uTeleporterElement) {
@@ -203,7 +203,7 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 uint32_t GetDestinationTeleporterCoordinate(uint32_t uSourceCoordinate, uint32_t uAnimation) {
     uint32_t uDestinationCoordinate = EMERALD_INVALID_TELEPORTER_COORDINATE;
-    int nIndex;
+    int32_t nIndex;
 
     if (uSourceCoordinate < Playfield.uLevel_XY_Dimension) {
         switch (Playfield.pLevel[uSourceCoordinate]) {

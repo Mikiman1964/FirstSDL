@@ -21,16 +21,16 @@ Parameter
                          sollte ein Vielfaches von FONT_W sein, da der Scroller sonst ruckelt
                uXStart, uint32_t, Horizontale Position wo Scroller ended (linke Seite)
                uXEnd, uint32_t, Horizontale Position wo Scroller startet (rechte Seite)
-               nYpos, int, Y-Startposition, hat scheinbar nur auf Sinusscroller Einfluss
+               nYpos, int32_t, Y-Startposition, hat scheinbar nur auf Sinusscroller Einfluss
                pszScrolltext, uint8_t *, Zeiger auf Scrolltext, null-terminiert
                fXfreq, float, X-Frequenz der Sinusfrequenz
                fYfreq, float, Y-Frequenz der Sinusfrequenz
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
-int InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont) {
-    int nErrorcode = -1;
+int32_t InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int32_t nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont) {
+    int32_t nErrorcode = -1;
     uint32_t I;
 
     if ( (pScroller != NULL) && (pszScrolltext != NULL) && ((uXEnd - uXStart) > FONT_W) ) {
@@ -102,13 +102,13 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                pScroller, SCROLLER *, Zeiger auf Scroller-Struktur
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
+int32_t DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
     uint8_t newchar;
     uint32_t I;
-    int nErrorCode;
+    int32_t nErrorCode;
     float fScaleW;
     float fScaleH;
     float fRotation;

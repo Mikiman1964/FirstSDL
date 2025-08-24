@@ -15,6 +15,7 @@
 #include "modplay.h"
 #include "mySDL.h"
 #include "mystd.h"
+#include "quicksaveloadgame.h"
 #include "scroller.h"
 #include "sdlmixer_SDL_mixer.h"
 #include "sound.h"
@@ -64,9 +65,9 @@ Parameter
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 uint32_t GetRainbowColors(uint16_t uWert) {
-    int nRed, nGreen, nBlue;
-    int nPhase;
-    int nLevel;
+    int32_t nRed, nGreen, nBlue;
+    int32_t nPhase;
+    int32_t nLevel;
     uint32_t uRGB = 0;
 
     uWert = uWert % 254;
@@ -120,15 +121,15 @@ Beschreibung: Prüft, welcher Gfx-Button im EmeraldMinemainMenü gedrückt ist.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = kein Button gedrückt,
-                    1 = EMERALD_STEEL_ARROW_DOWN_PRESSED,
-                    2 = EMERALD_STEEL_ARROW_UP_PRESSED
-                    3 = EMERALD_STEEL_SETTINGS_PRESSED
-                    4 = EMERALD_STEEL_EXIT_PRESSED
+Rückgabewert:  int32_t, 0 = kein Button gedrückt,
+                        1 = EMERALD_STEEL_ARROW_DOWN_PRESSED,
+                        2 = EMERALD_STEEL_ARROW_UP_PRESSED
+                        3 = EMERALD_STEEL_SETTINGS_PRESSED
+                        4 = EMERALD_STEEL_EXIT_PRESSED
 Seiteneffekte: InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int GetMainMenuButton(void) {
-    int nButton;
+int32_t GetMainMenuButton(void) {
+    int32_t nButton;
 
     nButton = 0;
     if (InputStates.bLeftMouseButton) {
@@ -160,11 +161,11 @@ Beschreibung: Prüft, ob ein Spielerlisten-Button (down/up) gedrückt ist.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
+Rückgabewert:  int32_t, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
-int GetPlayerListButton(void) {
-    int nButton;
+int32_t GetPlayerListButton(void) {
+    int32_t nButton;
     bool bMouseInNamesArea;
 
     bMouseInNamesArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 1088) &&
@@ -201,11 +202,11 @@ Beschreibung: Prüft, ob ein Levelgruppen-Button (down/up) gedrückt ist.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
+Rückgabewert:  int32_t, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
 Seiteneffekte: InputStates.x, g_LevelgroupFilesCount, MainMenu.x
 ------------------------------------------------------------------------------*/
-int GetLevelgroupListButton(void) {
-    int nButton;
+int32_t GetLevelgroupListButton(void) {
+    int32_t nButton;
     bool bMouseInLevelgroup;
 
     bMouseInLevelgroup = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 896) &&
@@ -240,9 +241,9 @@ Beschreibung: Setzt einen Text in einen Menüscreen. Falls das Ende einer Zeile
 Parameter
       Eingang: pMenuScreen, uint16_t *, Zeiger auf Menüscreen
                pszText, char*, Zeiger auf Text
-               nXpos, int, X-Menükoordinate (keine Pixelkoordinate)
+               nXpos, int32_t, X-Menükoordinate (keine Pixelkoordinate)
                     wenn < 0, dann wird horizontal zentriert
-               nYpos, int, Y-Menükoordinate (keine Pixelkoordinate)
+               nYpos, int32_t, Y-Menükoordinate (keine Pixelkoordinate)
                     wenn < 0, dann wird vertikal zentriert
                uFont, uint32_t, möglich ist Folgendes:
                     EMERALD_FONT_BLUE
@@ -250,11 +251,11 @@ Parameter
                     EMERALD_FONT_GREEN
                     EMERALD_FONT_STEEL_GREEN
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int SetMenuText(uint16_t *pMenuScreen, char *pszText, int nXpos, int nYpos,uint32_t uFont) {
-    int nErrorCode;
+int32_t SetMenuText(uint16_t *pMenuScreen, char *pszText, int32_t nXpos, int32_t nYpos,uint32_t uFont) {
+    int32_t nErrorCode;
     uint32_t uXdim;
     uint32_t uYdim;
     uint32_t uStringLen;
@@ -755,13 +756,13 @@ Beschreibung: Bewertet das zurückliegende Spiel und speichert neue Werte
               (Totalscore, Handicap usw.) für den aktuellen Spieler.
 Parameter
       Eingang: -
-      Ausgang: pnNewHighscoreIndex, int *, HighscoreIndex (>= 0), -1 = kein neuer Index
+      Ausgang: pnNewHighscoreIndex, int32_t *, HighscoreIndex (>= 0), -1 = kein neuer Index
                puLevelPlayed, uint32_t *, Zeiger auf Levelnummer, in der ein Highscore erreicht wurde
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: Playfield.x, Actualplayer.x, SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
-int EvaluateGame(int *pnNewHighscoreIndex, uint32_t *puLevelPlayed) {
-    int nErrorCode;
+int32_t EvaluateGame(int32_t *pnNewHighscoreIndex, uint32_t *puLevelPlayed) {
+    int32_t nErrorCode;
     uint32_t uLevelPlayed;
 
     nErrorCode = -1;
@@ -810,11 +811,11 @@ Beschreibung: Erledigt die Auswahl einer Levelgruppe aus dem Hauptmenü und
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: Actualplayer.x, SelectedLevelgroup.x, InputStates.x, MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
-int MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
-    int nErrorCode = 0;
+int32_t MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode = 0;
     uint32_t uBeamPosition;
     char szPlayername[EMERALD_PLAYERNAME_LEN + 1];
 
@@ -854,11 +855,11 @@ Beschreibung: Erledigt die Auswahl eines Namens aus dem Hauptmenü und
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, Names.x, SelectedLevelgroup.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int MenuSelectName(SDL_Renderer *pRenderer) {
-    int nErrorCode = 0;
+int32_t MenuSelectName(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode = 0;
     uint32_t uBeamPosition;
 
     uBeamPosition = GetNamesBeamPosition();
@@ -969,12 +970,12 @@ Beschreibung: Initialisiert die Struktur MainMenu.x.
 Parameter
       Eingang: bCenterDefault, bool, true = es handelt sich um ein zentriertes Default-Fenster (1280x768)
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: MainMenu.x, Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int InitMainMenu(bool bCenterDefault) {
+int32_t InitMainMenu(bool bCenterDefault) {
     uint32_t uNewMenuScreenMemorySize;
-    int nErrorCode = 0;
+    int32_t nErrorCode = 0;
 
     MainMenu.bCenterDefault = bCenterDefault;
     MainMenu.uXdim = DEFAULT_WINDOW_W / FONT_W;
@@ -1040,13 +1041,13 @@ Name:           ScrollLevelGroups
 ------------------------------------------------------------------------------
 Beschreibung: Scrollt die Levelgruppen im Hauptmenü.
 Parameter
-      Eingang: nButton, int, Levelgruppenlisten-Button, der gedrückt wurde
+      Eingang: nButton, int32_t, Levelgruppenlisten-Button, der gedrückt wurde
                         0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: MainMenu.x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
-void ScrollLevelGroups(int nButton) {
+void ScrollLevelGroups(int32_t nButton) {
     uint32_t I;
 
     if (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList) {
@@ -1077,13 +1078,13 @@ Name:           ScrollPlayernames
 ------------------------------------------------------------------------------
 Beschreibung: Scrollt die Playernamen im Hauptmenü.
 Parameter
-      Eingang: nButton, int, Playerlisten-Button, der gedrückt wurde
+      Eingang: nButton, int32_t, Playerlisten-Button, der gedrückt wurde
                         0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: MainMenu.x, Names.x
 ------------------------------------------------------------------------------*/
-void ScrollPlayernames(int nButton) {
+void ScrollPlayernames(int32_t nButton) {
     uint32_t I;
 
     if (Names.uNameCount > MAX_NAMES_IN_LIST) {
@@ -1115,12 +1116,12 @@ Beschreibung: Alle Menü-Elemente im Menü-Screen pMenuScreen werden in den Rend
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
-int RenderMenuElements(SDL_Renderer *pRenderer) {
+int32_t RenderMenuElements(SDL_Renderer *pRenderer) {
     uint32_t I;
-    int nErrorCode = 0;
+    int32_t nErrorCode = 0;
     uint32_t uTextureIndex;
     uint32_t X,Y;
     float fAngle;
@@ -1317,12 +1318,12 @@ Beschreibung: Setzt dynamische Elemente für das Emerald-Mine-Hauptmenü.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x, g_LevelgroupFilesCount, MainMenu.x, Actualplayer.x, Config.x
 ------------------------------------------------------------------------------*/
-int SetDynamicMenuElements(void) {
+int32_t SetDynamicMenuElements(void) {
     char szText[256];
-    int nErrorCode = 0;
+    int32_t nErrorCode = 0;
     bool bShowLeveleditorButton;
     uint32_t I;
     uint32_t uKey;
@@ -1550,13 +1551,13 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
                SelectedLevelgroup.x, Config.x, Audioplayer.x, Actualplayer.x
                Video.x, GameSound.x, Fps.x
 ------------------------------------------------------------------------------*/
-int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
-    int nErrorCode;
+int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode;
     uint8_t uMusicVolume;
     uint32_t uHighscoreLevel;
     uint32_t uScrollerLeftPosX;
@@ -1568,14 +1569,14 @@ int EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     bool bShowHighscores;
     bool bStartEditor;
     bool bStartSettings;
-    int nColorDimm;
-    int nButton;
-    int nLastButton;
-    int nPlayerlistButton;
-    int nLastPlayerlistButton;
-    int nLevelgrouplistButton;
-    int nLastLevelgrouplistButton;
-    int nNewHighscoreIndex;
+    int32_t nColorDimm;
+    int32_t nButton;
+    int32_t nLastButton;
+    int32_t nPlayerlistButton;
+    int32_t nLastPlayerlistButton;
+    int32_t nLevelgrouplistButton;
+    int32_t nLastLevelgrouplistButton;
+    int32_t nNewHighscoreIndex;
     char szText[256];
     char szLastPlayername[EMERALD_PLAYERNAME_LEN + 1];                       // Aktuellen Spielernamen merken
     SCROLLER Scroller;
@@ -1942,6 +1943,7 @@ Rückgabewert:  -
 Seiteneffekte: Video.x, Audioplayer.x, GameSound.x, MainMenu.x
 ------------------------------------------------------------------------------*/
 void CleanUpMemoryAndSDL(SDL_Renderer *pRenderer) {
+    FreeSaveGame();
     RestoreDesktop();
     SDL_CloseAudioDevice(Audioplayer.audio_device);
     FreeWavChunks();
@@ -1967,13 +1969,13 @@ Name:           RotateColors
 Beschreibung: Rotiert eine Farbenpalette nach oben, d.h. zu "kleineren" Speicheradressen.
 Parameter
       Eingang: pColors, RGBCOLOR *, Farbpalette
-               nCount, int, Anzahl Farben in der Palette
-               nCycles, int, Anzahl Rotierungen
+               nCount, int32_t, Anzahl Farben in der Palette
+               nCycles, int32_t, Anzahl Rotierungen
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-void RotateColors(RGBCOLOR *pColors,int nCount,int nCycles) {
+void RotateColors(RGBCOLOR *pColors,int32_t nCount,int32_t nCycles) {
     RGBCOLOR TmpColor;
     uint32_t I,C;
 
@@ -1999,13 +2001,13 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
 
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
+int32_t ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
     uint32_t I;
     SDL_Rect DestR;
-    int nErrorCode = 0;
+    int32_t nErrorCode = 0;
 
     for (I = 0; (I < MAX_GAMECONTROLLERS) && (nErrorCode == 0); I++) {
         DestR.x = Video.uXoffs + 80;
@@ -2041,19 +2043,19 @@ Beschreibung: Zeigt einen farbigen Rahmen für die Gamecontroller, Joysticks
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                pColors, RGBCOLOR *, Zeiger auf Farbpalette für Farb-Rahmen (mind. 700 Elemente)
-               nXpos, int, X-Position für Rahmen, relative Position im Menü
-               nYpos, int, Y-Position für Rahmen, relative Position im Menü
-               nWidth, int, Breite des Rahmen in Pixeln
-               nHeight, int, Höhe des Rahmen in Pixeln
-               nDimm, int, Dimmwert in Prozent (100 = volle Helligkeit
+               nXpos, int32_t, X-Position für Rahmen, relative Position im Menü
+               nYpos, int32_t, Y-Position für Rahmen, relative Position im Menü
+               nWidth, int32_t, Breite des Rahmen in Pixeln
+               nHeight, int32_t, Höhe des Rahmen in Pixeln
+               nDimm, int32_t, Dimmwert in Prozent (100 = volle Helligkeit
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int nXpos, int nYpos, int nWidth, int nHeight, int nDimm) {
-    int nP;
-    int nX,nY;
-    int nErrorCode = 0;
+int32_t ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int32_t nXpos, int32_t nYpos, int32_t nWidth, int32_t nHeight, int32_t nDimm) {
+    int32_t nP;
+    int32_t nX,nY;
+    int32_t nErrorCode = 0;
 
     nP = 0;
     // Obere Line
@@ -2134,28 +2136,28 @@ Beschreibung: Baut das Setup-Menü auf. Hier kann das Eingabegerät, Fenstergrö
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x, Config.x,
                GameController.x, Joystick.x, Video.x,
                g_uScanCodes[], g_ScanCodeNames[]
 ------------------------------------------------------------------------------*/
-int SettingsMenu(SDL_Renderer *pRenderer) {
+int32_t SettingsMenu(SDL_Renderer *pRenderer) {
     SDL_Rect RecAxisButton;
     SDL_Rect KeyboardButton;
-    int nDisplays;
-    int nErrorCode = 0;
-    int nKeyboardButton = 0;        // Für Richtungsauswahl bzw. Firebutton
-    int nKeybindingState = 0;
-    int nButton = 0;
-    int nLastButton = 0;
-    int nAxisButton = 0;
-    int nLastAxisButton = 0;
-    int nColorDimm = 0;
-    int nXpos;
-    int nYpos;
-    int nRec1PixelCount;
-    int nRec2PixelCount;
-    int nScanCodeIndex;
+    int32_t nDisplays;
+    int32_t nErrorCode = 0;
+    int32_t nKeyboardButton = 0;        // Für Richtungsauswahl bzw. Firebutton
+    int32_t nKeybindingState = 0;
+    int32_t nButton = 0;
+    int32_t nLastButton = 0;
+    int32_t nAxisButton = 0;
+    int32_t nLastAxisButton = 0;
+    int32_t nColorDimm = 0;
+    int32_t nXpos;
+    int32_t nYpos;
+    int32_t nRec1PixelCount;
+    int32_t nRec2PixelCount;
+    int32_t nScanCodeIndex;
     uint8_t uMusicVolume = 0;
     uint32_t I, II;
     uint32_t uRainbowColor;
@@ -3333,7 +3335,7 @@ Beschreibung: Prüft, welcher Plus-/Minus-Button für die AXIS-Bereiche gedrück
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = kein Button gedrückt
+Rückgabewert:  int32_t, 0 = kein Button gedrückt
                     1 = Minus LEFT AXIS
                     2 = Plus LEFT AXIS
                     3 = Minus RIGHT AXIS
@@ -3344,8 +3346,8 @@ Rückgabewert:  int, 0 = kein Button gedrückt
                     8 = Plus DOWN AXIS
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
-int GetSettingsMenuAxisButton(void) {
-    int nButton = 0;
+int32_t GetSettingsMenuAxisButton(void) {
+    int32_t nButton = 0;
 
     if (InputStates.bLeftMouseButton) {
         if ((InputStates.nMouseXpos_Relative >= 760) && (InputStates.nMouseXpos_Relative < 782)) {
@@ -3383,18 +3385,18 @@ Beschreibung: Prüft, welcher Bereich bzw. Button im Settings-Menü gedrückt is
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = kein Button gedrückt
-                    1 = GameController 0
-                    2 = GameController 1
-                    3 = GameController 2
-                    4 = Joystick 0
-                    5 = Joystick 1
-                    6 = Joystick 2
-                    7 = Keyboard
+Rückgabewert:  int32_t, 0 = kein Button gedrückt
+                        1 = GameController 0
+                        2 = GameController 1
+                        3 = GameController 2
+                        4 = Joystick 0
+                        5 = Joystick 1
+                        6 = Joystick 2
+                        7 = Keyboard
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
-int GetSettingsMenuButton(void) {
-    int nButton = 0;
+int32_t GetSettingsMenuButton(void) {
+    int32_t nButton = 0;
 
     if (InputStates.bLeftMouseButton) {
         // Gamecontroller liegen bei X 32 bis 255
@@ -3426,17 +3428,17 @@ Beschreibung: Prüft, welcher Bereich Button für die Tastenbelegung  im Setting
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = kein Button gedrückt
-                    1 = left
-                    2 = right
-                    3 = up
-                    4 = down
-                    5 = fire
-                    6 = Andere Stelle im Menü
+Rückgabewert:  int32_t, 0 = kein Button gedrückt
+                        1 = left
+                        2 = right
+                        3 = up
+                        4 = down
+                        5 = fire
+                        6 = Andere Stelle im Menü
 Seiteneffekte: InputStates.x
 ------------------------------------------------------------------------------*/
-int GetSettingsMenuKeyboardButton(void) {
-    int nButton = 0;
+int32_t GetSettingsMenuKeyboardButton(void) {
+    int32_t nButton = 0;
 
     if (InputStates.bLeftMouseButton) {
         nButton = 6;
@@ -3465,11 +3467,11 @@ Beschreibung: Zeigt im Hauptmenü des Spiels oben links den drehenden Settingsbu
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
-int RenderSettingsbutton(SDL_Renderer *pRenderer) {
-    int nErrorCode = 0;
+int32_t RenderSettingsbutton(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode = 0;
     SDL_Rect DestR;
 
     DestR.x = Video.uXoffs + 1;
@@ -3493,12 +3495,12 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                uLevel, uint32_t, Levelnummer
 
-Rückgabewert:  int, 0 = kein Fehler, 5 = Abbruch durch ESC, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, 5 = Abbruch durch ESC, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
-    int nErrorCode = 0;
-    int nColorDimm;
+int32_t ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
+    int32_t nErrorCode = 0;
+    int32_t nColorDimm;
     char szText[EMERALD_AUTHOR_LEN + 128];
     uint32_t I;
     uint8_t uMusicVolume;
@@ -3576,12 +3578,12 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                bDimmUp, bool, true = aufdimmen, false = abdimmen
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x
 ------------------------------------------------------------------------------*/
-int DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
-    int nColorDimm;
-    int nErrorCode = 0;
+int32_t DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
+    int32_t nColorDimm;
+    int32_t nErrorCode = 0;
     uint8_t uMusicVolume;
 
     if (bDimmUp) {
@@ -3628,17 +3630,17 @@ Beschreibung: Zeigt die Highscoreliste eines bestimmten Levels einer Levelgruppe
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                uLevel, uint32_t, Levelnummer
-               nNewHighScoreIndex, int, Markierung einer Zeile für neuen Highscore
+               nNewHighScoreIndex, int32_t, Markierung einer Zeile für neuen Highscore
                     Falls der Marker negativ oder ungültig ist, wird keine Markierung ausgeführt.
                     Die Nummerierung wird ab 0 durchgeführt, d.h. 0 = erster Platz.
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, MainMenu.x, HighscoreFile,
                SelectedLevelgroup.x, Video.x
 ------------------------------------------------------------------------------*/
-int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIndex) {
-    int nErrorCode = 0;
-    int nColorDimm;
+int32_t ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int32_t nNewHighScoreIndex) {
+    int32_t nErrorCode = 0;
+    int32_t nColorDimm;
     char szText[1024];
     char szNum[16];
     uint32_t I;
@@ -3649,7 +3651,7 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
     bool bPrepareExit;
     bool bPlayGame;
     bool bWellDone;         // Level wurde geschafft
-    int nRed,nGreen,nBlue;
+    int32_t nRed,nGreen,nBlue;
     uint8_t uRand;
 
     InitMainMenu(WINDOW_CENTER_DEFAULT);
@@ -3691,8 +3693,8 @@ int ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int nNewHighScoreIn
 
         uScore = HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x7FFFFFFF;    // WellDone-Flag ausmaskieren
         bWellDone = ((HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x80000000) != 0);
-        sprintf(szNum,"%04u",uScore);
-        SetMenuText(MainMenu.pMenuScreen,szNum,35,I + 3,EMERALD_FONT_BLUE);
+        sprintf(szNum,"%05u",uScore);
+        SetMenuText(MainMenu.pMenuScreen,szNum,34,I + 3,EMERALD_FONT_BLUE);
         if (bWellDone) {
             MainMenu.pMenuScreen[(I + 3) * MainMenu.uXdim + 39] = EMERALD_STEEL_PLAYERHEAD;
         }

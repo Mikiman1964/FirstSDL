@@ -80,11 +80,11 @@ Name:           MoveSmileys
 Beschreibung: Bewegt alle Smileys.
 Parameter
       Eingang: -
-Rückgabewert:  -
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Smileys.x, g_bT, Config.x, g_uNextWaitTime, g_uLastSmileyRotation
 ------------------------------------------------------------------------------*/
-int MoveSmileys(SDL_Renderer *pRenderer) {
-    int nErrorCode;
+int32_t MoveSmileys(SDL_Renderer *pRenderer) {
+    int32_t nErrorCode;
     uint32_t I;
     SDL_Rect DestR;                     // Zum Kopieren in den Renderer
     float fAngle = 0;

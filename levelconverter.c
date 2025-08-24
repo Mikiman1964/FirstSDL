@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "editor.h"
+#include "checkelement.h"
 #include "EmeraldMine.h"
 #include "EmeraldMineMainMenu.h"
 #include "KeyboardMouse.h"
@@ -1131,10 +1132,10 @@ Beschreibung: Konvertiert eine exportierte Diamond Caves III-Level-Bitmap
 Parameter
       Eingang: pszFilename, char *, Dateiname der Bitmap
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Ed.x, Bitmap.x
 ------------------------------------------------------------------------------*/
-int LevelConverterFromBitap(char *pszFilename) {
+int32_t LevelConverterFromBitap(char *pszFilename) {
     FILE *Readfile = NULL;
     char szTimestamp[16];    // Format: YYYYMMDD_HHMMSS
     struct stat Fileinfo;
@@ -1144,7 +1145,7 @@ int LevelConverterFromBitap(char *pszFilename) {
     MD5Context MD5Block;
     char szMD5String[32 + 1];   // + 1 für Stringende
     char szNum[16];
-    int nErrorCode = 0;
+    int32_t nErrorCode = 0;
     bool bBottomLeftReplicator;     // Linke und rechte Seite vom unteren Replikatorteil kann nicht unterschieden werden, daher Logik
 
     bBottomLeftReplicator = false;
@@ -1277,12 +1278,12 @@ Beschreibung: Vergrößert ggf. anhand der Levelrand-Prüfung die Leveldimension
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
-int AdjustLevelborder(void) {
+int32_t AdjustLevelborder(void) {
     uint16_t *pNewLevel = NULL;
-    int nErrorCode = 0;
+    int32_t nErrorCode = 0;
     uint8_t uLevelborderInfo;
     uint32_t uNew_X_Dimension;
     uint32_t uNew_Y_Dimension;
@@ -1427,11 +1428,11 @@ Beschreibung: Holt den Levelautor aus einer Datei. Falls diese Datei nicht exist
 Parameter
       Eingang/Ausgang: szLevelAuthor, char *, Zeiger auf Speicher mit mindestens
                 EMERALD_AUTHOR_LEN + 1
-Rückgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung möglich
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler oder keine Ermittlung möglich
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int GetLevelAuthorFromFile(char *pszLevelAuthor) {
-    int nErrorCode;
+int32_t GetLevelAuthorFromFile(char *pszLevelAuthor) {
+    int32_t nErrorCode;
     char szFullfileName[128];
     char *pszData;
     uint32_t uFileLen;
@@ -1475,12 +1476,12 @@ Beschreibung: Ermittelt anhand des Filenamens den Leveltitel.
 Parameter
       Eingang: pszFilename, char *, Zeiger auf Filenamen im Format "importdc3/num name.bmp"
       Ausgang: pszLevelTitle, char *, Zeiger auf mindestens EMERALD_TITLE_LEN + 1 Bytes Speicher für den Level-Titel
-Rückgabewert:  0 = alles OK, sonst Fehler oder keine Ermittlung möglich
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler oder keine Ermittlung möglich
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle) {
+int32_t GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle) {
     char szFilename[EMERALD_MAX_FILENAME_LEN * 2];  // Mit Directory
-    int nErrorCode = -1;
+    int32_t nErrorCode = -1;
     uint32_t I;
     char *pStart;
     char *pBmp;
@@ -1527,14 +1528,14 @@ Parameter
                uYpos, uint32_t, Y-Position für Block
                puBlockbuf, uint8_t *, Zeiger auf RGB-Daten des 16x16-Makroblocks
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf) {
+int32_t Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf) {
     uint32_t uLine;
     uint32_t uPoint;
     uint32_t uOff;
-    int nErrorCode;
+    int32_t nErrorCode;
 
     nErrorCode = 0;
     for (uLine = 0; (uLine <= 15) && (nErrorCode == 0); uLine++) {
@@ -1561,11 +1562,11 @@ Parameter
       Eingang: pF, FILE *, gültiges Lese-Handle auf Bitmap-Datei
                pBitmap, BITMAP *, Zeiger auf Bitmap-Struktur
       Ausgang: pBitmap, BITMAP *, Eingelesener Bitmap-Header
-Rückgabewert:  0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int ReadBmHeader(FILE *pF,BITMAP *pBitmap) {
-    int nErrorCode = -1;
+int32_t ReadBmHeader(FILE *pF,BITMAP *pBitmap) {
+    int32_t nErrorCode = -1;
     uint32_t uInfoHeaderSize;
     uint16_t uColorBitsPerPixel;
     uint32_t uCompressionMode;
@@ -1656,12 +1657,12 @@ Parameter
                Y, uint32_t, Levelposition Y
                puBlockbuf, uint8_t *, Zeiger auf Speicher 16 x 16 x 3 = 768 Bytes
       Ausgang: -
-Rückgabewert:  -
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Bitmap.x, Ed.x
 ------------------------------------------------------------------------------*/
-int Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf) {
+int32_t Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf) {
     long Offset = 0;
-    int nErrorCode;
+    int32_t nErrorCode;
     uint32_t uLine;
     uint32_t L;
     uint32_t P;
@@ -1751,10 +1752,10 @@ Beschreibung: Ermittelt die Dateien für den DC3-Level-Import.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t , 0 = OK, sonst Fehler
 Seiteneffekte: ImportLevel.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int CheckImportLevelFiles(void) {
+int32_t CheckImportLevelFiles(void) {
     uint32_t I;
     uint32_t uFileCount;    // Zugriff sollte atomar (Thread) sein
 
@@ -1813,11 +1814,11 @@ Beschreibung: Startet den Thread CheckDC3ImportDirectoryThread.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler durch Timeout bzw. bei Thread-Erstellung
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler durch Timeout bzw. bei Thread-Erstellung
 Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
-int StartCheckDC3ImportDirectoryThread(void) {
-    int nErrorCode;
+int32_t StartCheckDC3ImportDirectoryThread(void) {
+    int32_t nErrorCode;
 
     if (!g_CheckDC3ImportDirectoryThreadExit) {
         nErrorCode = CloseCheckDC3ImportDirectoryThread();
@@ -1847,11 +1848,11 @@ Beschreibung: Beendet den Thread CheckDC3ImportDirectoryThread.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler durch Timeout
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler durch Timeout
 Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
-int CloseCheckDC3ImportDirectoryThread(void) {
-    int nErrorCode;
+int32_t CloseCheckDC3ImportDirectoryThread(void) {
+    int32_t nErrorCode;
     uint32_t uTimeout;
 
     g_CheckDC3ImportDirectoryThreadRunning = false; // Thread stoppen
@@ -1880,13 +1881,13 @@ Parameter
                     (nur 3-stellig und ohne Punkt oder NULL)
       Ausgang: pLevelFileList, LEVELFILESLIST *, Zeiger auf zu befüllende Fileliste
                puFileCount, uint32_t *, Zeiger auf Anzahl Files, Zugriff sollte atomar (Thread) sein
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount) {
+int32_t GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount) {
     DIR *dir;
     struct dirent *entry;
-    int nErrorCode = -1;
+    int32_t nErrorCode = -1;
     uint32_t I;
     uint32_t U;
     uint32_t uFilenameLen;

@@ -85,10 +85,10 @@ Beschreibung: Schreibt eine Werks-Konfiguration.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
-int WriteDefaultConfigFile(void) {
+int32_t WriteDefaultConfigFile(void) {
     // SDL_Log("Writing default config file ...");
     memset(&Config,0,sizeof(Config));               // löscht auch letzten Spieler
     Config.bStartDynamiteWithSpace = true;          // true = Dynamite wird mit Space gezündet
@@ -130,10 +130,10 @@ Beschreibung: Schreibt den Inhalt der Struktur Config.x als XML-File.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
-int WriteConfigFile(void) {
+int32_t WriteConfigFile(void) {
     char szXML[16 * 1024];
     char szMd5String[32 + 1];
     char szString[256];
@@ -293,14 +293,14 @@ Beschreibung: Liest die Konfigurationsdatei und befüllt die Struktur Config.x
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x, Actualplayer.x, Video.x
 ------------------------------------------------------------------------------*/
-int ReadConfigFile(void) {
+int32_t ReadConfigFile(void) {
     ezxml_t xml = NULL;
     ezxml_t screen,fullscreen,resolution,display,x,y,dynamite,gamemusic,highscores,levelgrouphash,playername,editorzoom;
     ezxml_t inputdevice,devicename,deviceindex,controllersettings,joysticksettings,button,directions,threshold;
-    int nErrorCode;
+    int32_t nErrorCode;
     uint8_t *pXml;
     uint32_t uXmlLen;
     char szErrorMessage[256];
@@ -489,11 +489,11 @@ Beschreibung: Liest die Keyboard-Konfigurationsdaten aus der config.xml aus und
 Parameter
       Eingang: inputdevice, ezxml_t, Knoten auf inputdevice in der der XML
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
-int ReadKeyboardConfig(ezxml_t inputdevice) {
-    int nErrorCode = -1;
+int32_t ReadKeyboardConfig(ezxml_t inputdevice) {
+    int32_t nErrorCode = -1;
     ezxml_t keyboardsettings,direction;
 
     if (inputdevice != NULL) {

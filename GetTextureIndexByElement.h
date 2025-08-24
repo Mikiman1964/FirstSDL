@@ -3,6 +3,6 @@
 
 #include <stdint.h>
 
-uint32_t GetTextureIndexByElement(uint16_t uElement,int nAnimationCount,float *pfAngle);
+uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,float *pfAngle);
 
 #endif // GETTEXTUREINDEXBYELEMENT_H_INCLUDED

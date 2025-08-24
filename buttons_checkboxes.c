@@ -39,27 +39,27 @@ Parameter
       Eingang: pCheckbox, CHECKBOX *, Zeiger auf Checkbox-Struktur
                bActive, bool, true = Checkbox ist aktiv, also angehakt
                pszText, char *, Zeiger auf Checkboxtext
-               nXpos, int, X-Position
-               nYpos, int, Y-Position
+               nXpos, int32_t, X-Position
+               nYpos, int32_t, Y-Position
                bRadio, bool, true = Checkbox hat Radiobutton-Verhalten (optisch)
                bUse, bool, true = Checkbox ist sichtbar und verwendbar, sonst versteckt und inaktiv
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[]
 ------------------------------------------------------------------------------*/
-int RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int nXpos, int nYpos, bool bRadio, bool bUse) {
-    int nErrorCode = -1;
-    int I;
+int32_t RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int32_t nXpos, int32_t nYpos, bool bRadio, bool bUse) {
+    int32_t nErrorCode = -1;
+    int32_t nI;
     bool bFound = false;
 
     if ((pCheckbox != NULL) && (pszText != NULL)) {
         if (strlen(pszText) < MAX_CHECKBOXTEXT_LEN) {
             // Freien Platz suchen
-            for (I = 0; (I < MAX_CHECKBOXES) && (!bFound); I++) {
-                if (Checkboxes[I] == NULL) {
+            for (nI = 0; (nI < MAX_CHECKBOXES) && (!bFound); nI++) {
+                if (Checkboxes[nI] == NULL) {
                     bFound = true;
                     pCheckbox->bRadio = bRadio;
-                    pCheckbox->nRegisterIndex = I;
+                    pCheckbox->nRegisterIndex = nI;
                     pCheckbox->nXpos = nXpos;
                     pCheckbox->nYpos = nYpos;
                     pCheckbox->bActive = bActive;
@@ -67,7 +67,7 @@ int RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int nXpos
                     pCheckbox->bChanged = false;
                     pCheckbox->bUse = bUse;
                     strcpy(pCheckbox->szText,pszText);
-                    Checkboxes[I] = pCheckbox;
+                    Checkboxes[nI] = pCheckbox;
                 }
             }
             if (bFound) {
@@ -88,12 +88,12 @@ Beschreibung: De-Registriert eine Checkbox zur Freigabe.
 Parameter
       Eingang: pCheckbox, CHECKBOX *, Zeiger auf Checkbox-Struktur
       Ausgang: -
-Rückgabewert:  int, 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[]
 ------------------------------------------------------------------------------*/
-int DeRegisterCheckbox(CHECKBOX *pCheckbox) {
-    int nErrorCode = -1;
-    int nRegisterIndex;
+int32_t DeRegisterCheckbox(CHECKBOX *pCheckbox) {
+    int32_t nErrorCode = -1;
+    int32_t nRegisterIndex;
 
     if (pCheckbox != NULL) {
         nRegisterIndex = pCheckbox->nRegisterIndex;
@@ -115,15 +115,15 @@ Beschreibung: Zeigt alle registrierten Checkboxen an. Funktion muss in
               einer Event-Hauptschleife zyklisch aufgerufen werden.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               nDimm, int, Helligkeit der Checkboxen
+               nDimm, int32_t, Helligkeit der Checkboxen
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t , 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[], InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute) {
-    int nErrorCode = 0;
-    int I;
+int32_t ShowCheckboxes(SDL_Renderer *pRenderer, int32_t nDimm, bool bAbsolute) {
+    int32_t nErrorCode = 0;
+    int32_t nI;
     uint32_t uXoffs;
     uint32_t uYoffs;
     bool bOldPressed = false;;
@@ -143,8 +143,8 @@ int ShowCheckboxes(SDL_Renderer *pRenderer, int nDimm, bool bAbsolute) {
     Rect.h = 20;
     RectSmall.w = 10;
     RectSmall.h = 10;
-    for (I = 0; (I < MAX_CHECKBOXES) && (nErrorCode == 0); I++) {
-        pC = Checkboxes[I] ;
+    for (nI = 0; (nI < MAX_CHECKBOXES) && (nErrorCode == 0); nI++) {
+        pC = Checkboxes[nI] ;
         bNewPressed = false;
         bOldPressed = false;
         if (pC != NULL) {
@@ -293,21 +293,21 @@ Parameter
 Rückgabewert:  Array-Index, -1 = nicht gefunden
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
-int GetButtonIndex(char *pszLabel) {
-    int nButtonIndex;
-    uint32_t I;
+int32_t GetButtonIndex(char *pszLabel) {
+    int32_t nButtonIndex;
+    int32_t nI;
 
     nButtonIndex = -1;
     if (pszLabel != NULL) {
-        I = 0;
+        nI = 0;
         do {
-            if (Buttons[I].pszLabel != NULL) {
-                if (strcmp(pszLabel,Buttons[I].pszLabel) == 0) {
-                    nButtonIndex = (int)I;
+            if (Buttons[nI].pszLabel != NULL) {
+                if (strcmp(pszLabel,Buttons[nI].pszLabel) == 0) {
+                    nButtonIndex = nI;
                 }
             }
-            I++;
-        } while ((I < MAX_BUTTONS) && (nButtonIndex == -1));
+            nI++;
+        } while ((nI < MAX_BUTTONS) && (nButtonIndex == -1));
     }
     return nButtonIndex;
 }
@@ -325,18 +325,18 @@ Parameter
 Rückgabewert:  Array-Index des freien Platzes, -1 = keinen freien Platz gefunden
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
-int GetFreeButtonIndex(void) {
-    int nButtonIndex;
-    uint32_t I;
+int32_t GetFreeButtonIndex(void) {
+    int32_t nButtonIndex;
+    int32_t nI;
 
     nButtonIndex = -1;
-    I = 0;
+    nI = 0;
     do {
-        if (Buttons[I].pszLabel == NULL) {
-            nButtonIndex = (int)I;
+        if (Buttons[nI].pszLabel == NULL) {
+            nButtonIndex = nI;
         }
-        I++;
-    } while ((I < MAX_BUTTONS) && (nButtonIndex == -1));
+        nI++;
+    } while ((nI < MAX_BUTTONS) && (nButtonIndex == -1));
     return nButtonIndex;
 }
 
@@ -353,12 +353,12 @@ Parameter
                bActive, bool, true = Button ist aktiv und wird angezeigt
                bWaitRelease, bool, true = wartet solange, bis Button losgelassen wird
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
-int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease) {
-    int nErrorCode;
-    int nButtonIndex;
+int32_t CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease) {
+    int32_t nErrorCode;
+    int32_t nButtonIndex;
 
     nErrorCode = -1;
     if ((pszText != NULL) && (pszLabel != NULL)) {
@@ -393,7 +393,7 @@ int CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bo
 
             }
         } else {
-            SDL_Log("%s: button text has invalid len %d, maxlen = %d chars",__FUNCTION__,(int)strlen(pszText),MAX_BUTTONTEXT_LEN);
+            SDL_Log("%s: button text has invalid len %d, maxlen = %d chars",__FUNCTION__,(int32_t)strlen(pszText),MAX_BUTTONTEXT_LEN);
         }
     } else {
         SDL_Log("%s: bad  pointer",__FUNCTION__);
@@ -410,11 +410,11 @@ Parameter
       Eingang: pszLabel, char *, Zeiger auf Label des Buttons
                bActive, bool, true = Button wird aktiv geschaltet, sonst deaktiviert
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
-int SetButtonActivity(char *pszLabel, bool bActive) {
-    int nErrorCode;
+int32_t SetButtonActivity(char *pszLabel, bool bActive) {
+    int32_t nErrorCode;
     uint32_t I;
 
     nErrorCode = -1;
@@ -446,12 +446,12 @@ Parameter
                uXpos, uint32_t, X-Position für Button
                uYpos, uint32_t, Y-Position für Button
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
-int SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos) {
+int32_t SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos) {
     uint32_t I;
-    int nErrorCode;
+    int32_t nErrorCode;
 
     nErrorCode = -1;
     if (pszLabel != NULL) {
@@ -483,11 +483,11 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                 bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, Video.x
 ------------------------------------------------------------------------------*/
-int ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
-    int nErrorCode;
+int32_t ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
+    int32_t nErrorCode;
     uint32_t I;
     uint32_t uXpos;
     uint32_t uYpos;
@@ -571,11 +571,11 @@ Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
                 bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, Video.x
 ------------------------------------------------------------------------------*/
-int ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
-    int nErrorCode;
+int32_t ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
+    int32_t nErrorCode;
     uint32_t I;
     uint32_t uXpos;
     uint32_t uYpos;
@@ -634,7 +634,7 @@ Seiteneffekte: Buttons[].x
 ------------------------------------------------------------------------------*/
 bool IsButtonPressed(char *pszLabel) {
     uint32_t I;
-    int nErrorCode;
+    int32_t nErrorCode;
     bool bPressed;
 
     nErrorCode = -1;

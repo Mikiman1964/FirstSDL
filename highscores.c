@@ -21,10 +21,10 @@ Parameter
       Eingang: -
       Ausgang: -
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CheckHighScoresDir(void) {
+int32_t CheckHighScoresDir(void) {
     return CheckAndCreateDir(EMERALD_HIGHSCORES_DIRECTORYNAME);
 }
 
@@ -37,11 +37,11 @@ Parameter
       Eingang: puLevelgroupHash, uint8_t *, Zeiger auf Levelgruppenhash (16 Bytes)
       Ausgang: -
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: HighscoreFile.x
 ------------------------------------------------------------------------------*/
-int WriteHighScoreFile(uint8_t *puLevelgroupHash) {
-    int nErrorCode;
+int32_t WriteHighScoreFile(uint8_t *puLevelgroupHash) {
+    int32_t nErrorCode;
     char szFilename[256];
     char szHashString[32 + 1];
 
@@ -68,11 +68,11 @@ Parameter
       Eingang: puLevelgroupHash, uint8_t *, Zeiger auf Levelgruppenhash (16 Bytes)
       Ausgang: -
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: HighscoreFile.x
 ------------------------------------------------------------------------------*/
-int ReadHighScoreFile(uint8_t *puLevelgroupHash) {
-    int nErrorCode;
+int32_t ReadHighScoreFile(uint8_t *puLevelgroupHash) {
+    int32_t nErrorCode;
     char szFilename[256];
     char szHashString[32 + 1];
     uint8_t *pcFile;
@@ -113,42 +113,42 @@ Parameter
                bWellDone, bool, true = Level wurde geschafft
       Ausgang: -
 
-Rückgabewert:  int, >= 0 = Alles OK, Neuer Highscore auf Index X
-                    -1 = Fehler
-                    -2 = Alles OK, kein neuer Highscore
+Rückgabewert:  int32_t, >= 0 = Alles OK, Neuer Highscore auf Index X
+                        -1 = Fehler
+                        -2 = Alles OK, kein neuer Highscore
 Seiteneffekte: HighscoreFile.x
 ------------------------------------------------------------------------------*/
-int InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) {
-    int nErrorCode;
-    uint32_t I;
-    uint32_t S;     // Index, wo neuer Score eingetragen werden kann
+int32_t InsertScore(char *pszName, uint32_t uLevel, uint32_t uScore,bool bWellDone) {
+    int32_t nErrorCode;
+    int32_t nI;
+    int32_t nS;     // Index, wo neuer Score eingetragen werden kann
     bool bIndexFound;
 
     nErrorCode = -1;
-    S = 0;
+    nS = 0;
     if ((pszName != NULL) && (uLevel < EMERALD_MAX_LEVELCOUNT)) {
         if ((strlen(pszName) > 0) && (strlen(pszName) <= EMERALD_PLAYERNAME_LEN)) {
             // Die TopTwenty sind absteigend sortiert -> Prüfen, wo der aktuelle Score eingefügt werden kann
             bIndexFound =  false;
-            for (I = 0; (I < EMERALD_HIGHSCORE_LISTLEN) && (!bIndexFound); I++) {
-                if (uScore >= (HighscoreFile.TopTwenty[uLevel].uHighScore[I] & 0x7FFFFFFF)) {
-                    S = I;
+            for (nI = 0; (nI < EMERALD_HIGHSCORE_LISTLEN) && (!bIndexFound); nI++) {
+                if (uScore >= (HighscoreFile.TopTwenty[uLevel].uHighScore[nI] & 0x7FFFFFFF)) {
+                    nS = nI;
                     bIndexFound =  true;
                 }
             }
             if (bIndexFound) {
-                nErrorCode = (int)S;
+                nErrorCode = nS;
                 // Verschiebung durchführen
-                for ( (I = EMERALD_HIGHSCORE_LISTLEN - 1); I > S; I--) {
-                    HighscoreFile.TopTwenty[uLevel].uHighScore[I] = HighscoreFile.TopTwenty[uLevel].uHighScore[I - 1];
-                    strcpy(HighscoreFile.TopTwenty[uLevel].szTopTwenty[I],HighscoreFile.TopTwenty[uLevel].szTopTwenty[I - 1]);
+                for ( (nI = EMERALD_HIGHSCORE_LISTLEN - 1); nI > nS; nI--) {
+                    HighscoreFile.TopTwenty[uLevel].uHighScore[nI] = HighscoreFile.TopTwenty[uLevel].uHighScore[nI - 1];
+                    strcpy(HighscoreFile.TopTwenty[uLevel].szTopTwenty[nI],HighscoreFile.TopTwenty[uLevel].szTopTwenty[nI - 1]);
                 }
                 // Neuen Eintrag vornehmen
-                HighscoreFile.TopTwenty[uLevel].uHighScore[S] = uScore;
+                HighscoreFile.TopTwenty[uLevel].uHighScore[nS] = uScore;
                 if (bWellDone) {
-                    HighscoreFile.TopTwenty[uLevel].uHighScore[S] |= 0x80000000;
+                    HighscoreFile.TopTwenty[uLevel].uHighScore[nS] |= 0x80000000;
                 }
-                strcpy(HighscoreFile.TopTwenty[uLevel].szTopTwenty[S],pszName);
+                strcpy(HighscoreFile.TopTwenty[uLevel].szTopTwenty[nS],pszName);
             } else {
                 // Es reichte nicht für einen neuen Highscore -> nichts machen
                 nErrorCode = -2;
@@ -169,11 +169,11 @@ Beschreibung: Löscht Highscore-Dateien, für die es keine Levelgruppe (mehr) gi
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles.x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
-int CleanUpHighScoreDir(void) {
-    int nErrorCode;
+int32_t CleanUpHighScoreDir(void) {
+    int32_t nErrorCode;
     DIR *dir;
     struct dirent *entry;
     size_t FilenameLen;

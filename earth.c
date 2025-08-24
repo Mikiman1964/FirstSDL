@@ -87,9 +87,9 @@ Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlGrass(uint32_t I) {
     uint16_t uLeftRightUpDownGrass = 0;       // Bit 3 = links hat Gras, Bit 2 = rechts hat Gras, Bit 1 = oben hat Gras, Bit 0 = unten hat Gras
-    int nRandom;
-    int nLoops;
-    int nDirectionRandom;
+    int32_t nRandom;
+    int32_t nLoops;
+    int32_t nDirectionRandom;
 
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) != EMERALD_ANIM_GRASS_SHRINK) {      // Gras entfernen bzw. wegschnippen hat Vorrang
         if (Playfield.pLevel[I - 1] == EMERALD_GRASS) uLeftRightUpDownGrass |= 0x08;    // Bit 3 setzen

@@ -18,7 +18,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMoleUp(uint32_t I) {
-    int nRandom;
+    int32_t nRandom;
     bool bLeftFree;
     bool bRightFree;
 
@@ -81,7 +81,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMoleRight(uint32_t I) {
-    int nRandom;
+    int32_t nRandom;
     bool bLeftFree;
     bool bRightFree;
 
@@ -144,7 +144,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMoleDown(uint32_t I) {
-    int nRandom;
+    int32_t nRandom;
     bool bLeftFree;
     bool bRightFree;
 
@@ -217,7 +217,7 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void ControlMoleLeft(uint32_t I) {
-    int nRandom;
+    int32_t nRandom;
     bool bLeftFree;
     bool bRightFree;
 

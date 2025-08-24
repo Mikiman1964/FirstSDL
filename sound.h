@@ -50,12 +50,12 @@ typedef struct {
     uint64_t uAllSounds;                    // OR-verknüpfte Sounds, die abgespielt werden sollen
 } GAMESOUND;
 
-int InitGameSound(void);
+int32_t InitGameSound(void);
 void PreparePlaySound(uint64_t uSound, uint32_t uCoordinate);
-int PlayAllSounds(void);                    // Mixt alle Sounds in GameSound.uAllSounds und spielt diese ab.
+int32_t PlayAllSounds(void);                // Mixt alle Sounds in GameSound.uAllSounds und spielt diese ab.
 
 
 void FreeWavChunks(void);
-int CreateWavChunks(void);
+int32_t CreateWavChunks(void);
 
 #endif // SOUND_H_INCLUDED

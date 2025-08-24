@@ -3,9 +3,7 @@ TODO
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen, DC3 hat gleiches Problem
 * Leveleditor
     * Undo für Editor
-    * Hint an Mauspfeil über gezeichnetes Element
-* Quick-Load/Save
-* Replikatoren als "Ganzes" setzbar
+
 
 Für V 1.12
 * Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
@@ -17,8 +15,17 @@ Für V 1.12
 * Edelsteine rollen jetzt von Stahl Playerhead 2.
 * Musikplayer unterstützt SID (C64).
 * Leveleditor: Messageditor zeigt Messagenummer an, Buttons "Save message" und "cancel" an unteren Bildschirmrand, da Buttons sont Messagebox überdecken können
-* Leveleditor: Quicksave-Allowed-Checkbox
 * Steuerung für "double game speed" optimiert
+* Quick-Load/Save -> Leveleditor: Quicksave-Allowed-Checkbox
+* Leveleditor: -> Hint an Mauspfeil über gezeichnetes Element
+* Leveleditor: Füllen von Flächen mit folgenden Elementen vermeiden: Replikatoren, Säurebecken, Man wurde bereits abgefangen
+* Leveleditor: Replikatoren werden als "Ganzes" gesetzt, Säurebeckenränder werden halbautomatisch gesetzt
+* Leveleditor: YAMS: Replikator und Säurebecken wird als "Ganzes" gesetzt.
+* Bug fix: Leveleditor: Bei einem Levelfehler hatte der Button "QUIT" und "Return to Level" keine Wirkung
+* Bug fix: CheckAcidPools() und wahrscheinlich auch CheckReplicators() konnten abstürzen, wenn entsprechende Elemente in obere Stahlzeile gesetzt wurden.
+* int- und long int-Datentyp zu int32_t geändert
+* Totalscore von 4-stellig auf 5-stellig erweitert
+* SDL 2.32.8
 */
 
 #include "gfx/textures.h"
@@ -68,7 +75,7 @@ Für V 1.12
 #include "yam.h"
 
 PLAYFIELD Playfield;
-int g_nGameSpeed;
+int32_t g_nGameSpeed;
 extern GAMESOUND GameSound;
 extern INPUTSTATES InputStates;
 extern MANKEY ManKey;
@@ -89,15 +96,15 @@ Beschreibung: Hauptmenü, um den entsprechenden SDL2-Programmteil aufzurufen.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
+Rückgabewert:  int32_t, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
 Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
                Video.x, Fps.x, ManKey.x
 ------------------------------------------------------------------------------*/
-int Menu(SDL_Renderer *pRenderer) {
+int32_t Menu(SDL_Renderer *pRenderer) {
     uint8_t uMusicVolume;
-    int nErrorCode;
-    int nChoose;
-    int nColorDimm;
+    int32_t nErrorCode;
+    int32_t nChoose;
+    int32_t nColorDimm;
     float fAngle;
     SDL_Rect DestR;
     uint32_t uFrameCounter;
@@ -236,21 +243,21 @@ Parameter
                uLevel, uint32_t, Levelnummer
       Ausgang: -
 
-Rückgabewert:  int, 0 = kein Fehler, sonst Fehler
+Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x, g_nGameSpeed
 ------------------------------------------------------------------------------*/
-int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
+int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bLevelRun;
     bool bPrepareLevelExit;
     bool bPause;
-    int nColorDimm;
-    int nCheckLevelCount;
+    int32_t nColorDimm;
+    int32_t nCheckLevelCount;
     uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
     uint32_t uKey;
     uint32_t I;
     bool bDimmIn = true;
     uint32_t uQuitTime;
-    int nRet;
+    int32_t nRet;
     uint32_t uShowQuickSaveMessageTicks;
 
     uShowQuickSaveMessageTicks = 0xFFFFFFFF;
@@ -308,13 +315,6 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             WaitNoSpecialKey(SDL_SCANCODE_P);   // warten, dass "P" wieder losgelassen wird
         }
 
-
-        // Diesen Abschnitt wieder raus
-        if (InputStates.pKeyboardArray[SDL_SCANCODE_L]) {
-            Playfield.bLightAlwaysOn = true;
-            WaitNoSpecialKey(SDL_SCANCODE_L);   // warten, dass "P" wieder losgelassen wird
-        }
-
         if ((nCheckLevelCount == 0) && (!bPause)) {
             if (InputStates.bFkey[1]) {
                 SetGameSpeed(GAMESPEED_NORMAL);
@@ -327,8 +327,34 @@ int RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 InputStates.bFkey[9] = false;
                 uShowQuickSaveMessageTicks = SDL_GetTicks();
             } else if (InputStates.bFkey[10]) {
-                //SDL_Log("F10 pressed ! QuickLoadGame");
-                InputStates.bFkey[10] = false;
+                if (IsQuickLoadGameAvailable()) {
+                    InputStates.bFkey[10] = false;
+                    // Aktuelles Playfield abdimmen
+                    while (nColorDimm > 0) {
+                        UpdateManKey();
+                        if (nColorDimm > 2) {
+                            nColorDimm = nColorDimm - 2;
+                        } else {
+                            nColorDimm = 0;
+                        }
+                        SetAllTextureColors(nColorDimm);
+                        RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);
+                        RenderPresentAndClear(pRenderer);
+                    }
+                    QuickLoadGame();
+                    // Neues Playfield aufdimmen
+                    while (nColorDimm < 100) {
+                        UpdateManKey();
+                        if (nColorDimm < 98) {
+                            nColorDimm = nColorDimm + 2;
+                        } else {
+                            nColorDimm = 100;
+                        }
+                        SetAllTextureColors(nColorDimm);
+                        RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);
+                        RenderPresentAndClear(pRenderer);
+                    }
+                }
             }
             if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= (15 * (g_nGameSpeed + 1)))) {
                 // SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
@@ -1076,13 +1102,13 @@ Beschreibung: Holt den entsprechenden Texture-Index anhand eines Elements und de
               ins Säurebecken fallen können.
 Parameter
       Eingang: uElement, uint16_t, Element, z.B. EMERALD_MINE_RIGHT
-               nAnimationCount, int, Animationsschritt
+               nAnimationCount, int32_t, Animationsschritt
       Ausgang: pfAngle, float *, Winkel für Texture;
 Rückgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
                 SPACE (EMERALD_SPACE) zurückgegeben.
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int nAnimationCount, float *pfAngle) {
+uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int32_t nAnimationCount, float *pfAngle) {
     uint32_t uTextureIndex;
     uint32_t K;
     float fAngle = 0;
@@ -1730,219 +1756,6 @@ void PostControlSwitchDoors(void) {
 
 
 /*----------------------------------------------------------------------------
-Name:           IsElementAlive
-------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein angegebenes Element "lebt".
-
-Parameter
-      Eingang: uElement, uint16_t, Element, das geprüft werden soll
-      Ausgang: -
-Rückgabewert:  bool, true = Element lebt, sonst nicht
-Seiteneffekte: Playfield.x
-------------------------------------------------------------------------------*/
-bool IsElementAlive(uint16_t uElement) {
-    bool bAlive;
-
-    switch (uElement) {
-        case (EMERALD_MOLE_UP):
-        case (EMERALD_MOLE_RIGHT):
-        case (EMERALD_MOLE_DOWN):
-        case (EMERALD_MOLE_LEFT):
-        case (EMERALD_MINE_UP):
-        case (EMERALD_MINE_RIGHT):
-        case (EMERALD_MINE_DOWN):
-        case (EMERALD_MINE_LEFT):
-        case (EMERALD_BEETLE_UP):
-        case (EMERALD_BEETLE_RIGHT):
-        case (EMERALD_BEETLE_DOWN):
-        case (EMERALD_BEETLE_LEFT):
-        case (EMERALD_ALIEN):
-        case (EMERALD_YAM):
-        case (EMERALD_GREEN_DROP):
-        case (EMERALD_GREEN_CHEESE):
-        case (EMERALD_YELLOW_DROP):
-        case (EMERALD_YELLOW_CHEESE):
-        case (EMERALD_SLIME):
-        case (EMERALD_GRASS):
-        case (EMERALD_STEEL_GROW_LEFT):
-        case (EMERALD_STEEL_GROW_RIGHT):
-        case (EMERALD_STEEL_GROW_UP):
-        case (EMERALD_STEEL_GROW_DOWN):
-        case (EMERALD_STEEL_GROW_LEFT_RIGHT):
-        case (EMERALD_STEEL_GROW_UP_DOWN):
-        case (EMERALD_STEEL_GROW_ALL):
-        case (EMERALD_WALL_GROW_LEFT):
-        case (EMERALD_WALL_GROW_RIGHT):
-        case (EMERALD_WALL_GROW_UP):
-        case (EMERALD_WALL_GROW_DOWN):
-        case (EMERALD_WALL_GROW_LEFT_RIGHT):
-        case (EMERALD_WALL_GROW_UP_DOWN):
-        case (EMERALD_WALL_GROW_ALL):
-            bAlive = true;
-            break;
-        default:
-            bAlive = false;
-            break;
-    }
-    return bAlive;
-}
-
-
-/*----------------------------------------------------------------------------
-Name:           IsSteel
-------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Element Stahleigenschaften hat.
-Parameter
-      Eingang: uElement, uint16_t, Element, das geprüft wird
-      Ausgang: -
-Rückgabewert:  bool, true = Element gehört zum Stahl.
-Seiteneffekte: -
-------------------------------------------------------------------------------*/
-bool IsSteel(uint16_t uElement) {
-
-    switch (uElement) {
-        case (EMERALD_STEEL):
-        case (EMERALD_STEEL_ROUND_PIKE):
-        case (EMERALD_STEEL_ROUND):
-        case (EMERALD_STEEL_WARNING):
-        case (EMERALD_STEEL_BIOHAZARD):
-        case (EMERALD_STEEL_DEADEND):
-        case (EMERALD_STEEL_STOP):
-        case (EMERALD_STEEL_PARKING):
-        case (EMERALD_STEEL_FORBIDDEN):
-        case (EMERALD_STEEL_EXIT):
-        case (EMERALD_STEEL_RADIOACTIVE):
-        case (EMERALD_STEEL_EXPLOSION):
-        case (EMERALD_STEEL_ACID):
-        case (EMERALD_STEEL_NOT_ROUND):
-        case (EMERALD_STEEL_STRIPE_LEFT_TOP):
-        case (EMERALD_STEEL_STRIPE_TOP):
-        case (EMERALD_STEEL_STRIPE_RIGHT_TOP):
-        case (EMERALD_STEEL_STRIPE_LEFT):
-        case (EMERALD_STEEL_STRIPE_RIGHT):
-        case (EMERALD_STEEL_STRIPE_LEFT_BOTTOM):
-        case (EMERALD_STEEL_STRIPE_BOTTOM):
-        case (EMERALD_STEEL_STRIPE_RIGHT_BOTTOM):
-        case (EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP):
-        case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP):
-        case (EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM):
-        case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM):
-        case (EMERALD_STEEL_HEART):
-        case (EMERALD_STEEL_PLAYERHEAD):
-        case (EMERALD_STEEL_PLAYERHEAD_2):
-        case (EMERALD_STEEL_NO_ENTRY):
-        case (EMERALD_STEEL_GIVE_WAY):
-        case (EMERALD_STEEL_YING):
-        case (EMERALD_STEEL_WHEELCHAIR):
-        case (EMERALD_STEEL_ARROW_DOWN):
-        case (EMERALD_STEEL_ARROW_UP):
-        case (EMERALD_STEEL_ARROW_LEFT):
-        case (EMERALD_STEEL_ARROW_RIGHT):
-        case (EMERALD_STEEL_INVISIBLE):
-        case (EMERALD_DOOR_END_NOT_READY_STEEL):
-        case (EMERALD_DOOR_END_READY_STEEL):
-        case (EMERALD_STEEL_TRASHCAN):
-        case (EMERALD_STEEL_JOYSTICK):
-        case (EMERALD_STEEL_EDIT_LEVEL):
-        case (EMERALD_STEEL_MOVE_LEVEL):
-        case (EMERALD_STEEL_COPY_LEVEL):
-        case (EMERALD_STEEL_CLIPBOARD_LEVEL):
-        case (EMERALD_STEEL_DC3_IMPORT):
-        case (EMERALD_STEEL_ADD_LEVELGROUP):
-        case (EMERALD_REPLICATOR_RED_TOP_LEFT):
-        case (EMERALD_REPLICATOR_RED_TOP_MID):
-        case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
-        case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
-        case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
-        case (EMERALD_REPLICATOR_RED_SWITCH):
-        case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
-        case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
-        case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
-        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
-        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
-        case (EMERALD_REPLICATOR_YELLOW_SWITCH):
-        case (EMERALD_MAGIC_WALL_SWITCH):
-        case (EMERALD_MAGIC_WALL_STEEL):
-        case (EMERALD_LIGHT_SWITCH):
-        case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
-        case (EMERALD_REPLICATOR_GREEN_TOP_MID):
-        case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
-        case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
-        case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
-        case (EMERALD_REPLICATOR_GREEN_SWITCH):
-        case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
-        case (EMERALD_REPLICATOR_BLUE_TOP_MID):
-        case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
-        case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
-        case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
-        case (EMERALD_REPLICATOR_BLUE_SWITCH):
-        case (EMERALD_LIGHTBARRIER_RED_UP):
-        case (EMERALD_LIGHTBARRIER_RED_DOWN):
-        case (EMERALD_LIGHTBARRIER_RED_LEFT):
-        case (EMERALD_LIGHTBARRIER_RED_RIGHT):
-        case (EMERALD_LIGHTBARRIER_GREEN_UP):
-        case (EMERALD_LIGHTBARRIER_GREEN_DOWN):
-        case (EMERALD_LIGHTBARRIER_GREEN_LEFT):
-        case (EMERALD_LIGHTBARRIER_GREEN_RIGHT):
-        case (EMERALD_LIGHTBARRIER_BLUE_UP):
-        case (EMERALD_LIGHTBARRIER_BLUE_DOWN):
-        case (EMERALD_LIGHTBARRIER_BLUE_LEFT):
-        case (EMERALD_LIGHTBARRIER_BLUE_RIGHT):
-        case (EMERALD_LIGHTBARRIER_YELLOW_UP):
-        case (EMERALD_LIGHTBARRIER_YELLOW_DOWN):
-        case (EMERALD_LIGHTBARRIER_YELLOW_LEFT):
-        case (EMERALD_LIGHTBARRIER_YELLOW_RIGHT):
-        case (EMERALD_LIGHTBARRIER_RED_SWITCH):
-        case (EMERALD_LIGHTBARRIER_GREEN_SWITCH):
-        case (EMERALD_LIGHTBARRIER_BLUE_SWITCH):
-        case (EMERALD_LIGHTBARRIER_YELLOW_SWITCH):
-        case (EMERALD_ACIDPOOL_TOP_LEFT):
-        case (EMERALD_ACIDPOOL_TOP_RIGHT):
-        case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
-        case (EMERALD_ACIDPOOL_BOTTOM_MID):
-        case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
-        case (EMERALD_WHEEL_TIMEDOOR):
-        case (EMERALD_SWITCH_SWITCHDOOR):
-        case (EMERALD_CONVEYORBELT_SWITCH_RED):
-        case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
-        case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
-        case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
-        case (EMERALD_SWITCH_REMOTEBOMB_UP):
-        case (EMERALD_SWITCH_REMOTEBOMB_DOWN):
-        case (EMERALD_SWITCH_REMOTEBOMB_LEFT):
-        case (EMERALD_SWITCH_REMOTEBOMB_RIGHT):
-        case (EMERALD_SWITCH_REMOTEBOMB_IGNITION):
-        case (EMERALD_STEEL_MODERN_LEFT_END):
-        case (EMERALD_STEEL_MODERN_LEFT_RIGHT):
-        case (EMERALD_STEEL_MODERN_RIGHT_END):
-        case (EMERALD_STEEL_MODERN_UP_END):
-        case (EMERALD_STEEL_MODERN_UP_DOWN):
-        case (EMERALD_STEEL_MODERN_DOWN_END):
-        case (EMERALD_STEEL_MODERN_MIDDLE):
-        case (EMERALD_FONT_BLUE_STEEL_DOUBLE_QUOTE):
-        case (EMERALD_FONT_GREEN_STEEL_DOUBLE_QUOTE):
-        case (EMERALD_FONT_BLUE_STEEL_SEMICOLON):
-        case (EMERALD_FONT_GREEN_STEEL_SEMICOLON):
-        case (EMERALD_STEEL_GROW_LEFT):
-        case (EMERALD_STEEL_GROW_RIGHT):
-        case (EMERALD_STEEL_GROW_UP):
-        case (EMERALD_STEEL_GROW_DOWN):
-        case (EMERALD_STEEL_GROW_LEFT_RIGHT):
-        case (EMERALD_STEEL_GROW_UP_DOWN):
-        case (EMERALD_STEEL_GROW_ALL):
-            return true;
-        default:
-            if (((uElement >= EMERALD_FONT_GREEN_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_GREEN_STEEL_UE)) ||
-                ((uElement >= EMERALD_FONT_BLUE_STEEL_EXCLAMATION) && (uElement <= EMERALD_FONT_BLUE_STEEL_UE))) {
-                return true;
-            } else {
-                return false;
-            }
-    }
-}
-
-
-/*----------------------------------------------------------------------------
 Name:           CheckGameDirectorys
 ------------------------------------------------------------------------------
 Beschreibung: Prüft, ob alle benötigten Directorys vorhanden sind und legt diese
@@ -1950,11 +1763,11 @@ Beschreibung: Prüft, ob alle benötigten Directorys vorhanden sind und legt die
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CheckGameDirectorys(void) {
-    int nErrorCode = -1;
+int32_t CheckGameDirectorys(void) {
+    int32_t nErrorCode = -1;
 
     if (CheckHighScoresDir() == 0) {
         if (CheckAndCreateDir(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
@@ -1974,13 +1787,13 @@ Name:           SetGameSpeed
 Beschreibung: Setzt die Spielgeschwindigkeit. Die Geschwindigkeit sollte/darf nur
               außerhalb eines Animationsablaufes geändert werden.
 Parameter
-      Eingang: nGameSpeed, int, zur Zeit sind folgende Geschwindigkeiten möglich:
+      Eingang: nGameSpeed, int32_t, zur Zeit sind folgende Geschwindigkeiten möglich:
                     GAMESPEED_NORMAL (2 Pixel / Frame)
                     GAMESPEED_FAST   (4 Pixel / Frame)
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: g_nGameSpeed
 ------------------------------------------------------------------------------*/
-void SetGameSpeed(int nGameSpeed) {
+void SetGameSpeed(int32_t nGameSpeed) {
     g_nGameSpeed = nGameSpeed;
 }

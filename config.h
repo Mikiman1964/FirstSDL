@@ -40,9 +40,9 @@ typedef struct {
 
 
 void ShowConfigFile(void);
-int WriteDefaultConfigFile(void);
-int WriteConfigFile(void);
-int ReadConfigFile(void);
-int ReadKeyboardConfig(ezxml_t inputdevice);
+int32_t WriteDefaultConfigFile(void);
+int32_t WriteConfigFile(void);
+int32_t ReadConfigFile(void);
+int32_t ReadKeyboardConfig(ezxml_t inputdevice);
 
 #endif // CONFIG_H_INCLUDED

@@ -16,7 +16,7 @@ extern PLAYFIELD Playfield;
 extern VIDEO Video;
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
-extern int g_nGameSpeed;
+extern int32_t g_nGameSpeed;
 
 /*----------------------------------------------------------------------------
 Name:           CheckPlayTime
@@ -52,19 +52,20 @@ Beschreibung: Zeigt das Spielepanel mit den aktuellen Werten wie z.B. Time,
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Video.x, Config.x
 ------------------------------------------------------------------------------*/
-int ShowPanel(SDL_Renderer *pRenderer) {
+int32_t ShowPanel(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
-    int nErrorCode;
+    int32_t nErrorCode;
     char szNumber[8];
     uint32_t uRemainingSeconds;
 
-    // Die folgenden Werte müssen 4-stellig bleiben
-    if (Playfield.uTotalScore > 9999) {
-        Playfield.uTotalScore = 9999;
+    // Totalscore muss 5-stellig bleiben
+    if (Playfield.uTotalScore > 99999) {
+        Playfield.uTotalScore = 99999;
     }
+    // Die folgenden Werte müssen 4-stellig bleiben
     if (Playfield.uEmeraldsToCollect > 9999) {
         Playfield.uEmeraldsToCollect = 9999;
     }
@@ -103,9 +104,9 @@ int ShowPanel(SDL_Renderer *pRenderer) {
                 if (WritePanelText(pRenderer,"SCORE:",8 + 176, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
                     sprintf(szNumber,"%u",Playfield.uTotalScore);
                     if (WritePanelText(pRenderer,szNumber,8 + 272, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
-                        if (WritePanelText(pRenderer,"EMERALDS:",8 + 368, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
+                        if (WritePanelText(pRenderer,"EMERALDS:",8 + 368 + 20, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
                             sprintf(szNumber,"%u",Playfield.uEmeraldsToCollect);
-                            if (WritePanelText(pRenderer,szNumber,8 + 512, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
+                            if (WritePanelText(pRenderer,szNumber,8 + 512 + 20, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
                                 if (WritePanelDynamitHammerKeys(pRenderer) == 0) {
                                     if (WriteShieldValue(pRenderer) == 0) {
                                         nErrorCode = 0;
@@ -129,12 +130,12 @@ Beschreibung: Zeichnet für die Schildmünze den verbleibenden Schutz.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Config.x
 ------------------------------------------------------------------------------*/
-int WriteShieldValue(SDL_Renderer *pRenderer) {
+int32_t WriteShieldValue(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;             // Zum Kopieren in den Renderer
-    int nErrorCode;
+    int32_t nErrorCode;
     char szShieldString[16];    // ":xxxx", 6 Bytes inkl. \0
     uint32_t uShieldValue;      // verbleibender Schutz
 
@@ -170,12 +171,12 @@ Beschreibung: Zeichnet Dynamit- und Hammer-Anzahl ins Panel.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Config.x
 ------------------------------------------------------------------------------*/
-int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
+int32_t WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
-    int nErrorCode;
+    int32_t nErrorCode;
     uint32_t uDynamiteCount;
     uint32_t uHammerCount;
     uint32_t uWhiteKeyCount;
@@ -195,13 +196,13 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
     if (uWhiteKeyCount > 999) {
         uWhiteKeyCount = 999;
     }
-    DestR.x = 618;
+    DestR.x = 638;
     DestR.y = Config.uResY - FONT_H + 8;
     DestR.w = FONT_H / 2;
     DestR.h = FONT_H / 2;
     if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_DYNAMITE_OFF),NULL,&DestR) == 0) {
         sprintf(szDynamitString,":%u",uDynamiteCount);
-        if (WritePanelText(pRenderer,szDynamitString,630, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
+        if (WritePanelText(pRenderer,szDynamitString,650, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
             sprintf(szDynamitString,":%u",uHammerCount);
             if (WritePanelText(pRenderer,szDynamitString,1084, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
                 sprintf(szDynamitString,":%u",uWhiteKeyCount);
@@ -234,7 +235,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         SDL_Log("%s: SDL_RenderCopy() failed: %s",__FUNCTION__,SDL_GetError());
     }
     if ((Playfield.bHasRedKey) && (nErrorCode == 0)) {
-        DestR.x = 756;
+        DestR.x = 776;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
@@ -244,7 +245,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         }
     }
     if ((Playfield.bHasYellowKey) && (nErrorCode == 0)) {
-        DestR.x = 786;
+        DestR.x = 802;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
@@ -254,7 +255,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         }
     }
     if ((Playfield.bHasGreenKey) && (nErrorCode == 0)) {
-        DestR.x = 816;
+        DestR.x = 828;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
@@ -264,7 +265,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         }
     }
     if ((Playfield.bHasBlueKey) && (nErrorCode == 0)) {
-        DestR.x = 846;
+        DestR.x = 854;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
@@ -274,7 +275,7 @@ int WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         }
     }
     if ((Playfield.bHasGeneralKey) && (nErrorCode == 0)) {
-        DestR.x = 876;
+        DestR.x = 880;
         DestR.y = Config.uResY - FONT_H;
         DestR.w = FONT_W;
         DestR.h = FONT_H;
@@ -295,9 +296,9 @@ Beschreibung: Schreibt Text in den Renderer.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
                szText, const char *, Zeiger auf Text
-               nXpos, int, X-Position in Pixeln
-               nYpos, int, Y-Position in Pixeln
-               nFontSize, int, Skalierung für Font (Standard = 32, für Panel = 16)
+               nXpos, int32_t, X-Position in Pixeln
+               nYpos, int32_t, Y-Position in Pixeln
+               nFontSize, int32_t, Skalierung für Font (Standard = 32, für Panel = 16)
                uFont, uint32_t, möglich ist Folgendes:
                     EMERALD_FONT_BLUE
                     EMERALD_FONT_STEEL_BLUE
@@ -305,12 +306,12 @@ Parameter
                     EMERALD_FONT_STEEL_GREEN
 
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int WritePanelText(SDL_Renderer *pRenderer, const char *szText, int nXpos, int nYpos, int nFontSize,uint32_t uFont) {
-    int nErrorCode;
-    int nI;
+int32_t WritePanelText(SDL_Renderer *pRenderer, const char *szText, int32_t nXpos, int32_t nYpos, int32_t nFontSize,uint32_t uFont) {
+    int32_t nErrorCode;
+    int32_t nI;
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
 
     if ((pRenderer == NULL) || (szText == NULL)) {
@@ -341,15 +342,15 @@ Beschreibung: Erzeugt ein Fenster mit Text und wartet auf "Fire" oder "Space".
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int ConfirmMessage(SDL_Renderer *pRenderer) {
+int32_t ConfirmMessage(SDL_Renderer *pRenderer) {
     char szText[128];
     uint32_t uFireState;
     uint32_t uSpaceState;
     char *pszMessage;
-    int nErrorCode;
+    int32_t nErrorCode;
 
     strcpy(szText,"NO MESSAGE!\n\nPRESS FIRE OR SPACE TO CONFIRM!");
     pszMessage = Playfield.pMessage[Playfield.uShowMessageNo - 1];

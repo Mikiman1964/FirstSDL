@@ -65,7 +65,7 @@ typedef struct {
 } SIDSONG;
 
 
-int InitSidSong(uint8_t *pSidSong, uint16_t uLen);
+int32_t InitSidSong(uint8_t *pSidSong, uint16_t uLen);
 void ShowSidSong();
 void c64Init(void);
 uint32_t RenderSid(short *pAudiobuf,uint32_t uSidBlocks);

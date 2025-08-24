@@ -51,25 +51,25 @@ typedef struct {
 
 
 // Prototypen
-int LevelConverterFromBitap(char *pszFilename);
-int ReadBmHeader(FILE *pF,BITMAP *pBitmap);
-void DumpMem(uint8_t *pcMem, int nLen);
+int32_t LevelConverterFromBitap(char *pszFilename);
+int32_t ReadBmHeader(FILE *pF,BITMAP *pBitmap);
+void DumpMem(uint8_t *pcMem, int32_t nLen);
 void PrintBitmapInfos(BITMAP *pBitmap);
 void PrintLevelInfos(ED *pEd);
-int Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf);
+int32_t Read16x16Macroblock(FILE *pF, uint32_t X, uint32_t Y,uint8_t *puBlockbuf);
 uint8_t GetLevelborderInfo(void);
-int AdjustLevelborder(void);
-int GetLevelAuthorFromFile(char *pszLevelAuthor);
-int GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle);
-int Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf);
+int32_t AdjustLevelborder(void);
+int32_t GetLevelAuthorFromFile(char *pszLevelAuthor);
+int32_t GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle);
+int32_t Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf);
 uint16_t GetElementByMD5(char *szMd5);
 
-int CheckImportLevelFiles(void);
-int GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount);
+int32_t CheckImportLevelFiles(void);
+int32_t GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount);
 
 void CheckDC3ImportDirectoryThread(void);
-int StartCheckDC3ImportDirectoryThread(void);
-int CloseCheckDC3ImportDirectoryThread(void);
+int32_t StartCheckDC3ImportDirectoryThread(void);
+int32_t CloseCheckDC3ImportDirectoryThread(void);
 
 
 

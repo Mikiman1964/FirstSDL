@@ -43,16 +43,16 @@ typedef struct {
 
 
 typedef struct {
-    int nW;
-    int nH;
-    int nModeIndex;
+    int32_t nW;
+    int32_t nH;
+    int32_t nModeIndex;
 } USABLEDISPLAYMODES;
 
 
 typedef struct {
-    int nW;
-    int nH;
-    int nModeIndex;
+    int32_t nW;
+    int32_t nH;
+    int32_t nModeIndex;
 } SHOWABLEDISPLAYMODES;
 
 
@@ -63,10 +63,10 @@ typedef struct {
     bool bMustUseFullScreen;                                                // FullScreen muss aufgrund falscher Framerate verwendet werden
     SDL_Window *pWindow;
     // brauchbare Display-Modes
-    int nUsableDisplayModeCount;                                            // Anzahl der nutzbaren Display-Modes, Xres >= 1280, Yres >= 768, refreshrate = 60 Hz
+    int32_t nUsableDisplayModeCount;                                        // Anzahl der nutzbaren Display-Modes, Xres >= 1280, Yres >= 768, refreshrate = 60 Hz
     USABLEDISPLAYMODES *pUsableModes;                                       // X- und Y- Auflösung und Index
     // Anzeigbare Display-Modes
-    int nShowableDisplayModeCount;                                          // Anzahl der anzeigbaren Display-Modes
+    int32_t nShowableDisplayModeCount;                                      // Anzahl der anzeigbaren Display-Modes
     SHOWABLEDISPLAYMODES ShowableDisplayModes[MAX_SHOWABLE_DISPLAYMODES];   // X- und Y- Auflösung und Index
 } VIDEO;
 
@@ -79,26 +79,26 @@ typedef struct {
 } RGBCOLOR;
 
 // Prototypen
-SDL_Window *InitSDL_Window(int nWindowW, int nWindowH, const char * pszWindowTitle);
-int GetClosestWindowSize(int nWindowW, int nWindowH);
-int GetUsableDisplayModes(uint32_t uDisplay);
-int GetShowableDisplayModes(void);
-int GetDesktopDisplayMode(void);
+SDL_Window *InitSDL_Window(int32_t nWindowW, int32_t nWindowH, const char * pszWindowTitle);
+int32_t GetClosestWindowSize(int32_t nWindowW, int32_t nWindowH);
+int32_t GetUsableDisplayModes(uint32_t uDisplay);
+int32_t GetShowableDisplayModes(void);
+int32_t GetDesktopDisplayMode(void);
 SDL_Renderer *CreateRenderer(SDL_Window * pWindow);
-int RenderPresentAndClear(SDL_Renderer *pRenderer);
-int LoadTextures(SDL_Renderer *pRenderer);
-int CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int nXpos, int nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle);
-int CopyColorRect(SDL_Renderer *pRenderer, int nRed, int nGreen, int nBlue, int nXpos, int nYpos, uint32_t uW, uint32_t uH, bool bAbsolute);
+int32_t RenderPresentAndClear(SDL_Renderer *pRenderer);
+int32_t LoadTextures(SDL_Renderer *pRenderer);
+int32_t CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int32_t nXpos, int32_t nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle);
+int32_t CopyColorRect(SDL_Renderer *pRenderer, int32_t nRed, int32_t nGreen, int32_t nBlue, int32_t nXpos, int32_t nYpos, uint32_t uW, uint32_t uH, bool bAbsolute);
 void FreeTextures(void);
-SDL_Texture *GetTextureByIndex(int nIndex);
-int SetAllTextureColors(uint8_t uIntensityProzent);
-int PrintLittleFont(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText,bool bAbsolute,float fSizeFactor);
+SDL_Texture *GetTextureByIndex(int32_t nIndex);
+int32_t SetAllTextureColors(uint8_t uIntensityProzent);
+int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText,bool bAbsolute,float fSizeFactor);
 void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, char *pszText);
-int CreateMessageWindow(SDL_Renderer *pRenderer, int nXpos, int nYpos, uint32_t uFont, char *pszText, int *pnXpos, int *pnYpos);
-int DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute);
-int DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace);
+int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText, int32_t *pnXpos, int32_t *pnYpos);
+int32_t DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute);
+int32_t DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace);
 void RestoreDesktop(void);
-int SetWindowDisplayMode(int nWidth, int nHeight, Uint32 uFormat, int nRefreshRate);
-int CenterWindow(uint32_t uWidth, uint32_t uHeight);
+int32_t SetWindowDisplayMode(int32_t nWidth, int32_t nHeight, Uint32 uFormat, int32_t nRefreshRate);
+int32_t CenterWindow(uint32_t uWidth, uint32_t uHeight);
 void MeasureFps(void);
 #endif // MYSDL_H_INCLUDED

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
+#include "checkelement.h"
 #include "config.h"
 #include "editor.h"
 #include "EmeraldMine.h"
@@ -38,13 +39,13 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: puX, uint32_t *, X-Level-Dimension
                puY, uint32_t *, Y-Level-Dimension
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY) {
-    int nErrorCode;
-    long int nX;
-    long int nY;
+int32_t GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY) {
+    int32_t nErrorCode;
+    int32_t nX;
+    int32_t nY;
     ezxml_t leveldimension,x,y;
 
     nErrorCode = -1;
@@ -61,7 +62,7 @@ int GetLeveldimensionFromXml(ezxml_t xml,uint32_t *puX,uint32_t *puY) {
                     *puY = (uint32_t)nY;
                     nErrorCode = 0;
                 } else {
-                    SDL_Log("%s: bad level dimension, x = %d, y = %d",__FUNCTION__,(int)nX,(int)nY);
+                    SDL_Log("%s: bad level dimension, x = %d, y = %d",__FUNCTION__,(int32_t)nX,(int32_t)nY);
                 }
             } else {
                 SDL_Log("%s: error in xml file, 'x' or 'y' not found",__FUNCTION__);
@@ -85,11 +86,11 @@ Beschreibung: Erzeugt die Speicherbereiche für das Spielfeld.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetMemoryForPlayfield(void) {
-    int nErrorCode;
+int32_t GetMemoryForPlayfield(void) {
+    int32_t nErrorCode;
 
     Playfield.pLevel = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
     Playfield.pPipeLevel = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
@@ -140,11 +141,11 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t , 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetTitleAuthorVersionHashFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetTitleAuthorVersionHashFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     uint32_t uLen;
     ezxml_t node;
     char *pAttr;
@@ -219,13 +220,13 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetLevelScoresFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetLevelScoresFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     ezxml_t scores,node;
-    long int nNum;
+    int32_t nNum;
     char *pAttr;
 
     nErrorCode = -1;
@@ -405,13 +406,13 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetOtherLevelValuesFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetOtherLevelValuesFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     ezxml_t values,node;
-    long int nNum;
+    int32_t nNum;
     char *pAttr;
 
     nErrorCode = -1;
@@ -482,13 +483,13 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Video.x
 ------------------------------------------------------------------------------*/
-int GetLevelTimesFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetLevelTimesFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     ezxml_t times,node;
-    long int nNum;
+    int32_t nNum;
     char *pAttr;
 
     nErrorCode = -1;
@@ -575,13 +576,13 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetLevelInventoryFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetLevelInventoryFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     ezxml_t inventory,node;
-    long int nNum;
+    int32_t nNum;
     char *pAttr;
 
     nErrorCode = -1;
@@ -632,11 +633,11 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetConveyorBeltSettingsFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetConveyorBeltSettingsFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     ezxml_t conveyorbelt,color,node,node2;
     char *pAttr;
 
@@ -792,13 +793,13 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetReplicatorLighbarrierSettingsFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetReplicatorLighbarrierSettingsFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     ezxml_t lightbarrier,replicator,color,node;
-    long int nNum;
+    int32_t nNum;
     char *pAttr;
 
     nErrorCode = -1;
@@ -971,11 +972,11 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetLetterMessagesFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetLetterMessagesFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     uint32_t I;
     ezxml_t messages,messagenr;
     char *pAttr;
@@ -1034,13 +1035,13 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetQuicksaveFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetQuicksaveFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     char *pAttr;
-    int nNum;
+    int32_t nNum;
     ezxml_t node;
 
     nErrorCode = -1;
@@ -1068,12 +1069,12 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetTreasureChestElementsFromXml(ezxml_t xml) {
-    int nErrorCode;
-    int nNum;
+int32_t GetTreasureChestElementsFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
+    int32_t nNum;
     uint32_t I;
     ezxml_t treasurechests,treasurechestnr,treasurechestwarn;
     char *pAttr;
@@ -1129,12 +1130,12 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetYamExplosionsFromXml(ezxml_t xml) {
-    int nErrorCode;
-    long int nNum;
+int32_t GetYamExplosionsFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
+    int32_t nNum;
     uint32_t I;
     uint32_t E;
     ezxml_t yams,explosion,element;
@@ -1195,11 +1196,11 @@ Parameter
       Eingang: xml, ezxml_t, gültiges XML-Handle
       Ausgang: -
                -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int GetLeveldataFromXml(ezxml_t xml) {
-    int nErrorCode;
+int32_t GetLeveldataFromXml(ezxml_t xml) {
+    int32_t nErrorCode;
     ezxml_t leveldata;
     char *pAttr;
     uint32_t uBase64Len;
@@ -1208,7 +1209,7 @@ int GetLeveldataFromXml(ezxml_t xml) {
     MD5Context MD5Leveldata;
     uint8_t *pCompressed;
     uint32_t uUnCompressLen;
-    int nMiniz;
+    int32_t nMiniz;
 
     pCompressed = NULL;
     nErrorCode = -1;
@@ -1297,13 +1298,13 @@ Parameter
       Eingang: uLevelgroupIndex, uint32_t, Auswahl der Levelgruppe aus LevelgroupFiles[].x über Levelgruppen-Index
                uLevelNumber, uint32_t, Level innerhalb der Levelgruppe
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, ge_DesktopDisplayMode, SelectedLevelgroup.x, Config.x
 ------------------------------------------------------------------------------*/
-int InitialisePlayfield(uint32_t uLevelNumber) {
+int32_t InitialisePlayfield(uint32_t uLevelNumber) {
     ezxml_t xml;
     ezxml_t level;
-    int nErrorCode;
+    int32_t nErrorCode;
     uint32_t I;
     uint32_t uXmlLen;
     uint8_t *pXml;
@@ -1396,45 +1397,7 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
         SAFE_FREE(pXml);
     }
     if (Playfield.bInitOK) {
-        // Sichtbaren Bereich berechnen
-        Playfield.uVisibleY = ((Config.uResY - PANEL_H) / FONT_H);
-        Playfield.uVisibleX = Config.uResX / FONT_W;
-        Playfield.uVisibleCenterY = Playfield.uVisibleY / 2;
-        Playfield.uVisibleCenterX = Playfield.uVisibleX / 2;
-        // Y-Zentrierung des Levels im Anzeigebereich
-        if (Playfield.uVisibleY >= Playfield.uLevel_Y_Dimension) {    // Level ist in Y-Richtung kleiner bzw. gleich der Anzeigehöhe (in Y-Richtung wird nicht gescrollt)
-            Playfield.uShiftLevelYpix = ((Playfield.uVisibleY - Playfield.uLevel_Y_Dimension) / 2) * FONT_H;    // Level im Anzeigebereich zentrieren
-        } else {
-            // Level ist in Y-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
-            Playfield.uShiftLevelYpix = 0;
-        }
-        // X-Zentrierung des Levels im Anzeigebereich
-        if (Playfield.uVisibleX >= Playfield.uLevel_X_Dimension) {    // Level ist in X-Richtung kleiner bzw. gleich der Anzeigebreite (in X-Richtung wird nicht gescrollt)
-            Playfield.uShiftLevelXpix = ((Playfield.uVisibleX - Playfield.uLevel_X_Dimension) / 2) * FONT_H;    // Level im Anzeigebereich zentrieren
-        } else {
-            // Level ist in X-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
-            Playfield.uShiftLevelXpix = 0;
-        }
-        // Positionsüberläufe abfangen
-        Playfield.nMaxXpos = (Playfield.uLevel_X_Dimension * FONT_W) - Config.uResX;
-        if (Playfield.nMaxXpos < 0) {
-            Playfield.nMaxXpos = 0;
-        }
-        Playfield.nMaxYpos = (Playfield.uLevel_Y_Dimension * FONT_H) - Config.uResY + PANEL_H;
-        if (Playfield.nMaxYpos < 0) {
-            Playfield.nMaxYpos = 0;
-        }
-        // Startposition im Level
-        if (Playfield.uManXpos >= Playfield.uVisibleCenterX) {
-            Playfield.nTopLeftXpos = (Playfield.uManXpos - Playfield.uVisibleCenterX) * FONT_W;
-        } else {
-            Playfield.nTopLeftXpos = 0;
-        }
-        if (Playfield.uManYpos >= Playfield.uVisibleCenterY) {
-            Playfield.nTopLeftYpos = (Playfield.uManYpos - Playfield.uVisibleCenterY) * FONT_H;
-        } else {
-            Playfield.nTopLeftYpos = 0;
-        }
+        SetVisibleArea();   // // Sichtbaren Bereich berechnen
         Playfield.uTotalScore = 0;
         Playfield.uFrameCounter = 0;
         Playfield.bMagicWallRunning = false;
@@ -1482,6 +1445,58 @@ int InitialisePlayfield(uint32_t uLevelNumber) {
 
 
 /*----------------------------------------------------------------------------
+Name:           SetVisibleArea
+------------------------------------------------------------------------------
+Beschreibung: Berechnet und setzt den sichtbaren Bereich anhand der Man-Position.
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Playfield.x
+------------------------------------------------------------------------------*/
+void SetVisibleArea(void) {
+    Playfield.uVisibleY = ((Config.uResY - PANEL_H) / FONT_H);
+    Playfield.uVisibleX = Config.uResX / FONT_W;
+    Playfield.uVisibleCenterY = Playfield.uVisibleY / 2;
+    Playfield.uVisibleCenterX = Playfield.uVisibleX / 2;
+    // Y-Zentrierung des Levels im Anzeigebereich
+    if (Playfield.uVisibleY >= Playfield.uLevel_Y_Dimension) {    // Level ist in Y-Richtung kleiner bzw. gleich der Anzeigehöhe (in Y-Richtung wird nicht gescrollt)
+        Playfield.uShiftLevelYpix = ((Playfield.uVisibleY - Playfield.uLevel_Y_Dimension) / 2) * FONT_H;    // Level im Anzeigebereich zentrieren
+    } else {
+        // Level ist in Y-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
+        Playfield.uShiftLevelYpix = 0;
+    }
+    // X-Zentrierung des Levels im Anzeigebereich
+    if (Playfield.uVisibleX >= Playfield.uLevel_X_Dimension) {    // Level ist in X-Richtung kleiner bzw. gleich der Anzeigebreite (in X-Richtung wird nicht gescrollt)
+        Playfield.uShiftLevelXpix = ((Playfield.uVisibleX - Playfield.uLevel_X_Dimension) / 2) * FONT_H;    // Level im Anzeigebereich zentrieren
+    } else {
+        // Level ist in X-Richtung größer als Anzeigebereich, daher oben anfangen (es muss ggf. in Y-Richtung gescrollt werden)
+        Playfield.uShiftLevelXpix = 0;
+    }
+    // Positionsüberläufe abfangen
+    Playfield.nMaxXpos = (Playfield.uLevel_X_Dimension * FONT_W) - Config.uResX;
+    if (Playfield.nMaxXpos < 0) {
+        Playfield.nMaxXpos = 0;
+    }
+    Playfield.nMaxYpos = (Playfield.uLevel_Y_Dimension * FONT_H) - Config.uResY + PANEL_H;
+    if (Playfield.nMaxYpos < 0) {
+        Playfield.nMaxYpos = 0;
+    }
+    // Startposition im Level
+    if (Playfield.uManXpos >= Playfield.uVisibleCenterX) {
+        Playfield.nTopLeftXpos = (Playfield.uManXpos - Playfield.uVisibleCenterX) * FONT_W;
+    } else {
+        Playfield.nTopLeftXpos = 0;
+    }
+    if (Playfield.uManYpos >= Playfield.uVisibleCenterY) {
+        Playfield.nTopLeftYpos = (Playfield.uManYpos - Playfield.uVisibleCenterY) * FONT_H;
+    } else {
+        Playfield.nTopLeftYpos = 0;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           SetCentralExplosionCoordinates
 ------------------------------------------------------------------------------
 Beschreibung: Hinterlegt die 3x3-Koordinaten für eine zentrale Explosion ab Mittelpunkt.
@@ -1492,40 +1507,40 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetCentralExplosionCoordinates() {
-    Playfield.nCentralExplosionCoordinates[0] = -(int)Playfield.uLevel_X_Dimension - 1;         // oben links
-    Playfield.nCentralExplosionCoordinates[1] = -(int)Playfield.uLevel_X_Dimension;             // oben mitte
-    Playfield.nCentralExplosionCoordinates[2] = -(int)Playfield.uLevel_X_Dimension + 1;         // oben rechts
-    Playfield.nCentralExplosionCoordinates[3] = -1;                                             // mitte links
-    Playfield.nCentralExplosionCoordinates[4] = 1;                                              // mitte rechts
-    Playfield.nCentralExplosionCoordinates[5] = (int)Playfield.uLevel_X_Dimension - 1;          // unten links
-    Playfield.nCentralExplosionCoordinates[6] = (int)Playfield.uLevel_X_Dimension;              // unten mitte
-    Playfield.nCentralExplosionCoordinates[7] = (int)Playfield.uLevel_X_Dimension + 1;          // unten rechts
+    Playfield.nCentralExplosionCoordinates[0] = -(int32_t)Playfield.uLevel_X_Dimension - 1;         // oben links
+    Playfield.nCentralExplosionCoordinates[1] = -(int32_t)Playfield.uLevel_X_Dimension;             // oben mitte
+    Playfield.nCentralExplosionCoordinates[2] = -(int32_t)Playfield.uLevel_X_Dimension + 1;         // oben rechts
+    Playfield.nCentralExplosionCoordinates[3] = -1;                                                 // mitte links
+    Playfield.nCentralExplosionCoordinates[4] = 1;                                                  // mitte rechts
+    Playfield.nCentralExplosionCoordinates[5] = (int32_t)Playfield.uLevel_X_Dimension - 1;          // unten links
+    Playfield.nCentralExplosionCoordinates[6] = (int32_t)Playfield.uLevel_X_Dimension;              // unten mitte
+    Playfield.nCentralExplosionCoordinates[7] = (int32_t)Playfield.uLevel_X_Dimension + 1;          // unten rechts
     // Für Yam-Explosion mit Replikator (obere Hälfte)
-    Playfield.nCheckReplicatorForYamExplosionTop[0] = -(int)Playfield.uLevel_X_Dimension - 1;   // R. oben links
-    Playfield.nCheckReplicatorForYamExplosionTop[1] = -(int)Playfield.uLevel_X_Dimension;       // R. oben mitte
-    Playfield.nCheckReplicatorForYamExplosionTop[2] = -(int)Playfield.uLevel_X_Dimension + 1;   // R. oben rechts
-    Playfield.nCheckReplicatorForYamExplosionTop[3] = -1;                                       // R. mitte links
-    Playfield.nCheckReplicatorForYamExplosionTop[4] = 1;                                        // R. mitte rechts
+    Playfield.nCheckReplicatorForYamExplosionTop[0] = -(int32_t)Playfield.uLevel_X_Dimension - 1;   // R. oben links
+    Playfield.nCheckReplicatorForYamExplosionTop[1] = -(int32_t)Playfield.uLevel_X_Dimension;       // R. oben mitte
+    Playfield.nCheckReplicatorForYamExplosionTop[2] = -(int32_t)Playfield.uLevel_X_Dimension + 1;   // R. oben rechts
+    Playfield.nCheckReplicatorForYamExplosionTop[3] = -1;                                           // R. mitte links
+    Playfield.nCheckReplicatorForYamExplosionTop[4] = 1;                                            // R. mitte rechts
     // Für Yam-Explosion mit Replikator (untere Hälfte)
-    Playfield.nCheckReplicatorForYamExplosionButtom[0] = -1;                                    // R. oben links
-    Playfield.nCheckReplicatorForYamExplosionButtom[1] = 0;                                     // R. oben mitte
-    Playfield.nCheckReplicatorForYamExplosionButtom[2] = 1;                                     // R. oben rechts
-    Playfield.nCheckReplicatorForYamExplosionButtom[3] = (int)Playfield.uLevel_X_Dimension - 1; // R. mitte links;
-    Playfield.nCheckReplicatorForYamExplosionButtom[4] = (int)Playfield.uLevel_X_Dimension + 1; // R. mitte rechts;
+    Playfield.nCheckReplicatorForYamExplosionButtom[0] = -1;                                        // R. oben links
+    Playfield.nCheckReplicatorForYamExplosionButtom[1] = 0;                                         // R. oben mitte
+    Playfield.nCheckReplicatorForYamExplosionButtom[2] = 1;                                         // R. oben rechts
+    Playfield.nCheckReplicatorForYamExplosionButtom[3] = (int32_t)Playfield.uLevel_X_Dimension - 1; // R. mitte links;
+    Playfield.nCheckReplicatorForYamExplosionButtom[4] = (int32_t)Playfield.uLevel_X_Dimension + 1; // R. mitte rechts;
     // Für Yam-Explosion mit Säurebecken (obere Hälfte)
-    Playfield.nCheckAcidPoolForYamExplosionTop[0] = -(int)Playfield.uLevel_X_Dimension - 1;     // S. oben links
-    Playfield.nCheckAcidPoolForYamExplosionTop[1] = -(int)Playfield.uLevel_X_Dimension;         // S. oben mitte
-    Playfield.nCheckAcidPoolForYamExplosionTop[2] = -(int)Playfield.uLevel_X_Dimension + 1;     // S. oben rechts
-    Playfield.nCheckAcidPoolForYamExplosionTop[3] = - 1;                                        // S. mitte links
-    Playfield.nCheckAcidPoolForYamExplosionTop[4] = 0;                                          // S. mitte
-    Playfield.nCheckAcidPoolForYamExplosionTop[5] = 1;                                          // S. mitte rechts
+    Playfield.nCheckAcidPoolForYamExplosionTop[0] = -(int32_t)Playfield.uLevel_X_Dimension - 1;     // S. oben links
+    Playfield.nCheckAcidPoolForYamExplosionTop[1] = -(int32_t)Playfield.uLevel_X_Dimension;         // S. oben mitte
+    Playfield.nCheckAcidPoolForYamExplosionTop[2] = -(int32_t)Playfield.uLevel_X_Dimension + 1;     // S. oben rechts
+    Playfield.nCheckAcidPoolForYamExplosionTop[3] = - 1;                                            // S. mitte links
+    Playfield.nCheckAcidPoolForYamExplosionTop[4] = 0;                                              // S. mitte
+    Playfield.nCheckAcidPoolForYamExplosionTop[5] = 1;                                              // S. mitte rechts
     // Für Yam-Explosion mit Säurebecken (untere Hälfte)
-    Playfield.nCheckAcidPoolForYamExplosionButtom[0] = -1;                                      // S. oben links
-    Playfield.nCheckAcidPoolForYamExplosionButtom[1] = 0;                                       // S. oben mitte
-    Playfield.nCheckAcidPoolForYamExplosionButtom[2] = 1;                                       // S. oben rechts
-    Playfield.nCheckAcidPoolForYamExplosionButtom[3] = (int)Playfield.uLevel_X_Dimension - 1;   // S. mitte links
-    Playfield.nCheckAcidPoolForYamExplosionButtom[4] = (int)Playfield.uLevel_X_Dimension;       // S. mitte
-    Playfield.nCheckAcidPoolForYamExplosionButtom[5] = (int)Playfield.uLevel_X_Dimension + 1;   // S. mitte rechts
+    Playfield.nCheckAcidPoolForYamExplosionButtom[0] = -1;                                          // S. oben links
+    Playfield.nCheckAcidPoolForYamExplosionButtom[1] = 0;                                           // S. oben mitte
+    Playfield.nCheckAcidPoolForYamExplosionButtom[2] = 1;                                           // S. oben rechts
+    Playfield.nCheckAcidPoolForYamExplosionButtom[3] = (int32_t)Playfield.uLevel_X_Dimension - 1;   // S. mitte links
+    Playfield.nCheckAcidPoolForYamExplosionButtom[4] = (int32_t)Playfield.uLevel_X_Dimension;       // S. mitte
+    Playfield.nCheckAcidPoolForYamExplosionButtom[5] = (int32_t)Playfield.uLevel_X_Dimension + 1;   // S. mitte rechts
 }
 
 
@@ -1540,26 +1555,26 @@ Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetCentralMegaExplosionCoordinates(void) {
-    Playfield.nCentralMegaExplosionCoordinates[0] = -(int)Playfield.uLevel_X_Dimension * 2 - 1; // Ganz oben links
-    Playfield.nCentralMegaExplosionCoordinates[1] = -(int)Playfield.uLevel_X_Dimension * 2;     // Ganz oben mitte
-    Playfield.nCentralMegaExplosionCoordinates[2] = -(int)Playfield.uLevel_X_Dimension * 2 + 1; // Ganz oben rechts
-    Playfield.nCentralMegaExplosionCoordinates[3] = -(int)Playfield.uLevel_X_Dimension - 2;     // oben links, 2.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[4] = -(int)Playfield.uLevel_X_Dimension - 1;     // oben links, 2.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[5] = -(int)Playfield.uLevel_X_Dimension;         // oben mitte, 2.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[6] = -(int)Playfield.uLevel_X_Dimension + 1;     // oben rechts, 2.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[7] = -(int)Playfield.uLevel_X_Dimension + 2;     // oben rechts, 2.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[8] = -2;                                         // mitte, ganz links
-    Playfield.nCentralMegaExplosionCoordinates[9] = -1;                                         // mitte, links
-    Playfield.nCentralMegaExplosionCoordinates[10] = 1;                                         // mitte, rechts
-    Playfield.nCentralMegaExplosionCoordinates[11] = 2;                                         // mitte, ganz rechts
-    Playfield.nCentralMegaExplosionCoordinates[12] = (int)Playfield.uLevel_X_Dimension - 2;     // unten links, 4.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[13] = (int)Playfield.uLevel_X_Dimension - 1;     // unten links, 4.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[14] = (int)Playfield.uLevel_X_Dimension;         // unten mitte, 4.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[15] = (int)Playfield.uLevel_X_Dimension + 1;     // unten rechts, 4.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[16] = (int)Playfield.uLevel_X_Dimension + 2;     // unten rechts, 4.Reihe
-    Playfield.nCentralMegaExplosionCoordinates[17] = (int)Playfield.uLevel_X_Dimension * 2 - 1; // Ganz unten links
-    Playfield.nCentralMegaExplosionCoordinates[18] = (int)Playfield.uLevel_X_Dimension * 2;     // Ganz unten mitte
-    Playfield.nCentralMegaExplosionCoordinates[19] = (int)Playfield.uLevel_X_Dimension * 2 + 1; // Ganz unten rechts
+    Playfield.nCentralMegaExplosionCoordinates[0] = -(int32_t)Playfield.uLevel_X_Dimension * 2 - 1; // Ganz oben links
+    Playfield.nCentralMegaExplosionCoordinates[1] = -(int32_t)Playfield.uLevel_X_Dimension * 2;     // Ganz oben mitte
+    Playfield.nCentralMegaExplosionCoordinates[2] = -(int32_t)Playfield.uLevel_X_Dimension * 2 + 1; // Ganz oben rechts
+    Playfield.nCentralMegaExplosionCoordinates[3] = -(int32_t)Playfield.uLevel_X_Dimension - 2;     // oben links, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[4] = -(int32_t)Playfield.uLevel_X_Dimension - 1;     // oben links, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[5] = -(int32_t)Playfield.uLevel_X_Dimension;         // oben mitte, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[6] = -(int32_t)Playfield.uLevel_X_Dimension + 1;     // oben rechts, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[7] = -(int32_t)Playfield.uLevel_X_Dimension + 2;     // oben rechts, 2.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[8] = -2;                                             // mitte, ganz links
+    Playfield.nCentralMegaExplosionCoordinates[9] = -1;                                             // mitte, links
+    Playfield.nCentralMegaExplosionCoordinates[10] = 1;                                             // mitte, rechts
+    Playfield.nCentralMegaExplosionCoordinates[11] = 2;                                             // mitte, ganz rechts
+    Playfield.nCentralMegaExplosionCoordinates[12] = (int32_t)Playfield.uLevel_X_Dimension - 2;     // unten links, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[13] = (int32_t)Playfield.uLevel_X_Dimension - 1;     // unten links, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[14] = (int32_t)Playfield.uLevel_X_Dimension;         // unten mitte, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[15] = (int32_t)Playfield.uLevel_X_Dimension + 1;     // unten rechts, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[16] = (int32_t)Playfield.uLevel_X_Dimension + 2;     // unten rechts, 4.Reihe
+    Playfield.nCentralMegaExplosionCoordinates[17] = (int32_t)Playfield.uLevel_X_Dimension * 2 - 1; // Ganz unten links
+    Playfield.nCentralMegaExplosionCoordinates[18] = (int32_t)Playfield.uLevel_X_Dimension * 2;     // Ganz unten mitte
+    Playfield.nCentralMegaExplosionCoordinates[19] = (int32_t)Playfield.uLevel_X_Dimension * 2 + 1; // Ganz unten rechts
 }
 
 
@@ -1593,7 +1608,7 @@ Beschreibung: Entnimmt die Röhren-Elemente aus Playfield.pLevel und setzt diese
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
 void SetPipeLevel(void) {
@@ -1631,12 +1646,12 @@ Beschreibung: Prüft, ob die Level-Umrandung mit "Stahl" an jeder Stelle abgrenz
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-int CheckLevelBorder(void) {
+int32_t CheckLevelBorder(void) {
     uint32_t I;
-    int nErrorCode;
+    int32_t nErrorCode;
 
     nErrorCode = 0;
     // Obere Zeile prüfen
@@ -1678,32 +1693,32 @@ Name:           CheckReplicators
 Beschreibung: Prüft, ob im Level die Replikatoren korrekt zusammengebaut sind.
 Parameter
       Eingang: pLevel, uint16_t *, Zeiger auf Leveldaten
-               uXdim, uint32_t, X-Dimension des Levels
-               uYdim, uint32_t, Y-Dimension des Levels
+               nXdim, int32_t, X-Dimension des Levels
+               nYdim, int32_t, Y-Dimension des Levels
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
-    uint32_t I;
-    uint32_t uMaxIndex;
-    int nErrorCode;
+int32_t CheckReplicators(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
+    int32_t nI;
+    int32_t nMaxIndex;
+    int32_t nErrorCode;
     uint16_t uElement;
 
     if (pLevel == NULL) {
         return -1;
     }
     nErrorCode = 0;
-    uMaxIndex = (uXdim * uYdim) - 1;
-    for (I = 0; (I <= uMaxIndex) && (nErrorCode == 0); I++) {
-        uElement = pLevel[I];
+    nMaxIndex = (nXdim * nYdim) - 1;
+    for (nI = 0; (nI <= nMaxIndex) && (nErrorCode == 0); nI++) {
+        uElement = pLevel[nI];
         switch (uElement) {
             // Roter Replikator
             case (EMERALD_REPLICATOR_RED_TOP_LEFT):
-                if ((I + 1) <= uMaxIndex) {
-                    if (pLevel[I + 1] == EMERALD_REPLICATOR_RED_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_RED_BOTTOM_LEFT) {
+                if ((nI + 1) <= nMaxIndex) {
+                    if (pLevel[nI + 1] == EMERALD_REPLICATOR_RED_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_RED_BOTTOM_LEFT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1718,9 +1733,9 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 break;
             case (EMERALD_REPLICATOR_RED_TOP_MID):
                 if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_RED_TOP_LEFT) {
-                        if ((I + 1) <= uMaxIndex) {
-                            if (pLevel[I + 1] != EMERALD_REPLICATOR_RED_TOP_RIGHT) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_RED_TOP_LEFT) {
+                        if ((nI + 1) <= nMaxIndex) {
+                            if (pLevel[nI + 1] != EMERALD_REPLICATOR_RED_TOP_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1734,10 +1749,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_RED_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_RED_BOTTOM_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_RED_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_RED_BOTTOM_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1751,8 +1766,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_RED_TOP_LEFT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_RED_TOP_LEFT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1760,8 +1775,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_RED_TOP_RIGHT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_RED_TOP_RIGHT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1770,10 +1785,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 break;
             // Grüner Replikator
             case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
-                if ((I + 1) <= uMaxIndex) {
-                    if (pLevel[I + 1] == EMERALD_REPLICATOR_GREEN_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT) {
+                if ((nI + 1) <= nMaxIndex) {
+                    if (pLevel[nI + 1] == EMERALD_REPLICATOR_GREEN_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1787,10 +1802,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_GREEN_TOP_MID):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_GREEN_TOP_LEFT) {
-                        if ((I + 1) <= uMaxIndex) {
-                            if (pLevel[I + 1] != EMERALD_REPLICATOR_GREEN_TOP_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_GREEN_TOP_LEFT) {
+                        if ((nI + 1) <= nMaxIndex) {
+                            if (pLevel[nI + 1] != EMERALD_REPLICATOR_GREEN_TOP_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1804,10 +1819,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_GREEN_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_GREEN_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1821,8 +1836,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_GREEN_TOP_LEFT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_GREEN_TOP_LEFT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1830,8 +1845,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_GREEN_TOP_RIGHT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_GREEN_TOP_RIGHT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1840,10 +1855,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 break;
             // Blauer Replikator
             case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
-                if ((I + 1) <= uMaxIndex) {
-                    if (pLevel[I + 1] == EMERALD_REPLICATOR_BLUE_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT) {
+                if ((nI + 1) <= nMaxIndex) {
+                    if (pLevel[nI + 1] == EMERALD_REPLICATOR_BLUE_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1857,10 +1872,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_BLUE_TOP_MID):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_BLUE_TOP_LEFT) {
-                        if ((I + 1) <= uMaxIndex) {
-                            if (pLevel[I + 1] != EMERALD_REPLICATOR_BLUE_TOP_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_BLUE_TOP_LEFT) {
+                        if ((nI + 1) <= nMaxIndex) {
+                            if (pLevel[nI + 1] != EMERALD_REPLICATOR_BLUE_TOP_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1874,10 +1889,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_BLUE_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_BLUE_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1891,8 +1906,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_BLUE_TOP_LEFT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_BLUE_TOP_LEFT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1900,8 +1915,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_BLUE_TOP_RIGHT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_BLUE_TOP_RIGHT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1910,10 +1925,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 break;
             // Gelber Replikator
             case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
-                if ((I + 1) <= uMaxIndex) {
-                    if (pLevel[I + 1] == EMERALD_REPLICATOR_YELLOW_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT) {
+                if ((nI + 1) <= nMaxIndex) {
+                    if (pLevel[nI + 1] == EMERALD_REPLICATOR_YELLOW_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1927,10 +1942,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_YELLOW_TOP_LEFT) {
-                        if ((I + 1) <= uMaxIndex) {
-                            if (pLevel[I + 1] != EMERALD_REPLICATOR_YELLOW_TOP_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_YELLOW_TOP_LEFT) {
+                        if ((nI + 1) <= nMaxIndex) {
+                            if (pLevel[nI + 1] != EMERALD_REPLICATOR_YELLOW_TOP_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1944,10 +1959,10 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_REPLICATOR_YELLOW_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {
-                            if (pLevel[I + uXdim] != EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_REPLICATOR_YELLOW_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {
+                            if (pLevel[nI + nXdim] != EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -1961,8 +1976,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_YELLOW_TOP_LEFT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_YELLOW_TOP_LEFT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1970,8 +1985,8 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] != EMERALD_REPLICATOR_YELLOW_TOP_RIGHT) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] != EMERALD_REPLICATOR_YELLOW_TOP_RIGHT) {
                         nErrorCode = -1;
                     }
                 } else {
@@ -1984,7 +1999,7 @@ int CheckReplicators(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
         }
     }
     if (nErrorCode != 0) {
-        SDL_Log("%s: bad replicator found",__FUNCTION__);
+        // SDL_Log("%s: bad replicator found",__FUNCTION__);
     }
     return nErrorCode;
 }
@@ -1996,31 +2011,31 @@ Name:           CheckAcidPools
 Beschreibung: Prüft, ob im Level die Säurebecken korrekt zusammengebaut sind.
 Parameter
       Eingang: pLevel, uint16_t *, Zeiger auf Leveldaten
-               uXdim, uint32_t, X-Dimension des Levels
-               uYdim, uint32_t, Y-Dimension des Levels
+               nXdim, int32_t, X-Dimension des Levels
+               nYdim, int32_t, Y-Dimension des Levels
       Ausgang: -
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
-    uint32_t I;
-    uint32_t uMaxIndex;
-    int nErrorCode;
+int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
+    int32_t nI;
+    int32_t nMaxIndex;
+    int32_t nErrorCode;
     uint16_t uElement;
 
     if (pLevel == NULL) {
         return -1;
     }
     nErrorCode = 0;
-    uMaxIndex = (uXdim * uYdim) - 1;
-    for (I = 0; (I <= uMaxIndex) && (nErrorCode == 0); I++) {
-        uElement = pLevel[I];
+    nMaxIndex = (nXdim * nYdim) - 1;
+    for (nI = 0; (nI <= nMaxIndex) && (nErrorCode == 0); nI++) {
+        uElement = pLevel[nI];
         switch (uElement) {
             // Roter Replikator
             case (EMERALD_ACIDPOOL_TOP_LEFT):
-                if ((I + uXdim) <= uMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
-                    if (pLevel[I + uXdim] == EMERALD_ACIDPOOL_BOTTOM_LEFT) {
-                        if (pLevel[I + 1] != EMERALD_ACIDPOOL_TOP_MID) {
+                if ((nI + nXdim) <= nMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
+                    if (pLevel[nI + nXdim] == EMERALD_ACIDPOOL_BOTTOM_LEFT) {
+                        if (pLevel[nI + 1] != EMERALD_ACIDPOOL_TOP_MID) {
                             nErrorCode = -1;
                         }
                     } else {
@@ -2031,11 +2046,11 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_ACIDPOOL_TOP_MID):
-                if ((I - 1) >= 0) {
-                    if ((pLevel[I - 1] == EMERALD_ACIDPOOL_TOP_MID) || (pLevel[I - 1] == EMERALD_ACIDPOOL_TOP_LEFT)) {
-                        if ((I + uXdim) <= uMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
-                            if (pLevel[I + uXdim] == EMERALD_ACIDPOOL_BOTTOM_MID) {
-                                if ((pLevel[I + 1] != EMERALD_ACIDPOOL_TOP_MID) && (pLevel[I + 1] != EMERALD_ACIDPOOL_TOP_RIGHT)) {
+                if ((nI - 1) >= 0) {
+                    if ((pLevel[nI - 1] == EMERALD_ACIDPOOL_TOP_MID) || (pLevel[nI - 1] == EMERALD_ACIDPOOL_TOP_LEFT)) {
+                        if ((nI + nXdim) <= nMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
+                            if (pLevel[nI + nXdim] == EMERALD_ACIDPOOL_BOTTOM_MID) {
+                                if ((pLevel[nI + 1] != EMERALD_ACIDPOOL_TOP_MID) && (pLevel[nI + 1] != EMERALD_ACIDPOOL_TOP_RIGHT)) {
                                     nErrorCode = -1;
                                 }
                             } else {
@@ -2052,10 +2067,10 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_ACIDPOOL_TOP_RIGHT):
-                if ((I - 1) >= 0) {
-                    if (pLevel[I - 1] == EMERALD_ACIDPOOL_TOP_MID) {
-                        if ((I + uXdim) <= uMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
-                            if (pLevel[I + uXdim] != EMERALD_ACIDPOOL_BOTTOM_RIGHT) {
+                if ((nI - 1) >= 0) {
+                    if (pLevel[nI - 1] == EMERALD_ACIDPOOL_TOP_MID) {
+                        if ((nI + nXdim) <= nMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
+                            if (pLevel[nI + nXdim] != EMERALD_ACIDPOOL_BOTTOM_RIGHT) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -2069,10 +2084,10 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
-                if ((I - uXdim) >= 0) {
-                    if (pLevel[I - uXdim] == EMERALD_ACIDPOOL_TOP_LEFT) {
-                        if ((I + 1) <= uMaxIndex) {
-                            if (pLevel[I + 1] != EMERALD_ACIDPOOL_BOTTOM_MID) {
+                if ((nI - nXdim) >= 0) {
+                    if (pLevel[nI - nXdim] == EMERALD_ACIDPOOL_TOP_LEFT) {
+                        if ((nI + 1) <= nMaxIndex) {
+                            if (pLevel[nI + 1] != EMERALD_ACIDPOOL_BOTTOM_MID) {
                                 nErrorCode = -1;
                             }
                         } else {
@@ -2086,11 +2101,11 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_ACIDPOOL_BOTTOM_MID):
-                if ((I - uXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
-                    if (pLevel[I - uXdim] == EMERALD_ACIDPOOL_TOP_MID) {
-                        if ((pLevel[I - 1] == EMERALD_ACIDPOOL_BOTTOM_MID) || (pLevel[I - 1] == EMERALD_ACIDPOOL_BOTTOM_LEFT)) {
-                            if ((I + 1) <= uMaxIndex) {
-                                if ((pLevel[I + 1] != EMERALD_ACIDPOOL_BOTTOM_MID) && (pLevel[I + 1] != EMERALD_ACIDPOOL_BOTTOM_RIGHT)) {
+                if ((nI - nXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
+                    if (pLevel[nI - nXdim] == EMERALD_ACIDPOOL_TOP_MID) {
+                        if ((pLevel[nI - 1] == EMERALD_ACIDPOOL_BOTTOM_MID) || (pLevel[nI - 1] == EMERALD_ACIDPOOL_BOTTOM_LEFT)) {
+                            if ((nI + 1) <= nMaxIndex) {
+                                if ((pLevel[nI + 1] != EMERALD_ACIDPOOL_BOTTOM_MID) && (pLevel[nI + 1] != EMERALD_ACIDPOOL_BOTTOM_RIGHT)) {
                                     nErrorCode = -1;
                                 }
                             } else {
@@ -2107,9 +2122,9 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
                 }
                 break;
             case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
-                if ((I - uXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
-                    if (pLevel[I - uXdim] == EMERALD_ACIDPOOL_TOP_RIGHT) {
-                        if (pLevel[I - 1] != EMERALD_ACIDPOOL_BOTTOM_MID) {
+                if ((nI - nXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
+                    if (pLevel[nI - nXdim] == EMERALD_ACIDPOOL_TOP_RIGHT) {
+                        if (pLevel[nI - 1] != EMERALD_ACIDPOOL_BOTTOM_MID) {
                             nErrorCode = -1;
                         }
                     } else {
@@ -2122,7 +2137,7 @@ int CheckAcidPools(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim) {
         }
     }
     if (nErrorCode != 0) {
-        SDL_Log("%s: bad acid pool found",__FUNCTION__);
+        // SDL_Log("%s: bad acid pool found",__FUNCTION__);
     }
     return nErrorCode;
 }
@@ -2138,16 +2153,16 @@ Parameter
                uYdim, uint32_t, Y-Dimension des Levels
       Ausgang: puManXpos, uint32_t *, X-Koordinate des Man, darf NULL sein
                puManYpos, uint32_t *, Y-Koordinate des Man, darf NULL sein
-Rückgabewert:  int , 0 = OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t *puManXpos, uint32_t *puManYpos) {
-    int nErrorcode;
-    int nManCount;
+int32_t GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t *puManXpos, uint32_t *puManYpos) {
+    int32_t nErrorcode;
+    uint32_t uManCount;
     uint32_t I;                 // Index im Level
     uint32_t uLinCoordinate;    // Lineare Koordinate
 
-    nManCount = 0;
+    uManCount = 0;
     nErrorcode = -1;
     // Das Gröbste wurde bereits in InitialisePlayfield() geprüft
     if (pLevel != NULL) {
@@ -2155,10 +2170,10 @@ int GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t
         for (I = 0; I < (uXdim * uYdim); I++) {
             if (pLevel[I] == EMERALD_MAN) {
                 uLinCoordinate = I;
-                nManCount++;
+                uManCount++;
             }
         }
-        if (nManCount == 1) {
+        if (uManCount == 1) {
             // Lineare Koordinate in X- und Y-Koordinate zerlegen
             if (puManXpos != NULL) {
                 *puManXpos = uLinCoordinate % uXdim;
@@ -2168,7 +2183,7 @@ int GetManCoordinates(uint16_t *pLevel, uint32_t uXdim, uint32_t uYdim, uint32_t
             }
             nErrorcode = 0;
         } else {
-            SDL_Log("%s: invalid man count: %d",__FUNCTION__,nManCount);
+            // SDL_Log("%s: invalid man count: %d",__FUNCTION__,uManCount);
         }
 
     }
@@ -2351,11 +2366,11 @@ Beschreibung: Berechnet den MD5-Hash einer Levelgruppe.
 Parameter
       Eingang: puLevelgroupXml, uint8_t *, Zeiger auf Levelgruppen-XML-Daten, muss 0-terminiert (String) sein
       Ausgang: puMd5Hash, uint8_t, Zeiger auf mindestens 16 Bytes für MD5-Hash, nur gültig, wenn Rückgabe = 0
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int CalculateLevelGroupMd5Hash(uint8_t *puLevelgroupXml,uint8_t *puMd5Hash) {
-    int nErrorCode = -1;
+int32_t CalculateLevelGroupMd5Hash(uint8_t *puLevelgroupXml,uint8_t *puMd5Hash) {
+    int32_t nErrorCode = -1;
     uint8_t *puLevelgroupMd5TagStart;   // An dieser Stelle startet das Tag <levelgroup_md5_hash>
     MD5Context MD5Leveldata;
     uint32_t uLevelgroupSize;
@@ -2423,11 +2438,11 @@ Beschreibung: Ermittelt die Levelgruppen-Dateien im Arbeitsverzeichnis und stell
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
-int GetLevelgroupFiles(void) {
-    int nErrorCode;
+int32_t GetLevelgroupFiles(void) {
+    int32_t nErrorCode;
     DIR *dir;
     struct dirent *entry;
     size_t FilenameLen;
@@ -2619,12 +2634,12 @@ Parameter
       Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
                bReadWriteHighscores, bool, true = Highscores lesen/schreiben, false = Highscores nicht lesen/schreiben
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x.
                Config.x
 ------------------------------------------------------------------------------*/
-int SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
-    int nErrorCode;
+int32_t SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
+    int32_t nErrorCode;
     uint32_t uLevelNumber;
     uint32_t uXmlLen;
     uint32_t uLevelgroupIndex;
@@ -2703,11 +2718,11 @@ Parameter
       Eingang: puLevelgroupMd5Hash, uint8_t *, Levelgruppen-MD5-Hash
                bReadWriteHighscores, bool, true = Highscores lesen/schreiben, false = Highscores nicht lesen/schreiben
       Ausgang: -
-Rückgabewert:  0 = alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
-int SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
-    int nErrorCode;
+int32_t SelectAlternativeLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores) {
+    int32_t nErrorCode;
     uint32_t G;
     bool bSelected = false;
 
@@ -2798,10 +2813,10 @@ Beschreibung: Schreibt eine leere Namens-Datei (names.xml)
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
-int WriteDefaultNamesFile(void) {
+int32_t WriteDefaultNamesFile(void) {
     // SDL_Log("Writing default names file ...");
     memset(&Names,0,sizeof(Names));         // setzt alle Hashes auf "00000000000000000000000000000000" und alle Spielernamen auf \0, Spieleranzahl = 0
     return WriteNamesFile();
@@ -2816,10 +2831,10 @@ Beschreibung: Schreibt den Inhalt der Struktur Names.x als Daten-File.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
-int WriteNamesFile(void) {
+int32_t WriteNamesFile(void) {
     MD5Context MD5Names;
     MD5Context MD5NameCount;
     uint8_t uResultHash[16];        // Ergebnis-Hash aus MD5Names und MD5nameCount
@@ -2849,11 +2864,11 @@ Beschreibung: Liest die Namensdatei in die Struktur Names.x ein.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
-int ReadNamesFile(void) {
-    int nErrorCode;
+int32_t ReadNamesFile(void) {
+    int32_t nErrorCode;
     uint32_t I;
     uint32_t uDataLen;
     uint8_t *pData = NULL;
@@ -2945,10 +2960,10 @@ Beschreibung: Bereinigt die Struktur Names.x von nicht vorhandenen Levelgruppen-
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int, 0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x, LevelgroupFiles[].x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
-int CleanNameHashes(void) {
+int32_t CleanNameHashes(void) {
     uint32_t N;     // Name
     uint32_t G;     // Level-Gruppenhash aus Names.x
     uint32_t L;     // Level-Gruppenhash aus Levelgroup.x
@@ -3018,11 +3033,11 @@ Beschreibung: Fügt einen neuen Namen in die Struktur Names.x hinzu. Falls es
 Parameter
       Eingang: pszname, char*, Zeiger auf Spielernamen, der angelegt werden soll
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = kein Platz mehr
+Rückgabewert:  int32_t, 0 = Alles OK, -1 = Fehler, -2 = kein Platz mehr
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
-int InsertNewName(char *pszName) {
-    int nErrorCode;
+int32_t InsertNewName(char *pszName) {
+    int32_t nErrorCode;
     uint32_t N;
     uint32_t uInsertIndex;
     bool bNameFound;
@@ -3074,11 +3089,11 @@ Parameter
       Eingang: pszName, char*, Zeiger auf Spielernamen, für den Werte gespeichert werden sollen
                puHash, uint8_t * , Zeiger auf Levelgruppen-Hash, für den die Werte gelten
       Ausgang: -
-Rückgabewert:  0 = Alles OK, sonst Fehler
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Names.x, Actualplayer.x
 ------------------------------------------------------------------------------*/
-int InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
-    int nErrorCode;
+int32_t InsertGamesValuesIntoNamesFile(char *pszName, uint8_t *puHash) {
+    int32_t nErrorCode;
     bool bNameFound;
     bool bHashFound;
     uint32_t N;
@@ -3141,11 +3156,11 @@ Parameter
       Eingang: pszName, char*, Zeiger auf Spielernamen, der angelegt werden soll
                puHash, uint8_t * , Zeiger auf Levelgruppen-Hash
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = name nicht gefunden
+Rückgabewert:  int32_t, 0 = Alles OK, -1 = Fehler, -2 = name nicht gefunden
 Seiteneffekte: Names.x, Actualplayer.x
 ------------------------------------------------------------------------------*/
-int SelectName(char *pszName, uint8_t *puHash) {
-    int nErrorCode;
+int32_t SelectName(char *pszName, uint8_t *puHash) {
+    int32_t nErrorCode;
     bool bNameFound;
     bool bHashFound;
     uint32_t N;
@@ -3228,14 +3243,14 @@ Parameter
       Eingang: pszname, char*, Zeiger auf Spielernamen, bei dem der Levelgruppen-Hash hinzugefügt werden soll
                puHash, uint8_t * , Zeiger auf anzulegenden Levelgruppen-Hash
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler,
-                             -2 = Name nicht gefunden,
-                             -3 = kein Platz mehr
-                              0 = Hash gibt es schon
+Rückgabewert:  int32_t, 0 = Alles OK, -1 = Fehler,
+                                      -2 = Name nicht gefunden,
+                                      -3 = kein Platz mehr
+                                       0 = Hash gibt es schon
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
-int InsertGroupHashForName(char *pszName, uint8_t *puHash) {
-    int nErrorCode;
+int32_t InsertGroupHashForName(char *pszName, uint8_t *puHash) {
+    int32_t nErrorCode;
     bool bNameFound;
     bool bHashFound;
     uint32_t N;
@@ -3303,11 +3318,11 @@ Beschreibung: Löscht einen Namen aus der Struktur Names.x. Die zugehörigen
 Parameter
       Eingang: pszname, char*, Zeiger auf Spielernamen, der gelöscht werden soll
       Ausgang: -
-Rückgabewert:  0 = Alles OK, -1 = Fehler, -2 = Name nicht gefunden
+Rückgabewert:  int32_t, 0 = Alles OK, -1 = Fehler, -2 = Name nicht gefunden
 Seiteneffekte: Names.x
 ------------------------------------------------------------------------------*/
-int DeleteName(char *pszName) {
-    int nErrorCode;
+int32_t DeleteName(char *pszName) {
+    int32_t nErrorCode;
     bool bNameFound;
     uint32_t N;
     uint32_t uDeleteIndex;
