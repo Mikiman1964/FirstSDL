@@ -5,7 +5,7 @@
 
 #define DEFAULT_WINDOW_W            1280        // Ist auch gleichzeitig die
 #define DEFAULT_WINDOW_H            768         // Mindestanforderung an die Auflösung
-#define WINDOW_TITLE        "My first SDL2 application"
+#define WINDOW_TITLE        "My first SDL2 application, V "
 
 #define FONT_W              32
 #define FONT_H              32

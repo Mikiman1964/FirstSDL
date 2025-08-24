@@ -111,7 +111,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     if (InitInputStates() != 0) {
         return -1;
     }
-    Video.pWindow = InitSDL_Window(Config.uResX, Config.uResY, WINDOW_TITLE);     // SDL_Init() und Fenster erzeugen
+    Video.pWindow = InitSDL_Window(Config.uResX, Config.uResY,WINDOW_TITLE EMERALD_VERSION);     // SDL_Init() und Fenster erzeugen
     if (Video.pWindow == NULL) {
         return -1;
     }

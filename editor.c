@@ -4960,7 +4960,7 @@ int32_t RenumLevelgroup(uint8_t *pszXml) {
     uint8_t *puLastTag;
     uint8_t *pSearch;
     int32_t nLevelNum = 0;
-    char szLevelNum[8];
+    char szLevelNum[16];
     int32_t nCount = 0;
     bool bStartFlag = true;
 

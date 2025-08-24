@@ -4,27 +4,28 @@ TODO
 * Leveleditor
     * Undo für Editor
 
-
 Für V 1.12
 * Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
-* Bug fix: Mausrad funktionierte nicht im richtigen Bereich der Level-Auswahlliste beim Levellistenscrolling
-* Bug fix: Ein weißer Schlüssel wurde abgezogen, wenn gegen eine versperrte weiße Tür gedrückt wurde.
-* Bug fix: Wenn Man zeitgleich von mehr als einem Feind (Käfer, Mine, Standmine) umgeben ist und ein Schutzschild hat, wurde nur eine Explosion (über Man) ausgeführt.
 * Vom Vormenü kann mit dem Feuerknopf direkt ins Spiel gesprungen werden.
 * Sandminen sind besser erkennbar.
 * Edelsteine rollen jetzt von Stahl Playerhead 2.
 * Musikplayer unterstützt SID (C64).
 * Leveleditor: Messageditor zeigt Messagenummer an, Buttons "Save message" und "cancel" an unteren Bildschirmrand, da Buttons sont Messagebox überdecken können
 * Steuerung für "double game speed" optimiert
-* Quick-Load/Save -> Leveleditor: Quicksave-Allowed-Checkbox
-* Leveleditor: -> Hint an Mauspfeil über gezeichnetes Element
+* Quick-Load/Save: Leveleditor: Quicksave-Allowed-Checkbox
+* Leveleditor: Hint an Mauspfeil über gezeichnetes Element
 * Leveleditor: Füllen von Flächen mit folgenden Elementen vermeiden: Replikatoren, Säurebecken, Man wurde bereits abgefangen
 * Leveleditor: Replikatoren werden als "Ganzes" gesetzt, Säurebeckenränder werden halbautomatisch gesetzt
 * Leveleditor: YAMS: Replikator und Säurebecken wird als "Ganzes" gesetzt.
 * Bug fix: Leveleditor: Bei einem Levelfehler hatte der Button "QUIT" und "Return to Level" keine Wirkung
 * Bug fix: CheckAcidPools() und wahrscheinlich auch CheckReplicators() konnten abstürzen, wenn entsprechende Elemente in obere Stahlzeile gesetzt wurden.
+* Bug fix: Mausrad funktionierte nicht im richtigen Bereich der Level-Auswahlliste beim Levellistenscrolling
+* Bug fix: Ein weißer Schlüssel wurde abgezogen, wenn gegen eine versperrte weiße Tür gedrückt wurde.
+* Bug fix: Wenn Man zeitgleich von mehr als einem Feind (Käfer, Mine, Standmine) umgeben ist und ein Schutzschild hat, wurde nur eine Explosion (über Man) ausgeführt.
+* Bug fix: Editor: RenumLevelgroup(): Die Variable szLevelNum war unter Umständen zu knapp bemessen
 * int- und long int-Datentyp zu int32_t geändert
 * Totalscore von 4-stellig auf 5-stellig erweitert
+* Versionsnummer im Fenstertitel
 * SDL 2.32.8
 */
 
