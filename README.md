@@ -4,8 +4,8 @@ Welcome to my FirstSDL2 project
 Compile under linux
 ===================
 -> Compile SDL2
-1) Download the SDL2 source code from github:  https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.32.8.tar.gz
-2) Decompress the tar.gz file, open a terminal and "cd" into directory "SDL-release-2.32.8"
+1) Download the SDL2 source code from github:  https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.32.10.tar.gz
+2) Decompress the tar.gz file, open a terminal and "cd" into directory "SDL-release-2.xx.x"
 3) Type "./configure" to configure the package for your system
 4) Type "sudo make install" to compile & install SDL2
 
