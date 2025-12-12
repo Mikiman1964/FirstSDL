@@ -15,16 +15,23 @@ Beschreibung: Holt den entsprechenden Texture-Index anhand eines Elements und de
 Parameter
       Eingang: uElement, uint16_t, Element, z.B. EMERALD_MINE_RIGHT
                nAnimationCount, int32_t, Animationsschritt
+               bReplicatorOn, bool, true = Replikator aktiv
+               uConveyorBeltStatus, uint8_t, Status Laufband
+                    EMERALD_CONVEYBELT_OFF     0
+                    EMERALD_CONVEYBELT_LEFT    1
+                    EMERALD_CONVEYBELT_RIGHT   2
       Ausgang: pfAngle, float *, Winkel, darf NULL sein
 Rückgabewert:  uint32_t , Texture, wenn keine Texture ermittelt werden kann, wird
                 SPACE (EMERALD_SPACE) zurückgegeben.
 Seiteneffekte: Playfield.x, ge_ExitDoorSequence[]
 ------------------------------------------------------------------------------*/
-uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,float *pfAngle) {
+uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,float *pfAngle, bool bReplicatorOn, uint8_t uConveyorBeltStatus) {
     uint32_t uTextureIndex;
     uint32_t K;
     float fAngle;
+    uint32_t uReplicatorAnimation;      // Animationsschritt für Replikator
 
+    uReplicatorAnimation = Playfield.uFrameCounter % 12;
     fAngle = 0;
     switch (uElement) {
         case (EMERALD_FONT_BLUE_EXCLAMATION):
@@ -1395,77 +1402,230 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             uTextureIndex = TEX_MAN;    // Man
             //uTextureIndex = 119 + nAnimationCount % 8;     // Man runter
             break;
-        case (EMERALD_REPLICATOR_RED_TOP_LEFT):
-            uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_RED_TOP_MID):
-            uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
-            uTextureIndex = TEX_REPLICATOR_RED_LEFT_BOTTOM_OFF;
-            break;
-        case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_RED_RIGHT_BOTTOM_OFF;
-            break;
         case (EMERALD_REPLICATOR_RED_SWITCH):
             uTextureIndex = TEX_SWITCH_REPLICATOR_RED_OFF;
-            break;
-        case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
-            uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
-            uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
-            uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_BOTTOM_OFF;
-            break;
-        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_BOTTOM_OFF;
             break;
         case (EMERALD_REPLICATOR_YELLOW_SWITCH):
             uTextureIndex = TEX_SWITCH_REPLICATOR_YELLOW_OFF;
             break;
-        case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
-            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_GREEN_TOP_MID):
-            uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
-            uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_OFF;
-            break;
-        case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_OFF;
-            break;
         case (EMERALD_REPLICATOR_GREEN_SWITCH):
             uTextureIndex = TEX_SWITCH_REPLICATOR_GREEN_OFF;
             break;
-        case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
-            uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_BLUE_TOP_MID):
-            uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_OFF;
-            break;
-        case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
-            uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_BOTTOM_OFF;
-            break;
-        case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
-            uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_BOTTOM_OFF;
-            break;
         case (EMERALD_REPLICATOR_BLUE_SWITCH):
             uTextureIndex = TEX_SWITCH_REPLICATOR_BLUE_OFF;
+            break;
+        case (EMERALD_REPLICATOR_RED_TOP_LEFT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_ON_1;     // Replikator, rot, an, oben links, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_ON_2;     // Replikator, rot, an, oben links, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_ON_3;     // Replikator, rot, an, oben links, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_OFF;     // Replikator, rot, aus, oben links
+            }
+            break;
+        case (EMERALD_REPLICATOR_RED_TOP_MID):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_ON_1;     // Replikator, rot, an, mitte, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_ON_2;     // Replikator, rot, an, mitte, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_ON_3;     // Replikator, rot, an, mitte, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_OFF;     // Replikator, rot, aus, oben mitte
+            }
+            break;
+        case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_ON_1;     // Replikator, rot, an, oben rechts, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_ON_2;     // Replikator, rot, an, oben rechts, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_ON_3;     // Replikator, rot, an, oben rechts, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_OFF;     // Replikator, rot, aus, oben rechts
+            }
+            break;
+        case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_RED_LEFT_BOTTOM_ON;     // Replikator, rot, an, unten links, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_RED_LEFT_BOTTOM_OFF;    // Replikator, rot, aus, unten links
+            }
+            break;
+        case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_RED_RIGHT_BOTTOM_ON;     // Replikator, rot, an, unten rechts, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_RED_RIGHT_BOTTOM_OFF;   // Replikator, rot, aus, unten rechts
+            }
+            break;
+
+        case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_1;     // Replikator, grün, an, oben links, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_2;     // Replikator, grün, an, oben links, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_3;     // Replikator, grün, an, oben links, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_OFF;     // Replikator, grün, aus, oben links
+            }
+            break;
+        case (EMERALD_REPLICATOR_GREEN_TOP_MID):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_1;     // Replikator, grün, an, mitte, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_2;     // Replikator, grün, an, mitte, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_3;     // Replikator, grün, an, mitte, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_OFF;     // Replikator, grün, aus, oben mitte
+            }
+            break;
+        case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_1;     // Replikator, grün, an, oben rechts, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_2;     // Replikator, grün, an, oben rechts, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_3;     // Replikator, grün, an, oben rechts, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_OFF;     // Replikator, grün, aus, oben rechts
+            }
+            break;
+        case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_ON;     // Replikator, grün, an, unten links, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_BOTTOM_OFF;     // Replikator, grün, aus, unten links
+            }
+            break;
+        case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_ON;     // Replikator, grün, an, unten rechts, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_BOTTOM_OFF;     // Replikator, grün, aus, unten rechts
+            }
+            break;
+        case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_ON_1;     // Replikator, blau, an, oben links, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_ON_2;     // Replikator, blau, an, oben links, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_ON_3;     // Replikator, blau, an, oben links, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_OFF;     // Replikator, blau, aus, oben links
+            }
+            break;
+        case (EMERALD_REPLICATOR_BLUE_TOP_MID):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_ON_1;     // Replikator, blau, an, mitte, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_ON_2;     // Replikator, blau, an, mitte, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_ON_3;     // Replikator, blau, an, mitte, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_OFF;     // Replikator, blau, aus, oben mitte
+            }
+            break;
+        case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_ON_1;     // Replikator, blau, an, oben rechts, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_ON_2;     // Replikator, blau, an, oben rechts, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_ON_3;     // Replikator, blau, an, oben rechts, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_OFF;     // Replikator, blau, aus, oben rechts
+            }
+            break;
+        case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_BOTTOM_ON;     // Replikator, blau, an, unten links, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_BOTTOM_OFF;     // Replikator, blau, aus, unten links
+            }
+            break;
+        case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_BOTTOM_ON;     // Replikator, blau, an, unten rechts, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_BOTTOM_OFF;     // Replikator, blau, aus, unten rechts
+            }
+            break;
+        case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_ON_1;     // Replikator, gelb, an, oben links, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_ON_2;     // Replikator, gelb, an, oben links, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_ON_3;     // Replikator, gelb, an, oben links, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_OFF;     // Replikator, gelb, aus, oben links
+            }
+            break;
+        case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_ON_1;     // Replikator, gelb, an, mitte, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_ON_2;     // Replikator, gelb, an, mitte, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_ON_3;     // Replikator, gelb, an, mitte, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_OFF;     // Replikator, gelb, aus, oben mitte
+            }
+            break;
+        case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
+            if (bReplicatorOn) {
+                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_ON_1;     // Replikator, gelb, an, oben rechts, Animationsschritt 1
+                } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_ON_2;     // Replikator, gelb, an, oben rechts, Animationsschritt 2
+                } else {
+                    uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_ON_3;     // Replikator, gelb, an, oben rechts, Animationsschritt 3
+                }
+            } else {
+                uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_OFF;     // Replikator, gelb, aus, oben rechts
+            }
+            break;
+        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_BOTTOM_ON;     // Replikator, gelb, an, unten links, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_BOTTOM_OFF;     // Replikator, gelb, aus, unten links
+            }
+            break;
+        case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
+            if (bReplicatorOn) {
+                uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_BOTTOM_ON;     // Replikator, gelb, an, unten rechts, Animationsschritt 1,2 u. 3
+            } else {
+                uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_BOTTOM_OFF;     // Replikator, gelb, aus, unten rechts
+            }
             break;
         case (EMERALD_ACIDPOOL_TOP_LEFT):
             uTextureIndex = TEX_ACID_LEFT_TOP;
@@ -1584,24 +1744,44 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_CONVEYORBELT_RED):
             uTextureIndex = TEX_CONVEYOR_RED;
+            if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_LEFT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+            } else if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_RIGHT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+            }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_RED):
             uTextureIndex = TEX_SWITCH_CONVEYOR_RED_OFF;
             break;
         case (EMERALD_CONVEYORBELT_GREEN):
             uTextureIndex = TEX_CONVEYOR_GREEN;
+            if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_LEFT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+            } else if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_RIGHT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+            }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
             uTextureIndex = TEX_SWITCH_CONVEYOR_GREEN_OFF;
             break;
         case (EMERALD_CONVEYORBELT_BLUE):
             uTextureIndex = TEX_CONVEYOR_BLUE;
+            if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_LEFT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+            } else if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_RIGHT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+            }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
             uTextureIndex = TEX_SWITCH_CONVEYOR_BLUE_OFF;
             break;
         case (EMERALD_CONVEYORBELT_YELLOW):
             uTextureIndex = TEX_CONVEYOR_YELLOW;
+            if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_LEFT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
+            } else if (uConveyorBeltStatus == EMERALD_CONVEYORBELT_RIGHT) {
+                fAngle = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
+            }
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
             uTextureIndex = TEX_SWITCH_CONVEYOR_YELLOW_OFF;

@@ -42,17 +42,19 @@ int32_t QuickSaveGame(void) {
     FreeSaveGame();     // Falls es bereits ein SaveGame gibt, dieses freigeben
     // Speicher für Savegame allozieren
     Savegame.pLevel = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+    Savegame.pPipeLevel = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
     Savegame.pInvalidElement = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
     Savegame.pSlimeElement = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
     Savegame.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
     Savegame.pLastStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
     Savegame.pLastYamSlimeDirection = (uint8_t*)malloc(Playfield.uLevel_XY_Dimension);
 
-    if ((Savegame.pLevel != NULL) && (Savegame.pInvalidElement != NULL) && (Savegame.pSlimeElement != NULL) &&
+    if ((Savegame.pLevel != NULL) && (Savegame.pPipeLevel) && (Savegame.pInvalidElement != NULL) && (Savegame.pSlimeElement != NULL) &&
        (Savegame.pStatusAnimation != NULL) && (Savegame.pLastStatusAnimation != NULL) && (Savegame.pLastYamSlimeDirection != NULL)) {
         nErrorCode = 0;
         // Aktuelles Spiel speichern
         memcpy(Savegame.pLevel,Playfield.pLevel,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+        memcpy(Savegame.pPipeLevel,Playfield.pPipeLevel,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
         memcpy(Savegame.pInvalidElement,Playfield.pInvalidElement,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
         memcpy(Savegame.pSlimeElement,Playfield.pSlimeElement,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
         memcpy(Savegame.pStatusAnimation,Playfield.pStatusAnimation,Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
@@ -83,14 +85,14 @@ int32_t QuickSaveGame(void) {
         Savegame.bReplicatorGreenOn = Playfield.bReplicatorGreenOn;
         Savegame.bReplicatorBlueOn = Playfield.bReplicatorBlueOn;
         Savegame.bReplicatorYellowOn = Playfield.bReplicatorYellowOn;
-        Savegame.uConveybeltRedState = Playfield.uConveybeltRedState;
-        Savegame.uConveybeltRedDirection = Playfield.uConveybeltRedDirection;
-        Savegame.uConveybeltGreenState = Playfield.uConveybeltGreenState;
-        Savegame.uConveybeltGreenDirection = Playfield.uConveybeltGreenDirection;
-        Savegame.uConveybeltBlueState = Playfield.uConveybeltBlueState;
-        Savegame.uConveybeltBlueDirection = Playfield.uConveybeltBlueDirection;
-        Savegame.uConveybeltYellowState = Playfield.uConveybeltYellowState;
-        Savegame.uConveybeltYellowDirection = Playfield.uConveybeltYellowDirection;
+        Savegame.uConveyorbeltRedState = Playfield.uConveyorbeltRedState;
+        Savegame.uConveyorbeltRedDirection = Playfield.uConveyorbeltRedDirection;
+        Savegame.uConveyorbeltGreenState = Playfield.uConveyorbeltGreenState;
+        Savegame.uConveyorbeltGreenDirection = Playfield.uConveyorbeltGreenDirection;
+        Savegame.uConveyorbeltBlueState = Playfield.uConveyorbeltBlueState;
+        Savegame.uConveyorbeltBlueDirection = Playfield.uConveyorbeltBlueDirection;
+        Savegame.uConveyorbeltYellowState = Playfield.uConveyorbeltYellowState;
+        Savegame.uConveyorbeltYellowDirection = Playfield.uConveyorbeltYellowDirection;
         strcpy(Savegame.szMd5String,Playfield.szMd5String);
         Savegame.uEmeraldsToCollect = Playfield.uEmeraldsToCollect;
         Savegame.uTimeToPlay = Playfield.uTimeToPlay;
@@ -135,7 +137,7 @@ bool IsQuickLoadGameAvailable(void) {
     bool bGameAvailable;
 
     bGameAvailable = (strcmp(Savegame.szMd5String,Playfield.szMd5String) == 0) &&
-                     (Savegame.pLevel != NULL) && (Savegame.pInvalidElement != NULL) && (Savegame.pSlimeElement != NULL) &&
+                     (Savegame.pLevel != NULL) &&  (Savegame.pPipeLevel != NULL) && (Savegame.pInvalidElement != NULL) && (Savegame.pSlimeElement != NULL) &&
                      (Savegame.pStatusAnimation != NULL) && (Savegame.pLastStatusAnimation != NULL) && (Savegame.pLastYamSlimeDirection != NULL);
 
     return bGameAvailable;
@@ -162,6 +164,7 @@ int32_t QuickLoadGame(void) {
 
     if (IsQuickLoadGameAvailable()) {
         memcpy(Playfield.pLevel,Savegame.pLevel,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
+        memcpy(Playfield.pPipeLevel,Savegame.pPipeLevel,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
         memcpy(Playfield.pInvalidElement,Savegame.pInvalidElement,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
         memcpy(Playfield.pSlimeElement,Savegame.pSlimeElement,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
         memcpy(Playfield.pStatusAnimation,Savegame.pStatusAnimation,Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
@@ -192,14 +195,14 @@ int32_t QuickLoadGame(void) {
         Playfield.bReplicatorGreenOn = Savegame.bReplicatorGreenOn;
         Playfield.bReplicatorBlueOn = Savegame.bReplicatorBlueOn;
         Playfield.bReplicatorYellowOn = Savegame.bReplicatorYellowOn;
-        Playfield.uConveybeltRedState = Savegame.uConveybeltRedState;
-        Playfield.uConveybeltRedDirection = Savegame.uConveybeltRedDirection;
-        Playfield.uConveybeltGreenState = Savegame.uConveybeltGreenState;
-        Playfield.uConveybeltGreenDirection = Savegame.uConveybeltGreenDirection;
-        Playfield.uConveybeltBlueState = Savegame.uConveybeltBlueState;
-        Playfield.uConveybeltBlueDirection = Savegame.uConveybeltBlueDirection;
-        Playfield.uConveybeltYellowState = Savegame.uConveybeltYellowState;
-        Playfield.uConveybeltYellowDirection = Savegame.uConveybeltYellowDirection;
+        Playfield.uConveyorbeltRedState = Savegame.uConveyorbeltRedState;
+        Playfield.uConveyorbeltRedDirection = Savegame.uConveyorbeltRedDirection;
+        Playfield.uConveyorbeltGreenState = Savegame.uConveyorbeltGreenState;
+        Playfield.uConveyorbeltGreenDirection = Savegame.uConveyorbeltGreenDirection;
+        Playfield.uConveyorbeltBlueState = Savegame.uConveyorbeltBlueState;
+        Playfield.uConveyorbeltBlueDirection = Savegame.uConveyorbeltBlueDirection;
+        Playfield.uConveyorbeltYellowState = Savegame.uConveyorbeltYellowState;
+        Playfield.uConveyorbeltYellowDirection = Savegame.uConveyorbeltYellowDirection;
         Playfield.uEmeraldsToCollect = Savegame.uEmeraldsToCollect;
         Playfield.uTimeToPlay = Savegame.uTimeToPlay;
         Playfield.uTimeWheelRotationLeft = Savegame.uTimeWheelRotationLeft;
@@ -241,6 +244,7 @@ Seiteneffekte: Playfield.x, Actualplayer.x, SelectedLevelgroup.x
 ------------------------------------------------------------------------------*/
 void FreeSaveGame() {
     SAFE_FREE(Savegame.pLevel);
+    SAFE_FREE(Savegame.pPipeLevel);
     SAFE_FREE(Savegame.pInvalidElement);
     SAFE_FREE(Savegame.pSlimeElement);
     SAFE_FREE(Savegame.pStatusAnimation);

@@ -110,7 +110,7 @@ int32_t WriteDefaultConfigFile(void) {
     Config.nAxisRightThreshold = 30000;             // 0 bis 32767
     Config.nAxisUpThreshold = -30000;               // -32768 bis 0
     Config.nAxisDownThreshold = 30000;              // 0 bis 32767
-    Config.cJoystickFireButton  = 'A';              // 'A', 'B', 'X' oder 'Y'               'A' = linker runder Nutton
+    Config.cJoystickFireButton  = 'A';              // 'A', 'B', 'X' oder 'Y'               'A' = linker runder Button
     Config.cJoystickStartDynamiteButton = 'X';      // 'A', 'B', 'X' oder 'Y'               'X' = linker dreieckiger Button
     Config.cJoystickExitButton = 'Y';               // 'A', 'B', 'X', 'Y' oder 'N' = NONE   'Y' = rechter dreieckiger Button
     Config.uKeyboardScancodeLeft = SDL_SCANCODE_LEFT;

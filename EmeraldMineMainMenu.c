@@ -24,6 +24,7 @@
 MAINMENU MainMenu;
 extern char g_ScanCodeNames[][64];
 extern uint32_t g_uScanCodes[];
+extern uint32_t ge_TotalLevelCount;
 extern INPUTSTATES InputStates;
 extern MANKEY ManKey;
 extern VIDEO Video;
@@ -1059,7 +1060,6 @@ void ScrollLevelGroups(int32_t nButton) {
                     }
                 }
             }
-
         } else if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {   // Button Levelgruppen Pfeil runter?
             if (MainMenu.pLevelgroupList[MainMenu.uMaxLevelgroupsInList - 1] < (g_LevelgroupFilesCount - 1)) {
                 for (I = 0; I < MainMenu.uMaxLevelgroupsInList; I++) {
@@ -1130,7 +1130,7 @@ int32_t RenderMenuElements(SDL_Renderer *pRenderer) {
     for (I = 0; ((I < ((DEFAULT_WINDOW_W / FONT_W) * MainMenu.uYdim)) && (nErrorCode == 0)); I++) {
         X = I % MainMenu.uXdim;
         Y = I / MainMenu.uXdim;
-        uTextureIndex = GetTextureIndexByElement(MainMenu.pMenuScreen[I],Playfield.uFrameCounter % 16,&fAngle);
+        uTextureIndex = GetTextureIndexByElement(MainMenu.pMenuScreen[I],Playfield.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
         DestR.x = Video.uXoffs + X * FONT_W;
         if (MainMenu.bCenterDefault) {
             DestR.y = Video.uYoffs + Y * FONT_H;
@@ -1554,7 +1554,7 @@ Parameter
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
                SelectedLevelgroup.x, Config.x, Audioplayer.x, Actualplayer.x
-               Video.x, GameSound.x, Fps.x
+               Video.x, GameSound.x, Fps.x, ge_TotalLevelCount
 ------------------------------------------------------------------------------*/
 int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int32_t nErrorCode;
@@ -1579,6 +1579,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int32_t nNewHighscoreIndex;
     char szText[256];
     char szLastPlayername[EMERALD_PLAYERNAME_LEN + 1];                       // Aktuellen Spielernamen merken
+    char szTotalLevelCount[64];
     SCROLLER Scroller;
     uint8_t szMessage[] = {"START THE GAME WITH THE FIRE BUTTON (LEFT CTRL).  \
     GAME MUSIC BY MAKTONE, VOYCE/DELIGHT AND JESPER KYD.  \
@@ -1899,12 +1900,13 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                 nErrorCode = RenderSettingsbutton(pRenderer);
                             }
                         }
-
-                                PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,0,Fps.szFrameaPerSecond,K_ABSOLUTE,1);
-                                PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 24,3,Fps.szFrameaPerSecond,K_ABSOLUTE,1);
-
-
-
+                        // FPS
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,0,Fps.szFrameaPerSecond,K_ABSOLUTE,1);
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 24,3,Fps.szFrameaPerSecond,K_ABSOLUTE,1);
+                        // Gesamtanzahl Levels
+                        sprintf(szTotalLevelCount,"TOTAL LEVELS: %u",ge_TotalLevelCount);
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 960,MainMenu.uYdim * FONT_H - 25,0,szTotalLevelCount,K_ABSOLUTE,1);
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 960,MainMenu.uYdim * FONT_H - 24,3,szTotalLevelCount,K_ABSOLUTE,1);
                         ShowButtons(pRenderer,K_ABSOLUTE);
                         if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_CREATE_PLAYER))) {
                             ActivateInputPlayernameMode();  // Eingabemodus für Namenseingabe aktivieren

@@ -784,6 +784,7 @@ Parameter
                         1 = Font_8_15_Courier_transp
                         2 = LittleFont_Red.bmp
                         3 = LittleFont_Black.bmp
+                        4 = font_arcade_numbers_green.bmp, kann nur Ziffern und Minus (Bindestrich)
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
                fSizeFactor, float, Vergrößerung- bzw. Verkleinerungsfaktor
@@ -806,7 +807,7 @@ int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, u
     uint32_t uTextureIndex;
     uint32_t uCharCountPerLine;
 
-    if (uFont > 3) {
+    if (uFont > 4) {
         uFont = 1;
     }
     if (uFont == 0) {
@@ -821,6 +822,10 @@ int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, u
         uFontW = FONT_LITTLE_W;
         uFontH = FONT_LITTLE_H;
         uTextureIndex = TEX_FONT_LITTLE_RED;
+    } else if (uFont == 4) {
+        uFontW = FONT_ARCADE_W;
+        uFontH = FONT_ARCADE_H;
+        uTextureIndex = TEX_FONT_ARCADE_NUMBERS_GREEN;
     } else {
         uFontW = FONT_LITTLE_W;
         uFontH = FONT_LITTLE_H;
@@ -843,6 +848,15 @@ int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, u
                 } else if ((pszText[I] >= ' ') && (pszText[I] <= 102)) {    // Cursor -> letztes Zeichen im Zeichensatz
                     cSign = pszText[I] - 32;
                     uCharCountPerLine++;
+                }
+            } else if (uFont == 4) {
+                // Arcade-Ziffern
+                if ((pszText[I] >= '0') && (pszText[I] <= '9')) {
+                    cSign = pszText[I] - 0x30 + 1;
+                } else if (pszText[I] == '-') {
+                    cSign = 0;
+                } else {
+                    cSign = 0xFF;
                 }
             } else {
                 if ((pszText[I] >= 32) && (pszText[I] <= 125)) {

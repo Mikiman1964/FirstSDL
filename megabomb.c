@@ -67,15 +67,15 @@ void ControlMegaBomb(uint32_t I) {
                 }
             }
         // Ab hier prüfen, ob Megabombe durch Laufband bewegt werden kann
-        } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) ||
-                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) ||
-                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) ||
-                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT)))) {
+        } else if ((IS_SPACE(I - 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveyorbeltRedState == EMERALD_CONVEYORBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_LEFT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_LEFT)))) {
             SetElementToNextPosition(I,EMERALD_ANIM_LEFT,EMERALD_ANIM_CLEAN_RIGHT,EMERALD_MEGABOMB);
-        } else if ((IS_SPACE(I + 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT)) ||
-                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT)) ||
-                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT)) ||
-                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT)))) {
+        } else if ((IS_SPACE(I + 1)) && (((uHitElement == EMERALD_CONVEYORBELT_RED) && (Playfield.uConveyorbeltRedState == EMERALD_CONVEYORBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_YELLOW) && (Playfield.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_GREEN) && (Playfield.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_RIGHT)) ||
+                                         ((uHitElement == EMERALD_CONVEYORBELT_BLUE) && (Playfield.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_RIGHT)))) {
             SetElementToNextPosition(I,EMERALD_ANIM_RIGHT,EMERALD_ANIM_CLEAN_LEFT,EMERALD_MEGABOMB);
         } else {
             // SDL_Log("Megabomb sleeps, Hitelement = %x",uHitElement);

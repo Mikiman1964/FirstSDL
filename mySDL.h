@@ -18,6 +18,10 @@
 #define FONT_LITTLE_COURIER_W   8
 #define FONT_LITTLE_COURIER_H   14
 
+// Font Arcade, grün, nur Ziffern
+#define FONT_ARCADE_W       8
+#define FONT_ARCADE_H       8
+
 // Button-Höhe für Font 1
 #define BUTTON_H            (FONT_LITTLE_COURIER_H + 5)
 

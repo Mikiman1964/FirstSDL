@@ -6,6 +6,12 @@
 
 #define IS_SPACE(x)  ((Playfield.pLevel[x] == EMERALD_SPACE) && (Playfield.pPipeLevel[x] == EMERALD_SPACE))
 
+#define COLOR_UNKNOWN                               0             // unbekannte Farbe
+#define COLOR_RED                                   1             // Rot
+#define COLOR_YELLOW                                2             // Gelb
+#define COLOR_GREEN                                 3             // Grün
+#define COLOR_BLUE                                  4             // Blau
+
 #define MIN_LEVEL_W                                 4             // Minumum 4 Elemente in der Breite
 #define MIN_LEVEL_H                                 3             // Minumum 3 Elemente in der Höhe
 #define MAX_LEVEL_W                                 1000          // Maximum Elemente in der Breite
@@ -13,7 +19,7 @@
 
 #define PANEL_H                                     32            // Spiel-Anzeige (Time, Score usw.)
 
-#define EMERALD_VERSION                             "01.12"       // Version
+#define EMERALD_VERSION                             "01.13"       // Version
 
 #define EMERALD_VERSION_LEN                         5             // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                           32            // Maximale Titellänge
@@ -603,12 +609,12 @@
 #define EMERALD_FONT_GREEN_STEEL                    0x11
 
 // Status der Laufbänder
-#define EMERALD_CONVEYBELT_OFF                      0
-#define EMERALD_CONVEYBELT_LEFT                     1
-#define EMERALD_CONVEYBELT_RIGHT                    2
+#define EMERALD_CONVEYORBELT_OFF                    0
+#define EMERALD_CONVEYORBELT_LEFT                   1
+#define EMERALD_CONVEYORBELT_RIGHT                  2
 // Schalt-Richtungen für Laufband-Umschalter
-#define EMERALD_CONVEYBELT_TO_LEFT                  0
-#define EMERALD_CONVEYBELT_TO_RIGHT                 1
+#define EMERALD_CONVEYORBELT_TO_LEFT                0
+#define EMERALD_CONVEYORBELT_TO_RIGHT               1
 
 
 // Animationen
@@ -845,14 +851,14 @@ typedef struct {
     uint16_t        uReplicatorBlueObject;
     bool            bReplicatorYellowOn;
     uint16_t        uReplicatorYellowObject;
-    uint8_t         uConveybeltRedState;                        // CONVEYBELT_OFF, CONVEYBELT_LEFT, CONVEYBELT_RIGHT
-    uint8_t         uConveybeltRedDirection;                    // EMERALD_CONVEYBELT_TO_LEFT, EMERALD_CONVEYBELT_TO_RIGHT
-    uint8_t         uConveybeltGreenState;
-    uint8_t         uConveybeltGreenDirection;
-    uint8_t         uConveybeltBlueState;
-    uint8_t         uConveybeltBlueDirection;
-    uint8_t         uConveybeltYellowState;
-    uint8_t         uConveybeltYellowDirection;
+    uint8_t         uConveyorbeltRedState;                        // CONVEYORBELT_OFF, CONVEYORBELT_LEFT, CONVEYORBELT_RIGHT
+    uint8_t         uConveyorbeltRedDirection;                    // EMERALD_CONVEYORBELT_TO_LEFT, EMERALD_CONVEYORBELT_TO_RIGHT
+    uint8_t         uConveyorbeltGreenState;
+    uint8_t         uConveyorbeltGreenDirection;
+    uint8_t         uConveyorbeltBlueState;
+    uint8_t         uConveyorbeltBlueDirection;
+    uint8_t         uConveyorbeltYellowState;
+    uint8_t         uConveyorbeltYellowDirection;
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
     char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "DER BUNKER"
     char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "MIKIMAN"

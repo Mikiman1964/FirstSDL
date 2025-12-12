@@ -1067,18 +1067,18 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     DynStringAdd(XML,"  </lightbarriers>\r\n");
     DynStringAdd(XML,"  <conveyorbelts>\r\n");
     DynStringAdd(XML,"    <red>\r\n");
-    switch (Ed.uConveybeltRedState) {
-        case (EMERALD_CONVEYBELT_LEFT):
+    switch (Ed.uConveyorbeltRedState) {
+        case (EMERALD_CONVEYORBELT_LEFT):
             strcpy(szNum,"left");
             strcpy(szNum2,"right");
             break;
-        case (EMERALD_CONVEYBELT_RIGHT):
+        case (EMERALD_CONVEYORBELT_RIGHT):
             strcpy(szNum,"right");
             strcpy(szNum2,"left");
             break;
-        case (EMERALD_CONVEYBELT_OFF):
+        case (EMERALD_CONVEYORBELT_OFF):
             strcpy(szNum,"off");
-            if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltRedDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1086,7 +1086,7 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
             break;
         default:
             strcpy(szNum,"off");
-            if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltRedDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1097,18 +1097,18 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
     DynStringAdd(XML,"    </red>\r\n");
     DynStringAdd(XML,"    <green>\r\n");
-    switch (Ed.uConveybeltGreenState) {
-        case (EMERALD_CONVEYBELT_LEFT):
+    switch (Ed.uConveyorbeltGreenState) {
+        case (EMERALD_CONVEYORBELT_LEFT):
             strcpy(szNum,"left");
             strcpy(szNum2,"right");
             break;
-        case (EMERALD_CONVEYBELT_RIGHT):
+        case (EMERALD_CONVEYORBELT_RIGHT):
             strcpy(szNum,"right");
             strcpy(szNum2,"left");
             break;
-        case (EMERALD_CONVEYBELT_OFF):
+        case (EMERALD_CONVEYORBELT_OFF):
             strcpy(szNum,"off");
-            if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltGreenDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1116,7 +1116,7 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
             break;
         default:
             strcpy(szNum,"off");
-            if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltGreenDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1127,18 +1127,18 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
     DynStringAdd(XML,"    </green>\r\n");
     DynStringAdd(XML,"    <blue>\r\n");
-    switch (Ed.uConveybeltBlueState) {
-        case (EMERALD_CONVEYBELT_LEFT):
+    switch (Ed.uConveyorbeltBlueState) {
+        case (EMERALD_CONVEYORBELT_LEFT):
             strcpy(szNum,"left");
             strcpy(szNum2,"right");
             break;
-        case (EMERALD_CONVEYBELT_RIGHT):
+        case (EMERALD_CONVEYORBELT_RIGHT):
             strcpy(szNum,"right");
             strcpy(szNum2,"left");
             break;
-        case (EMERALD_CONVEYBELT_OFF):
+        case (EMERALD_CONVEYORBELT_OFF):
             strcpy(szNum,"off");
-            if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltBlueDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1146,7 +1146,7 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
             break;
         default:
             strcpy(szNum,"off");
-            if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltBlueDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1157,18 +1157,18 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
     DynStringAdd(XML,"      <next_direction>");DynStringAdd(XML,szNum2);DynStringAdd(XML,"</next_direction>\r\n");
     DynStringAdd(XML,"    </blue>\r\n");
     DynStringAdd(XML,"    <yellow>\r\n");
-    switch (Ed.uConveybeltYellowState) {
-        case (EMERALD_CONVEYBELT_LEFT):
+    switch (Ed.uConveyorbeltYellowState) {
+        case (EMERALD_CONVEYORBELT_LEFT):
             strcpy(szNum,"left");
             strcpy(szNum2,"right");
             break;
-        case (EMERALD_CONVEYBELT_RIGHT):
+        case (EMERALD_CONVEYORBELT_RIGHT):
             strcpy(szNum,"right");
             strcpy(szNum2,"left");
             break;
-        case (EMERALD_CONVEYBELT_OFF):
+        case (EMERALD_CONVEYORBELT_OFF):
             strcpy(szNum,"off");
-            if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltYellowDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1176,7 +1176,7 @@ DYNSTRING *GetLevelXmlFromEditor(void) {
             break;
         default:
             strcpy(szNum,"off");
-            if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+            if (Ed.uConveyorbeltYellowDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
                 strcpy(szNum2,"left");
             } else {
                 strcpy(szNum2,"right");
@@ -1355,14 +1355,14 @@ int32_t CopyPlayfieldValueToEditor(void) {
         Ed.uReplicatorBlueObject = Playfield.uReplicatorBlueObject;
         Ed.bReplicatorYellowOn = Playfield.bReplicatorYellowOn;
         Ed.uReplicatorYellowObject = Playfield.uReplicatorYellowObject;
-        Ed.uConveybeltRedState = Playfield.uConveybeltRedState;
-        Ed.uConveybeltRedDirection = Playfield.uConveybeltRedDirection;
-        Ed.uConveybeltGreenState = Playfield.uConveybeltGreenState;
-        Ed.uConveybeltGreenDirection = Playfield.uConveybeltGreenDirection;
-        Ed.uConveybeltBlueState = Playfield.uConveybeltBlueState;
-        Ed.uConveybeltBlueDirection = Playfield.uConveybeltBlueDirection;
-        Ed.uConveybeltYellowState = Playfield.uConveybeltYellowState;
-        Ed.uConveybeltYellowDirection = Playfield.uConveybeltYellowDirection;
+        Ed.uConveyorbeltRedState = Playfield.uConveyorbeltRedState;
+        Ed.uConveyorbeltRedDirection = Playfield.uConveyorbeltRedDirection;
+        Ed.uConveyorbeltGreenState = Playfield.uConveyorbeltGreenState;
+        Ed.uConveyorbeltGreenDirection = Playfield.uConveyorbeltGreenDirection;
+        Ed.uConveyorbeltBlueState = Playfield.uConveyorbeltBlueState;
+        Ed.uConveyorbeltBlueDirection = Playfield.uConveyorbeltBlueDirection;
+        Ed.uConveyorbeltYellowState = Playfield.uConveyorbeltYellowState;
+        Ed.uConveyorbeltYellowDirection = Playfield.uConveyorbeltYellowDirection;
         strcpy(Ed.szLevelTitle,Playfield.szLevelTitle);
         strcpy(Ed.szLevelAuthor,Playfield.szLevelAuthor);
         strcpy(Ed.szVersion,EMERALD_VERSION);
@@ -1642,7 +1642,7 @@ int32_t FillPanel(SDL_Renderer *pRenderer) {
             DestR.y = Ed.uPanelYpos + 8 + uY * 23;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            uTextureIndex = GetTextureIndexByElement(g_PanelElements[uI],Ed.uFrameCounter % 16,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(g_PanelElements[uI],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL,SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
@@ -1709,21 +1709,21 @@ int32_t DrawEditorPanel(SDL_Renderer *pRenderer) {
             Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
-            uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementLeft[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementLeft[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
             // selected element, right
             Rect.x = Config.uResX - 48 + 1;
             Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
-            uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementRight[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementRight[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
             // selected element, middle
             Rect.x = Config.uResX - 112 + 1;
             Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
-            uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementMiddle[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementMiddle[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,0,NULL, SDL_FLIP_NONE);
         }
     }
@@ -1797,7 +1797,7 @@ int32_t RenderEditorLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnY
                 DestR.y = uY * Ed.uFont_H - (*pnYpos % Ed.uFont_H) + Ed.uShiftLevelYpix;
                 DestR.w = Ed.uFont_W;
                 DestR.h = Ed.uFont_H;
-                pTexture = GetTextureByIndex(GetTextureIndexByElement(uLevelElement,nAnimationCount,&fAngle));
+                pTexture = GetTextureByIndex(GetTextureIndexByElement(uLevelElement,nAnimationCount,&fAngle,false,EMERALD_CONVEYORBELT_OFF));
                 if (SDL_RenderCopyEx(pRenderer,pTexture,NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                     SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
@@ -1901,7 +1901,7 @@ int32_t EditorStateLevel(SDL_Renderer *pRenderer) {
                     if (uElement == EMERALD_MAN) {
                         ClearOldMan();
                     }
-                    if (IsReplicatorElement(uElement)) {
+                    if (IsReplicatorElement(uElement,NULL)) {
                         SetCompleteReplicator(uElement,uLevelX,uLevelY);
                     }else if (IsAcidPoolElement(uElement)) {
                         SetAcidPool(uElement,uLevelX,uLevelY);
@@ -2232,7 +2232,9 @@ Seiteneffekte: Ed.x, InputStates.x, Config.x
 ------------------------------------------------------------------------------*/
 int32_t EditorStateYams(SDL_Renderer *pRenderer) {
     char szText[64];
+    char szSpace[2];
     uint32_t I;
+    uint32_t uYam;
     uint32_t uLine;
     int32_t nErrorCode;
     uint32_t uXpos;
@@ -2255,7 +2257,12 @@ int32_t EditorStateYams(SDL_Renderer *pRenderer) {
     bReplicatorError = false;
     nErrorCode = 0;
     for (I = 0; (I <= Ed.uMaxYamExplosionIndex) && (nErrorCode == 0); I++) {
-        sprintf(szText,"YAM%02d",I);
+        if (I < 99) {
+            uYam = I + 1;
+        } else {
+            uYam = 0;   // Überlauf "100"
+        }
+        sprintf(szText,"YAM%02d",uYam);
         uXpos = ((I % 10) * 80) + 4;
         uYpos = ((I / 10) * 74) + 4;
         PrintLittleFont(pRenderer,uXpos,uYpos,0,szText,K_ABSOLUTE,1);
@@ -2279,7 +2286,7 @@ int32_t EditorStateYams(SDL_Renderer *pRenderer) {
             DestR.y = uYpos + (E / 3) * FONT_H / 2 + FONT_H / 2 + 1;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            uTextureIndex = GetTextureIndexByElement(uElement,0,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(uElement,0,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
@@ -2361,7 +2368,14 @@ int32_t EditorStateYams(SDL_Renderer *pRenderer) {
         }
         PrintLittleFont(pRenderer,Config.uResX - 740, Config.uResY - 16,0,szText,K_ABSOLUTE,1);
     }
-    sprintf(szText,"YAMS: %02u",Ed.uMaxYamExplosionIndex);
+
+    if (Ed.uMaxYamExplosionIndex < 99) {
+        szSpace[0] = ' ';
+        szSpace[1] = 0;
+    } else {
+        szSpace[0] = 0;
+    }
+    sprintf(szText,"YAMS:%s%02u",szSpace,Ed.uMaxYamExplosionIndex + 1);
     PrintLittleFont(pRenderer,Config.uResX  - 355,Config.uResY - 20,0,szText,K_ABSOLUTE,1);
     return nErrorCode;
 }
@@ -2380,16 +2394,24 @@ Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, InputStates.x
 ------------------------------------------------------------------------------*/
 int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
+    int nAnimationCount;
+    int nXoffs;
+    int nYoffs;
+    uint32_t uSlimePhase;
     int32_t nErrorCode;
     uint32_t uTextureIndex;
     uint32_t uElement;
     uint32_t I;
+    uint8_t uReplicatorColor;
+    uint8_t uConveyorbeltColor;
+    uint8_t uConveyorbeltState;
+    bool bReplicatorOn;
     bool bXmouseReplicatorObject;
     bool bYmouseRedReplicator;
     bool bYmouseYellowReplicator;
     bool bYmouseGreenReplicator;
     bool bYmouseBlueReplicator;
-    float fAngle;
+    float fAngle,fScaleH,fScaleW;
     SDL_Rect DestR;
     uint32_t uPositionsAndElements[] = {// Replicator red
                                         64,64,EMERALD_REPLICATOR_RED_TOP_LEFT,
@@ -2466,6 +2488,8 @@ int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
                                         800,352,EMERALD_CONVEYORBELT_SWITCH_BLUE,
                                         };
 
+    nAnimationCount = Ed.uFrameCounter & 0xF;
+    uSlimePhase = (Ed.uFrameCounter >> 4) & 0x03;
     uPositionsAndElements[32 * 3 + 2] = Ed.uReplicatorRedObject;
     uPositionsAndElements[33 * 3 + 2] = Ed.uReplicatorYellowObject;
     uPositionsAndElements[34 * 3 + 2] = Ed.uReplicatorGreenObject;
@@ -2546,60 +2570,101 @@ int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
     // Laufbänder
     PrintLittleFont(pRenderer,682,24,0,"CONVEYOR BELTS",K_ABSOLUTE,1);
     PrintLittleFont(pRenderer,848,72,0,"ACTIVE AT START:",K_ABSOLUTE,1);
-    if (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
+    if (Ed.uConveyorbeltRedState == EMERALD_CONVEYORBELT_LEFT) {
         PrintLittleFont(pRenderer,848 + 160,72,0,"LEFT",K_ABSOLUTE,1);
-    } else if (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) {
+    } else if (Ed.uConveyorbeltRedState == EMERALD_CONVEYORBELT_RIGHT) {
         PrintLittleFont(pRenderer,848 + 160,72,0,"RIGHT",K_ABSOLUTE,1);
     } else {
         PrintLittleFont(pRenderer,848 + 160,72,0,"NO",K_ABSOLUTE,1);
-        if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+        if (Ed.uConveyorbeltRedDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
             PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
             PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
     PrintLittleFont(pRenderer,848,168,0,"ACTIVE AT START:",K_ABSOLUTE,1);
-    if (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) {
+    if (Ed.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_LEFT) {
         PrintLittleFont(pRenderer,848 + 160,168,0,"LEFT",K_ABSOLUTE,1);
-    } else if (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) {
+    } else if (Ed.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_RIGHT) {
         PrintLittleFont(pRenderer,848 + 160,168,0,"RIGHT",K_ABSOLUTE,1);
     } else {
         PrintLittleFont(pRenderer,848 + 160,168,0,"NO",K_ABSOLUTE,1);
-        if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+        if (Ed.uConveyorbeltYellowDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
             PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
             PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
     PrintLittleFont(pRenderer,848,264,0,"ACTIVE AT START:",K_ABSOLUTE,1);
-    if (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) {
+    if (Ed.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_LEFT) {
         PrintLittleFont(pRenderer,848 + 160,264,0,"LEFT",K_ABSOLUTE,1);
-    } else if (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) {
+    } else if (Ed.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_RIGHT) {
         PrintLittleFont(pRenderer,848 + 160,264,0,"RIGHT",K_ABSOLUTE,1);
     } else {
         PrintLittleFont(pRenderer,848 + 160,264,0,"NO",K_ABSOLUTE,1);
-        if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+        if (Ed.uConveyorbeltGreenDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
             PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
             PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
     PrintLittleFont(pRenderer,848,360,0,"ACTIVE AT START:",K_ABSOLUTE,1);
-    if (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) {
+    if (Ed.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_LEFT) {
         PrintLittleFont(pRenderer,848 + 160,360,0,"LEFT",K_ABSOLUTE,1);
-    } else if (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) {
+    } else if (Ed.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_RIGHT) {
         PrintLittleFont(pRenderer,848 + 160,360,0,"RIGHT",K_ABSOLUTE,1);
     } else {
         PrintLittleFont(pRenderer,848 + 160,360,0,"NO",K_ABSOLUTE,1);
-        if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
+        if (Ed.uConveyorbeltBlueDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
             PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
             PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
     for (I = 0; (I < sizeof(uPositionsAndElements) / (3 * sizeof(uint32_t))) && (nErrorCode == 0); I++) {
+        fScaleW = 1;
+        fScaleH = 1;
+        nXoffs = 0;
+        nYoffs = 0;
         uElement = uPositionsAndElements[I * 3 + 2];
-        uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],0,&fAngle);
+        IsReplicatorElement(uElement,&uReplicatorColor);
+        switch (uReplicatorColor) {
+            case (COLOR_RED):
+                bReplicatorOn = Ed.bReplicatorRedOn;
+                break;
+            case (COLOR_YELLOW):
+                bReplicatorOn = Ed.bReplicatorYellowOn;
+                break;
+            case (COLOR_GREEN):
+                bReplicatorOn = Ed.bReplicatorGreenOn;
+                break;
+            case (COLOR_BLUE):
+                bReplicatorOn = Ed.bReplicatorBlueOn;
+                break;
+            default:
+                bReplicatorOn = false;
+                break;
+        }
+        IsConveyorbeltElement(uElement,&uConveyorbeltColor);
+        switch (uConveyorbeltColor) {
+            case (COLOR_RED):
+                uConveyorbeltState = Ed.uConveyorbeltRedState;
+                break;
+            case (COLOR_YELLOW):
+                uConveyorbeltState = Ed.uConveyorbeltYellowState;
+                break;
+            case (COLOR_GREEN):
+                uConveyorbeltState = Ed.uConveyorbeltGreenState;
+                break;
+            case (COLOR_BLUE):
+                uConveyorbeltState = Ed.uConveyorbeltBlueState;
+                break;
+            default:
+                uConveyorbeltState = EMERALD_CONVEYORBELT_OFF;
+                break;
+        }
+
+        uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],nAnimationCount,&fAngle,bReplicatorOn,uConveyorbeltState);
         if ((uElement == EMERALD_REPLICATOR_RED_SWITCH) && Ed.bReplicatorRedOn) {
             uTextureIndex++;
         } else if ((uElement == EMERALD_REPLICATOR_YELLOW_SWITCH) && Ed.bReplicatorYellowOn) {
@@ -2616,27 +2681,48 @@ int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
             uTextureIndex++;
         } else if ((uElement == EMERALD_LIGHTBARRIER_BLUE_SWITCH) && Ed.bLightBarrierBlueOn) {
             uTextureIndex++;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_RED) && (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_RED) && (Ed.uConveyorbeltRedState == EMERALD_CONVEYORBELT_LEFT)) {
             uTextureIndex++;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_RED) && (Ed.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_RED) && (Ed.uConveyorbeltRedState == EMERALD_CONVEYORBELT_RIGHT)) {
             uTextureIndex = uTextureIndex + 2;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) && (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) && (Ed.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_LEFT)) {
             uTextureIndex++;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) && (Ed.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_YELLOW) && (Ed.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_RIGHT)) {
             uTextureIndex = uTextureIndex + 2;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) && (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) && (Ed.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_LEFT)) {
             uTextureIndex++;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) && (Ed.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_GREEN) && (Ed.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_RIGHT)) {
             uTextureIndex = uTextureIndex + 2;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) && (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) && (Ed.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_LEFT)) {
             uTextureIndex++;
-        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) && (Ed.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT)) {
+        } else if ((uElement == EMERALD_CONVEYORBELT_SWITCH_BLUE) && (Ed.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_RIGHT)) {
             uTextureIndex = uTextureIndex + 2;
+        } else if (uElement == EMERALD_SLIME) {
+
+            switch (uSlimePhase) {
+                case (0):
+                    fScaleW = 1 - nAnimationCount * 0.03;   // 1 ..... 0.55
+                    nXoffs = nAnimationCount / 2;           // max. 15/2 = 7 Pixel zur Mitte
+                    break;
+                case (1):
+                    fScaleW = 0.55 + (nAnimationCount) * 0.03;      // 0.55 ..... 1
+                    nXoffs = 7 - nAnimationCount / 2;
+                    break;
+                case (2):
+                    fScaleH = 1 - nAnimationCount * 0.03;   // 1 ..... 0.55
+                    nYoffs = nAnimationCount / 2;               // max. 15/2 = 7 Pixel zur Mitte
+                    break;
+                case (3):
+                    fScaleH = 0.55 + (nAnimationCount) * 0.03;      // 0.55 ..... 1
+                    nYoffs = 7 - nAnimationCount / 2;
+                    break;
+            }
+
         }
-        DestR.x = uPositionsAndElements[I * 3 + 0];
-        DestR.y = uPositionsAndElements[I * 3 + 1];
-        DestR.w = FONT_W;
-        DestR.h = FONT_H;
+        DestR.x = uPositionsAndElements[I * 3 + 0] + nXoffs;
+        DestR.y = uPositionsAndElements[I * 3 + 1] + nYoffs;
+        DestR.w = FONT_W * fScaleW;
+        DestR.h = FONT_H * fScaleH;
         if (nErrorCode == 0) {
             if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 nErrorCode = -1;
@@ -2647,74 +2733,74 @@ int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
     // Dieser Block kann die Aktivität der Laufbänder umschalten
     if (((InputStates.nMouseXpos_Absolute >= 800) && (InputStates.nMouseXpos_Absolute < (800 + FONT_W))) && (InputStates.bLeftMouseButton)) {
         if ((InputStates.nMouseYpos_Absolute >= 64) && (InputStates.nMouseYpos_Absolute < (64 + FONT_H))) {
-            switch (Ed.uConveybeltRedState) {
-                case(EMERALD_CONVEYBELT_OFF):
-                    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_RIGHT;
+            switch (Ed.uConveyorbeltRedState) {
+                case(EMERALD_CONVEYORBELT_OFF):
+                    Ed.uConveyorbeltRedState = EMERALD_CONVEYORBELT_RIGHT;
                     break;
-                case(EMERALD_CONVEYBELT_LEFT):
-                    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
-                    if (Ed.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                        Ed.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                case(EMERALD_CONVEYORBELT_LEFT):
+                    Ed.uConveyorbeltRedState = EMERALD_CONVEYORBELT_OFF;
+                    if (Ed.uConveyorbeltRedDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                        Ed.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                     } else {
-                        Ed.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        Ed.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                     }
                     break;
-                case(EMERALD_CONVEYBELT_RIGHT):
-                    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_LEFT;
+                case(EMERALD_CONVEYORBELT_RIGHT):
+                    Ed.uConveyorbeltRedState = EMERALD_CONVEYORBELT_LEFT;
                     break;
             }
             WaitNoKey();
         } else if ((InputStates.nMouseYpos_Absolute >= 160) && (InputStates.nMouseYpos_Absolute < (160 + FONT_H))) {
-            switch (Ed.uConveybeltYellowState) {
-                case(EMERALD_CONVEYBELT_OFF):
-                    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_RIGHT;
+            switch (Ed.uConveyorbeltYellowState) {
+                case(EMERALD_CONVEYORBELT_OFF):
+                    Ed.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_RIGHT;
                     break;
-                case(EMERALD_CONVEYBELT_LEFT):
-                    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
-                    if (Ed.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                        Ed.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                case(EMERALD_CONVEYORBELT_LEFT):
+                    Ed.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_OFF;
+                    if (Ed.uConveyorbeltYellowDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                        Ed.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                     } else {
-                        Ed.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        Ed.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                     }
                     break;
-                case(EMERALD_CONVEYBELT_RIGHT):
-                    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_LEFT;
+                case(EMERALD_CONVEYORBELT_RIGHT):
+                    Ed.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_LEFT;
                     break;
             }
             WaitNoKey();
         } else if ((InputStates.nMouseYpos_Absolute >= 256) && (InputStates.nMouseYpos_Absolute < (256 + FONT_H))) {
-            switch (Ed.uConveybeltGreenState) {
-                case(EMERALD_CONVEYBELT_OFF):
-                    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_RIGHT;
+            switch (Ed.uConveyorbeltGreenState) {
+                case(EMERALD_CONVEYORBELT_OFF):
+                    Ed.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_RIGHT;
                     break;
-                case(EMERALD_CONVEYBELT_LEFT):
-                    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
-                    if (Ed.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                        Ed.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                case(EMERALD_CONVEYORBELT_LEFT):
+                    Ed.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_OFF;
+                    if (Ed.uConveyorbeltGreenDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                        Ed.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                     } else {
-                        Ed.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        Ed.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                     }
                     break;
-                case(EMERALD_CONVEYBELT_RIGHT):
-                    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_LEFT;
+                case(EMERALD_CONVEYORBELT_RIGHT):
+                    Ed.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_LEFT;
                     break;
             }
             WaitNoKey();
         } else if ((InputStates.nMouseYpos_Absolute >= 352) && (InputStates.nMouseYpos_Absolute < (352 + FONT_H))) {
-            switch (Ed.uConveybeltBlueState) {
-                case(EMERALD_CONVEYBELT_OFF):
-                    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_RIGHT;
+            switch (Ed.uConveyorbeltBlueState) {
+                case(EMERALD_CONVEYORBELT_OFF):
+                    Ed.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_RIGHT;
                     break;
-                case(EMERALD_CONVEYBELT_LEFT):
-                    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
-                    if (Ed.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                        Ed.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                case(EMERALD_CONVEYORBELT_LEFT):
+                    Ed.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_OFF;
+                    if (Ed.uConveyorbeltBlueDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                        Ed.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                     } else {
-                        Ed.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        Ed.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                     }
                     break;
-                case(EMERALD_CONVEYBELT_RIGHT):
-                    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_LEFT;
+                case(EMERALD_CONVEYORBELT_RIGHT):
+                    Ed.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_LEFT;
                     break;
             }
             WaitNoKey();
@@ -2916,7 +3002,7 @@ int32_t EditorStateTreasureChests(SDL_Renderer *pRenderer) {
     }
     // Elemente zeichnen
     for (I = 0; (I < sizeof(uPositionsAndElements) / (3 * sizeof(uint32_t))) && (nErrorCode == 0); I++) {
-        uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],0,&fAngle);
+        uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],0,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
         DestR.x = uPositionsAndElements[I * 3 + 0];
         DestR.y = uPositionsAndElements[I * 3 + 1];
         DestR.w = FONT_W;
@@ -3337,7 +3423,7 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         nErrorCode = CreateMessageWindow(pRenderer,-1,-1,0,Ed.MessageEditor.szMessageEditorMem,&nXposMW,&nYposMW);
         // Message 1 - 8 über Messagebox anzeigen
         if ((Ed.MessageEditor.nEditMessage >= 0) && (Ed.MessageEditor.nEditMessage < EMERALD_MAX_MESSAGES)) {
-            uTextureIndex = GetTextureIndexByElement(EMERALD_MESSAGE_1 + Ed.MessageEditor.nEditMessage,0,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(EMERALD_MESSAGE_1 + Ed.MessageEditor.nEditMessage,0,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             DestR.x = nXposMW - FONT_W;
             DestR.y = nYposMW - FONT_H;
             DestR.w = FONT_W;
@@ -3619,6 +3705,9 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,900,201,0,szText,K_ABSOLUTE,1);
         // 4. Zeile
         // Time to Play
+        if ((Ed.uTimeToPlay == 0) && (((Ed.uFrameCounter >> 4) & 0x01) == 0)) {
+            PrintLittleFont(pRenderer,64,300,0,"INFINITE",K_ABSOLUTE,1);
+        }
         PrintLittleFont(pRenderer,100,316,0,"++++",K_ABSOLUTE,1);
         PrintLittleFont(pRenderer,100,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeToPlay);
@@ -3704,7 +3793,7 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,32,908,0,"LEVEL-AUTHOR:",K_ABSOLUTE,1);
         nErrorCode = PrintLittleFont(pRenderer,164,908,0,Ed.szLevelAuthor,K_ABSOLUTE,1);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
-            uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],Ed.uFrameCounter % 16,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             DestR.x = uPositionsAndElements[I * 3 + 0];
             DestR.y = uPositionsAndElements[I * 3 + 1];
             DestR.w = FONT_W;
@@ -4469,14 +4558,14 @@ int32_t InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int32_t nLeve
     Ed.uReplicatorGreenObject = EMERALD_SPACE;
     Ed.uReplicatorBlueObject = EMERALD_SPACE;
     Ed.uReplicatorYellowObject = EMERALD_SPACE;
-    Ed.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
-    Ed.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
-    Ed.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
-    Ed.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
-    Ed.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
-    Ed.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
-    Ed.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
-    Ed.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+    Ed.uConveyorbeltRedState = EMERALD_CONVEYORBELT_OFF;
+    Ed.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+    Ed.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_OFF;
+    Ed.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+    Ed.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_OFF;
+    Ed.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+    Ed.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_OFF;
+    Ed.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_LEFT;
     memset(Ed.szLevelTitle,0,sizeof(Ed.szLevelTitle));      // z.B. "Der Bunker"
     memset(Ed.szLevelAuthor,0,sizeof(Ed.szLevelAuthor));    // z.B. "Mikiman"
     strcpy(Ed.szVersion,EMERALD_VERSION);                   // z.B. "01.00"

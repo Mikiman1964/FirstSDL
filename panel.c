@@ -60,6 +60,7 @@ int32_t ShowPanel(SDL_Renderer *pRenderer) {
     int32_t nErrorCode;
     char szNumber[8];
     uint32_t uRemainingSeconds;
+    uint32_t uWarnRecWidth;
 
     // Totalscore muss 5-stellig bleiben
     if (Playfield.uTotalScore > 99999) {
@@ -82,31 +83,36 @@ int32_t ShowPanel(SDL_Renderer *pRenderer) {
         SDL_Log("%s: SDL_RenderCopy() failed: %s",__FUNCTION__,SDL_GetError());
         return - 1;
     }
-    if ((uRemainingSeconds > 0) && (uRemainingSeconds <= 10)) {
+    if ((uRemainingSeconds <= WARN_LOW_TIME) && (!Playfield.bManDead) && (!Playfield.bUnlimtedTime)) {
+        if (uRemainingSeconds >= 10) {
+            uWarnRecWidth = 124;
+        } else {
+            uWarnRecWidth = 108;
+        }
         if ((Playfield.uFrameCounter % Video.DesktopDisplayMode.refresh_rate) == 0) {
-            nErrorCode = CopyColorRect(pRenderer,255,0,0,6,Config.uResY - 26,98,20,K_ABSOLUTE);
+            nErrorCode = CopyColorRect(pRenderer,255,0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
             PreparePlaySound(SOUND_END_BELL,0);
         } else {
-            nErrorCode = CopyColorRect(pRenderer,255 - 4 * (Playfield.uFrameCounter % 60),0,0,6,Config.uResY - 26,98,20,K_ABSOLUTE);
+            nErrorCode = CopyColorRect(pRenderer,255 - 4 * (Playfield.uFrameCounter % 60),0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
         }
     } else {
         nErrorCode = 0;
     }
     if (nErrorCode == 0) {
         nErrorCode = -1;
-        if (WritePanelText(pRenderer,"TIME:",8, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
+        if (WritePanelText(pRenderer,"TIME:",8, Config.uResY - FONT_H + 7, 18, EMERALD_FONT_BLUE) == 0) {
             if (Playfield.bUnlimtedTime) {
                 strcpy(szNumber,"----");
             } else {
                 sprintf(szNumber,"%u",uRemainingSeconds);
             }
-            if (WritePanelText(pRenderer,szNumber,8 + 80, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
-                if (WritePanelText(pRenderer,"SCORE:",8 + 176, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
+            if (PrintLittleFont(pRenderer,96,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
+                if (WritePanelText(pRenderer,"SCORE:",184,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
                     sprintf(szNumber,"%u",Playfield.uTotalScore);
-                    if (WritePanelText(pRenderer,szNumber,8 + 272, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
-                        if (WritePanelText(pRenderer,"EMERALDS:",8 + 368 + 20, Config.uResY - FONT_H + 8, 16, EMERALD_FONT_BLUE) == 0) {
+                    if (PrintLittleFont(pRenderer,290,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
+                        if (WritePanelText(pRenderer,"EMERALDS:",396,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
                             sprintf(szNumber,"%u",Playfield.uEmeraldsToCollect);
-                            if (WritePanelText(pRenderer,szNumber,8 + 512 + 20, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
+                            if (PrintLittleFont(pRenderer,556,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
                                 if (WritePanelDynamitHammerKeys(pRenderer) == 0) {
                                     if (WriteShieldValue(pRenderer) == 0) {
                                         nErrorCode = 0;
@@ -145,19 +151,17 @@ int32_t WriteShieldValue(SDL_Renderer *pRenderer) {
     if (uShieldValue > 9999) {
         uShieldValue = 9999;
     }
-    DestR.x = 1176;
-    DestR.y = Config.uResY - FONT_H + 8;
-    DestR.w = FONT_H / 2;
-    DestR.h = FONT_H / 2;
+    DestR.x = 1170;
+    DestR.y = Config.uResY - FONT_H + 6;
+    DestR.w = FONT_H / 2 + 4;
+    DestR.h = FONT_H / 2 + 4;
     if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_COIN_SHIELD_1),NULL,&DestR) == 0) {
-        sprintf(szShieldString,":%u",uShieldValue);
-        if (WritePanelText(pRenderer,szShieldString,1192, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
-            nErrorCode = 0;
-        } else {
-            SDL_Log("%s: WritePanelText(ShieldCoin) failed",__FUNCTION__);
+        sprintf(szShieldString,"%u",uShieldValue);
+        if (WritePanelText(pRenderer,":",1188,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
+            if (PrintLittleFont(pRenderer,1204,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szShieldString,K_ABSOLUTE,2.2) == 0) {
+                nErrorCode = 0;
+            }
         }
-    } else {
-      SDL_Log("%s: SDL_RenderCopy(ShieldCoin) failed: %s",__FUNCTION__,SDL_GetError());
     }
     return nErrorCode;
 }
@@ -180,7 +184,7 @@ int32_t WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
     uint32_t uDynamiteCount;
     uint32_t uHammerCount;
     uint32_t uWhiteKeyCount;
-    char szDynamitString[16];   // ":xxx", 5 Bytes inkl. \0
+    char szString[16];   // ":xxxx", 6 Bytes inkl. \0
 
     nErrorCode = -1;
     // Anzeige muss 4-stellig bleiben
@@ -196,93 +200,75 @@ int32_t WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
     if (uWhiteKeyCount > 999) {
         uWhiteKeyCount = 999;
     }
-    DestR.x = 638;
-    DestR.y = Config.uResY - FONT_H + 8;
-    DestR.w = FONT_H / 2;
-    DestR.h = FONT_H / 2;
+    DestR.x = 642;
+    DestR.y = Config.uResY - FONT_H + 6;
+    DestR.w = FONT_H / 2 + 4;
+    DestR.h = FONT_H / 2 + 4;
+
     if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_DYNAMITE_OFF),NULL,&DestR) == 0) {
-        sprintf(szDynamitString,":%u",uDynamiteCount);
-        if (WritePanelText(pRenderer,szDynamitString,650, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
-            sprintf(szDynamitString,":%u",uHammerCount);
-            if (WritePanelText(pRenderer,szDynamitString,1084, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
-                sprintf(szDynamitString,":%u",uWhiteKeyCount);
-                if (WritePanelText(pRenderer,szDynamitString,972, Config.uResY - FONT_H + 8 , 16, EMERALD_FONT_GREEN) == 0) {
-                    DestR.x = 1064;
-                    DestR.y = Config.uResY - FONT_H + 8;
-                    DestR.w = FONT_W / 2;
-                    DestR.h = FONT_H / 2;
-                    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_HAMMER),NULL,&DestR) == 0) { // Hammer
-                        DestR.x = 952;
-                        DestR.y = Config.uResY - FONT_H + 8;
-                        DestR.w = FONT_W / 2;
-                        DestR.h = FONT_H / 2;
-                        if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_WHITE),NULL,&DestR) == 0) { // Weißer Schlüssel
-                            nErrorCode = 0;
+        if (WritePanelText(pRenderer,":",658,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
+            sprintf(szString,"%u",uDynamiteCount);
+            if (PrintLittleFont(pRenderer,674,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
+                if (WritePanelText(pRenderer,":",1080,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
+                    sprintf(szString,"%u",uHammerCount);
+                    if (PrintLittleFont(pRenderer,1096,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
+                        if (WritePanelText(pRenderer,":",972,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
+                            sprintf(szString,"%u",uWhiteKeyCount);
+                            if (PrintLittleFont(pRenderer,988,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
+                                DestR.x = 1060;
+                                DestR.y = Config.uResY - FONT_H + 6;
+                                DestR.w = FONT_W / 2 + 4;
+                                DestR.h = FONT_H / 2 + 4;
+                                if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_HAMMER),NULL,&DestR) == 0) { // Hammer
+                                    DestR.x = 952;
+                                    DestR.y = Config.uResY - FONT_H + 6;
+                                    DestR.w = FONT_W / 2 + 4;
+                                    DestR.h = FONT_H / 2 + 4;
+                                    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_WHITE),NULL,&DestR) == 0) { // Weißer Schlüssel
+                                        nErrorCode = 0;
+                                    }
+                                }
+                            }
                         }
-                    } else {
-                        SDL_Log("%s: SDL_RenderCopy(Hammer) failed: %s",__FUNCTION__,SDL_GetError());
                     }
-                } else {
-                    SDL_Log("%s: WritePanelText(WhiteKeyCount) failed",__FUNCTION__);
                 }
-            } else {
-                SDL_Log("%s: WritePanelText(HammerCount) failed",__FUNCTION__);
             }
-        } else {
-            SDL_Log("%s: WritePanelText(DynamiteCount) failed",__FUNCTION__);
         }
-    } else {
-        SDL_Log("%s: SDL_RenderCopy() failed: %s",__FUNCTION__,SDL_GetError());
     }
     if ((Playfield.bHasRedKey) && (nErrorCode == 0)) {
-        DestR.x = 776;
+        DestR.x = 778;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
         nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_RED),NULL,&DestR); // roter Schlüssel
-        if (nErrorCode != 0) {
-            SDL_Log("%s: SDL_RenderCopy(red Key) failed: %s",__FUNCTION__,SDL_GetError());
-        }
     }
     if ((Playfield.bHasYellowKey) && (nErrorCode == 0)) {
-        DestR.x = 802;
+        DestR.x = 804;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
         nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_YELLOW),NULL,&DestR); // gelber Schlüssel
-        if (nErrorCode != 0) {
-            SDL_Log("%s: SDL_RenderCopy(yellow Key) failed: %s",__FUNCTION__,SDL_GetError());
-        }
     }
     if ((Playfield.bHasGreenKey) && (nErrorCode == 0)) {
-        DestR.x = 828;
+        DestR.x = 830;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
         nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GREEN),NULL,&DestR); // grüner Schlüssel
-        if (nErrorCode != 0) {
-            SDL_Log("%s: SDL_RenderCopy(green Key) failed: %s",__FUNCTION__,SDL_GetError());
-        }
     }
     if ((Playfield.bHasBlueKey) && (nErrorCode == 0)) {
-        DestR.x = 854;
+        DestR.x = 856;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
         nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_BLUE),NULL,&DestR); // blauer Schlüssel
-        if (nErrorCode != 0) {
-            SDL_Log("%s: SDL_RenderCopy(blue Key) failed: %s",__FUNCTION__,SDL_GetError());
-        }
     }
     if ((Playfield.bHasGeneralKey) && (nErrorCode == 0)) {
-        DestR.x = 880;
+        DestR.x = 882;
         DestR.y = Config.uResY - FONT_H;
         DestR.w = FONT_W;
         DestR.h = FONT_H;
         nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GENERAL),NULL,&DestR); // General-Schlüssel
-        if (nErrorCode != 0) {
-            SDL_Log("%s: SDL_RenderCopy(general Key) failed: %s",__FUNCTION__,SDL_GetError());
-        }
     }
     return nErrorCode;
 }
@@ -325,7 +311,7 @@ int32_t WritePanelText(SDL_Renderer *pRenderer, const char *szText, int32_t nXpo
         DestR.y = nYpos;
         DestR.w = nFontSize;
         DestR.h = nFontSize;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(GetTextureIndexByElement(GetFontElementByChar(szText[nI],uFont),0,NULL)),NULL,&DestR);
+        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(GetTextureIndexByElement(GetFontElementByChar(szText[nI],uFont),0,NULL,false,EMERALD_CONVEYORBELT_OFF)),NULL,&DestR);
         nI++;
         nXpos = nXpos + nFontSize;
     }

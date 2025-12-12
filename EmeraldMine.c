@@ -3,30 +3,21 @@ TODO
 * doppeltes Rollen ("tanzen") der Elemente vermeiden, wenn diese nicht auf Laufband liegen, DC3 hat gleiches Problem
 * Leveleditor
     * Undo für Editor
+* Tasten für Gamespeed und Quicksave konfigurierbar
+* Fehler bei Quicksave/Quickload? Nach Load hatte Spieler plötzlich 2 weiße Schlüssel
 
-Für V 1.12
-* Zwei weitere (zufällige) Songs während Highscore-Anzeige möglich (class05_1999.mod und softworld.mod) jeweils von Maktone
-* Vom Vormenü kann mit dem Feuerknopf direkt ins Spiel gesprungen werden.
-* Sandminen sind besser erkennbar.
-* Edelsteine rollen jetzt von Stahl Playerhead 2.
-* Musikplayer unterstützt SID (C64).
-* Leveleditor: Messageditor zeigt Messagenummer an, Buttons "Save message" und "cancel" an unteren Bildschirmrand, da Buttons sont Messagebox überdecken können
-* Steuerung für "double game speed" optimiert
-* Quick-Load/Save: Leveleditor: Quicksave-Allowed-Checkbox
-* Leveleditor: Hint an Mauspfeil über gezeichnetes Element
-* Leveleditor: Füllen von Flächen mit folgenden Elementen vermeiden: Replikatoren, Säurebecken, Man wurde bereits abgefangen
-* Leveleditor: Replikatoren werden als "Ganzes" gesetzt, Säurebeckenränder werden halbautomatisch gesetzt
-* Leveleditor: YAMS: Replikator und Säurebecken wird als "Ganzes" gesetzt.
-* Bug fix: Leveleditor: Bei einem Levelfehler hatte der Button "QUIT" und "Return to Level" keine Wirkung
-* Bug fix: CheckAcidPools() und wahrscheinlich auch CheckReplicators() konnten abstürzen, wenn entsprechende Elemente in obere Stahlzeile gesetzt wurden.
-* Bug fix: Mausrad funktionierte nicht im richtigen Bereich der Level-Auswahlliste beim Levellistenscrolling
-* Bug fix: Ein weißer Schlüssel wurde abgezogen, wenn gegen eine versperrte weiße Tür gedrückt wurde.
-* Bug fix: Wenn Man zeitgleich von mehr als einem Feind (Käfer, Mine, Standmine) umgeben ist und ein Schutzschild hat, wurde nur eine Explosion (über Man) ausgeführt.
-* Bug fix: Editor: RenumLevelgroup(): Die Variable szLevelNum war unter Umständen zu knapp bemessen
-* int- und long int-Datentyp zu int32_t geändert
-* Totalscore von 4-stellig auf 5-stellig erweitert
-* Versionsnummer im Fenstertitel
-* SDL 2.32.8
+Für V 1.13
+* Hint im Leveleditor wird nach 1 statt 3 Sekunden angezeigt
+* Fehler beim Quick-Load/Save im Zusammenhang mit Pipes gefixt
+* 1 Frame mehr Zeit für EMERALD_WHEEL_TIMEDOOR -> Playfield.uTimeDoorTimeLeft =  Playfield.uTimeDoorTime + 1 in man.c
+* Anzeige für Anzahl YAMS + 1
+* Leveleditor:Maschinen: Animierte Replikatoren und Laufbänder
+* Leveleditor: Hinweis bei Spielzeit = 0 = INFINITE
+* Variablennamen: Conveybelt -> Conveyorbelt
+* Gesamtanzahl Levels werden im Hauptmenü angezeigt
+* Quicksave/Quicload funktionierte auch, wenn das im Level nicht erlaubt ist.
+* Quicksave verhindern, wenn Man tot.
+* Bessere Lesbarkeit in Statuszeile durch größere Ziffern/Beschriftung (Arcade font)
 */
 
 #include "gfx/textures.h"
@@ -90,6 +81,7 @@ extern AUDIOPLAYER Audioplayer;
 extern VIDEO Video;
 extern FPS Fps;
 
+
 /*----------------------------------------------------------------------------
 Name:           Menu
 ------------------------------------------------------------------------------
@@ -97,7 +89,7 @@ Beschreibung: Hauptmenü, um den entsprechenden SDL2-Programmteil aufzurufen.
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
-Rückgabewert:  int32_t, 0 = Level-Editor, 1 = Game, 2 = SDL2-Demo, 3 = Quit
+Rückgabewert:  int32_t, 1 = Game, 2 = SDL2-Demo, 3 = Quit
 Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
                Video.x, Fps.x, ManKey.x
 ------------------------------------------------------------------------------*/
@@ -173,7 +165,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
         }
         PlayMusic(true);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
-            uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],uFrameCounter % 16,&fAngle);
+            uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             DestR.x = 128 + Video.uXoffs + uPositionsAndElements[I * 3 + 0];
             DestR.y = Video.uYoffs + uPositionsAndElements[I * 3 + 1];
             DestR.w = FONT_W;
@@ -186,6 +178,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
             }
         }
         PrintLittleFont(pRenderer,448,232,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.",K_RELATIVE,1);
+        PrintLittleFont(pRenderer,448,247,0,"F1 = NORMAL SPEED, F2 = FAST SPEED, F9 = QUICK SAVE, F10 = QUICK LOAD",K_RELATIVE,1);
         PrintLittleFont(pRenderer,448,296,0,"USE THE FOLLOWING KEYS:",K_RELATIVE,1);
         PrintLittleFont(pRenderer,468,311,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT",K_RELATIVE,1);
         PrintLittleFont(pRenderer,468,326,0,"* MOUSEWHEEL TO ZOOM BALLONS",K_RELATIVE,1);
@@ -251,6 +244,7 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bool bLevelRun;
     bool bPrepareLevelExit;
     bool bPause;
+    bool bDelay;
     int32_t nColorDimm;
     int32_t nCheckLevelCount;
     uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
@@ -263,6 +257,7 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
 
     uShowQuickSaveMessageTicks = 0xFFFFFFFF;
     bPause = false;
+    bDelay = false;
     nRet = 0;
     nColorDimm = 0;
     FillCheeseRandomNumbers();
@@ -292,6 +287,7 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SDL_ShowCursor(SDL_DISABLE);    // Mauspfeil verstecken
     SetTreasureChestStart();
     ClearFkeys();
+    // Playfield.bQuicksaveAllowed = true;
     while (bLevelRun) {
         UpdateManKey();
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bExit)) {
@@ -320,11 +316,19 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             if (InputStates.bFkey[1]) {
                 SetGameSpeed(GAMESPEED_NORMAL);
                 InputStates.bFkey[1] = false;
+                bDelay = false;
             } else if (InputStates.bFkey[2]) {
                 SetGameSpeed(GAMESPEED_FAST);
                 InputStates.bFkey[2] = false;
+                bDelay = false;
+            } else if (InputStates.bFkey[3]) {
+                SetGameSpeed(GAMESPEED_NORMAL);
+                InputStates.bFkey[3] = false;
+                bDelay = true;
             } else if (InputStates.bFkey[9]) {
-                QuickSaveGame();
+                if ((Playfield.bQuicksaveAllowed) && (!Playfield.bManDead)) {
+                    QuickSaveGame();
+                }
                 InputStates.bFkey[9] = false;
                 uShowQuickSaveMessageTicks = SDL_GetTicks();
             } else if (InputStates.bFkey[10]) {
@@ -393,7 +397,11 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
         if (uShowQuickSaveMessageTicks != 0xFFFFFFFF) {
             if (SDL_GetTicks() - uShowQuickSaveMessageTicks < 5000) {
                 if (Playfield.bQuicksaveAllowed) {
-                    CreateMessageWindow(pRenderer, 10,10, 0, "GAME SAVED",NULL,NULL);
+                    if (Playfield.bManDead) {
+                        CreateMessageWindow(pRenderer, 10,10, 0, "YOU ARE DEAD! GAME NOT SAVED",NULL,NULL);
+                    } else {
+                        CreateMessageWindow(pRenderer, 10,10, 0, "GAME SAVED",NULL,NULL);
+                    }
                 } else {
                     CreateMessageWindow(pRenderer, 10,10, 0, "QUICKSAVE NOT ALLOWED",NULL,NULL);
                 }
@@ -434,6 +442,9 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             ConfirmMessage(pRenderer);  // Spiel pausiert hier, bis Nachricht bestätigt wurde
         }
         RenderPresentAndClear(pRenderer);
+        if (bDelay) {
+            SDL_Delay(24);
+        }
     }
     SDL_ShowCursor(SDL_ENABLE);    // Mauspfeil verstecken
     Playfield.uPlayTimeEnd = SDL_GetTicks();
@@ -940,22 +951,22 @@ uint32_t ControlGame(uint32_t uDirection) {
                 ControlBlueReplicator(I);
                 break;
             case (EMERALD_CONVEYORBELT_RED):
-                if (Playfield.uConveybeltRedState != EMERALD_CONVEYBELT_OFF) {
+                if (Playfield.uConveyorbeltRedState != EMERALD_CONVEYORBELT_OFF) {
                     PreparePlaySound(SOUND_CONVEYORBELT,I);
                 }
                 break;
             case (EMERALD_CONVEYORBELT_YELLOW):
-                if (Playfield.uConveybeltYellowState != EMERALD_CONVEYBELT_OFF) {
+                if (Playfield.uConveyorbeltYellowState != EMERALD_CONVEYORBELT_OFF) {
                     PreparePlaySound(SOUND_CONVEYORBELT,I);
                 }
                 break;
             case (EMERALD_CONVEYORBELT_GREEN):
-                if (Playfield.uConveybeltGreenState != EMERALD_CONVEYBELT_OFF) {
+                if (Playfield.uConveyorbeltGreenState != EMERALD_CONVEYORBELT_OFF) {
                     PreparePlaySound(SOUND_CONVEYORBELT,I);
                 }
                 break;
             case (EMERALD_CONVEYORBELT_BLUE):
-                if (Playfield.uConveybeltBlueState != EMERALD_CONVEYBELT_OFF) {
+                if (Playfield.uConveyorbeltBlueState != EMERALD_CONVEYORBELT_OFF) {
                     PreparePlaySound(SOUND_CONVEYORBELT,I);
                 }
                 break;

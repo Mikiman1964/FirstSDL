@@ -1,6 +1,8 @@
 #ifndef PANEL_H_INCLUDED
 #define PANEL_H_INCLUDED
 
+#define WARN_LOW_TIME           20      // Unter 20 Sekunden ertönt Warngong und roter Balken
+
 void CheckPlayTime(void);
 int32_t ShowPanel(SDL_Renderer *pRenderer);
 int32_t WritePanelText(SDL_Renderer *pRenderer, const char *szText, int32_t nXpos, int32_t nYpos, int32_t nFontSize, uint32_t uFont);

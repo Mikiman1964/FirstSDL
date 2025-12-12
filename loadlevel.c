@@ -24,6 +24,7 @@ extern VIDEO Video;
 extern CONFIG Config;
 
 uint32_t g_LevelgroupFilesCount;
+uint32_t ge_TotalLevelCount;
 LEVELGROUPFILE LevelgroupFiles[EMERALD_MAX_LEVELGROUPFILES];
 LEVELGROUP SelectedLevelgroup;
 
@@ -651,18 +652,18 @@ int32_t GetConveyorBeltSettingsFromXml(ezxml_t xml) {
             if ((node != NULL) && (node2 != NULL)) {
                 pAttr = node->txt;      // "off", "left" oder "right"
                 if (strcmp(pAttr,"left") == 0) {
-                    Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_LEFT;
-                    Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_LEFT;
+                    Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                 } else if (strcmp(pAttr,"right") == 0) {
-                    Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_RIGHT;
-                    Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                    Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_RIGHT;
+                    Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                 } else {
-                    Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
+                    Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_OFF;
                     pAttr = node2->txt; // "left" oder "right"
                     if (strcmp(pAttr,"left") == 0) {
-                        Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                        Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                     } else {
-                        Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                        Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                     }
                 }
                 color = ezxml_child(conveyorbelt,"green");
@@ -672,18 +673,18 @@ int32_t GetConveyorBeltSettingsFromXml(ezxml_t xml) {
                     if ((node != NULL) && (node2 != NULL)) {
                         pAttr = node->txt;      // "off", "left" oder "right"
                         if (strcmp(pAttr,"left") == 0) {
-                            Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_LEFT;
-                            Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                            Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_LEFT;
+                            Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                         } else if (strcmp(pAttr,"right") == 0) {
-                            Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_RIGHT;
-                            Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                            Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_RIGHT;
+                            Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                         } else {
-                            Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
+                            Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_OFF;
                             pAttr = node2->txt; // "left" oder "right"
                             if (strcmp(pAttr,"left") == 0) {
-                                Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                                Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                             } else {
-                                Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                                Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                             }
                         }
                         color = ezxml_child(conveyorbelt,"blue");
@@ -693,18 +694,18 @@ int32_t GetConveyorBeltSettingsFromXml(ezxml_t xml) {
                             if ((node != NULL) && (node2 != NULL)) {
                                 pAttr = node->txt;      // "off", "left" oder "right"
                                 if (strcmp(pAttr,"left") == 0) {
-                                    Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_LEFT;
-                                    Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                                    Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_LEFT;
+                                    Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                                 } else if (strcmp(pAttr,"right") == 0) {
-                                    Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_RIGHT;
-                                    Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                                    Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_RIGHT;
+                                    Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                                 } else {
-                                    Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
+                                    Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_OFF;
                                     pAttr = node2->txt; // "left" oder "right"
                                     if (strcmp(pAttr,"left") == 0) {
-                                        Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                                        Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                                     } else {
-                                        Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                                        Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                                     }
                                 }
                                 color = ezxml_child(conveyorbelt,"yellow");
@@ -714,18 +715,18 @@ int32_t GetConveyorBeltSettingsFromXml(ezxml_t xml) {
                                     if ((node != NULL) && (node2 != NULL)) {
                                         pAttr = node->txt;      // "off", "left" oder "right"
                                         if (strcmp(pAttr,"left") == 0) {
-                                            Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_LEFT;
-                                            Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                                            Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_LEFT;
+                                            Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                                         } else if (strcmp(pAttr,"right") == 0) {
-                                            Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_RIGHT;
-                                            Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                                            Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_RIGHT;
+                                            Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                                         } else {
-                                            Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
+                                            Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_OFF;
                                             pAttr = node2->txt; // "left" oder "right"
                                             if (strcmp(pAttr,"left") == 0) {
-                                                Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                                                Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                                             } else {
-                                                Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                                                Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                                             }
                                         }
                                         nErrorCode = 0;
@@ -757,25 +758,25 @@ int32_t GetConveyorBeltSettingsFromXml(ezxml_t xml) {
         SDL_Log("%s: error in xml file, 'conveyorbelts' not found",__FUNCTION__);
     }
     if (nErrorCode != 0) {
-        Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
-        Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
-        Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
-        Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
-        Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
-        Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
-        Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
-        Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+        Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_OFF;
+        Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+        Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_OFF;
+        Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+        Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_OFF;
+        Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+        Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_OFF;
+        Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_LEFT;
     } else {
         /*
         SDL_Log("All OK:");
-        SDL_Log("Playfield.uConveybeltRedState: %d",Playfield.uConveybeltRedState);
-        SDL_Log("Playfield.uConveybeltRedDirection :%d",Playfield.uConveybeltRedDirection);
-        SDL_Log("Playfield.uConveybeltGreenState: %d",Playfield.uConveybeltGreenState);
-        SDL_Log("Playfield.uConveybeltGreenDirection :%d",Playfield.uConveybeltGreenDirection);
-        SDL_Log("Playfield.uConveybeltBlueState: %d",Playfield.uConveybeltBlueState);
-        SDL_Log("Playfield.uConveybeltBlueDirection :%d",Playfield.uConveybeltBlueDirection);
-        SDL_Log("Playfield.uConveybeltYellowState: %d",Playfield.uConveybeltYellowState);
-        SDL_Log("Playfield.uConveybeltYellowDirection :%d",Playfield.uConveybeltYellowDirection);
+        SDL_Log("Playfield.uConveyorbeltRedState: %d",Playfield.uConveyorbeltRedState);
+        SDL_Log("Playfield.uConveyorbeltRedDirection :%d",Playfield.uConveyorbeltRedDirection);
+        SDL_Log("Playfield.uConveyorbeltGreenState: %d",Playfield.uConveyorbeltGreenState);
+        SDL_Log("Playfield.uConveyorbeltGreenDirection :%d",Playfield.uConveyorbeltGreenDirection);
+        SDL_Log("Playfield.uConveyorbeltBlueState: %d",Playfield.uConveyorbeltBlueState);
+        SDL_Log("Playfield.uConveyorbeltBlueDirection :%d",Playfield.uConveyorbeltBlueDirection);
+        SDL_Log("Playfield.uConveyorbeltYellowState: %d",Playfield.uConveyorbeltYellowState);
+        SDL_Log("Playfield.uConveyorbeltYellowDirection :%d",Playfield.uConveyorbeltYellowDirection);
         */
     }
     return nErrorCode;
@@ -1316,14 +1317,14 @@ int32_t InitialisePlayfield(uint32_t uLevelNumber) {
     Playfield.uReplicatorGreenObject = EMERALD_SPACE;
     Playfield.uReplicatorBlueObject = EMERALD_SPACE;
     Playfield.uReplicatorYellowObject = EMERALD_SPACE;
-    Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
-    Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
-    Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
-    Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
-    Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
-    Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
-    Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
-    Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+    Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_OFF;
+    Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_OFF;
+    Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_OFF;
+    Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_OFF;
+    Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+    Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+    Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_LEFT;
+    Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_LEFT;
     Playfield.bInitOK = false;
     for (I = 0; I < EMERALD_MAX_MESSAGES; I++) {
         Playfield.pMessage[I] = NULL;
@@ -2416,12 +2417,14 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, SelectedLevelgroup.x,
+               ge_TotalLevelCount
 ------------------------------------------------------------------------------*/
 void InitLevelgroups(void) {
     memset(&LevelgroupFiles,0,sizeof(LevelgroupFiles));
     memset(&SelectedLevelgroup,0,sizeof(SelectedLevelgroup));
     g_LevelgroupFilesCount = 0;
+    ge_TotalLevelCount = 0;
 }
 
 
@@ -2439,7 +2442,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
-Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount
+Seiteneffekte: LevelgroupFiles[].x, g_LevelgroupFilesCount, ge_TotalLevelCount
 ------------------------------------------------------------------------------*/
 int32_t GetLevelgroupFiles(void) {
     int32_t nErrorCode;
@@ -2455,6 +2458,7 @@ int32_t GetLevelgroupFiles(void) {
     char szFullFilename[EMERALD_MAX_FILENAME_LEN * 2];
 
     g_LevelgroupFilesCount = 0;
+    ge_TotalLevelCount = 0;
     nErrorCode = -1;
     if ((dir = opendir(EMERALD_LEVELGROUPS_DIRECTORYNAME)) == NULL) {
         SDL_Log("%s: can not open current directory, error: %s",__FUNCTION__,strerror(errno));
@@ -2506,6 +2510,7 @@ int32_t GetLevelgroupFiles(void) {
                                                     GetActualTimestamp(LevelgroupFiles[g_LevelgroupFilesCount].szCreateTimestamp);
                                                 }
                                                 LevelgroupFiles[g_LevelgroupFilesCount].uLevelCount = (uint32_t)strtol(levelcount->txt,NULL,10);
+                                                ge_TotalLevelCount = ge_TotalLevelCount + LevelgroupFiles[g_LevelgroupFilesCount].uLevelCount;
                                                 memcpy(LevelgroupFiles[g_LevelgroupFilesCount].uMd5Hash,uCalculatedLevelgroupMd5Hash,16);
                                                 g_LevelgroupFilesCount++;
                                             } else {

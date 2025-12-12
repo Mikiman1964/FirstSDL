@@ -450,9 +450,9 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     }
                     break;
                 case (EMERALD_CONVEYORBELT_SWITCH_RED):
-                    if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltRedState == EMERALD_CONVEYORBELT_LEFT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_RED_LEFT;    // links
-                    } else if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltRedState == EMERALD_CONVEYORBELT_RIGHT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_RED_RIGHT;    // rechts
                     } else {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_RED_OFF;    // aus
@@ -460,16 +460,16 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     break;
                 case (EMERALD_CONVEYORBELT_RED):
                     uTextureIndex = TEX_CONVEYOR_RED;
-                    if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltRedState == EMERALD_CONVEYORBELT_LEFT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
-                    } else if (Playfield.uConveybeltRedState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltRedState == EMERALD_CONVEYORBELT_RIGHT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
                     }
                     break;
                 case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
-                    if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_LEFT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_GREEN_LEFT;    // links
-                    } else if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_RIGHT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_GREEN_RIGHT;    // rechts
                     } else {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_GREEN_OFF;    // aus
@@ -477,16 +477,16 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     break;
                 case (EMERALD_CONVEYORBELT_GREEN):
                     uTextureIndex = TEX_CONVEYOR_GREEN;
-                    if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_LEFT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
-                    } else if (Playfield.uConveybeltGreenState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_RIGHT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
                     }
                     break;
                 case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
-                    if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_LEFT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_BLUE_LEFT;    // links
-                    } else if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_RIGHT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_BLUE_RIGHT;    // rechts
                     } else {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_BLUE_OFF;    // aus
@@ -494,16 +494,16 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     break;
                 case (EMERALD_CONVEYORBELT_BLUE):
                     uTextureIndex = TEX_CONVEYOR_BLUE;
-                    if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_LEFT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
-                    } else if (Playfield.uConveybeltBlueState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_RIGHT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
                     }
                     break;
                 case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
-                    if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_LEFT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_YELLOW_LEFT;    // links
-                    } else if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_RIGHT) {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_YELLOW_RIGHT;    // rechts
                     } else {
                         uTextureIndex = TEX_SWITCH_CONVEYOR_YELLOW_OFF;    // aus
@@ -511,9 +511,9 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     break;
                 case (EMERALD_CONVEYORBELT_YELLOW):
                     uTextureIndex = TEX_CONVEYOR_YELLOW;
-                    if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_LEFT) {
+                    if (Playfield.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_LEFT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * -11.25;   // links drehen
-                    } else if (Playfield.uConveybeltYellowState == EMERALD_CONVEYBELT_RIGHT) {
+                    } else if (Playfield.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_RIGHT) {
                         fAngleOffs = (((Playfield.uFrameCounter & 0xFFFFFFFE) >> 1) & 0x1F) * 11.25;    // rechts drehen
                     }
                     break;
@@ -3015,13 +3015,13 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 case (EMERALD_FONT_GREEN_STEEL_AE):
                 case (EMERALD_FONT_GREEN_STEEL_OE):
                 case (EMERALD_FONT_GREEN_STEEL_UE):
-                    uTextureIndex = GetTextureIndexByElement(uLevelElement,0,NULL);
+                    uTextureIndex = GetTextureIndexByElement(uLevelElement,0,NULL,false,EMERALD_CONVEYORBELT_OFF);
                     break;
                 case (EMERALD_INVALID):     // invalides Element gefunden
                     // Es muss sich nur um Elemente gekümmert werden, die sich am Rand des sichtbaren Bereichs befinden
                     // und sich in den sichtbaren Bereich >hinein< bewegen
                     if (Playfield.pInvalidElement[I] != EMERALD_NONE) {   // Bei grünen Tropfen in Phase 1
-                        uTextureIndex = GetTextureIndexByElement(Playfield.pInvalidElement[I],nAnimationCount,&fAngle);
+                        uTextureIndex = GetTextureIndexByElement(Playfield.pInvalidElement[I],nAnimationCount,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
                         if ((uY == 0) && ((Playfield.pStatusAnimation[I] & 0x00FF0000) == EMERALD_ANIM_CLEAN_UP)) {
                             // 1. Element befindet sich am oberen Rand und will nach unten in den sichtbaren Bereich
                             //SDL_Log("%s: invalid element at top found    Anim:%x   T:%u",__FUNCTION__,Playfield.pStatusAnimation[I],SDL_GetTicks());
@@ -3136,7 +3136,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 case (EMERALD_DOOR_BLUE):
                 case (EMERALD_DOOR_GREEN):
                 case (EMERALD_DOOR_GREY_NOKEY):
-                    uTextureIndex = GetTextureIndexByElement(uLevelElement,0,NULL);
+                    uTextureIndex = GetTextureIndexByElement(uLevelElement,0,NULL,false,EMERALD_CONVEYORBELT_OFF);
                     break;
                 case (EMERALD_DOOR_GREY_RED):
                     if (Playfield.bLightOn) {

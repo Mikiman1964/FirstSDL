@@ -549,7 +549,7 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_WHEEL_TIMEDOOR):
             if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
-                Playfield.uTimeDoorTimeLeft =  Playfield.uTimeDoorTime;
+                Playfield.uTimeDoorTimeLeft =  Playfield.uTimeDoorTime + 1;
                 if (Playfield.uTimeDoorTime > 0) {
                     Playfield.bTimeDoorOpen = true;
                 }
@@ -560,18 +560,18 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_RED):
             if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
-                switch (Playfield.uConveybeltRedState) {
-                    case (EMERALD_CONVEYBELT_LEFT):
-                    case (EMERALD_CONVEYBELT_RIGHT):
-                        Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_OFF;
+                switch (Playfield.uConveyorbeltRedState) {
+                    case (EMERALD_CONVEYORBELT_LEFT):
+                    case (EMERALD_CONVEYORBELT_RIGHT):
+                        Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_OFF;
                         break;
-                    case (EMERALD_CONVEYBELT_OFF):
-                        if (Playfield.uConveybeltRedDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                            Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_LEFT;
-                            Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    case (EMERALD_CONVEYORBELT_OFF):
+                        if (Playfield.uConveyorbeltRedDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                            Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_LEFT;
+                            Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                         } else {
-                            Playfield.uConveybeltRedState = EMERALD_CONVEYBELT_RIGHT;
-                            Playfield.uConveybeltRedDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                            Playfield.uConveyorbeltRedState = EMERALD_CONVEYORBELT_RIGHT;
+                            Playfield.uConveyorbeltRedDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                         }
                         break;
                 }
@@ -582,18 +582,18 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_GREEN):
             if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
-                switch (Playfield.uConveybeltGreenState) {
-                    case (EMERALD_CONVEYBELT_LEFT):
-                    case (EMERALD_CONVEYBELT_RIGHT):
-                        Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_OFF;
+                switch (Playfield.uConveyorbeltGreenState) {
+                    case (EMERALD_CONVEYORBELT_LEFT):
+                    case (EMERALD_CONVEYORBELT_RIGHT):
+                        Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_OFF;
                         break;
-                    case (EMERALD_CONVEYBELT_OFF):
-                        if (Playfield.uConveybeltGreenDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                            Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_LEFT;
-                            Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    case (EMERALD_CONVEYORBELT_OFF):
+                        if (Playfield.uConveyorbeltGreenDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                            Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_LEFT;
+                            Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                         } else {
-                            Playfield.uConveybeltGreenState = EMERALD_CONVEYBELT_RIGHT;
-                            Playfield.uConveybeltGreenDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                            Playfield.uConveyorbeltGreenState = EMERALD_CONVEYORBELT_RIGHT;
+                            Playfield.uConveyorbeltGreenDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                         }
                         break;
                 }
@@ -604,18 +604,18 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_BLUE):
             if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
-                switch (Playfield.uConveybeltBlueState) {
-                    case (EMERALD_CONVEYBELT_LEFT):
-                    case (EMERALD_CONVEYBELT_RIGHT):
-                        Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_OFF;
+                switch (Playfield.uConveyorbeltBlueState) {
+                    case (EMERALD_CONVEYORBELT_LEFT):
+                    case (EMERALD_CONVEYORBELT_RIGHT):
+                        Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_OFF;
                         break;
-                    case (EMERALD_CONVEYBELT_OFF):
-                        if (Playfield.uConveybeltBlueDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                            Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_LEFT;
-                            Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    case (EMERALD_CONVEYORBELT_OFF):
+                        if (Playfield.uConveyorbeltBlueDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                            Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_LEFT;
+                            Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                         } else {
-                            Playfield.uConveybeltBlueState = EMERALD_CONVEYBELT_RIGHT;
-                            Playfield.uConveybeltBlueDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                            Playfield.uConveyorbeltBlueState = EMERALD_CONVEYORBELT_RIGHT;
+                            Playfield.uConveyorbeltBlueDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                         }
                         break;
                 }
@@ -626,18 +626,18 @@ uint32_t ManTouchElement(uint32_t uActPos, uint32_t uTouchPos, uint32_t uAnimati
             break;
         case (EMERALD_CONVEYORBELT_SWITCH_YELLOW):
             if (ManKey.uLastSwitchFrameCount != ManKey.uLastDirectionFrameCount) {  // Verhindert doppeltes Umschalten, wenn Schalter länger durchgehend gedrückt wird
-                switch (Playfield.uConveybeltYellowState) {
-                    case (EMERALD_CONVEYBELT_LEFT):
-                    case (EMERALD_CONVEYBELT_RIGHT):
-                        Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_OFF;
+                switch (Playfield.uConveyorbeltYellowState) {
+                    case (EMERALD_CONVEYORBELT_LEFT):
+                    case (EMERALD_CONVEYORBELT_RIGHT):
+                        Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_OFF;
                         break;
-                    case (EMERALD_CONVEYBELT_OFF):
-                        if (Playfield.uConveybeltYellowDirection == EMERALD_CONVEYBELT_TO_LEFT) {
-                            Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_LEFT;
-                            Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_RIGHT;
+                    case (EMERALD_CONVEYORBELT_OFF):
+                        if (Playfield.uConveyorbeltYellowDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
+                            Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_LEFT;
+                            Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_RIGHT;
                         } else {
-                            Playfield.uConveybeltYellowState = EMERALD_CONVEYBELT_RIGHT;
-                            Playfield.uConveybeltYellowDirection = EMERALD_CONVEYBELT_TO_LEFT;
+                            Playfield.uConveyorbeltYellowState = EMERALD_CONVEYORBELT_RIGHT;
+                            Playfield.uConveyorbeltYellowDirection = EMERALD_CONVEYORBELT_TO_LEFT;
                         }
                         break;
                 }

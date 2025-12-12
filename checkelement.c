@@ -262,7 +262,55 @@ Rückgabewert:  bool, true = Element gehört zu Säurebad oder Replikator
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 bool IsAcidPoolOrReplicatorElement(uint16_t uElement) {
-    return IsReplicatorElement(uElement) || IsAcidPoolElement(uElement);
+    return IsReplicatorElement(uElement,NULL) || IsAcidPoolElement(uElement);
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           IsConveyorbeltElement
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob ein Element zu einem Laufband gehört.
+Parameter
+      Eingang: uElement, uint16_t, Element, das geprüft werden soll.
+      Ausgang: puColor, uint8_t *, Zeiger auf Farbe, darf NULL sein
+            COLOR_UNKNOWN
+            COLOR_RED
+            COLOR_YELLOW
+            COLOR_GREEN
+            COLOR_BLUE
+Rückgabewert:  bool, true = Element gehört zu Laufband
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+bool IsConveyorbeltElement(uint16_t uElement, uint8_t *puColor) {
+    bool bIsConveyorbeltElement;
+    uint8_t uColor;
+
+    switch (uElement) {
+        case (EMERALD_CONVEYORBELT_RED):
+            bIsConveyorbeltElement = true;
+            uColor = COLOR_RED;
+            break;
+        case (EMERALD_CONVEYORBELT_YELLOW):
+            bIsConveyorbeltElement = true;
+            uColor = COLOR_YELLOW;
+            break;
+        case (EMERALD_CONVEYORBELT_GREEN):
+            bIsConveyorbeltElement = true;
+            uColor = COLOR_GREEN;
+            break;
+        case (EMERALD_CONVEYORBELT_BLUE):
+            bIsConveyorbeltElement = true;
+            uColor = COLOR_BLUE;
+            break;
+        default:
+            bIsConveyorbeltElement = false;
+            uColor = COLOR_UNKNOWN;
+            break;
+    }
+    if (puColor != NULL) {
+        *puColor = uColor;
+    }
+    return bIsConveyorbeltElement;
 }
 
 
@@ -272,12 +320,18 @@ Name:           IsReplicatorElement
 Beschreibung: Prüft, ob ein Element zu einem Replikator gehört.
 Parameter
       Eingang: uElement, uint16_t, Element, das geprüft werden soll.
-      Ausgang: -
+      Ausgang: puColor, uint8_t *, Zeiger auf Farbe, darf NULL sein
+            COLOR_UNKNOWN
+            COLOR_RED
+            COLOR_YELLOW
+            COLOR_GREEN
+            COLOR_BLUE
 Rückgabewert:  bool, true = Element gehört zu Replikator
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-bool IsReplicatorElement(uint16_t uElement) {
-    bool bIsReplikatorElement;
+bool IsReplicatorElement(uint16_t uElement, uint8_t *puColor) {
+    bool bIsReplicatorElement;
+    uint8_t uColor;
 
     switch (uElement) {
         case (EMERALD_REPLICATOR_RED_TOP_LEFT):
@@ -285,28 +339,42 @@ bool IsReplicatorElement(uint16_t uElement) {
         case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
         case (EMERALD_REPLICATOR_RED_BOTTOM_LEFT):
         case (EMERALD_REPLICATOR_RED_BOTTOM_RIGHT):
+            bIsReplicatorElement = true;
+            uColor = COLOR_RED;
+            break;
         case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
         case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
         case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
         case (EMERALD_REPLICATOR_YELLOW_BOTTOM_LEFT):
         case (EMERALD_REPLICATOR_YELLOW_BOTTOM_RIGHT):
+            bIsReplicatorElement = true;
+            uColor = COLOR_YELLOW;
+            break;
         case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
         case (EMERALD_REPLICATOR_GREEN_TOP_MID):
         case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
         case (EMERALD_REPLICATOR_GREEN_BOTTOM_LEFT):
         case (EMERALD_REPLICATOR_GREEN_BOTTOM_RIGHT):
+            bIsReplicatorElement = true;
+            uColor = COLOR_GREEN;
+            break;
         case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
         case (EMERALD_REPLICATOR_BLUE_TOP_MID):
         case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
         case (EMERALD_REPLICATOR_BLUE_BOTTOM_LEFT):
         case (EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT):
-            bIsReplikatorElement = true;
+            bIsReplicatorElement = true;
+            uColor = COLOR_BLUE;
             break;
         default:
-            bIsReplikatorElement = false;
+            bIsReplicatorElement = false;
+            uColor = COLOR_UNKNOWN;
             break;
     }
-    return bIsReplikatorElement;
+    if (puColor != NULL) {
+        *puColor = uColor;
+    }
+    return bIsReplicatorElement;
 }
 
 

@@ -147,7 +147,7 @@ int32_t DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
             fScaleH = fScaleW;
             fRotation = 0;
         }
-        uTextureIndex = GetTextureIndexByElement(GetFontElementByChar(pScroller->puBuffer[I],EMERALD_FONT_BLUE),0,NULL);
+        uTextureIndex = GetTextureIndexByElement(GetFontElementByChar(pScroller->puBuffer[I],EMERALD_FONT_BLUE),0,NULL,false,EMERALD_CONVEYORBELT_OFF);
         nErrorCode = CopyTexture(pRenderer,
                                  uTextureIndex,        // TextureIndex
                                  pScroller->uXStart + I * FONT_W - pScroller->uScrolledPixel,        // X-pos

@@ -7,6 +7,7 @@
 
 typedef struct {
     uint16_t        *pLevel;
+    uint16_t        *pPipeLevel;
     uint32_t        *pStatusAnimation;
     uint32_t        *pLastStatusAnimation;                      // Wird für Explosionen benötigt, damit entsprechende Felder auf Space gesetzt werden können
     uint16_t        *pInvalidElement;                           // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
@@ -37,14 +38,14 @@ typedef struct {
     bool            bReplicatorGreenOn;
     bool            bReplicatorBlueOn;
     bool            bReplicatorYellowOn;
-    uint8_t         uConveybeltRedState;                        // CONVEYBELT_OFF, CONVEYBELT_LEFT, CONVEYBELT_RIGHT
-    uint8_t         uConveybeltRedDirection;                    // EMERALD_CONVEYBELT_TO_LEFT, EMERALD_CONVEYBELT_TO_RIGHT
-    uint8_t         uConveybeltGreenState;
-    uint8_t         uConveybeltGreenDirection;
-    uint8_t         uConveybeltBlueState;
-    uint8_t         uConveybeltBlueDirection;
-    uint8_t         uConveybeltYellowState;
-    uint8_t         uConveybeltYellowDirection;
+    uint8_t         uConveyorbeltRedState;                        // CONVEYBELT_OFF, CONVEYBELT_LEFT, CONVEYBELT_RIGHT
+    uint8_t         uConveyorbeltRedDirection;                    // EMERALD_CONVEYBELT_TO_LEFT, EMERALD_CONVEYBELT_TO_RIGHT
+    uint8_t         uConveyorbeltGreenState;
+    uint8_t         uConveyorbeltGreenDirection;
+    uint8_t         uConveyorbeltBlueState;
+    uint8_t         uConveyorbeltBlueDirection;
+    uint8_t         uConveyorbeltYellowState;
+    uint8_t         uConveyorbeltYellowDirection;
     char            szMd5String[EMERALD_MD5_STRING_LEN + 1];    // MD5-Prüfsumme als String für komprimierte Leveldaten, d.h. ohne Header
     uint32_t        uEmeraldsToCollect;
     uint32_t        uTimeToPlay;

@@ -7,7 +7,7 @@
 #include "mystd.h"
 
 
-#define SHOW_HINT_MS                            3000        // Hint nach x ms auf Element anzeigen
+#define SHOW_HINT_MS                            1000        // Hint nach x ms auf Element anzeigen
 
 #define MIN_Y_RESOLUTION_FOR_LEVELEDITOR        960
 
@@ -139,14 +139,14 @@ typedef struct {
     uint16_t        uReplicatorBlueObject;
     bool            bReplicatorYellowOn;
     uint16_t        uReplicatorYellowObject;
-    uint8_t         uConveybeltRedState;                        // CONVEYBELT_OFF, CONVEYBELT_LEFT, CONVEYBELT_RIGHT
-    uint8_t         uConveybeltRedDirection;                    // EMERALD_CONVEYBELT_TO_LEFT, EMERALD_CONVEYBELT_TO_RIGHT
-    uint8_t         uConveybeltGreenState;
-    uint8_t         uConveybeltGreenDirection;
-    uint8_t         uConveybeltBlueState;
-    uint8_t         uConveybeltBlueDirection;
-    uint8_t         uConveybeltYellowState;
-    uint8_t         uConveybeltYellowDirection;
+    uint8_t         uConveyorbeltRedState;                        // CONVEYBELT_OFF, CONVEYBELT_LEFT, CONVEYBELT_RIGHT
+    uint8_t         uConveyorbeltRedDirection;                    // EMERALD_CONVEYBELT_TO_LEFT, EMERALD_CONVEYBELT_TO_RIGHT
+    uint8_t         uConveyorbeltGreenState;
+    uint8_t         uConveyorbeltGreenDirection;
+    uint8_t         uConveyorbeltBlueState;
+    uint8_t         uConveyorbeltBlueDirection;
+    uint8_t         uConveyorbeltYellowState;
+    uint8_t         uConveyorbeltYellowDirection;
     char            szLevelTitle[EMERALD_TITLE_LEN + 1];        // z.B. "Der Bunker"
     char            szLevelAuthor[EMERALD_AUTHOR_LEN + 1];      // z.B. "Mikiman"
     char            szVersion[EMERALD_VERSION_LEN + 1];         // z.B. "01.00"
