@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>RUBY'S LEVELS 10</groupname>
-<create_timestamp>20231009_212044</create_timestamp>
-<levelcount>18</levelcount>
+<create_timestamp>20251129_210826</create_timestamp>
+<levelcount>19</levelcount>
 <level000>
   <title>ZU BEGINN ETWAS EINFACHES</title>
   <author>RUBEN WOLF</author>
@@ -369,11 +369,13 @@
 <level003>
   <title>KLEINE KNOBELEI</title>
   <author>LEVELIMPORTER</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>14</emeralds_to_collect>
     <score_time_factor>40</score_time_factor>
     <speed_cheese_spread>20</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -387,7 +389,7 @@
     <perl>5</perl>
     <crystal>8</crystal>
     <letter>0</letter>
-    <key>0</key>
+    <key>50</key>
     <dynamite>2</dynamite>
     <hammer>1</hammer>
     <nutcracking>2</nutcracking>
@@ -395,7 +397,10 @@
     <stoning_mine>12</stoning_mine>
     <stoning_alien>2</stoning_alien>
     <stoning_yam>1</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>10</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>320</to_play>
@@ -404,6 +409,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>50</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -460,6 +466,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -2380,6 +2404,151 @@
   <leveldata_md5_hash>D721ACB0B3A41A520D73423B9A8729DC</leveldata_md5_hash>
 </level012>
 <level013>
+  <title>SCHATZRAUM</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>80</emeralds_to_collect>
+    <score_time_factor>50</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>35</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>30</x>
+    <y>23</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>0</key>
+    <dynamite>0</dynamite>
+    <hammer>5</hammer>
+    <nutcracking>10</nutcracking>
+    <stoning_beetle>0</stoning_beetle>
+    <stoning_mine>0</stoning_mine>
+    <stoning_alien>0</stoning_alien>
+    <stoning_yam>10</stoning_yam>
+    <stoning_slime>0</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>240</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>0</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>0</active>
+      <element>128</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>128</element>
+    </green>
+    <blue>
+      <active>0</active>
+      <element>128</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>128</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>0</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>152</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>40</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>10</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>39</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>17</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>2</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>19</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>18</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>1</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>128</element01>
+      <element02>128</element02>
+      <element03>128</element03>
+      <element04>128</element04>
+      <element05>128</element05>
+      <element06>128</element06>
+      <element07>128</element07>
+      <element08>128</element08>
+      <element09>128</element09>
+    </explosion01>
+  </yam_explosions>
+  <leveldata>eNqlU8kNwzAMSzRZJ2gOx/sEyDvLZoLWFRid7qMFkcOWKVG0fQzHHzgD9jeu8fH5Ms4Efa5Fj8vRjfYhQ6Gmod7Ra8Rf48oIsUL8xxEbb2OuI3UbliS7jep5cGNufmbKY+3N3GpWTOSzIZOF1eyB9dL3rPLCKx6tlNfK9yD67HeoF0W/WhWqPIPnE2EHRXPmocys1HOBuZ5hPcp4ti5O3XzXqc457kV0WM2FYl1oYuhczPU9tVUbRRfArWT71Vmjc/B2IdGT3aM2Xsk7GJ1Ev5XEDd2lvlv986yr8LsaVrz98Q6Kxm9nFdzf8QIwcHx6</leveldata>
+  <leveldata_md5_hash>FDF074C47CAEE525130515CF04819615</leveldata_md5_hash>
+</level013>
+<level014>
   <title>GEBUENDELTE KRAFT (MODIFIED)</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -2532,8 +2701,8 @@
   </yam_explosions>
   <leveldata>eNrt10sOgjAQgOEB3bjzsfAEqMfwUK58EjiGt+QEWkrpUDvQQgshNv/W8FE6SWsO+SilVp0tf8+yV9KgBMW5krU2B6X5rEibqWquFJGaKwW/dxHtAMcU3dr6KPjdVUW/tn7KCkRN5ahkr+DdmK+izq69opu1NoXvqS9Fzu4CRNtGlypVoSZar4jZlMr7W5dCTzSlLIG1KaOVRNPcFPH9hyqspHy2zLXCJ8yvItYzliI71AnpVNVHwXszpRJXuVJYe+D5Uvic0cq6rvvMpBSxHqHwYhRWus5/V0r7XYY696dU8Nf/VezvlpQiTzizO5KZop8f8/ueiWJ6N84GKLa5VsI/vqD8q3KFm/fu8ICn917wAQr9NIM=</leveldata>
   <leveldata_md5_hash>3300CC236059704DE90D9C22FCAAC7FD</leveldata_md5_hash>
-</level013>
-<level014>
+</level014>
+<level015>
   <title>RUBY'S SUPERGENERATOR</title>
   <author>RUBEN WOLF</author>
   <version>01.06</version>
@@ -3735,8 +3904,8 @@
   </yam_explosions>
   <leveldata>eNrt2EEKglAQxvEZoVWbDlDYIrAWIXSCjlO3eOQxuszrZj0VSYlCnAFB/ny8hyL8GL6Fi4kS3VJJnlXik5sEuafzEE3Hcndi/V4Y786pE4x337KmtaxNffqyN9XvK9AXfdEXfdEXfdEXfS2yL79E1wSnYGFhYWFhYWFhYWFhYWFhYWFhYWGNt9ptp4+1yq7p2KxuY/pqMmZ/+s/afMViPQf75uPsc/U3zMO+4gTronsttNQoheZZnp7WTaJprvG78F/fouz0kKYp03z1lFs9N88nnWL5zcU/B2vpll/eH16whA==</leveldata>
   <leveldata_md5_hash>B893CDEB65CC4B6BD96EB35995E63EDB</leveldata_md5_hash>
-</level014>
-<level015>
+</level015>
+<level016>
   <title>ZUM GREIFEN NAH</title>
   <author>RUBEN WOLF</author>
   <version>01.06</version>
@@ -3860,11 +4029,12 @@
   </yam_explosions>
   <leveldata>eNq1V0GOwzAITH3qkzjui/LGfqr3VYRYGGZwpFUrK1HqxHiAYXBfx+sL47k+O9zm+3Ee70cf13v1fA1b/Vu3UG3ybmGn3+vb+iuutFnx+Agk/hQ40WZgy+u6YzwZSe6O793beDL4PnH2CKFNn6lR77uyTY6kihTP39lMFPis8/0UftmI8/9D5z2Q5BzHGeeSud1m3w95pTjJMb3n/OQZsjlwq9o0ga1nIPmkWRzfKc7HqvNQfuoKrnx2m7E6veu7s4eMOdBkPOca2keX81ptqlVckxzhvsdU7wqJVhJkw46fWoMxk93mVEfh5Z6f1QYqwJ3O92igUqgcOH/Qps69VjSVg+67zkrF59d53Clq1JH/soWxxUz0fHMOEKf99TDdEW1NvJxwYsdFFLrPVba5PxOXtF7UekJvNK/V2SbWVGVRfY/PBR1nRtqWrpCqnyY661SbeKpwrMieeq+9yzY9bo+V76z6NZ67s8LOZq+6sKm84ArU9dt3wjriePZLaXuePKd4qhpHL21Nejhr3YR5UpfYPTpe9k19+u4YvZamvlH1c+47uzhmZpXvP8d80mL1Q21iHnzrv8znxy9C4hC8</leveldata>
   <leveldata_md5_hash>D3FF01212F60CB0E524F30265E570D66</leveldata_md5_hash>
-</level015>
-<level016>
+</level016>
+<level017>
   <title>(BONUS) 40 SEKUNDEN ADRENALIN</title>
   <author>RUBEN WOLF</author>
-  <version>01.06</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>1000</emeralds_to_collect>
     <score_time_factor>40</score_time_factor>
@@ -3877,11 +4047,11 @@
     <y>200</y>
   </leveldimension>
   <scores>
-    <emerald>0</emerald>
-    <ruby>0</ruby>
-    <sapphire>0</sapphire>
-    <perl>0</perl>
-    <crystal>0</crystal>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
     <letter>0</letter>
     <key>0</key>
     <dynamite>0</dynamite>
@@ -3894,9 +4064,10 @@
     <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
     <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
-    <to_play>64</to_play>
+    <to_play>100</to_play>
     <wheel_rotation>0</wheel_rotation>
     <magic_wall>0</magic_wall>
     <light>0</light>
@@ -3959,6 +4130,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -3985,8 +4174,8 @@
   </yam_explosions>
   <leveldata>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</leveldata>
   <leveldata_md5_hash>2C78469E345DFCE3AD68B6B26911F937</leveldata_md5_hash>
-</level016>
-<level017>
+</level017>
+<level018>
   <title>DER FLEISSIGE PROGRAMMIERER,MOD.</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -4106,7 +4295,7 @@
   </yam_explosions>
   <leveldata>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</leveldata>
   <leveldata_md5_hash>2AC0175E55B0534DE3534D0F6329A813</leveldata_md5_hash>
-</level017>
+</level018>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>9E3DCA753D5CB5DE9C1293985250B9B8</levelgroup_md5_hash>
+<levelgroup_md5_hash>480A806628EF4813F0EF428F0A3C177A</levelgroup_md5_hash>
 </levelgroup>

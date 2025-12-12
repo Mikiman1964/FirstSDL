@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>RUBY'S LEVELS 02</groupname>
-<create_timestamp>20230909_152530</create_timestamp>
-<levelcount>14</levelcount>
+<create_timestamp>20251113_140516</create_timestamp>
+<levelcount>15</levelcount>
 <level000>
   <title>SYSTEM-KONTROLLE</title>
   <author>RUBEN WOLF</author>
@@ -1456,6 +1456,151 @@
   <leveldata_md5_hash>EC755ABC5E7C56B5D718F450424CAF3A</leveldata_md5_hash>
 </level011>
 <level012>
+  <title>WEISE IHM DEN WEG</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>210</emeralds_to_collect>
+    <score_time_factor>0</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>0</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>25</x>
+    <y>25</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>0</key>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <nutcracking>0</nutcracking>
+    <stoning_beetle>0</stoning_beetle>
+    <stoning_mine>0</stoning_mine>
+    <stoning_alien>0</stoning_alien>
+    <stoning_yam>0</stoning_yam>
+    <stoning_slime>50</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>800</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>0</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>0</active>
+      <element>128</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>128</element>
+    </green>
+    <blue>
+      <active>0</active>
+      <element>128</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>128</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>0</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>0</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>0</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>0</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>0</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>0</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>0</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>0</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>0</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>1</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>128</element01>
+      <element02>128</element02>
+      <element03>128</element03>
+      <element04>128</element04>
+      <element05>128</element05>
+      <element06>128</element06>
+      <element07>128</element07>
+      <element08>128</element08>
+      <element09>128</element09>
+    </explosion01>
+  </yam_explosions>
+  <leveldata>eNqlU20OwiAMnb3Btgv4Ec+hRyMPj+APjytYVlpgQTQvGwt9Hy0LfvLDcB0cDCcq7h0FRIGksPoy/zE9wwrD0ezsxX5RYROZ9WrM01bA5CNlw3S81XTGjeLXlVDln0PlSF58NgXE3RVul6A4Uc7QZwXDLU+untzOiyLLNbpyA9jrCtVUe121O3HNfz7SFbocKN9v78PY/fDp+WeOccUioABe43sN4DVXFlHkHWas0/zBonbZISooVWfZ1WkkezljFQ/m6bwIm+Z/wBvEfA+a</leveldata>
+  <leveldata_md5_hash>39FF0CCD21EA6186CB9CD679A0EF6111</leveldata_md5_hash>
+</level012>
+<level013>
   <title>HAST</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1575,8 +1720,8 @@
   </yam_explosions>
   <leveldata>eNrtU0EOwkAI7N0bL/Jpm+ETPldtrMsAS62rF2PIpoTAMAxUF/2CYTX2ZrFgPF2EopwtaWXPiB36Fy7D+zHHcuvMQHyzOHND6JJz9fGKK6sg1Lfe11ahRY0WisboeKL2sNPtnZ2aeO7T39P9XVJ+7aW+CNsb6ddWRH+Fkacaluq0RNq/ui0UGrLJkI99dpeyc13VnjesStMjePyvipviOB5f/Dussv3NTLmHPYMnH0H52+/YFfez95Y=</leveldata>
   <leveldata_md5_hash>1F19C740CB40002DC2DA2810DA902953</leveldata_md5_hash>
-</level012>
-<level013>
+</level013>
+<level014>
   <title>KRISTALLIKA</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1696,7 +1841,7 @@
   </yam_explosions>
   <leveldata>eNrdlk0OhSAMhF2ynRu9C71T9OIuNCpYpgNijGYWGpCvlf6kNhnRn+4ehVVpe+M6f7dQLHvmFuK1neJb9fbKtX4KhlDsVko9fjqFqdUXSPHj96KcOJ7y7bVQylwuKbU8BVkrfVFrJ7oXC2OvZh337HsUvOSP4j4Zdcwk9Ge9e2uW27s3hFvro2AIxR6m9NR0TkmdFVDzBc6EcCVGoBWgTg1+1jH9pniesUGaAWvqIn0=</leveldata>
   <leveldata_md5_hash>518A44FFB8DF289F2397223664D5835F</leveldata_md5_hash>
-</level013>
+</level014>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>CEABB55368477439CCCD0E478AAD1CA8</levelgroup_md5_hash>
+<levelgroup_md5_hash>6A4E215BA713E9AF1278D9CE2A176DAB</levelgroup_md5_hash>
 </levelgroup>

@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>RUBY'S LEVELS 01</groupname>
-<create_timestamp>20231205_205351</create_timestamp>
-<levelcount>15</levelcount>
+<create_timestamp>20251112_210519</create_timestamp>
+<levelcount>19</levelcount>
 <level000>
   <title>ERSTER LEVEL VON DC3</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>32</emeralds_to_collect>
     <score_time_factor>40</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -32,15 +34,19 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
-    <to_play>400</to_play>
+    <to_play>480</to_play>
     <wheel_rotation>0</wheel_rotation>
     <magic_wall>0</magic_wall>
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -97,6 +103,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -127,11 +151,13 @@
 <level001>
   <title>12 RAEUME (MODIFIED)</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>32</emeralds_to_collect>
     <score_time_factor>40</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -153,7 +179,10 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>400</to_play>
@@ -162,6 +191,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -218,6 +248,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -248,11 +296,13 @@
 <level002>
   <title>AREAL 03</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>120</emeralds_to_collect>
     <score_time_factor>40</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>7000</speed_grass_spread>
   </values>
   <leveldimension>
@@ -274,7 +324,10 @@
     <stoning_mine>10</stoning_mine>
     <stoning_alien>10</stoning_alien>
     <stoning_yam>10</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>800</to_play>
@@ -283,6 +336,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -339,6 +393,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -369,11 +441,13 @@
 <level003>
   <title>UND MARSCH...!</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>0</emeralds_to_collect>
     <score_time_factor>40</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -395,7 +469,10 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>560</to_play>
@@ -404,6 +481,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -460,6 +538,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -490,11 +586,13 @@
 <level004>
   <title>4 - SPACE</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>90</emeralds_to_collect>
     <score_time_factor>3</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -516,7 +614,10 @@
     <stoning_mine>10</stoning_mine>
     <stoning_alien>10</stoning_alien>
     <stoning_yam>10</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>1120</to_play>
@@ -525,6 +626,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -581,6 +683,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -611,7 +731,8 @@
 <level005>
   <title>WO SIND ALLE STEINE HIN?? (MOD.)</title>
   <author>RUBEN WOLF</author>
-  <version>01.06</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>55</emeralds_to_collect>
     <score_time_factor>1</score_time_factor>
@@ -641,6 +762,7 @@
     <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
     <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>240</to_play>
@@ -706,6 +828,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -736,11 +876,13 @@
 <level006>
   <title>POLTERPATZ</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>99</emeralds_to_collect>
     <score_time_factor>1</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -762,7 +904,10 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>640</to_play>
@@ -771,6 +916,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -827,6 +973,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -857,11 +1021,13 @@
 <level007>
   <title>CHEMIKAL ZONE</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>80</emeralds_to_collect>
     <score_time_factor>1</score_time_factor>
     <speed_cheese_spread>15</speed_cheese_spread>
+    <speed_yellow_cheese_spread>15</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -883,7 +1049,10 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>1280</to_play>
@@ -892,6 +1061,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -948,6 +1118,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -978,11 +1166,13 @@
 <level008>
   <title>HARTER REGEN</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>130</emeralds_to_collect>
     <score_time_factor>1</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -1004,7 +1194,10 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>320</to_play>
@@ -1013,6 +1206,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -1069,6 +1263,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -1097,6 +1309,740 @@
   <leveldata_md5_hash>90189777227A16A67A647D698C5469F1</leveldata_md5_hash>
 </level008>
 <level009>
+  <title>INFINITUM (MODIFIED)</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>4000</emeralds_to_collect>
+    <score_time_factor>10</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>0</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>102</x>
+    <y>102</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>0</key>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <nutcracking>0</nutcracking>
+    <stoning_beetle>0</stoning_beetle>
+    <stoning_mine>0</stoning_mine>
+    <stoning_alien>0</stoning_alien>
+    <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>4800</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>0</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>0</active>
+      <element>128</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>128</element>
+    </green>
+    <blue>
+      <active>1</active>
+      <element>128</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>128</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>0</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>1</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>128</element01>
+      <element02>128</element02>
+      <element03>128</element03>
+      <element04>128</element04>
+      <element05>128</element05>
+      <element06>128</element06>
+      <element07>128</element07>
+      <element08>128</element08>
+      <element09>128</element09>
+    </explosion01>
+  </yam_explosions>
+  <leveldata>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</leveldata>
+  <leveldata_md5_hash>8803414180A46941DFC5F24F6F604AB2</leveldata_md5_hash>
+</level009>
+<level010>
+  <title>HAUPTSTRASSE 11 (MODIFIED)</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>50</emeralds_to_collect>
+    <score_time_factor>10</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>7000</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>110</x>
+    <y>62</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>0</key>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <nutcracking>0</nutcracking>
+    <stoning_beetle>0</stoning_beetle>
+    <stoning_mine>0</stoning_mine>
+    <stoning_alien>0</stoning_alien>
+    <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>480</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>1</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>1</active>
+      <element>1</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>1</element>
+    </green>
+    <blue>
+      <active>1</active>
+      <element>1</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>1</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>1</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>1</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>128</element01>
+      <element02>128</element02>
+      <element03>128</element03>
+      <element04>128</element04>
+      <element05>128</element05>
+      <element06>128</element06>
+      <element07>128</element07>
+      <element08>128</element08>
+      <element09>128</element09>
+    </explosion01>
+  </yam_explosions>
+  <leveldata>eNrtm7tugzAUhn2yVt17y0yWvkO3qEM7VB0qdWxDOmVi6tXCeYRsfRkerQaDY6ghhhDXPrU+kWDE4I//YBuUZCRDC2twQk7JGaHlN0PFOfe64Jv4xuXGZGYUnRmTmWF0A0lwC27BLbjhcKOSZJRx2y03/T4WN8p7IrLD5EZLN9v323RiqyJtu41VIya5bay7gZX15tjX0MQtLbA3nti938wq5Urbs35Z2HejxjWlP5q2gMGtrdbVmheI65D3J0XpBo1Ut2uxiLcipe2yWxNKZtKsYqm4UG3LRbffjiDNqJJbPal6il19u55U/LUbKImZz3THHeeZ1e5h3XQ8K/tDc9tI3HLbJhjX7jBda7/cds3dt8Xnona1K/RH+6/Fdo2Tq5o1LVaKFXQw34bnHe09Y3WxGtj7GWK3kFvIzR6mazPBZcsMf8O3O2DkEe7hBZ5gCTHfFrwVcx4AyBzmwLx0c5N+77mCW3Bzya3rTQAON0Dshjc3Gty8c1tzIrS5rUvCWBLcDonZO7ychFslXrmZPwf4l1s/N5EdPrf/UJMYc8Pshrkmc/x6Nu3jZud3JsFt/Jqcoq1Jv3glb5J3ZG4f5FPy5bkL3n8aZeQHxa1iKQ==</leveldata>
+  <leveldata_md5_hash>CF07EBD7070DDA8A1F08EEDB7C5B8A97</leveldata_md5_hash>
+</level010>
+<level011>
+  <title>SPIRALIG</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>40</emeralds_to_collect>
+    <score_time_factor>10</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>7000</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>25</x>
+    <y>25</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>0</key>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <nutcracking>0</nutcracking>
+    <stoning_beetle>0</stoning_beetle>
+    <stoning_mine>0</stoning_mine>
+    <stoning_alien>0</stoning_alien>
+    <stoning_yam>10</stoning_yam>
+    <stoning_slime>50</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>640</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>1</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>1</active>
+      <element>128</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>128</element>
+    </green>
+    <blue>
+      <active>0</active>
+      <element>128</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>128</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>0</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>134</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>1</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>1</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>1</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>1</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>1</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>1</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>1</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>15</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>18</element01>
+      <element02>128</element02>
+      <element03>128</element03>
+      <element04>19</element04>
+      <element05>128</element05>
+      <element06>141</element06>
+      <element07>132</element07>
+      <element08>138</element08>
+      <element09>132</element09>
+    </explosion01>
+    <explosion02>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion02>
+    <explosion03>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion03>
+    <explosion04>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion04>
+    <explosion05>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion05>
+    <explosion06>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion06>
+    <explosion07>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion07>
+    <explosion08>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion08>
+    <explosion09>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion09>
+    <explosion10>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion10>
+    <explosion11>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion11>
+    <explosion12>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion12>
+    <explosion13>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion13>
+    <explosion14>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion14>
+    <explosion15>
+      <element01>1</element01>
+      <element02>1</element02>
+      <element03>1</element03>
+      <element04>1</element04>
+      <element05>1</element05>
+      <element06>1</element06>
+      <element07>1</element07>
+      <element08>1</element08>
+      <element09>1</element09>
+    </explosion15>
+  </yam_explosions>
+  <leveldata>eNqVVEtSBCEMhawc3TVLZ+20WtN+LqAn8EwUtAtv4HENCSFBeqZm6hVdqfAe+UFnl69GchMu+VpEN+NKtASs6FnRMNTi8z5JEeoO+zxi1+nE8iaGcAPxFVu52awycgAuq5wjjBWlFmesPJJdGCt+w6YWKiu3fdbeg+bsiec3Y7C9ugPFkM6AOVszyWQ9wAxFwThVrTcxHmGPCp7CAX2/1RZkYgfqDyueoHijOwIrcuMu8Ep7/QSTe4YfdyrGkRRTnXRfueYgUI/0jhUfEKuinCeRClQR6BZpr0TxBkvTvBu7VD51vUruC3LXnQVeIA5ZpZYrT0GzsRCF9iqemdv/+yqKO1w3w6sbb2PqsoobbzahPxi+dD66W1y76t0D5zgTf23/i2jeoO3Qd7uNCl/ZqrgWf9bNEtc=</leveldata>
+  <leveldata_md5_hash>A7C6AD22DCC50A6614BCEB835CCE2669</leveldata_md5_hash>
+</level011>
+<level012>
+  <title>SMARAGDHOEHLE</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>250</emeralds_to_collect>
+    <score_time_factor>10</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>7000</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>50</x>
+    <y>50</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>10</key>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <nutcracking>0</nutcracking>
+    <stoning_beetle>10</stoning_beetle>
+    <stoning_mine>10</stoning_mine>
+    <stoning_alien>10</stoning_alien>
+    <stoning_yam>10</stoning_yam>
+    <stoning_slime>10</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>2400</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>1</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>1</active>
+      <element>128</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>128</element>
+    </green>
+    <blue>
+      <active>0</active>
+      <element>128</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>128</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>1</active>
+    </red>
+    <green>
+      <active>0</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>135</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>1</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>1</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>1</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>1</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>1</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>1</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>1</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>1</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>128</element01>
+      <element02>128</element02>
+      <element03>128</element03>
+      <element04>128</element04>
+      <element05>128</element05>
+      <element06>128</element06>
+      <element07>128</element07>
+      <element08>128</element08>
+      <element09>128</element09>
+    </explosion01>
+  </yam_explosions>
+  <leveldata>eNq9WL1uFDEQto2EEqC5ddrwf9I1JyRKdBLUV/AioeSntewroIgEHeU9QN6CV0oFDWuPx54ZzwaKKBrlbr1rzze/32wumXQHEpvYWab5zj0Tbk1+Foxp1hznFSIlczWvnrhgVvP3bfqBuIDiyvVVef61PUvmvYNvwO6f+Jw/SWbtOkbe8dgBwlQ98eRE19F1jld9RSWfscQPyEosEbwadgeBR5HT4F8i15CLQHIPORkRVsp53Yok/IhMMCPa6aTGQfqheWZLDjiO1DXNVZDUrFD7kxJRasdUfciVzM9Ps3hSAcvWJpYlXme4Y+u2LomYZA/cEKekRizUKI/i2k7A4B644kEaTvNIxEFQx8fy3BcUN2BMxAeoA+5Dx3vuIrEMMX5bkNSiRGO1daHmwJPqvqh9ynPxaP58UTHeOorR+wCsylpfu1czxmlZaZyZlAoCtKeqHxoG/gFG565A9o65T+ale+Yi00/7zNYT2QOJce5wV/58wDgAdB+KUE7FHSvFj655605Y/wfCmdSzjiJralWxA+nnpapPxArqf15fLFYs6Mfvw8DcOkYc9ME5N8QeMDiixHg44EWGE9lTx1AQ5yD8SoJLsVO4H4EwseQHPzDVQaBozEB7gzN9EjYDQ6QWA7QMUYKY5517x5lC9VvFxjDXNVydML3fWnS7vecuFe6YSFbiwgxzbSLj3lNSKWnISTL3CR7Kj8aD3QOn1CpiXDYMnHbXNirVz9eI5sWkf9e8mSpXWGbdm7Yzo9gBI6l++iEbtr4jRcGbVqB0jN3MaDu3c7h3TT7jQj93G/q1ZzXC+SrrBwy8u2bfdJJ2bbZp8/Os6xj4dsarvGOsmY3dn2T2pBNoFx5KPkbvdAweKS772sEHweeurADFtvfNyN6iOcZSzPeNT/q0coJpD8yjMHcgXJ0RjOXM7ocJ59U6QBTMPO8PxLhUMcKAoVeba3EEQYzwH7Faei/Od/5YiJv8f+bayrmAGEcF4UgQvJhIUjNkY6NUGa3dY9Ga7x3FjJHnJpWJNZkYxq5ODslAiTHDpOoZ71k2fSJB2TlrUPKqs4X/p72RdZ6sD9DuDcdBDKvaGFV9vFZorLgnXPKOz+aL+SQ0WhalaZiZOicGs4zya8bQfjWIw7TB52eM/6XOHDPA84bWQt7J6wG82ZTrD4ss0DH8DfHqTwED+eI7sV9ngTD4Ycn1co5kzDckzxtldoENVENktRzqCuLXYxdurOMVweg9iB7EWrVLkcv35SzVKyDUWqN9bg3vQF/t9+U3IGoHvIdhjJCVNzXjK+bF8n+6ty1/AUheXwc=</leveldata>
+  <leveldata_md5_hash>5FAFCE6E52E9548C00006586E98D785F</leveldata_md5_hash>
+</level012>
+<level013>
   <title>1 RAUM - 1 TNT</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1216,8 +2162,8 @@
   </yam_explosions>
   <leveldata>eNqtVtl17TAIzLQA3dyvV5tEEa/cxDZid75yfO5iGY9YhkH7a//xte6Lfj64/+H+ha5f/0gtEGz4/hV986xfeJTedpT19VEcslVWnAsPirfC08c/Siir4MMioPKMf/DEvL7iuvAyBkL8a/Tc0Vby8ODlXHlMERGaMWh22Z7JbXfuLzzR69TkzTMu9/6e2594YU9FcTh45hnydY8Upb4rWEfcaE2lQghc4fub7p0evJiZUw1J3pwPBe8kVc79Q/IZ6o2UtRUq8FxkvMZrvD0a9xglw9GaEp8ROgvBC69srAAFBiD0Xvav510ag2tu1mCxjRW1f8VWnyjP3jz0Ilr+PhYxmX+nt0VztAOTUDL4WOY9p90OAqdKTepB2r88KNXpbgzvSbN3bXM9Zf2QMTB3FKzST16p5PJkZBcViTZiOP9S3WWo/YNx+DdXX1q/n347FUdgZ+Vf1YGotdf9/8LupdVyf6DzAwFJjCu76TUV5u4UfeSLDCq5ba3PpYixlE8oDEPpSmm1nevBQbl28KL2pOsSpbkiFjs17dhWozqVPBZXKEnd4tZsT1yfM3O5eLo1M70zcged+s4KGfV6t36sPiDF699oPFumMRimZ/THzy/TrlF7JezjnYlynnj840Ev8lnlzJ951vR57qzLOBw6mV9PMl2frx7A64kndnVlALX5kfnWJ66MarvK3PkMGrLayXSFXpxOSrWK0b9+hpymz/r1XFj9W+lchKBUXDIL4wVe81f1COm8kfnR2QBTxb+8vgF/wWh8</leveldata>
   <leveldata_md5_hash>EC5BA828F2F486241D175D16344AF0F1</leveldata_md5_hash>
-</level009>
-<level010>
+</level013>
+<level014>
   <title>GOLDREGEN</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1337,8 +2283,8 @@
   </yam_explosions>
   <leveldata>eNrFVkkOwyAM9Ht66KZux/6mp36gq6W8ZH7aDbUKMQYb1GgkQpR4ZMaMoaOuhynNaE4rWtMmzDsHFsS0pO1z3IW5LZ5VlLMgREjPNrmwgaM2m18EJ5jYtBqI60ERCxJqwKBMXpXXmGOBooa9Rqk12WsEpypyLojeSljQyEcTFf/2dFzpOk9LVbL3F4nLmou8X0pZUpnArC7cfs73GDjUjfuBP5ehp+y6oLfrUFGjFg7AYDbWCctClXxuRJPO4Pe0dkLmovfvvw4ZdbXvx28OtSwfnOis4lKkypVuKu6uW+IYeACGy8O3</leveldata>
   <leveldata_md5_hash>575E0C7F76AAEADF47CCBF763BA729EE</leveldata_md5_hash>
-</level010>
-<level011>
+</level014>
+<level015>
   <title>CLASSIC</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1458,8 +2404,8 @@
   </yam_explosions>
   <leveldata>eNq1VtmRpDAMbaVgJbQJbQ4qjQKftnU9GX6nqBkaMLreYX4+P392/PtoHPY91ofqWurX/i3fp/p9bmfl/qNz7e8ZRKHv2h1Z4a5+79KHv2ce9yne4Xrbzwxvdg07m0de5x0bGe7DTge9gqNaipo16s//Hrnf1JMBJ2HQvV79rZF3wVqPzGOqMrLTa79cq+x0S5Wzp7QjeyaGrgiq8bt0cvJBOCOs1z4osu7IVHyY+NLr3Dm6oIrvmdZ5x84TC27QhZ3EzOnkzzhW/evofa8lQIrinKzbOedbOYVElgIDgSokuIuzz6O5kREpJtGduA6k5s9xRnQJ9OWd7MhSvMzqbyan4gywt9FdTszq7DV7hzL4KANvfYnkrFyxMvEz4IZXiQqzUqkMdfOJdaOtMDOuuaS6W1VSXH36wipV52Tp0uPUoF6+g/1K3ZPBPRoY6EMNVpGt5iSDdXPKCh6YvseAJ1bTLopKeHOdVITzXq7KGTIqqDt7SXdvJnP57WT9qhWtaC38rGqW4vMCdvaVQW0TEYNnAmjknBkUKOEuk4HoGwQZqWrP6pLhzmcG7u+46Gao4RVIr5p36tFzLEDInd8iDpV3GvRhgY4M5mvMNRnJpaZ9/X/sKemzOlROMN3pdFoVPWcn4KICe4JBlOSHXoqw2l0bb75Y1yom4AkqhoErd/W3p6e7OoLNGXowV8c0kvdUU7Khqe6g1Z0YGPjE3AepMq/H7rhKEdOReKBxexyN/a9dYl2ZV+BFxWeBbxwrdijoWopdzUZ6YUp/KVGpW8AraOwaq7ie3xLy8Gx6YJNfMlSKb5bIC/L66vM01uVXkU8D3U4HFlYeaZfLEexRySAJdzBgHX4VZ1aqXg16QjS0vsoUfKv3wb86fgGwC6Da</leveldata>
   <leveldata_md5_hash>9F5C4F570010D7AC5E562F2A43809634</leveldata_md5_hash>
-</level011>
-<level012>
+</level015>
+<level016>
   <title>ZAUBERWALD (MODIFIED)</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1744,15 +2690,17 @@
   </yam_explosions>
   <leveldata>eNq9WNttwzAM5E3jNToagWycCYpEZfg6Su5HCyNBLFsiRR6Ppzzk8Q/XE0/g/e2Xyuuj4nd24TMW52iZ7yP6Y8NW8+9L8lieB2Er9/fXZfswz7tvaHP6ld/B2z+35TaYB2wlTT51K2v1aDXayLno60wR7+MxJp6PKV/1CcYc+Yw4+/V72QD1ercDm7F+RXx0LOZ8mOXsv8X2knOs+s7POTeb/TmGCvIx86nGquZcj8jlnsVfOedxTdCKqrjcI4Bhl/vEq1Cl1neP25ppNph/vA6/ZP+c5xwN0T3Lv6nEjEkIq/PXW5fwGVMWMjry3cQljOsi3rBh3Lqzl42OUMbZu5j10c6JU7RZBt0jyFRBvD4sDjpEZ1+FFRs5b7FHgTIwJFvSQyZ6l8699uwx2irRAu/BGVf5HU07uMqqEVtLAXBm1KRL9v0Dcgd5bNywqzLnl3fwGH3Ijgt6Dd7tPNYFcz123ExcwmMAslveXQ3BK0d7G5BdDWtDAWcUtwGJHVvlKh5mdu6cGLkBBLv3WAhyQkH2pO4jd44p4swG079Wpdr6YI2Jz4ZMtc3uLol5Xzk/qQPfCfMXwlAY8zNpBqWrLWuXzFWnm3xUpmK9iSs2njcELHPeZcq5ayC214l3MWgQyMT52TrGCNf6UJlUjKkUlTt8EyOPcDa4r2IrZ1yyj9pc55axuWdkrlXZKeGK3Vq5vO7vqFbvjLx/sHMVSpRAnlaU4MPt8eTFNUfs77ipL9wL14lZs+7UNGRSnfyUyvWuDt0zMxI+503ukcU0cwmE94lJBU54zLnM/2WcTxidf+d/AnZnA68trq0yfnFUyHf2sTsvVW7D55P38ffXN4FHu20=</leveldata>
   <leveldata_md5_hash>15ED7AD8BDBE21BA10B410CD86C8AEFE</leveldata_md5_hash>
-</level012>
-<level013>
+</level016>
+<level017>
   <title>KRACH!!</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>150</emeralds_to_collect>
     <score_time_factor>10</score_time_factor>
     <speed_cheese_spread>500</speed_cheese_spread>
+    <speed_yellow_cheese_spread>500</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -1774,7 +2722,10 @@
     <stoning_mine>2</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>480</to_play>
@@ -1783,6 +2734,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -1839,6 +2791,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -1863,17 +2833,19 @@
       <element09>128</element09>
     </explosion01>
   </yam_explosions>
-  <leveldata>eNrNWEuy4zAIDDut4UJzoblDl3MMX3ZeYn34yp7dK1WlbEsCBE2D8n69f9E41IB5G4PUd1Gr/OrTvHEq67OLnaTr97JlzOJH65Cx1kcbJGgTo6sZrWIsl+/Zrt1s5HxsGRr+TC8sDXTrs0Ptop8hqSfifhjZyy/5HD3yeIzNUcjBdzQjWUf/ssVqla1efVZJ48X/Yd+h4uZt+UQ4xkIM5tDf+btPFJJYfbd7yUWJEus+tnB5bmxOxPNZ5owEvN15l5T/bE5D6cGMsaTnuEbb6OGOBzj5Mfv4i3qdR0fBNEjRiwLfUtp9FGdi5xcJEWlp7sDhEh0zHiUVE7CSCYdJHaPlTeo6KN0TEUXBDhjW0TJG/Ae6pMjpwZgw2YpgB9QTP/DG9X6GKKHgOs8R5Djdy6BtnmBm+46zOdjC3WbudnNnOzxGn65h3NmVzP4WamPkmox3qdST+2HF87xhFN7qGTGCqcxi9sPJwhw+Zk9sEFeF1ltej+4icsdzXPAElxiHymmElRyqAG74XMITleehRObopfKY+Nq4sCd92Iqx+hcoLO+iBtdL7boeDv2at4tuvUTmPDCzTTHA8MtguTPU6NiT5RWcFP9K6GZizCntGeJsM5UPxqe2V5UEk6s6SrAWpnsWxWS2fxneE/OFQ13mtOqPyq9ZASGX4LKPU36RssuoWGLXLel7BRQGrP9Qch0VPCMv271iroThP4043wdLYgXNfsvmERW+WCvXrEVDlreYOMW2CsQa0EoWk5uK4k8q00vHhmH9WQemLr+w8wG5vgddE8JNJOdVmWs9J3BxJlH9Lm2YXHec7Pgb7qbIyprj4S2LHHYp6R0p4WN2mLC1O4srJd/JyZW0Bow+ZUUDzg/eumF1u8WmrXZt2n9Z8lfZkuNUAqeOle0V768ccnLwC7/8vx0+VhdeyGBAEhxS97QkVabGwbm9Rfiqefyq/6Ter38B1TE7</leveldata>
-  <leveldata_md5_hash>1748F8AA5EBB9CF4AC22E9C3670D83FB</leveldata_md5_hash>
-</level013>
-<level014>
+  <leveldata>eNrNWMmR4zAMFPalN5DOPjahzaFLDsPJzsi8cJHU/KZY5dJBEk2g0YD8Ol6/aFxqwNy1Qeq5qFl+9tvccbrXvYrdTuW3YGlv8W217THmRwwSrImxdRqrYpDL52xlNZt9bizNwr/uhWGBtj671Cr6HpJ6Iq6H2Xv4JX9Hjzx+j79/diiLBVSfURr9gsValaVdfVZJ48U/wHepuHksd4RjLMRwDvWeP+tEMYnVc7uWXJQoQXdj4em5sTgR92vpbyTwbeddUrlncxrKDnqMJT1HGefCDlc+wO0fs48/rNd5dE2UBil7MeG3THFfkzOx84uEiJxp7sBpGipnPEtmSsBqTzhO6hgNb1K1QemayCgKOGBUR+/R4t/YJZOcbooJk60IOKCu+IE3yn3J8rl6Wu5qjSCn6X4PWuYJeravNJsDFq6YuXqVq9rhMft0DeOqrmTWn6E2Rq3JdJemdnI/jHi+N4rCSzstRjCVWcx6uL3Qh4/ZEwziqtC4y+vRLiI7neOJTvCU41A5jTCTQxXARs8lXNH0PJTs2XqpPCa+Ng7uSR22Yoz+BYrLq6jB9VKrrodDv+Zx0dZLZM4D8/ZUCtD80lTuHWp07MnyCk5KfyV0MzHmlPYM8e1pKh+MT22vKgknR3WUgBamexalZLZ/ad4T84RDXea06rfKr1UBIZfgso9TfZFplzFTiVW3pL8roDhg/Yep1tFEZ+Sw3Sv6TBj904zzfbAkKKj3WzaPaOKLMXO8tWzI8hadp1hWgVgDzqmKyaai+JNK99K1UFh/1sap4hd2PiDX96BaQvgSyXVV+lyvCTw5k6h+lxZKrjtOdvoN96XICs318CuLHHcp6R0p0WN2nLC1O4srJc/J7StpDWh9yogGnB88uob63HLTVruz4y9I/issOU8laGqbeR7x+5VDTjZ94cP/2+FjVfhChgOS8JCqpyWpMnMeFE3CIjPtd+dv+k/qdXwBUcAvDQ==</leveldata>
+  <leveldata_md5_hash>3BCFC68BA5EDC6D6B37FC3A6AE3C8D33</leveldata_md5_hash>
+</level017>
+<level018>
   <title>VERFOLGER-STREITMACHT</title>
   <author>RUBEN WOLF</author>
-  <version>00.00</version>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
   <values>
     <emeralds_to_collect>38</emeralds_to_collect>
     <score_time_factor>40</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -1895,7 +2867,10 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>0</stoning_alien>
     <stoning_yam>0</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>160</to_play>
@@ -1904,6 +2879,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -1960,6 +2936,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -1986,7 +2980,7 @@
   </yam_explosions>
   <leveldata>eNrNlssNAjEMRJe9cXURQA2cKA0lLoIiKBIWhJKsf5OVNkK+GchLxuMRecoD6rhzLYzTfN6tLvPhw0hAMdDR6j7dNjMIZOQ3BWdQ2Gnv8GM8OxilrM66X96Su6aAl8bQbtXHIIAhz9U1Z/UG7f3IZDwEQ1dcZ1xXs8Le4XnMdy9Vp/nz0LX2v5nERBHvknticrfTZ+jaYnvUKh8zenNMTndhkPD298UUbIA399oXC0PbvbgXzb18Lr27LVfYzd6RDF/7aOO07PcZuvY1nYzc54DBHRtgZVgKGZqL0dS11WsZth9JzIXht3p5xa7ieE5jDNS1/IcMCv7dyD2yfpGH1AtHVcNx</leveldata>
   <leveldata_md5_hash>501B63788CEA1F9B529DFA36873B17FF</leveldata_md5_hash>
-</level014>
+</level018>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>C361943F4850E682C5A430988F571BD8</levelgroup_md5_hash>
+<levelgroup_md5_hash>9F5862F8FB6E8DD5DE7083E4B4C91974</levelgroup_md5_hash>
 </levelgroup>

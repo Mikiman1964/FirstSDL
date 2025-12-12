@@ -1,9 +1,165 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>RUBY'S LEVELS 08</groupname>
-<create_timestamp>20231008_210137</create_timestamp>
-<levelcount>15</levelcount>
+<create_timestamp>20251114_111039</create_timestamp>
+<levelcount>18</levelcount>
 <level000>
+  <title>MIX (MODIFIED)</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>190</emeralds_to_collect>
+    <score_time_factor>50</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>0</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>52</x>
+    <y>32</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>0</key>
+    <dynamite>0</dynamite>
+    <hammer>10</hammer>
+    <nutcracking>10</nutcracking>
+    <stoning_beetle>10</stoning_beetle>
+    <stoning_mine>10</stoning_mine>
+    <stoning_alien>10</stoning_alien>
+    <stoning_yam>10</stoning_yam>
+    <stoning_slime>0</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>480</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>0</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>0</active>
+      <element>128</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>128</element>
+    </green>
+    <blue>
+      <active>0</active>
+      <element>128</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>128</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>0</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>0</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>0</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>0</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>0</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>0</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>0</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>0</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>0</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>2</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>18</element01>
+      <element02>19</element02>
+      <element03>18</element03>
+      <element04>19</element04>
+      <element05>2</element05>
+      <element06>19</element06>
+      <element07>18</element07>
+      <element08>19</element08>
+      <element09>18</element09>
+    </explosion01>
+    <explosion02>
+      <element01>128</element01>
+      <element02>8</element02>
+      <element03>128</element03>
+      <element04>11</element04>
+      <element05>109</element05>
+      <element06>9</element06>
+      <element07>128</element07>
+      <element08>10</element08>
+      <element09>128</element09>
+    </explosion02>
+  </yam_explosions>
+  <leveldata>eNq9VktygzAMRXABYnIFkmv0UJ0mS01GW+6U6claDLb1s2GV8bQDQdLT50nyu3t/6Dy7lzqQn6b/P4xP63/Kv6PRaZ8Vh9slg8RtooMADH3TI2YNBc6rC479oOKDrLWo6CyCRNtwZvPFHjyVMRQSPfM2xcNjwV0SlBUSudjexlxFjgVGS9YnyWCFFekNTFTY3aJ/4Hoo4ynn6uKV82hkliLaQ1SCdpxR2bTeXthz8aDP0qFRL8rxUMZGhkFRu3ATKrnUHFny++zygFdwdv2j01wMSmLFgeY08GMA9nYXXqRcgfCs5M3afYk+sIiUn4eMSpXofb75GrT7gW4G6r0wZBw5RXqnA5aqL95snUwFUzy1mSM7UrOMol6apL3DjmGfGl7eSM2fZAkrE4LPcqgwk8+dSdi6VadBQfnKCEtjUk2KB73wJcleWBZmpyp1L7jUirOIL5w74cTGkLZB9Q25vCYn6+RWDxr71/Mi4Qzm61hBT10k9xA/30ITnXiw+3HnNbhbuczp8jWw3kTFt9CclanqT9WveLjj0fDa0wnuPag+qws3k97WTbPpH8yRzSYiMHzVdywwd58rk+A4N6OFO4LeKxjvA3bPJB/G5v0AKwydDrrn+BDDWXk6HnZl6Rt+DyQ1S6SH5O6fe8wKinkKuStAVG9wvPh12cj3dn8iAzWZydRoNvvnM+cPSGgw0A==</leveldata>
+  <leveldata_md5_hash>141E0A3D8EC43FA95C7BD11443AC2687</leveldata_md5_hash>
+</level000>
+<level001>
   <title>NUESSE KNACKEN</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -123,8 +279,8 @@
   </yam_explosions>
   <leveldata>eNqtlr1uHCEQx2HSJHJj+QWiFFPu+u4SJ21eJm/gjxbBSSn8EnbvN0mRp7nOlgwMs8wAez5L1gh2F7gff4ZhuGDCh9s3oOfBHqwzn8CbZJCfrpiN/ZgLWzA7mOFnLDPQmBBH+VicsjpPIgdBfrZkqS0Yv1gwE1Ahc6VXq8Zcy1/xmxOtXoyiNyJXdahGe/MLsPB9Xqcmt3MGMQOTWaFv2Eyu7VqzZvtmbaz5zMxAtol+3OW61YydN9bYRN5GCvs62RSZE0wgNfuiW5J79kO3HxPIaOjJWLgovIkDdhBkm7968hYu4Zif19hva253UGqxJ7A5ionMEZLiZUQ+707EOpsjbluiwpkvJbLXyXgiG0XcBXOfe+8H5POFhSex2wzkRB1W/FxPlcwBx/byWvVcMxm0ZpujyTYnomXXVd01+YTe9ov+quBxQD7Gvh2Sb8TK9QmwJ8Q3NgxpN4vmh8X4bMldHMf3U5n3NnL2wjv72OIH3iByUJrXz460lC/k98Gm+ne330FlXmKP4iS10711FW0DF/lrAyPNOLxhkn0F17Ef8wmXp5uL61aFw4jWLZKN5iprvDBUpvJO3tCag8oOZ+Xe4JyAA5/IG3cCeSq90IRKLfX/ieXzQu7Z2+znufhb+7m/+eu9zHUlS/YonpNu9kbV6cST88xfQR6xdzAru2w015t1hu/glC/YG3pdT3HEPyP/1fR7Lm/6VP8AJzxCeT10cfg/ZrI7kf+ruRij7/kf+GKDyANv2yt6XGNc</leveldata>
   <leveldata_md5_hash>B4D50CE6A9336DBD77F79857C4EA2415</leveldata_md5_hash>
-</level000>
-<level001>
+</level001>
+<level002>
   <title>STRENG BEWACHT 2</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -244,8 +400,8 @@
   </yam_explosions>
   <leveldata>eNrNV0luwzAMLKSL7aP4oX6ofyCYj7eJNg5JK+6lLoQAoSVzHQ7lx8fjlsWna7v8/FhosWtvVkWtv5CeVo/Xv7qk/Wj8k7GjpQRSP1nfyk1KP3Ld28zJHisprd23ArpY+Tx9qBbKsKP9E9BZLSSwKqCZQdd8e3d20IcCEr3kGXkZEXSr9RS7eKsum8W6drdXXFZsXb1VMbVD29oqLTXPkwT545GjbnX6vEM8PLzPoWZu2YuykkbGbVy6rgniKfCOtqWrVRTexNXa5okNmvJJb20uHsQ32iHIWHL9RyrDe4Bhjyk6ibyjaHPRpaAbxaBpevKMXJ8tCgedQRJENzs7AaIt9kurzH2M+I7rVzvXl54Pd8bq2Z9bT0z0FteltXaeCTTXJdCSDftHyJWQazngJlazQBacJuHM6R1aDCtrnGZjq6P5aE91jvgE0TE3ifG5L6+Zg55caeFL7L83KQcz5wBW5JEjGpyWwSMKrfIp89qa8jI6eZsHxHAJ8Gbn7oo7k8F3n+OHmb2dh/nynBSINbteWU11DmLVDE+n3UFBfwnwfXw34BMMryppnydAUrmQfVY3nzlfcYZqVimt12TcYfX9keCeqnOUXs8JYv38BzNnC78Mrkyc3+z2ufN107fVNzCuLLo=</leveldata>
   <leveldata_md5_hash>C89D29EAA92FAA6A53C4AC2B25D0BB3A</leveldata_md5_hash>
-</level001>
-<level002>
+</level002>
+<level003>
   <title>STAHLGEFLECHT</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -365,8 +521,8 @@
   </yam_explosions>
   <leveldata>eNqNV9ut2zAMtZwFUnuGAPnpAv3qQv3LAASVRTRKN6slkYeHykVxIcSWRUl8HzJ1q98Ysp3bvpVNr5nSev8uY7RBVdvxtFNzpVzzvkOMKkaN+fwu16/v+nN9/aa9ane1D6nUeGSpzmv0dzP+fnLymvI6xwIJ1J5laFKhka/Od6O5LFSxudjdCi0raSEmc0kWcF0KdGr2HZYUOzXPtMEjJHFt7+AX0jXc0QbXCqkEHJqt38xyfIfAPnPcyFaT0n/H9TySP4Oqg9apL2hUl1vZC3yfkLVc3zpuO0zyAr1C5riv4IzLXBC54RE/W+xZPqJL0xDsDb4Cv01bn2RnNasK/NpSLlRE2HHl2ozUeXbq2Z+SNHOq71HE3ztlVs4Yvah95NVC2VQSTSiLOM96liuoD9g4rHE32z4s/gqoR4rx0FUwd1s1y1hd9O4Z/iCMEUKk8HynnEQPBJoRfQxrK2Q4EQ1ivBvd6DZqyLG6IM9unO+mS0TOK3nAM0q/yP1ATV1QLuItqBGN4acnqIHMfIsmm2uis0duyIgGG+4pOvwupzLf8EuD1JoyRRYNW8I6l0SBTe4DWWwbKOLaht/U/FwJBwQIN9HhgO9kuVUI7R1xC85xfWCEFMqd/r6Txzn6xKpVrPQ8mtIyeoud77R9RH4ZEeZVZs10jo0DPO+4y3EjvHKQR4RqilB+5fznlcgVobgQWPuNUSm/HRPfY4dQhiplVsfCTj3AVcyy04v91tPyzjuPQlq8xx7nGjW0gMMJakFmzdk+fLciv1Asa0LQYlGnSzxEHLGlGfEFWdTAv1LlFUTT6qOKGukeyPY7k5xcJbnz8phthAycw4X6gAosKglVKvUqjO6ftbshosNaXLsVuNSoFlR0VsxRk1TV+rM1xyv1klOu6VtJMtflHPd3s5o9yV6OKtEHcBUVQ7MzodmsiAc62Ub1YE9fkSkhUUEnxzEXWJSRuVDEhzwHdSMCSQWIUBEzr5EBbsEd+mZMjz5eF0vOtRfhQ6Uzr4//A3VYRu1ZF7m5m/cu6kzIF1gkqdp8djJCcrg/2/Y3jZaouQ9a1+tythKaCWqRoMbJ0vXxyUyVpFesxeynzdqX1F/bjzFqov5v/ANUFjbG</leveldata>
   <leveldata_md5_hash>2ABC7B5E0A2083EB3E8E4A2AB03F84DA</leveldata_md5_hash>
-</level002>
-<level003>
+</level003>
+<level004>
   <title>UMZINGELT</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -486,8 +642,8 @@
   </yam_explosions>
   <leveldata>eNrVlwEOwiAMRZftBOodOIdHa7pLeFwl0YjOtR/aMkxDaMgSVl5/C+u0drHzRMEj78IPL3a8YsmWAgZ9xBJp71jyvpfnquecNrHEzWUsEZYO5uJlMheaZhdP48IuHsrlW19JWdO4UBAXErhQY27/Pvc9LrMhghnmwsW+S7Gu+WlzIqheuNLH9dKHS5865kdf4mKpn9zEpcyl046/gFyQf6vNMQL6vj3HtDom07+B9LU6xmIsVzEWbuJiN4RLe46NUcd8tI/3fYv2kb4foZcj7mNk6JVtfb82x9r6fi0XhuuYHxdSuNjvlqP1fYuH932Lh+jF4w02Apce78p/f+8jmkuCZqXv+3Lh4LF2sjuE0KRJ</leveldata>
   <leveldata_md5_hash>D8B10DAFDFFF4F2B8B7044E39781575D</leveldata_md5_hash>
-</level003>
-<level004>
+</level004>
+<level005>
   <title>4 QUADRANTEN</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -607,8 +763,153 @@
   </yam_explosions>
   <leveldata>eNrtWDt22zAQ1MIXQIzWsVudQVUulJJki7fRFVj5Kil8tIgkCOyXZCzn2UUenigStLmD2dlZUG+nty8wft0xchn3PGPBgGQAu9oeE4bfp5eQxTOmEXf/O5dnrBiyuA/1O6sZjmHlocWOh5Dk01PIDAOefhBsekh2zi6GrRHZt+TBi3feREMxxJ2I0c2nhcFmITt6+BseNMZIMJzZGvPpSgb9Pz6rMUSDiehqNW7ycDXOlquH2/GbgSHu6jBu5kKv+nq63I4P8xmQnEz3LxXZe3NBa6dhmK5Cefa5fH9jPEC9ejyIIZKse2xEhuGBReSobD1kxx+OK1LzsHIMLNZ1xyebHrZrMTo12zAkU4G46RQ6F/GwFqORC7pqcJy9VS4c8oe4mZnoeBSIuLDTy47rIbqe4fvD+WDP26vNuMtLwwDKK3HXM+/1aguD1524ZwK5QzF0t+v+duzmO335dGxguYvkiuaCrxWEb19mx7qKbHEehvnJfY3RkVjTfF8wLmMoqFcMUJ7/YFbntfgX7uRiXdn69IWXdW6ozLSZCQvnAWcfbjycSeRHw7d1Lob5+QPLAs7rx3KXopjmB4XhKUzfWfFwTJN9We1Q4yzHvg4sWaCa4BiC4Bt2d3UyFwOL0BS66rWvOerrua9JHu/sOITWQ89qoKsq7VitLJlZNLq/n9z2LoqBVyKS+D25h1WRaNSm3lVf2djfT3a1FrqaC6zrbiwNtXI4D2CstHV0WZWXf+KTKDrjEvfRdYb3Y/gefAxgeNPeTuYjefj8d97X+qTPGK//MXwxDF/ldxjqgmN5u0Exh2J+VLUJ8zsClDqHWu/pNqCM5kXAajPfnCPPcdqHDjm34rQxpBonMfdbo76E5kcgeKAYlnWGygGdb3MUA7CY+jcl6YIwc0N9ssUJYt3o8GPxkOqRZoFzAgxZMjHYeCgfweEBWKREsg/1mAg6YBhCjYeKC7r+IPKi+wUY+UhMhU0z4OZidLgICpPEsMYH8WlnqVRIy5aVC1mLNL685/dNqCtNVRGpqgNIRmCTB6suUczq2uQOgCT3VrUkhsFaczA4WeY9DLoy6UgVC5h7GK2D0Z1rSCmGJPwgiUoA4ZvrUe7lguNFdI5eSU1KT0rMM4EosSlD6mHc8AZLHXZdcG8G4VuJIZIYrLU3HMGoHu2TNI6lTyAdLJm1OW54Ap9ZBtdDUt0hidoEpVdkPqk9mZ9LDjQPtD8n4tyJ6BBID+G9e9zxB69idL9A4scoaiQdeMeRfsgdgrtEcPSQSDfgXoSEGSCdxOublidKZkZjHyX9J7Ha0Dsb6tXB6RWhsmP/hfZqFLUABi7eU7b2D3zNdlflekjCnXTfBMOtrH7heaJ20GDqoVVeIv7M3SoZmpSdYDT9YLsuknBm2SWbMrKTC1T7Ncsp5a5f9wtkXcryznx6DpnUieybo/JFu1rQ9AepRbrTB9KtMvtLykMw9kmWNy4zz8HbP7SO0HZMQHSQiJfKfdRoeKRXIaPLAxgaSMa8r4fWq+zfTKSPSk0i6Qmo9va8k37c7zA/y7jvnfcP0eTWlg==</leveldata>
   <leveldata_md5_hash>7A74FC2144128EC3254B4457E24DA8F2</leveldata_md5_hash>
-</level004>
-<level005>
+</level005>
+<level006>
+  <title>AREAL 09</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>230</emeralds_to_collect>
+    <score_time_factor>50</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>0</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>44</x>
+    <y>50</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>20</key>
+    <dynamite>10</dynamite>
+    <hammer>10</hammer>
+    <nutcracking>10</nutcracking>
+    <stoning_beetle>10</stoning_beetle>
+    <stoning_mine>10</stoning_mine>
+    <stoning_alien>10</stoning_alien>
+    <stoning_yam>10</stoning_yam>
+    <stoning_slime>0</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>1120</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>6</magic_wall>
+    <light>1</light>
+    <timedoor>4</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>100</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>0</active>
+      <element>1</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>1</element>
+    </green>
+    <blue>
+      <active>0</active>
+      <element>1</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>1</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>1</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>right</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>0</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>0</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>0</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>0</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>0</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>0</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>0</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>0</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>1</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>128</element01>
+      <element02>206</element02>
+      <element03>128</element03>
+      <element04>128</element04>
+      <element05>195</element05>
+      <element06>128</element06>
+      <element07>128</element07>
+      <element08>128</element08>
+      <element09>128</element09>
+    </explosion01>
+  </yam_explosions>
+  <leveldata>eNq1l7uOEzEUhm1vkxAhZWfapYxASEvDRSgVj8BDsOxSIIS0gMTVsiMuBVqQoNoqbzI90na8DDTYPr4c28cTVkr0KzPOZOab43OzMzC9Ew3mI41m7lifZeP6rHEEJe42bc2514Rk29BjxL2yM3utptWx1nT0PN3g384oHUV2LkdhnH+33C9GwepP7L7YZp5pdpZ56Lt/T28Ed/DKJz361RKesetGPNqrnKQ/gyydozfB+FEzThN0J0dcnlGV+10R0sS1PMu4m8NA3gnPL9D3Bbqu2Z7oWFKI+gk7FDZ2fJS7QLQ0Bq4s7NXO+9rVAW9yJbJ3kVET9yaS9F4DT/eR+4q9jF7/bT7f3EgR1MAuM0OztTk+8W8I+eBzWnQixLcfyUxVXTmKuSoJP1huHjde5QmP8y3tTdyO4M4RV0QWzsPAvXBasV/mA8R1Ye9TxF0S+QtWCzS2z688cxW5yQ99Ze+yWReWzFHcErXmBj/0pH8F8i+PvuUj+VByhSOXXI5iJZDVm+KmIpfuJCrzL45gmzthx67zAZcT64Jmcz9KcwgextwHkbv2/Q6q1XL/8FKSpRHOYd6sNzh37DV7Y/Q2W9/yO4EjiS7a4vZmRu/Ye6MPnkvXK/QgXlVGzp2zJcEY67/J3pS7wnFXhTS74dhDth7TvSXkbJDw5+CHeeGHMIshcudOwc69rGcdVqvzX07ZC6yh4H50XJ31blhj7oi0OyotSzaDHw4EbS+uicC9LSaRcxwptL3lPiqP11nmh7vinqDqkcrKMNe9gmutDmsildUzt9LIKhfzeCfuMuMqdku0dezrCgTPnbinDgRwJ01u297nzT34ebR3EvtDvRqO5ZnVjKwllXHB6/uujr464Ugeop4cZv+/+0ntKylxk92WWz5zNb5h6lXnx+Cpa8flscuEOjkq6kUR+4fW/4B9c+8pwcV7qrF4yhF7ue8NKZfLur78fl05L/BmD9Y+ar2LWbkP1mgnlK6Bvae+X3fwvIAP9qdydWR3HJ/Zwzhb3dhpYz9wd0cvqP6uo831fOD4wwiu/TQq8yFUZqLrgjymtKfD/y+CvV3wphv1ApPPi0+yd2FEcZVb/4FXegOTNyvnSvO/W6OKDW9IXoXxyuzt8TtfmCvhl4sibrvQPzIu1gc=</leveldata>
+  <leveldata_md5_hash>069015490FF556A78CEF5EB6DA4CD187</leveldata_md5_hash>
+</level006>
+<level007>
   <title>DAS SCHLAFENDE UNGEHEUER</title>
   <author>RUBEN WOLF</author>
   <version>01.06</version>
@@ -732,8 +1033,153 @@
   </yam_explosions>
   <leveldata>eNrNWUty2zAM1fAGHa677ce5ghbtgXoHDHkMX7aWKAq/B0hJu8hw4jgyTT4CD8AD8618/8TjZ3mUtmyDFv3bvkdP1/JcxliLffJvY673OPFFKOh4R+BTiW9bcXvVu4zxEXwD4cSHLZVZsS39HIzFYhun2IacO0df6lJer+N7ct604MCX24q9yUNit3v2fce1oFN2hb4rnqw7kvoabEHvX4tAPn+akxa15xzltQP2QDX8ouOH8W2jiDkSn2TLQDisQwHz+/7TnNdqEG/13Fl6n1nLT4bHt78Zn7SP5LbmCI6zLvboSw/ZoU/C/NRP5KwNH6WZoYvXOA/I2O3OelEUW3zjifxb2u8jeWpEg/fTekbdFnN+7ekdglkK40MIORqzPKV5ru1q19bxR4B/cvbwLwGWM9N74iHsYcl1zR6bm3DO0PiaiDCEsC/YwjOiok85n0obNZNrUWXitR6i/sr4H74tR4bD2VWf2lp3dXmVrUeuAhDIcRIfHZlRcmFyn0RF0zHh7eOzh/ZhVI1I8QD7d8bCWBvVuLrbGNWHOHvQGT0Wmz+JP6Wsv12wOFYIdUF6DOOrO2sy3XOlznR8TMZvK3stmGmcKDfV3dpaLyAu3MM3WTzWbWfuk/kWqy+UfbZ1uAaxIsDZWtvH4yOFb57f6wWZA1bBjX5TEUdckJWQV+P66zWCZTFSW/Npva3YI1tLf1SHj8IKh/DxzLsItf0xvvlpCfiHMti0oa5LWnGQWdUrHp35KIkQq8Okf+Oo8pnVz6pn7uzLl9eQjERqHOdyi1zjQxW0uRwTrc34mtH9tkrgM6LY1vHLn0pdZ/NgVMkmEwh2x7b3QhzJ8Onq15NeE7HbdzlYU/lVUCeS1Y85p7hKluV/MgqF7Rz1gujTuH6QUQgzO0f3GmzpeX6tBm1X20y/nmetuL5FKrgd1bQdipWR6drJCs/m8O3910KOeXld0fcH2+44OqdHhr7iSGWF6BVyU938YLWvg/nNkrVfXTLuP88bF9YR1dU8Sj0W1RXd/UX9Rwl71MlKWVP6Pl8qYevh57uqHnMZ4/P21/ySGPRdwx0l4O2jVQEpHBifvyXL2HtXSeh+Kss8rF/GnEd5K7gr0JmdFn+3h3US0gJr8V2arGoWXxHx8Wd/+utCN+KcGrOhhR1k1s35GHi8bqDHjN8BPtQTzh2/lh6cpi3RrTaFNX1ERldd9tX9i/SYv1vN7HfntljWlCfk/sB3dYsd7dthbBSVFSm9KUZ3VggfVs72CR317apnm7VQ2zzqI3Bc8v1zdu9uv9P3W5ma9GFSQ0pLSZWQe0pyfODL4yFe5+ruUvdR19/xPNrwZbdO/+8/Qu/N7BPf26f+/9uP8hfL3HoA</leveldata>
   <leveldata_md5_hash>87801BD774053967B4BEB47D42A8F15E</leveldata_md5_hash>
-</level005>
-<level006>
+</level007>
+<level008>
+  <title>KAEFERKAMPF (MODIFIED)</title>
+  <author>RUBEN WOLF</author>
+  <version>01.13</version>
+  <quicksave_allowed>0</quicksave_allowed>
+  <values>
+    <emeralds_to_collect>130</emeralds_to_collect>
+    <score_time_factor>50</score_time_factor>
+    <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
+    <speed_grass_spread>0</speed_grass_spread>
+  </values>
+  <leveldimension>
+    <x>37</x>
+    <y>40</y>
+  </leveldimension>
+  <scores>
+    <emerald>1</emerald>
+    <ruby>2</ruby>
+    <sapphire>3</sapphire>
+    <perl>5</perl>
+    <crystal>8</crystal>
+    <letter>0</letter>
+    <key>0</key>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <nutcracking>0</nutcracking>
+    <stoning_beetle>10</stoning_beetle>
+    <stoning_mine>10</stoning_mine>
+    <stoning_alien>10</stoning_alien>
+    <stoning_yam>10</stoning_yam>
+    <stoning_slime>0</stoning_slime>
+    <timecoin>0</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
+  </scores>
+  <times>
+    <to_play>800</to_play>
+    <wheel_rotation>0</wheel_rotation>
+    <magic_wall>0</magic_wall>
+    <light>1</light>
+    <timedoor>0</timedoor>
+    <timecoin>0</timecoin>
+    <shieldcoin>100</shieldcoin>
+  </times>
+  <inventory>
+    <dynamite>0</dynamite>
+    <hammer>0</hammer>
+    <white_key>0</white_key>
+  </inventory>
+  <replicators>
+    <red>
+      <active>0</active>
+      <element>128</element>
+    </red>
+    <green>
+      <active>0</active>
+      <element>128</element>
+    </green>
+    <blue>
+      <active>0</active>
+      <element>128</element>
+    </blue>
+    <yellow>
+      <active>0</active>
+      <element>128</element>
+    </yellow>
+  </replicators>
+  <lightbarriers>
+    <red>
+      <active>0</active>
+    </red>
+    <green>
+      <active>0</active>
+    </green>
+    <blue>
+      <active>0</active>
+    </blue>
+    <yellow>
+      <active>0</active>
+    </yellow>
+  </lightbarriers>
+  <conveyorbelts>
+    <red>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </red>
+    <green>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </green>
+    <blue>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </blue>
+    <yellow>
+      <direction_at_start>off</direction_at_start>
+      <next_direction>left</next_direction>
+    </yellow>
+  </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>0</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>0</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>0</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>0</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>0</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>0</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>0</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>0</tc8_warn>
+  </treasurechests>
+  <messages>
+    <m1></m1>
+    <m2></m2>
+    <m3></m3>
+    <m4></m4>
+    <m5></m5>
+    <m6></m6>
+    <m7></m7>
+    <m8></m8>
+  </messages>
+  <max_yam_explosions>1</max_yam_explosions>
+  <yam_explosions>
+    <explosion01>
+      <element01>128</element01>
+      <element02>128</element02>
+      <element03>128</element03>
+      <element04>128</element04>
+      <element05>128</element05>
+      <element06>128</element06>
+      <element07>128</element07>
+      <element08>128</element08>
+      <element09>128</element09>
+    </explosion01>
+  </yam_explosions>
+  <leveldata>eNqtVttxwzAM03UG7dA1ulD/OAAPk2W0NqktkQTo+KPnsxMnEkWA4OMxPj/+43qMx8Dw3/v59GGv59/38/N882Olhwtr59NSXZvXxf36BAuWnNbtVVj7QKch4ImWPPxe74ijXig+VYSg9TiQaKSVpxO1pzjwe+V+Lp8sYa4+4fBlIzfyd6vAiQ0QF0hI9ymRcVaKCWuTePMUO47IbLirPtrCYIlxBF6zhlB8zrrAip0RKpBWq98WfFfoIPTHGlVZFS3hdQYoUkg+93HdPKGo76upAFr7WQWVj6pUE1FGQqf+RbM+MxcrBecdpC0dS9zI4K28Tgf12pZMnIOie8X6JJ7Q8snoLSBQsUPCz3aM4rHzxdrYKWVcV5mTJ2YEUn/e1nL2CYSyRh/kMULsVD0A1SWUShEz86wqoC4WGTXRIXQd1z0DAl19znVCl8FYlRsNP1lNfqmCPlYQ1SLWTLsxmXjbzdSEUWtGzUST/l7Vp34CUnVdTRi6xvY900u/m5edw9/MalEFaCce9m9SPqlJzGV8dJeIe6IKNpN5LphvOcMxP92dk7/H9RT9A0tJ2yE=</leveldata>
+  <leveldata_md5_hash>BB7B14282B9682E71CA6DE4C4C1C221A</leveldata_md5_hash>
+</level008>
+<level009>
   <title>FREMDER PLANET (MODIFIED)</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -930,8 +1376,8 @@
   </yam_explosions>
   <leveldata>eNrFWTuS2zAMBZQqk8ZrtzmAjpH7JKU3k5IDqsqpdINUe5T0kUlRBPGh6J3M7GCsv/X48CWhFdYPkr9YhKDsyxGyu2MyD/wDE671bjRHw68jO5OjzHsC6515W/lWjpboe+X5nkbQ1VrB1Xqlrr74XZudP+rHma1ngtZKCGfj1yjFKjNoHXG+Us9VixKlPsn/YfsTQl/PozrlZ+QiIfSsXfyZjxZBM+95l6fh9ll6gq9kWc9l5PN77ZHNoPiVRjvLNHf4Ot3flZlm5lc6Jtak62BuA8T9KB7X+RNyT0wvWs8I2Giyvq++t1yL29F1x89yMY6qrIdPE+StF78WbpUIyxbfy44bTeHjtTxoda7y8fMf7fqt+9+J/RVum0ybfNpE4rb+VfnWqzNwXJtHhJckZ3xDo+fWszNfmX9WwYyac0ubPeEIXl1o7WvjarmI7aVj3xzXfftKnKWJGRrwq6D4kqi/yOrpqjwoOgi2DqKpZz5LqHpuZwMkMsQ1SYQc5w+Z9vcXjFsSD3c0jsKRIb5OIeHeEu60vyvjR8fXdPwSyIy4GlWf67nlW7hqXNqyNj8LQ/7sxZG2Jx5s6Qn7ygrMcenImDVPlvdPxzE6ubONcD9+Z7DylcWXdp7ILCv5+vatVjvLG/VJgm/JtnG3KQnWD//OGI9n7ulZy6+8+UZmXGZ/D9zQaDAeWMg8ejrGdGW41wY3qDiiQ8/WaGpWim5Oijtuvw6e+5VVB2Xtr8e4V7/HNmv93qkLtfK3+WqGEVwdW5pvMHBH5pMEHLdX6y6HfYuPWdrpzzcQ7HlOntNIRDxwsckd0bSKj1tn2qVKVdxXgVz0iQwzducCqzG/9ut+9eZXg3NM1UfmyReFG07ti2D5VX5PixwYQ+pGkMTF3YcRznEz4qtp5xEJjueuoFds3L4/34Ucnqj7fL3A9Wwjh8ERLO4KzM9XZS3icX5L4vHMqEtn/izzNvfnjGQjv8Gf7Rdc7ssTuG09ivCrg5z5erhLg9t2YEreKB41q7zxIyEXbZeoateJwdDzonARrHzVXs3/iCfS86Yilj9j0y2wcMMhX8Q+dHA56uRYUq4XNG5Mvyj2Pi5HvYl5HcJI3S+4047T7r8PcOX5ilvT0nPOqC8MNzqcddxKrkGt/GbQ698ZLL4BPot9tW9oei4WV77aR+D5Cs2u5f+SjKpX9lLP47063qckY/Yge2oIFi6Prn6nkIx/INBpn9PmazPVI5Ddbq8njIb92nylNYxgdVFnIKO3f/6dQXaLEby64PeNraee799a3zUIRvvPvS6414ktvsdxEUa7zTTwBcYej16HIuh+PZkdZl/741+b7PxsMyXoY1j30em6rx/2le4fAwCt5Q==</leveldata>
   <leveldata_md5_hash>FA2E25A7140946A4EA4A8C70D53E013C</leveldata_md5_hash>
-</level006>
-<level007>
+</level009>
+<level010>
   <title>GEWUSST WIE</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1051,8 +1497,8 @@
   </yam_explosions>
   <leveldata>eNrtjbENAAAEBI0gJrKQKSyu0CJeLZdvPrmck8NIiTZ/Ggysb8jYeGNn2KGBElSVNAE=</leveldata>
   <leveldata_md5_hash>7D607341C23B6D635A98954703D7815E</leveldata_md5_hash>
-</level007>
-<level008>
+</level010>
+<level011>
   <title>SMARAGDENWACHE</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1172,8 +1618,8 @@
   </yam_explosions>
   <leveldata>eNrt1LENACAMA0GXBDomYjcvwbg01CkdRbJ+gJNcmGBRC0NcfHeLs9vBPbje2W7iTnFR9s3EA6svcZs=</leveldata>
   <leveldata_md5_hash>7E66C88C185C46F74EC276BC42D431FE</leveldata_md5_hash>
-</level008>
-<level009>
+</level011>
+<level012>
   <title>PESTKUGEL (MODIFIED)</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1293,8 +1739,8 @@
   </yam_explosions>
   <leveldata>eNrtllEKhDAMRKXHmq89WsBLLOSyu6Btk+o2NV3xJ4RK8+HrMJ2I67LeUvT3CmpQg/qL+mp63ld+zmutHHz3mKZmdSi7rWBoHvOV1Qm2Cz0ql8VL2jVuWi265UBl5R7lFK8DKColjYVivkjlw6osMrJg3VZ2MikvoE7w3RYpsvTkutaWB+Uld/PVo27ZSYLzFunq5cB24JhYapLgSZZWRwNKR6YgNWTZweVA66J02j+xpJxldXf+iT3LFUzmiFYoN6lxY8YBlPdzh6mvNp9MW/wPBDWoT1LvqA+q0J7z</leveldata>
   <leveldata_md5_hash>905858E71404591A55230BFA0C1AC18E</leveldata_md5_hash>
-</level009>
-<level010>
+</level012>
+<level013>
   <title>IMMER ENGER</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1414,8 +1860,8 @@
   </yam_explosions>
   <leveldata>eNqlVdsRxCAItBzLuKbEXyahiJtJs2e8F0YUJMOPRpfltWYP+w07nPbGbg6TsDjZaVjNUMBSSCF3N6CeaLwYonADytckRs6xqfiH7gY1vJntrvlqdaIaxaxW49rCh5tj0VxdvUfE/NuwKOa1OhujriJbaXP1cPB+7flbnd0n9zxHlRcHHYLCmk113gwd/2OheKUlJXLeaJynnvdUb5ogsDtp9atHmmrNvG9ONM1kEjVInQavWZ1aICFHy1zlhncNa3kDjtv/FL+9AB32z6c=</leveldata>
   <leveldata_md5_hash>4E0D47BD0CA2D5E1CF64577B26E887D8</leveldata_md5_hash>
-</level010>
-<level011>
+</level013>
+<level014>
   <title>KLEIN UND FEIN</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1535,8 +1981,8 @@
   </yam_explosions>
   <leveldata>eNqdkj0OgzAMhd3A0KFShVjpXbq3e3uJCo4QKT1Ct87dOARb596ojonBhIQ/PQXF4bP9MGnALFaDMqAXaUxzlV23m6Irel5xXUQcr63h6GofXDzn5I67W9TJfuNXss6TtIGS+pZeb3nKtK8n/HCF/84b9RKy9JdoeWqpMM0+QrTs1dKF0nBSHPn3pFC2XgL9+0rkJtTHZssJ1qK3Fr7qwQQ/kFFGHqFzIjPk2tqp8mf1GE0vdU7W6A9Jl9uw</leveldata>
   <leveldata_md5_hash>23BE654472A0CFABD41596CF9B337573</leveldata_md5_hash>
-</level011>
-<level012>
+</level014>
+<level015>
   <title>SCHLEIMGARTEN</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1656,8 +2102,8 @@
   </yam_explosions>
   <leveldata>eNqtVEEOwzAIo0/gR/tbPzGJ437YF2wpRbZJKu1Qoa1ZuoBtHHb7/GJ/IDLP+D62sBHHlvE6V2H5WQX/e4SfvzJjXKfdega/qmAvph2sx3PgVCR45soJPSpm9Wg84uTN+8y8Y2Bkyhd7lQ85gKDWhQc64QRQZyTff9RRpMoS7/arH3d8nDD2cFO9/eKr/bxzB3eiV8V34nPSquuGnKimfoimX+6w0i45u4tUOdal8s2uqxU7Th3FuAoD/MwY1wqqT2ZtO9/ZDYzWratfmuqNRn9VsbB5HmiXq4bWVb+oZ2b+97XYzzjLTDqzztub+/MN5gufdNF4dWv6PalO1Tydpwt7ZnXj+s7bap4+O++/+4JRgw==</leveldata>
   <leveldata_md5_hash>656BA00C830068AF0F0191B445E131DE</leveldata_md5_hash>
-</level012>
-<level013>
+</level015>
+<level016>
   <title>ROBOTERINVASION (MODIFIED)</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1777,8 +2223,8 @@
   </yam_explosions>
   <leveldata>eNq9V71SwzAMFpl5kC78w84Or8EEdxx3tHTUyRM/YwfWvEmPv+fCdhLHkmXHGdrThaZY0qfvk+wmBswe7GDHti+MdqcIba9Wu3OEx1ko7UwE9BjoP1v/OWU31vO2yhNtxoc+t8M4hhM4hU2FGfi016bKuqwDxpm9zisxsBqjyzpqVWsGnmZGYNiHtf73/VU2sqbnJ+ZVqkmuUyGOfITmT+Hi8ZRFT3MPuUYeVKxfy5D356sdDwoqEsOiCe1I5a/py5lRITeFSmQMieop+u/YwTSCGMMxO2WmiFgeEjxirTgSiu8GFr26cR0kWHL1h7mixEeyGXgvRFVpbrk29pxYjSSmlUJNi1DVyCv24n/jfsh4nZHUKv6Okzwo4ZHiaD4DD86ZXylGvicd6+eoh7w/mr5Y7IdWt4EXWMJK4Z7ON0V16P6YwVjBF6wz+qYxeYwSDwN3ldyRRen5UNEinQSthzLP2L+4nzQxBzSDe8zDab22HTWTOXLr6R7i/XArS/i2c2My/dP0KnHXes77WcfD1bUMdU1rpe/sEgZ6fX/ZfilhYHVPr0X0nciR6mfUX4P82aGxkTFrfxoY9juYj3N6r4MWWJgvYmfBn8dAtR+a/08yz3nemDkLTHFutFnTc2MW38AWzpvj3k6bmnrjd8k69bZw1Bz6c/7C3k35j/WU6orzv/cYpn/m7+6MshMHO2rkE1ouhsKzscO4tHGv3t/dvbl3niZnJwmGi/koxFw1DmPe2/xWWI33P6oXm2Q=</leveldata>
   <leveldata_md5_hash>810B8D2A96D2E5721C5E31A28CB8DAC6</leveldata_md5_hash>
-</level013>
-<level014>
+</level016>
+<level017>
   <title>(BONUS) DER SAEURE ZUM OPFER</title>
   <author>RUBEN WOLF</author>
   <version>00.00</version>
@@ -1898,7 +2344,7 @@
   </yam_explosions>
   <leveldata>eNqtWNuR2zAM1OiTf5ZqYB9JQWkgT8+iEnQaKxJJLAAqzuSGc2dZXvGxWCxIySJvtuoawp1qcBshtutzNTh+/pH0xrjzU02/5+duxt3Nk+fvoHlIv3/0VF7ty5//9klex3F9IOTCtXbO48ApsSFhBb4/y994lnEa+KrJOiqhEUY/57e5uXDbAi9ZUzfuw0RC6ffzevDCo7ZoSsrziJb0+Q/c7lRQEkbnOkWIW/u2mXVjEreMOVwzVdIpHCdKPfr5Seek8bWbcdWsq6ZRPMcVoyXGaeBl9KU96xDiodc9kCZg4ic9TkLsWXwJeZnFDVd/JaxxMLgn+QvDneUFryfauFuSi5V0Jl1RuHE3MQzB+AquJ9HVMDIgV5TtTxy/cZZC/eBakV7cjm+slzzfWX/acwGJYwtlqkw9v40L54sDvdJ6q7lzKgRBB54ppaz38cj4bVd7wp9/SlN/KZ0RJXey+ctalsSflfJQg/MXWm9ThO9JE14keLO4+ILqEpz3HriH8+K5Tm1WqPOa4Qc6VXshHFesLDor+cvQvffx1t9q1qlUV5HWX/aM4uJ7ZkRJK+qMlxO3m5picVvITTiHsP7iXVeMIhsvcGyUaX74nLRVGL2/1TmoZ5p9Q0yfxdRUvw47lq2pMD4uaaVm/oqprNWtdO4HvKdAqgNNo7ua/Yu6+qv0nF+HEEeV6uXQI0w1BWXBOz6+Oz/QzphcFR2TfWxN90a44W+oi/dNMI68k8JGvpVkBUNFEvS8kouCskFCXpRQv6IOEHZPVlc6cRUYz5LEaXPPFDOqGI2UHiEN8xOXIeLqdEn9wrJk/RSdq7YfEeOC1k815Hh1++zc9bbgV0I5CcekpvxxNDJ/lnD+8edBkD7m55TI2IhQMbhCStJEtz4vNXFW9P34eX/v1z674rmC9+XZeQbuLChmJzE7v2G6/xvPgpyFedaQt5XqN+uK4wHzXVJFFRoDgefNxbQG3ccYx317CeeSGMn7eqlhn8MnJF2q261wHfS1ToIOCt0vbnwk70vgrovbj4Nc0J8P7/xewv5q9v6F/V6pUjduQGr1/fEbFfQTpiTZwLVYwrmMs7smOKSZFP0F4ZRfaa5K8/OuV4NOcVN9s3H5tAMzE+YP/Ryoi38rYfcGs7c50Yc0KALunBz3rpr4LtKzRK6/oz2NVsSttyH09deafeb4fuCeF0YMzjY1OCGcEk4M7hl++Xfcc4p73uB0sgKPy8fXCU4no0mytoH9PMVF7D1O/puXv+M+fWh/X5dvb7Tvy4/l5xvt1/Ib1+WG+g==</leveldata>
   <leveldata_md5_hash>4C36F8713E1E294E943B716E8945D955</leveldata_md5_hash>
-</level014>
+</level017>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>39A581C5382D2C774E5768E506CB6D7F</levelgroup_md5_hash>
+<levelgroup_md5_hash>FCE436D667D934AE0CC04897BE592FEA</levelgroup_md5_hash>
 </levelgroup>
