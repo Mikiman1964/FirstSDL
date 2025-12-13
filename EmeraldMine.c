@@ -18,6 +18,7 @@ Für V 1.13
 * Quicksave/Quicload funktionierte auch, wenn das im Level nicht erlaubt ist.
 * Quicksave verhindern, wenn Man tot.
 * Bessere Lesbarkeit in Statuszeile durch größere Ziffern/Beschriftung (Arcade font)
+* Datenstruktur POSTANIMATION aufgelöst
 */
 
 #include "gfx/textures.h"
@@ -455,7 +456,6 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SAFE_FREE(Playfield.pSlimeElement);
     SAFE_FREE(Playfield.pStatusAnimation);
     SAFE_FREE(Playfield.pLastStatusAnimation);
-    SAFE_FREE(Playfield.pPostAnimation);
     SAFE_FREE(Playfield.pLastYamSlimeDirection);
     FreeTeleporterCoordinates();
     for (I = 0; I < EMERALD_MAX_MESSAGES; I++) {

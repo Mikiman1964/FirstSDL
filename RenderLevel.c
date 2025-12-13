@@ -154,7 +154,6 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
     uint32_t Y;                         // Für YAM-Animation und Post-Animation
     uint32_t uReplicatorAnimation;      // Animationsschritt für Replikator
     uint32_t uUpperLeftLevelIndex;      // oberstes linkes Element, welches entweder komplett oder dessen untere rechte Ecke noch gerade sichtbar ist
-    uint32_t uPostAnimationIndex;       // Zeiger auf Playfield.pPostAnimation für Post-Animationen
     uint32_t uAnimStatus;
     uint32_t uSelfStatus;
     uint32_t uNewMagicElement;
@@ -201,7 +200,6 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
     uResX = ((Config.uResX + FONT_W) / FONT_W) * FONT_W;
     uResY = ((Config.uResY + FONT_H) / FONT_H) * FONT_H;
 
-    uPostAnimationIndex = 0;
     // Die Eingangsparameter "grob" prüfen, damit nichts Schlimmes passiert
     if ((pRenderer == NULL) || (Playfield.pLevel == NULL)) {
         SDL_Log("%s: bad input parameters",__FUNCTION__);
@@ -1287,20 +1285,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     uTextureIndex = TEX_QUICKSAND_SLOW;    // Treibsand
                     break;
                 case (EMERALD_ACIDPOOL_DESTROY):
-                    // Splash rechts
-                    Playfield.pPostAnimation[uPostAnimationIndex].uTextureIndex = TEX_ACID_SPLASH_01;  // AcidSplash 1/15
-                    Playfield.pPostAnimation[uPostAnimationIndex].uX = uX + 1;
-                    Playfield.pPostAnimation[uPostAnimationIndex].uY = uY;
-                    Playfield.pPostAnimation[uPostAnimationIndex].bFlipHorizontal = false;
-                    Playfield.pPostAnimation[uPostAnimationIndex].bFlipVertical = false;
-                    uPostAnimationIndex++;
-                    // Splash links
-                    Playfield.pPostAnimation[uPostAnimationIndex].uTextureIndex = TEX_ACID_SPLASH_01;  // AcidSplash 1/15
-                    Playfield.pPostAnimation[uPostAnimationIndex].uX = uX - 1;
-                    Playfield.pPostAnimation[uPostAnimationIndex].uY = uY;
-                    Playfield.pPostAnimation[uPostAnimationIndex].bFlipHorizontal = true;
-                    Playfield.pPostAnimation[uPostAnimationIndex].bFlipVertical = false;
-                    uPostAnimationIndex++;
+                    // Element läuft in Säürebecken
                     uTextureIndex = GetTextureIndexByElementForAcidPool(Playfield.pInvalidElement[I],nAnimationCount,&fAngle);
                     nYoffs = nAnimationCount * 2;
                     break;
@@ -3287,39 +3272,51 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
         }
     }
 
-
-    // Ab hier Post-Animationen. Diese sind keinem bestimmten Element zugeordnet.
-    for (Y = 0; (Y < uPostAnimationIndex) & (nErrorCode == 0); Y++) {
-        uTextureIndex = Playfield.pPostAnimation[Y].uTextureIndex;
-        uX = Playfield.pPostAnimation[Y].uX;
-        uY = Playfield.pPostAnimation[Y].uY;
-        // Es gibt z.Z. noch keine unterschiedlichen Animationsformeln
-        if (nAnimationCount < 15) {
-            uTextureIndex = uTextureIndex + nAnimationCount;    // Animationsformel 0
-        } else {
-            uTextureIndex = TEX_SPACE;
-        }
-        nXoffs = 0;
-        nYoffs = 0;
-        fAngle = 0;
-        fAngleOffs = 0;
-        fScaleW = 1;
-        fScaleH = 1;
-        Flip = SDL_FLIP_NONE;
-        if (Playfield.pPostAnimation[Y].bFlipHorizontal) {
-            Flip = (SDL_RendererFlip)(Flip | SDL_FLIP_HORIZONTAL);
-        }
-        if (Playfield.pPostAnimation[Y].bFlipVertical) {
-            Flip = (SDL_RendererFlip)(Flip | SDL_FLIP_VERTICAL);
-        }
-        // Position innerhalb des Renderers
-        DestR.x = uX * FONT_W - (*pnXpos % FONT_W) + nXoffs + Playfield.uShiftLevelXpix;
-        DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
-        DestR.w = FONT_W * fScaleW;
-        DestR.h = FONT_H * fScaleH;
-        if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
-            SDL_Log("%s: SDL_RenderCopyEx(post animation) failed: %s, TextureIndex: %u",__FUNCTION__,SDL_GetError(),uTextureIndex);
-            nErrorCode = -1;
+    // Den sichtbaren Teil des Levels in den Renderer kopieren, Teil 3
+    // Hier kommen nur Splash-Elemente des Säurebeckens
+    fAngle = 0;
+    nXoffs = 0;
+    nYoffs = 0;
+    fAngleOffs = 0;
+    fScaleW = 1;
+    fScaleH = 1;
+    for (uY = 0; (uY <= ((uResY - PANEL_H) / FONT_H)) && (uY < Playfield.uLevel_Y_Dimension) && (nErrorCode == 0); uY++) {
+        for (uX = 0; (uX <= (uResX / FONT_W)) && (uX < Playfield.uLevel_X_Dimension) && (nErrorCode == 0); uX++) {
+            // Levelindex berechnen
+            I = uUpperLeftLevelIndex + uY * Playfield.uLevel_X_Dimension + uX;
+            if (I > (Playfield.uLevel_XY_Dimension - 1)) {
+                // SDL_Log("%s: Warning: Level-Overflow, V:%u   X:%u   Y:%u  T:%u",__FUNCTION__,I,uX,uY,SDL_GetTicks());
+                break;
+            }
+            if (Playfield.pLevel[I] == EMERALD_ACIDPOOL_DESTROY) {
+                if (nAnimationCount < 15) {
+                    uTextureIndex = TEX_ACID_SPLASH_01 + nAnimationCount;    // Animationsformel 0
+                } else {
+                    uTextureIndex = TEX_SPACE;
+                }
+                // Splash rechts
+                Flip = SDL_FLIP_NONE;
+                DestR.x = (uX + 1) * FONT_W - (*pnXpos % FONT_W) + nXoffs + Playfield.uShiftLevelXpix;
+                DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
+                DestR.w = FONT_W * fScaleW;
+                DestR.h = FONT_H * fScaleH;
+                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
+                    SDL_Log("%s: SDL_RenderCopyEx(standard,2) failed: %s",__FUNCTION__,SDL_GetError());
+                    nErrorCode = -1;
+                }
+                if (nErrorCode == 0) {
+                    // Splash links
+                    Flip = SDL_FLIP_HORIZONTAL;
+                    DestR.x = (uX - 1) * FONT_W - (*pnXpos % FONT_W) + nXoffs + Playfield.uShiftLevelXpix;
+                    DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
+                    DestR.w = FONT_W * fScaleW;
+                    DestR.h = FONT_H * fScaleH;
+                    if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
+                        SDL_Log("%s: SDL_RenderCopyEx(standard,2) failed: %s",__FUNCTION__,SDL_GetError());
+                        nErrorCode = -1;
+                    }
+                }
+            }
         }
     }
     if (nErrorCode == 0) {

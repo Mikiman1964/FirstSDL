@@ -83,7 +83,7 @@ int32_t ShowPanel(SDL_Renderer *pRenderer) {
         SDL_Log("%s: SDL_RenderCopy() failed: %s",__FUNCTION__,SDL_GetError());
         return - 1;
     }
-    if ((uRemainingSeconds <= WARN_LOW_TIME) && (!Playfield.bManDead) && (!Playfield.bUnlimtedTime)) {
+    if ((uRemainingSeconds <= WARN_LOW_TIME) && (!Playfield.bManDead) && (!Playfield.bUnlimtedTime) && (!Playfield.bWellDone)) {
         if (uRemainingSeconds >= 10) {
             uWarnRecWidth = 124;
         } else {

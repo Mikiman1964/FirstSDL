@@ -99,13 +99,11 @@ int32_t GetMemoryForPlayfield(void) {
     Playfield.pSlimeElement = (uint16_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint16_t));
     Playfield.pStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
     Playfield.pLastStatusAnimation = (uint32_t*)malloc(Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
-    Playfield.pPostAnimation = (POSTANIMATION*)malloc(Playfield.uLevel_XY_Dimension * sizeof(POSTANIMATION));
     Playfield.pLastYamSlimeDirection = (uint8_t*)malloc(Playfield.uLevel_XY_Dimension);
     if ((Playfield.pLevel != NULL) &&
         (Playfield.pPipeLevel != NULL) &&
         (Playfield.pStatusAnimation != NULL) &&
         (Playfield.pLastStatusAnimation != NULL) &&
-        (Playfield.pPostAnimation != NULL) &&
         (Playfield.pInvalidElement != NULL) &&
         (Playfield.pSlimeElement != NULL) &&
         (Playfield.pLastYamSlimeDirection != NULL)) {
@@ -114,7 +112,6 @@ int32_t GetMemoryForPlayfield(void) {
             memset(Playfield.pSlimeElement,0,Playfield.uLevel_XY_Dimension * sizeof(uint16_t));   // EMERALD_NONE
             memset(Playfield.pStatusAnimation,0,Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
             memset(Playfield.pLastStatusAnimation,0,Playfield.uLevel_XY_Dimension * sizeof(uint32_t));
-            memset(Playfield.pPostAnimation,0,Playfield.uLevel_XY_Dimension * sizeof(POSTANIMATION));
             memset(Playfield.pLastYamSlimeDirection,0,Playfield.uLevel_XY_Dimension);
             nErrorCode = 0;
     } else {
@@ -126,7 +123,6 @@ int32_t GetMemoryForPlayfield(void) {
         SAFE_FREE(Playfield.pSlimeElement);
         SAFE_FREE(Playfield.pStatusAnimation);
         SAFE_FREE(Playfield.pLastStatusAnimation);
-        SAFE_FREE(Playfield.pPostAnimation);
         SAFE_FREE(Playfield.pLastYamSlimeDirection);
     }
     return nErrorCode;

@@ -4597,7 +4597,6 @@ int32_t InitEditor(bool bNewLevel, uint32_t uXdim, uint32_t uYdim, int32_t nLeve
             SAFE_FREE(Playfield.pSlimeElement);
             SAFE_FREE(Playfield.pStatusAnimation);
             SAFE_FREE(Playfield.pLastStatusAnimation);
-            SAFE_FREE(Playfield.pPostAnimation);
             SAFE_FREE(Playfield.pLastYamSlimeDirection);
         } else {
             SDL_Log("%s: InitialisePlayfield() failed",__FUNCTION__);

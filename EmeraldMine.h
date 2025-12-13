@@ -774,16 +774,6 @@
 
 
 typedef struct {
-    // Datentypen sind hier etwas geiziger ausgelegt, sollten aber immer noch locker ausreichen
-    uint16_t        uTextureIndex;                              // Start-Texture zur Animation
-    uint16_t        uX;                                         // X-Koordinate, wo Post-Animation durchgeführt werden soll.
-    uint16_t        uY;                                         // Y-Koordinate, wo Post-Animation durchgeführt werden soll.
-    bool            bFlipVertical;                              // Texture vertikal spiegeln
-    bool            bFlipHorizontal;                            // Texture horizontal spiegeln
-} POSTANIMATION;
-
-
-typedef struct {
     uint16_t uElement[9];                                       // 1 YAM erzeugt maximal 9 neue Elemente/Objekte
 } YAMEXPLOSION;
 
@@ -793,7 +783,6 @@ typedef struct {
     uint16_t        *pPipeLevel;
     uint32_t        *pStatusAnimation;
     uint32_t        *pLastStatusAnimation;                      // Wird für Explosionen benötigt, damit entsprechende Felder auf Space gesetzt werden können
-    POSTANIMATION   *pPostAnimation;                            // wird bisher nur für "Splash" des Säurebeckens verwendet
     uint16_t        *pInvalidElement;                           // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
     uint16_t        *pSlimeElement;                             // Element, welches der Schleim gefressen hat
     uint8_t         *pLastYamSlimeDirection;
