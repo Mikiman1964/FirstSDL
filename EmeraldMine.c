@@ -6,19 +6,9 @@ TODO
 * Tasten für Gamespeed und Quicksave konfigurierbar
 * Fehler bei Quicksave/Quickload? Nach Load hatte Spieler plötzlich 2 weiße Schlüssel
 
-Für V 1.13
-* Hint im Leveleditor wird nach 1 statt 3 Sekunden angezeigt
-* Fehler beim Quick-Load/Save im Zusammenhang mit Pipes gefixt
-* 1 Frame mehr Zeit für EMERALD_WHEEL_TIMEDOOR -> Playfield.uTimeDoorTimeLeft =  Playfield.uTimeDoorTime + 1 in man.c
-* Anzeige für Anzahl YAMS + 1
-* Leveleditor:Maschinen: Animierte Replikatoren und Laufbänder
-* Leveleditor: Hinweis bei Spielzeit = 0 = INFINITE
-* Variablennamen: Conveybelt -> Conveyorbelt
-* Gesamtanzahl Levels werden im Hauptmenü angezeigt
-* Quicksave/Quicload funktionierte auch, wenn das im Level nicht erlaubt ist.
-* Quicksave verhindern, wenn Man tot.
-* Bessere Lesbarkeit in Statuszeile durch größere Ziffern/Beschriftung (Arcade font)
-* Datenstruktur POSTANIMATION aufgelöst
+Für V 1.14
+* SDL2-2.32.10
+* Struktur FPS in Struktur VIDEO und Variablenname korrigiert
 */
 
 #include "gfx/textures.h"
@@ -80,7 +70,6 @@ extern LEVELGROUP SelectedLevelgroup;
 extern MAINMENU MainMenu;
 extern AUDIOPLAYER Audioplayer;
 extern VIDEO Video;
-extern FPS Fps;
 
 
 /*----------------------------------------------------------------------------
@@ -92,7 +81,7 @@ Parameter
       Ausgang: -
 Rückgabewert:  int32_t, 1 = Game, 2 = SDL2-Demo, 3 = Quit
 Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
-               Video.x, Fps.x, ManKey.x
+               Video.x, ManKey.x
 ------------------------------------------------------------------------------*/
 int32_t Menu(SDL_Renderer *pRenderer) {
     uint8_t uMusicVolume;
@@ -132,7 +121,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
         1120,544,EMERALD_STEEL,1120,576,EMERALD_STEEL,1120,608,EMERALD_STEEL,1120,640,EMERALD_STEEL,1120,672,EMERALD_STEEL,1120,704,EMERALD_STEEL,
         // "Menüpunkte"
         128,224,EMERALD_RUBY,128,288,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
-        // "PROGRAMMED IN 2023"
+        // "PROGRAMMED IN 2022 - 2025"
         144,672,EMERALD_FONT_BLUE_P,176,672,EMERALD_FONT_BLUE_R,208,672,EMERALD_FONT_BLUE_O,240,672,EMERALD_FONT_BLUE_G,272,672,EMERALD_FONT_BLUE_R,304,672,EMERALD_FONT_BLUE_A,336,672,EMERALD_FONT_BLUE_M,368,672,EMERALD_FONT_BLUE_M,
         400,672,EMERALD_FONT_BLUE_E,432,672,EMERALD_FONT_BLUE_D,496,672,EMERALD_FONT_BLUE_I,528,672,EMERALD_FONT_BLUE_N,592,672,EMERALD_FONT_BLUE_2,624,672,EMERALD_FONT_BLUE_0,656,672,EMERALD_FONT_BLUE_2,688,672,EMERALD_FONT_BLUE_2,
         720,672,EMERALD_FONT_BLUE_MINUS,752,672,EMERALD_FONT_BLUE_2,784,672,EMERALD_FONT_BLUE_0,816,672,EMERALD_FONT_BLUE_2,848,672,EMERALD_FONT_BLUE_5
@@ -153,7 +142,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
     nColorDimm = 0;
     SetAllTextureColors(nColorDimm);
 
-    memset(&Fps,0,sizeof(Fps));
+    memset(&Video.Fps,0,sizeof(Video.Fps));
     while (((nErrorCode == 0) && (nChoose == -1)) || (nColorDimm > 0) ) {
         MeasureFps();
         MoveSmileys(pRenderer);
@@ -197,9 +186,9 @@ int32_t Menu(SDL_Renderer *pRenderer) {
         PrintLittleFont(pRenderer,468,506,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE,1);
         PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE,1);
         // Framerate anzeigen
-        if (strlen(Fps.szFrameaPerSecond) > 0) {
-            PrintLittleFont(pRenderer,32,744,0,Fps.szFrameaPerSecond,K_RELATIVE,1);
-            PrintLittleFont(pRenderer,33,745,3,Fps.szFrameaPerSecond,K_RELATIVE,1);
+        if (strlen(Video.Fps.szFramesPerSecond) > 0) {
+            PrintLittleFont(pRenderer,32,744,0,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
+            PrintLittleFont(pRenderer,33,745,3,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
         }
         nErrorCode = ShowButtons(pRenderer,K_RELATIVE);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME) || (ManKey.bFire)) {

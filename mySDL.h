@@ -3,47 +3,36 @@
 
 #include <SDL2/SDL.h>
 
-#define DEFAULT_WINDOW_W            1280        // Ist auch gleichzeitig die
-#define DEFAULT_WINDOW_H            768         // Mindestanforderung an die Auflösung
-#define WINDOW_TITLE        "My first SDL2 application, V "
+#define DEFAULT_WINDOW_W                        1280    // Ist auch gleichzeitig die
+#define DEFAULT_WINDOW_H                        768     // Mindestanforderung an die Auflösung
+#define WINDOW_TITLE                            "My first SDL2 application, V "
 
-#define FONT_W              32
-#define FONT_H              32
+#define FONT_W                                  32
+#define FONT_H                                  32
 
 // Little Font, schwarz, grün, rot
-#define FONT_LITTLE_W       10
-#define FONT_LITTLE_H       14
+#define FONT_LITTLE_W                           10
+#define FONT_LITTLE_H                           14
 
 // Font Courier, schwarz
-#define FONT_LITTLE_COURIER_W   8
-#define FONT_LITTLE_COURIER_H   14
+#define FONT_LITTLE_COURIER_W                   8
+#define FONT_LITTLE_COURIER_H                   14
 
 // Font Arcade, grün, nur Ziffern
-#define FONT_ARCADE_W       8
-#define FONT_ARCADE_H       8
+#define FONT_ARCADE_W                           8
+#define FONT_ARCADE_H                           8
 
 // Button-Höhe für Font 1
-#define BUTTON_H            (FONT_LITTLE_COURIER_H + 5)
+#define BUTTON_H                                (FONT_LITTLE_COURIER_H + 5)
 
 // Für Messageboxen
-#define EMERALD_MAX_LINEFEEDS_IN_MESSAGE        30                          // Maximal 30 Zeilenumbrüche in Message
-#define EMERALD_MAX_CHARACTERS_PER_LINE         96                          // Maximal 96 Zeichen pro Zeile in Message
+#define EMERALD_MAX_LINEFEEDS_IN_MESSAGE        30      // Maximal 30 Zeilenumbrüche in Message
+#define EMERALD_MAX_CHARACTERS_PER_LINE         96      // Maximal 96 Zeichen pro Zeile in Message
 
-#define MAX_SHOWABLE_DISPLAYMODES               21                          // Maximale Anzahl von auswählbaren Displaymodi
+#define MAX_SHOWABLE_DISPLAYMODES               21      // Maximale Anzahl von auswählbaren Displaymodi
 
 #define K_ABSOLUTE                              true
 #define K_RELATIVE                              false
-
-
-typedef struct {
-    // Variablen für Messung der Framerate
-    float fFramesPerSecond;
-    float fDiffTimeSeconds;
-    uint32_t uLastTicks;
-    uint32_t uActTicks;
-    uint32_t uFrameCount;
-    char szFrameaPerSecond[32];
-} FPS;
 
 
 typedef struct {
@@ -61,6 +50,17 @@ typedef struct {
 
 
 typedef struct {
+    // Variablen für Messung der Framerate
+    float fFramesPerSecond;
+    float fDiffTimeSeconds;
+    uint32_t uLastTicks;
+    uint32_t uActTicks;
+    uint32_t uFrameCount;
+    char szFramesPerSecond[32];
+} FPS;
+
+
+typedef struct {
     SDL_DisplayMode DesktopDisplayMode;                                     // Desktop-Display-Einstellungen beim Start des Programms
     uint32_t uXoffs;                                                        // X-Offset für die Zentrierung von Elementen
     uint32_t uYoffs;                                                        // Y-Offset für die Zentrierung von Elementen
@@ -72,6 +72,7 @@ typedef struct {
     // Anzeigbare Display-Modes
     int32_t nShowableDisplayModeCount;                                      // Anzahl der anzeigbaren Display-Modes
     SHOWABLEDISPLAYMODES ShowableDisplayModes[MAX_SHOWABLE_DISPLAYMODES];   // X- und Y- Auflösung und Index
+    FPS Fps;
 } VIDEO;
 
 

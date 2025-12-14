@@ -41,7 +41,6 @@ extern GAMESOUND GameSound;
 extern GAMECONTROLLER GameController;
 extern JOYSTICK Joystick;
 extern IMPORTLEVEL ImportLevel;
-extern FPS Fps;
 
 /*----------------------------------------------------------------------------
 Name:           GetRainbowColors
@@ -1554,7 +1553,7 @@ Parameter
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
                SelectedLevelgroup.x, Config.x, Audioplayer.x, Actualplayer.x
-               Video.x, GameSound.x, Fps.x, ge_TotalLevelCount
+               Video.x, GameSound.x, ge_TotalLevelCount
 ------------------------------------------------------------------------------*/
 int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     int32_t nErrorCode;
@@ -1591,7 +1590,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     GAME GRAPHICS AND SOUNDS TAKEN FROM DIAMOND CAVES 3, A GAME BY PETER ELZNER.             \
     PLEASE SEND YOUR OWN LEVELGROUP TO DIETER1964@GMX.NET           "};
 
-    memset(&Fps,0,sizeof(Fps));
+    memset(&Video.Fps,0,sizeof(Video.Fps));
     SetGameSpeed(GAMESPEED_NORMAL);
     InitTeleporter();
     InitClipboard();
@@ -1901,8 +1900,8 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                             }
                         }
                         // FPS
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,0,Fps.szFrameaPerSecond,K_ABSOLUTE,1);
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 24,3,Fps.szFrameaPerSecond,K_ABSOLUTE,1);
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,0,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 24,3,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
                         // Gesamtanzahl Levels
                         sprintf(szTotalLevelCount,"TOTAL LEVELS: %u",ge_TotalLevelCount);
                         PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 960,MainMenu.uYdim * FONT_H - 25,0,szTotalLevelCount,K_ABSOLUTE,1);

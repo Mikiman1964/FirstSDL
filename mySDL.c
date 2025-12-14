@@ -17,7 +17,6 @@ uint8_t g_uIntensityProzent = 100;
 uint32_t g_LastRenderTicks;
 SDL_Texture **g_pTextures;   // Pointer Array für Texturen
 VIDEO Video;
-FPS Fps;
 extern uint32_t Gfx[];
 extern CONFIG Config;
 
@@ -1188,28 +1187,28 @@ Name:           MeasureFps
 Beschreibung: Misst die aaktuelle Framerate. Diese Funkton wird innerhalb einer
               Anzeigeschleife aufgerufen und ist nicht threadsicher!
               Vor Verwendung dieser Funktion sollte ein
-              memset(&Fps,0,sizeof(Fps));
+              memset(&Video.Fps,0,sizeof(Video.Fps));
               erfolgen.
 Parameter
       Eingang: -
-      Ausgang: Fps.x -> Fps.fFramesPerSecond
+      Ausgang: Video.Fps.fFramesPerSecond
 Rückgabewert:  -
-Seiteneffekte: Fps.x
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
 void MeasureFps(void) {
     uint32_t uActTicks;
     float fDiffTimeSeconds;
 
-    Fps.uFrameCount++;
-    if (Fps.uFrameCount == 100) {     // 100 Frames abwarten
+    Video.Fps.uFrameCount++;
+    if (Video.Fps.uFrameCount == 100) {     // 100 Frames abwarten
         uActTicks = SDL_GetTicks();
-        fDiffTimeSeconds = ((float)uActTicks - (float)Fps.uLastTicks) / (Fps.uFrameCount * 1000);
+        fDiffTimeSeconds = ((float)uActTicks - (float)Video.Fps.uLastTicks) / (Video.Fps.uFrameCount * 1000);
         if (fDiffTimeSeconds > 0) {
-            Fps.fFramesPerSecond = 1 / fDiffTimeSeconds;
-            sprintf(Fps.szFrameaPerSecond,"FRAMERATE: %.2f",Fps.fFramesPerSecond);
+            Video.Fps.fFramesPerSecond = 1 / fDiffTimeSeconds;
+            sprintf(Video.Fps.szFramesPerSecond,"FRAMERATE: %.2f",Video.Fps.fFramesPerSecond);
         }
-        Fps.uLastTicks = uActTicks;
-        Fps.uFrameCount = 0;
+        Video.Fps.uLastTicks = uActTicks;
+        Video.Fps.uFrameCount = 0;
     }
 }
 
