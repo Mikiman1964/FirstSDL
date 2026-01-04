@@ -1356,7 +1356,6 @@ int32_t InitialisePlayfield(uint32_t uLevelNumber) {
                                                                         if (CheckAcidPools(Playfield.pLevel,Playfield.uLevel_X_Dimension,Playfield.uLevel_Y_Dimension) == 0) {
                                                                             if (CheckLevelBorder() == 0) {
                                                                                 CloseAllDoors();
-                                                                                SetActiveDynamiteP1();
                                                                                 nErrorCode = SearchTeleporter();
                                                                                 Playfield.bInitOK = (nErrorCode == 0);
                                                                                 // Die Schatztruhen sind später dazu gekommen. Damit alte Levels kompatibel bleiben,
@@ -2211,9 +2210,9 @@ void CloseAllDoors(void) {
 
 
 /*----------------------------------------------------------------------------
-Name:           SetActiveDynamiteP1
+Name:           SetActiveDynamite
 ------------------------------------------------------------------------------
-Beschreibung: Setzt alle aktiven Dynamits auf Phase 1.
+Beschreibung: Setzt alle aktiven Dynamite auf eine Phase zwischen 1 und 4 (sofort)
 
 Parameter
       Eingang: -
@@ -2221,12 +2220,28 @@ Parameter
 Rückgabewert:  -
 Seiteneffekte: Playfield.x
 ------------------------------------------------------------------------------*/
-void SetActiveDynamiteP1(void) {
+void SetActiveDynamite(void) {
     uint32_t I;                 // Index im Level
 
     for (I = 0; I < (Playfield.uLevel_XY_Dimension); I++) {
-        if (Playfield.pLevel[I] == EMERALD_DYNAMITE_ON) {
-            Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P1;
+        switch (Playfield.pLevel[I]) {
+            case (EMERALD_DYNAMITE_ON):
+            case (EMERALD_DYNAMITE_ON_P1):
+                Playfield.pLevel[I] = EMERALD_DYNAMITE_ON;
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P1;
+                break;
+            case (EMERALD_DYNAMITE_ON_P2):
+                Playfield.pLevel[I] = EMERALD_DYNAMITE_ON;
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P2;
+                break;
+            case (EMERALD_DYNAMITE_ON_P3):
+                Playfield.pLevel[I] = EMERALD_DYNAMITE_ON;
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P3;
+                break;
+            case (EMERALD_DYNAMITE_ON_P4):
+                Playfield.pLevel[I] = EMERALD_DYNAMITE_ON;
+                Playfield.pStatusAnimation[I] = EMERALD_ANIM_DYNAMITE_ON_P4;
+                break;
         }
     }
 }

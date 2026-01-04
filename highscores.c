@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include "highscores.h"
 #include "loadlevel.h"
+#include "miniz.h"
 #include "mystd.h"
 
 HIGHSCOREFILE HighscoreFile;
@@ -44,6 +45,9 @@ int32_t WriteHighScoreFile(uint8_t *puLevelgroupHash) {
     int32_t nErrorCode;
     char szFilename[256];
     char szHashString[32 + 1];
+    uint8_t *pcCompressedScores;
+    uint32_t uMaxCompressedSize;
+    int32_t nMiniz;
 
     nErrorCode = -1;
     if (puLevelgroupHash != NULL) {
@@ -53,7 +57,16 @@ int32_t WriteHighScoreFile(uint8_t *puLevelgroupHash) {
         GetMd5String(puLevelgroupHash,szHashString);
         strcat(szFilename,szHashString);
         strcat(szFilename,EMERALD_HIGHSCORES_FILENAME_EXTENSION);   // ".dat"
-        nErrorCode = WriteFile(szFilename,(uint8_t*)&HighscoreFile,sizeof(HIGHSCOREFILE),false);
+        uMaxCompressedSize = sizeof(HIGHSCOREFILE);
+        pcCompressedScores = malloc(uMaxCompressedSize);
+        if (pcCompressedScores != NULL) {
+            // uMaxCompressedSize ist hier noch Eingabeparameter, damit mz_compress2() weiß, wieviel Puffer zum Komprimieren bereit steht
+            nMiniz = mz_compress2(pcCompressedScores,(mz_ulong*)&uMaxCompressedSize,(uint8_t*)&HighscoreFile,sizeof(HIGHSCOREFILE),MZ_UBER_COMPRESSION);
+            if (nMiniz == MZ_OK) {
+                nErrorCode = WriteFile(szFilename,pcCompressedScores,uMaxCompressedSize,false);
+            }
+            SAFE_FREE(pcCompressedScores);
+        }
     }
     return nErrorCode;
 }
@@ -73,10 +86,12 @@ Seiteneffekte: HighscoreFile.x
 ------------------------------------------------------------------------------*/
 int32_t ReadHighScoreFile(uint8_t *puLevelgroupHash) {
     int32_t nErrorCode;
+    int32_t nMiniz;
     char szFilename[256];
     char szHashString[32 + 1];
     uint8_t *pcFile;
     uint32_t uFileLen;
+    uint32_t uUnCompressLen;
 
     nErrorCode = -1;
     if (puLevelgroupHash != NULL) {
@@ -87,11 +102,23 @@ int32_t ReadHighScoreFile(uint8_t *puLevelgroupHash) {
         strcat(szFilename,szHashString);
         strcat(szFilename,EMERALD_HIGHSCORES_FILENAME_EXTENSION);   // ".dat"
         pcFile = ReadFile(szFilename,&uFileLen);
-        if ((pcFile != NULL) && (uFileLen == sizeof(HIGHSCOREFILE))) {
-            memcpy(&HighscoreFile,pcFile,sizeof(HIGHSCOREFILE));
+        if (pcFile != NULL) {
+            if (uFileLen == sizeof(HIGHSCOREFILE)) {                // unkomprimierte Highscores?
+                memcpy(&HighscoreFile,pcFile,sizeof(HIGHSCOREFILE));
+                nErrorCode = 0;
+            } else {
+                uUnCompressLen = sizeof(HIGHSCOREFILE);
+                // prüfen, ob sich Daten dekomprimieren lassen
+                nMiniz = mz_uncompress((uint8_t*)&HighscoreFile,(mz_ulong*)&uUnCompressLen,pcFile,(mz_ulong)uFileLen);
+                if (nMiniz == MZ_OK) {
+                    if (uUnCompressLen == sizeof(HIGHSCOREFILE)) {
+                        nErrorCode = 0;
+                    }
+                }
+            }
             SAFE_FREE(pcFile);
-            nErrorCode = 0;
-        } else {
+        }
+        if (nErrorCode != 0) {
             memset(&HighscoreFile,0,sizeof(HIGHSCOREFILE));
             nErrorCode = WriteFile(szFilename,(uint8_t*)&HighscoreFile,sizeof(HIGHSCOREFILE),false);
         }

@@ -26,7 +26,6 @@ extern MAINMENU MainMenu;
 char g_szDC3_MD5[][33] =
     {
         "B65A30CB1DD469EC791B73B792A7D0B1",        // EMERALD_STEEL
-        "5ADB5F65B2664A6EC166642D7BC7B957",        // EMERALD_STEEL
         "8C66E89509E846A88DE0885E195A475C",        // EMERALD_REPLICATOR_RED_TOP_LEFT
         "19A7ACD4E9675B7B18C6EDBBA326771C",        // EMERALD_REPLICATOR_RED_TOP_MID
         "1BA2FE84CE7C45EB3A18C9AC0DDD33D2",        // EMERALD_REPLICATOR_RED_TOP_RIGHT
@@ -569,12 +568,25 @@ char g_szDC3_MD5[][33] =
         "4C1503D2147818B765E3A3402927F670",        // EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM
         "915464E7AAB28A0593FE21C121B09463",        // EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP
         "66B0C730BD560B2C4744707F73C825FD",        // EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP
+        "A1B29A6EAE2EBB15A7FD5529B78E2717",        // EMERALD_STEEL_STRIPE_LEFT_RIGHT
+        "5ADB5F65B2664A6EC166642D7BC7B957",        // EMERALD_STEEL_STRIPE_TOP_BOTTOM
+
+        "1DE86175B01E8E92817F3B26DF13B6AE",        // EMERALD_DYNAMITE_ON_P1
+        "FEB8BC393D67C8169437FA98161A460E",        // EMERALD_DYNAMITE_ON_P2
+        "20842FD15FB48C1237ADCAD2BF4BDE65",        // EMERALD_DYNAMITE_ON_P3
+        "B6EFDB25B04C849BEF7A431095F3A776",        // EMERALD_DYNAMITE_ON_P4
+
+
+
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",        // ENDE der MD5-Liste
     };
 
+
+/*
+*/
+
 uint16_t g_DC3_Elements[] = {
          EMERALD_STEEL
-        ,EMERALD_STEEL
         ,EMERALD_REPLICATOR_RED_TOP_LEFT
         ,EMERALD_REPLICATOR_RED_TOP_MID
         ,EMERALD_REPLICATOR_RED_TOP_RIGHT
@@ -1117,6 +1129,12 @@ uint16_t g_DC3_Elements[] = {
         ,EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM
         ,EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP
         ,EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP
+        ,EMERALD_STEEL_STRIPE_LEFT_RIGHT
+        ,EMERALD_STEEL_STRIPE_TOP_BOTTOM
+        ,EMERALD_DYNAMITE_ON_P1
+        ,EMERALD_DYNAMITE_ON_P2
+        ,EMERALD_DYNAMITE_ON_P3
+        ,EMERALD_DYNAMITE_ON_P4
 };
 
 
@@ -1238,8 +1256,8 @@ int32_t LevelConverterFromBitap(char *pszFilename) {
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = uLevelElement;
             } else {
                 SDL_Log("%s: Warning: hash (%s) not found for element at position X:%u  Y:%u",__FUNCTION__,szMD5String,X,Y);
-                //WriteFile("hashes.txt",szMD5String,32,true);
-                //WriteFile("hashes.txt","\r\n",2,true);
+                // WriteFile("hashes.txt",szMD5String,32,true);
+                // WriteFile("hashes.txt","\r\n",2,true);
 
                 //Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_SPACE;
                 Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = EMERALD_FONT_BLUE_STEEL_QUESTION_MARK;

@@ -90,7 +90,7 @@
 #define EMERALD_REPLICATOR_BLUE_BOTTOM_RIGHT        0x0038        // Replikator blau, unten rechts
 #define EMERALD_REPLICATOR_BLUE_SWITCH              0x0039        // Schalter für blauen Replikator
 #define EMERALD_DYNAMITE_OFF                        0x003A        // Dynamit aus
-#define EMERALD_DYNAMITE_ON                         0x003B        // Dynamit an
+#define EMERALD_DYNAMITE_ON                         0x003B        // Dynamit an, Phase 1 bis 4
 #define EMERALD_DOOR_RED_WOOD                       0x003C        // rote Holz-Tür
 #define EMERALD_DOOR_YELLOW_WOOD                    0x003D        // gelbe Holz-Tür
 #define EMERALD_DOOR_BLUE_WOOD                      0x003E        // blaue Holz-Tür
@@ -597,10 +597,16 @@
 #define EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP       0x025B	      // Stahl, Ecke, Markierung, rechts oben
 #define EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM     0x025C	      // Stahl, Ecke, Markierung, links unten
 #define EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM    0x025D	      // Stahl, Ecke, Markierung, rechts unten
+#define EMERALD_STEEL_STRIPE_TOP_BOTTOM             0x025E        // Stahl, Markierung, oben unten
+#define EMERALD_STEEL_STRIPE_LEFT_RIGHT             0x025F        // Stahl, Markierung, oben unten
+#define EMERALD_DYNAMITE_ON_P1                      0x0260        // Dynamit an, Phase 1, wird beim Laden des Levels in EMERALD_DYNAMITE_ON gewandelt
+#define EMERALD_DYNAMITE_ON_P2                      0x0261        // Dynamit an, Phase 2, wird beim Laden des Levels in EMERALD_DYNAMITE_ON gewandelt
+#define EMERALD_DYNAMITE_ON_P3                      0x0262        // Dynamit an, Phase 3, wird beim Laden des Levels in EMERALD_DYNAMITE_ON gewandelt
+#define EMERALD_DYNAMITE_ON_P4                      0x0263        // Dynamit an, Phase 4, wird beim Laden des Levels in EMERALD_DYNAMITE_ON gewandelt
 
-#define EMERALD_SMILEY                              0x025E        // nicht für das Spiel
+#define EMERALD_SMILEY                              0x0264        // nicht für das Spiel
 
-#define EMERALD_MAX_ELEMENT                         0x025E        // hier immer das letzte Element eintragen (für ControlExplosionToElement())
+#define EMERALD_MAX_ELEMENT                         0x0264        // hier immer das letzte Element eintragen (für ControlExplosionToElement())
 #define EMERALD_INVALID                             0xFFFF        // ungültiges Element
 
 #define EMERALD_FONT_BLUE                           0x00          // Bit 0 = 1 = Stahl, Bit 1 = Farbe (0 = blau, 1 = grün)

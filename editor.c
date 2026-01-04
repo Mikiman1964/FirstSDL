@@ -102,7 +102,7 @@ char ge_szElementNames[][64] =
                           "REPLICATOR BLUE, BOTTON RIGHT",      // 0X38
                           "SWITCH, REPLICATOR BLUE",            // 0X39
                           "DYNAMITE, OFF",                      // 0X3A
-                          "DYNAMITE, ON",                       // 0X3B
+                          "DYNAMITE, ON, PHASE 1",              // 0X3B
                           "DOOR, RED, WOOD",                    // 0X3C
                           "DOOR, YELLOW, WOOD",                 // 0X3D
                           "DOOR, BLUE, WOOD",                   // 0X3E
@@ -649,7 +649,13 @@ char ge_szElementNames[][64] =
                           "STEEL, STRIPE, CORNER RIGHT TOP",    // 0X25B // sind noch nicht
                           "STEEL, STRIPE, CORNER LEFT BOTTOM",  // 0X25C // im Leveleditor
                           "STEEL, STRIPE, CORNER RIGHT BOTTOM", // 0X25D // auswählbar, werden aber beim DC3-Import berücksichtigt
-                          "SMILEY",                             // 0X25E
+                          "STEEL, STRIPE, TOP BOTTOM",          // 0x25E // nicht auswählbar, wird aber beim DC3-Import berücksichtigt
+                          "STEEL, STRIPE, LEFT RIGHT",          // 0x25F // nicht auswählbar, wird aber beim DC3-Import berücksichtigt
+                          "DYNAMITE, ON, PHASE 1",              // 0X260 // nicht auswählbar, wird aber beim DC3-Import berücksichtigt
+                          "DYNAMITE, ON, PHASE 2",              // 0X261 // nicht auswählbar, wird aber beim DC3-Import berücksichtigt
+                          "DYNAMITE, ON, PHASE 3",              // 0X262 // nicht auswählbar, wird aber beim DC3-Import berücksichtigt
+                          "DYNAMITE, ON, PHASE 4",              // 0X263 // nicht auswählbar, wird aber beim DC3-Import berücksichtigt
+                          "SMILEY",                             // 0X264
                           };
 
 

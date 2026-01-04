@@ -4,11 +4,15 @@ TODO
 * Leveleditor
     * Undo für Editor
 * Tasten für Gamespeed und Quicksave konfigurierbar
-* Fehler bei Quicksave/Quickload? Nach Load hatte Spieler plötzlich 2 weiße Schlüssel
+
 
 Für V 1.14
 * SDL2-2.32.10
 * Struktur FPS in Struktur VIDEO und Variablenname korrigiert
+* komprimierte Highscores -> sparte ca. 27 MB
+* Fehlende Steel-Stripe-Elemente ergänzt (2 Stück, left/right und top/bottom)
+* Fehlende gezündete Dynamite-Elemente (Phase 2,3 und 4) ergänzt
+* ShowAuthorAndLevelname() zeigt, ob Quicksave erlaubt ist
 */
 
 #include "gfx/textures.h"
@@ -124,7 +128,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
         // "PROGRAMMED IN 2022 - 2025"
         144,672,EMERALD_FONT_BLUE_P,176,672,EMERALD_FONT_BLUE_R,208,672,EMERALD_FONT_BLUE_O,240,672,EMERALD_FONT_BLUE_G,272,672,EMERALD_FONT_BLUE_R,304,672,EMERALD_FONT_BLUE_A,336,672,EMERALD_FONT_BLUE_M,368,672,EMERALD_FONT_BLUE_M,
         400,672,EMERALD_FONT_BLUE_E,432,672,EMERALD_FONT_BLUE_D,496,672,EMERALD_FONT_BLUE_I,528,672,EMERALD_FONT_BLUE_N,592,672,EMERALD_FONT_BLUE_2,624,672,EMERALD_FONT_BLUE_0,656,672,EMERALD_FONT_BLUE_2,688,672,EMERALD_FONT_BLUE_2,
-        720,672,EMERALD_FONT_BLUE_MINUS,752,672,EMERALD_FONT_BLUE_2,784,672,EMERALD_FONT_BLUE_0,816,672,EMERALD_FONT_BLUE_2,848,672,EMERALD_FONT_BLUE_5
+        720,672,EMERALD_FONT_BLUE_MINUS,752,672,EMERALD_FONT_BLUE_2,784,672,EMERALD_FONT_BLUE_0,816,672,EMERALD_FONT_BLUE_2,848,672,EMERALD_FONT_BLUE_6
     };
 
     InitSmileys();
@@ -258,6 +262,7 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bPrepareLevelExit = false;
     if (bLevelRun) {
         SetPipeLevel();
+        SetActiveDynamite();
         nRet = ShowAuthorAndLevelname(pRenderer,uLevel);
         if (nRet < 0) {
             bLevelRun = false; // Ein Fehler ist aufgetreten

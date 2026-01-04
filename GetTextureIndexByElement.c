@@ -733,6 +733,18 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
         case (EMERALD_DYNAMITE_ON):
             uTextureIndex = TEX_DYNAMITE_ON_1 + nAnimationCount / 4;
             break;
+        case (EMERALD_DYNAMITE_ON_P1):
+            uTextureIndex = TEX_DYNAMITE_ON_1;
+            break;
+        case (EMERALD_DYNAMITE_ON_P2):
+            uTextureIndex = TEX_DYNAMITE_ON_2;
+            break;
+        case (EMERALD_DYNAMITE_ON_P3):
+            uTextureIndex = TEX_DYNAMITE_ON_3;
+            break;
+        case (EMERALD_DYNAMITE_ON_P4):
+            uTextureIndex = TEX_DYNAMITE_ON_4;
+            break;
         case (EMERALD_QUICKSAND):
             uTextureIndex = TEX_QUICKSAND;
             break;
@@ -1197,6 +1209,12 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM):
             uTextureIndex = TEX_STEEL_STRIPE_CORNER_RIGHT_BOTTOM;
+            break;
+        case (EMERALD_STEEL_STRIPE_LEFT_RIGHT):
+            uTextureIndex = TEX_STEEL_STRIPE_LEFT_RIGHT;
+            break;
+        case (EMERALD_STEEL_STRIPE_TOP_BOTTOM):
+            uTextureIndex = TEX_STEEL_STRIPE_TOP_BOTTOM;
             break;
         case (EMERALD_GREEN_DROP):
             uTextureIndex = TEX_DROP_GREEN;

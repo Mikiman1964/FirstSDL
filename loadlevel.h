@@ -111,7 +111,7 @@ int32_t CheckLevelBorder(void);
 int32_t CheckReplicators(uint16_t *pLevel, int32_t nXdim, int32_t nYdim);
 int32_t CheckAcidPools(uint16_t *pLevel, int32_t uXdim, int32_t uYdim);
 void CloseAllDoors(void);
-void SetActiveDynamiteP1(void);
+void SetActiveDynamite(void);
 void SetTreasureChests(void);
 void SetCentralExplosionCoordinates(void);
 void SetCentralMegaExplosionCoordinates(void);

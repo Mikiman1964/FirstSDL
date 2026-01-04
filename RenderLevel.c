@@ -541,6 +541,18 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                             break;
                     }
                     break;
+                case (EMERALD_DYNAMITE_ON_P1):
+                    uTextureIndex = TEX_DYNAMITE_ON_1;
+                    break;
+                case (EMERALD_DYNAMITE_ON_P2):
+                    uTextureIndex = TEX_DYNAMITE_ON_2;
+                    break;
+                case (EMERALD_DYNAMITE_ON_P3):
+                    uTextureIndex = TEX_DYNAMITE_ON_3;
+                    break;
+                case (EMERALD_DYNAMITE_ON_P4):
+                    uTextureIndex = TEX_DYNAMITE_ON_4;
+                    break;
                 case (EMERALD_WHEEL_TIMEDOOR):
                     if (Playfield.bTimeDoorOpen) {
                         uTextureIndex = TEX_WHEEL_DOOR_TIME_1 + nAnimationCount / 4;

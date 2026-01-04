@@ -3521,18 +3521,22 @@ int32_t ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SetMenuText(MainMenu.pMenuScreen,SelectedLevelgroup.szLevelgroupname,-1,1,EMERALD_FONT_BLUE);
     for (I = 1; (I < (MainMenu.uXdim - 1)); I++) {
         MainMenu.pMenuScreen[2 * MainMenu.uXdim + I] = EMERALD_STEEL;
-        MainMenu.pMenuScreen[12 * MainMenu.uXdim + I] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[14 * MainMenu.uXdim + I] = EMERALD_STEEL;
     }
     SetMenuText(MainMenu.pMenuScreen,Playfield.szLevelTitle,-1,5,EMERALD_FONT_BLUE);
     sprintf(szText,"LEVEL:%03d",uLevel);
     SetMenuText(MainMenu.pMenuScreen,szText,-1,7,EMERALD_FONT_BLUE);
     sprintf(szText,"BY:%s",Playfield.szLevelAuthor);
     SetMenuText(MainMenu.pMenuScreen,szText,-1,9,EMERALD_FONT_BLUE);
-
-    MainMenu.pMenuScreen[16 * MainMenu.uXdim + 2] = EMERALD_EMERALD;
-    SetMenuText(MainMenu.pMenuScreen,"PRESS FIRE (LEFT CTRL) TO PLAY",4,16,EMERALD_FONT_BLUE);
-    MainMenu.pMenuScreen[19 * MainMenu.uXdim + 2] = EMERALD_RUBY;
-    SetMenuText(MainMenu.pMenuScreen,"PRESS ESC TO CANCEL",4,19,EMERALD_FONT_BLUE);
+    if (Playfield.bQuicksaveAllowed) {
+        SetMenuText(MainMenu.pMenuScreen,"QUICKSAVE ALLOWED: YES",-1,11,EMERALD_FONT_BLUE);
+    } else {
+        SetMenuText(MainMenu.pMenuScreen,"QUICKSAVE ALLOWED: NO",-1,11,EMERALD_FONT_BLUE);
+    }
+    MainMenu.pMenuScreen[17 * MainMenu.uXdim + 2] = EMERALD_EMERALD;
+    SetMenuText(MainMenu.pMenuScreen,"PRESS FIRE (LEFT CTRL) TO PLAY",4,17,EMERALD_FONT_BLUE);
+    MainMenu.pMenuScreen[20 * MainMenu.uXdim + 2] = EMERALD_RUBY;
+    SetMenuText(MainMenu.pMenuScreen,"PRESS ESC TO CANCEL",4,20,EMERALD_FONT_BLUE);
 
     do {
         UpdateManKey();

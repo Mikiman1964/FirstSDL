@@ -451,7 +451,7 @@ Beschreibung: Zeigt den Inhalt des Renderers an und löscht diesen anschließend
               der Bildschirmwiederholfrequenz (default 60 Hz).
               Sollte die Bildschirmwiederholfrquenz deutlich zu hoch sein (> 125 Hz),
               bzw. VSYNC nicht funktionieren, dann wartet die Funktion hier eine
-              entsprechende Zeit ab und begrenzt auf 8 ms = 125 frames/sec.
+              entsprechende Zeit ab und begrenzt auf 8 ms = 125 Frames/sec.
               Wegen g_LastRenderTicks wäre die Funktion nicht threadsicher!
 
 Parameter
@@ -469,7 +469,7 @@ int32_t RenderPresentAndClear(SDL_Renderer *pRenderer) {   // Renderer anzeigen,
 
     if (uDiffTicks < 8) {   // Kann auch durch Verschieben des Fensters auftreten
         SDL_Delay(8 - uDiffTicks);
-        SDL_Log("%s:DiffTicks: %u",__FUNCTION__,uDiffTicks);
+        // SDL_Log("%s:DiffTicks: %u",__FUNCTION__,uDiffTicks);
     }
     g_LastRenderTicks = uTicks;
     SDL_RenderPresent(pRenderer);       // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen, hat keinen Rückgabewert
