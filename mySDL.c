@@ -449,29 +449,21 @@ Beschreibung: Zeigt den Inhalt des Renderers an und löscht diesen anschließend
               Wenn der Renderer mit dem Flag SDL_RENDERER_PRESENTVSYNC erstellt
               wurde, so synchronisiert diese Funktion den Programmablauf mit
               der Bildschirmwiederholfrequenz (default 60 Hz).
-              Sollte die Bildschirmwiederholfrquenz deutlich zu hoch sein (> 125 Hz),
-              bzw. VSYNC nicht funktionieren, dann wartet die Funktion hier eine
-              entsprechende Zeit ab und begrenzt auf 8 ms = 125 Frames/sec.
+              Falls kein V-Sync erkannt wurde, wird nach jedem Frame pauschal 14 ms
+              gewartet, um die Framerate zu begrenzen (~ 70 Fps)
+
               Wegen g_LastRenderTicks wäre die Funktion nicht threadsicher!
 
 Parameter
       Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
       Ausgang: -
       Rückgabewert: int32_t, 0 = alles OK, -1 = Fehler
-Seiteneffekte: g_LastRenderTicks
+Seiteneffekte: g_LastRenderTicks, Video.x
 ------------------------------------------------------------------------------*/
 int32_t RenderPresentAndClear(SDL_Renderer *pRenderer) {   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
-    uint32_t uDiffTicks;    // Differenz zwischen aktuellem und letzten Aufruf in Ticks
-    uint32_t uTicks;
-
-    uTicks = SDL_GetTicks();
-    uDiffTicks = uTicks - g_LastRenderTicks;
-
-    if (uDiffTicks < 8) {   // Kann auch durch Verschieben des Fensters auftreten
-        SDL_Delay(8 - uDiffTicks);
-        // SDL_Log("%s:DiffTicks: %u",__FUNCTION__,uDiffTicks);
+    if (!Video.bVsync) {
+        SDL_Delay(14);
     }
-    g_LastRenderTicks = uTicks;
     SDL_RenderPresent(pRenderer);       // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen, hat keinen Rückgabewert
     return SDL_RenderClear(pRenderer);  // Renderer für nächstes Frame löschen
 }
@@ -1196,20 +1188,60 @@ Rückgabewert:  -
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
 void MeasureFps(void) {
-    uint32_t uActTicks;
     float fDiffTimeSeconds;
 
-    Video.Fps.uFrameCount++;
-    if (Video.Fps.uFrameCount == 100) {     // 100 Frames abwarten
-        uActTicks = SDL_GetTicks();
-        fDiffTimeSeconds = ((float)uActTicks - (float)Video.Fps.uLastTicks) / (Video.Fps.uFrameCount * 1000);
+    if (Video.Fps.uFrameCount == 0) {   // Start einer neuen Messung
+        Video.Fps.uLastTicks = SDL_GetTicks();
+        Video.Fps.uFrameCount++;
+    } else if (Video.Fps.uFrameCount == VSYNC_DETECTION_FRAMES) {     // Ein paar Frames messen
+        fDiffTimeSeconds = ((float)SDL_GetTicks() - (float)Video.Fps.uLastTicks) / (Video.Fps.uFrameCount * 1000);
         if (fDiffTimeSeconds > 0) {
             Video.Fps.fFramesPerSecond = 1 / fDiffTimeSeconds;
-            sprintf(Video.Fps.szFramesPerSecond,"FRAMERATE: %.2f",Video.Fps.fFramesPerSecond);
+            sprintf(Video.Fps.szFramesPerSecond,"FRAMERATE: %.2f FPS",Video.Fps.fFramesPerSecond);
         }
-        Video.Fps.uLastTicks = uActTicks;
         Video.Fps.uFrameCount = 0;
+    } else {
+        Video.Fps.uFrameCount++;
     }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           IsVsync
+------------------------------------------------------------------------------
+Beschreibung: Prüft mit Hilfe eines Renderers, ob V-Sync mit der gewünschten Framerate
+              aktiv ist. Vor Aufruf dieser Funktion muss bereits ein Fenster und
+              Renderer vorhanden sein.
+Parameter
+      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+               fCheckFramerate, float, Framerate, mit der geprüft wird.
+      Ausgang: -
+Rückgabewert:  bool, true = V-Sync erkannt, false = V-Sync nicht erkannt
+Seiteneffekte: Video.x
+------------------------------------------------------------------------------*/
+bool IsVsync(SDL_Renderer *pRenderer,float fCheckFramerate) {
+    uint32_t uFrames;
+    char szText[128];
+
+    uFrames = 0;
+    memset(&Video.Fps,0,sizeof(Video.Fps));
+    Video.bVsync = false;
+    if ((pRenderer != NULL) && (fCheckFramerate > 0)) {
+        SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+        RenderPresentAndClear(pRenderer);
+        while (uFrames < 4 * VSYNC_DETECTION_FRAMES) {
+            uFrames++;
+            sprintf(szText,"DETECTING V-SYNC ... FRAME: %u",uFrames);
+            PrintLittleFont(pRenderer,20,20,0,szText,K_ABSOLUTE,1);
+            MeasureFps();
+            SDL_RenderPresent(pRenderer);
+            SDL_RenderClear(pRenderer);
+        }
+    }
+    // Untere Grenze wird hier bewusst nicht abgefragt. Falls Framerate << fCheckFramerate kann V-Sync-Flag aktiv sein.
+    Video.bVsync = (Video.Fps.fFramesPerSecond <= fCheckFramerate + 5.0);
+    SDL_Log("%s: Framerate: %f  V-SYNC: %d",__FUNCTION__,Video.Fps.fFramesPerSecond,Video.bVsync);
+    return Video.bVsync;
 }
 
 

@@ -17,15 +17,10 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
+
+  A simple library to play and mix sounds and musics
 */
 
-/**
- *  \file SDL_mixer.h
- *
- *  Header file for SDL_mixer library
- *
- * A simple library to play and mix sounds and musics
- */
 #ifndef SDL_MIXER_H_
 #define SDL_MIXER_H_
 

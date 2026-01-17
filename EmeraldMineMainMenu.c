@@ -1556,6 +1556,7 @@ Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
                Video.x, GameSound.x, ge_TotalLevelCount
 ------------------------------------------------------------------------------*/
 int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
+    char * pWarnVsyncMessage = VSYNC_WARNING_MESSAGE;
     int32_t nErrorCode;
     uint8_t uMusicVolume;
     uint32_t uHighscoreLevel;
@@ -1901,11 +1902,16 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                         }
                         // FPS
                         PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,0,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 24,3,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 1,MainMenu.uYdim * FONT_H - 24,3,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
+                        // V-SYNC
+                        if (!Video.bVsync) {
+                            PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 240,MainMenu.uYdim * FONT_H - 25,0,pWarnVsyncMessage,K_ABSOLUTE,1);
+                            PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 241,MainMenu.uYdim * FONT_H - 24,3,pWarnVsyncMessage,K_ABSOLUTE,1);
+                        }
                         // Gesamtanzahl Levels
                         sprintf(szTotalLevelCount,"TOTAL LEVELS: %u",ge_TotalLevelCount);
                         PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 960,MainMenu.uYdim * FONT_H - 25,0,szTotalLevelCount,K_ABSOLUTE,1);
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 960,MainMenu.uYdim * FONT_H - 24,3,szTotalLevelCount,K_ABSOLUTE,1);
+                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 961,MainMenu.uYdim * FONT_H - 24,3,szTotalLevelCount,K_ABSOLUTE,1);
                         ShowButtons(pRenderer,K_ABSOLUTE);
                         if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_CREATE_PLAYER))) {
                             ActivateInputPlayernameMode();  // Eingabemodus für Namenseingabe aktivieren

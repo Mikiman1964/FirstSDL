@@ -35,6 +35,10 @@
 #define K_RELATIVE                              false
 
 
+#define VSYNC_DETECTION_FRAMES                  20     // Anzahl Frames, um V-Sync zu detektieren.
+#define VSYNC_WARNING_MESSAGE                   "WARNING: NO Y-SYNC DETECTED"
+
+
 typedef struct {
     int32_t nW;
     int32_t nH;
@@ -56,7 +60,7 @@ typedef struct {
     uint32_t uLastTicks;
     uint32_t uActTicks;
     uint32_t uFrameCount;
-    char szFramesPerSecond[32];
+    char szFramesPerSecond[64];
 } FPS;
 
 
@@ -73,6 +77,7 @@ typedef struct {
     int32_t nShowableDisplayModeCount;                                      // Anzahl der anzeigbaren Display-Modes
     SHOWABLEDISPLAYMODES ShowableDisplayModes[MAX_SHOWABLE_DISPLAYMODES];   // X- und Y- Auflösung und Index
     FPS Fps;
+    bool bVsync;                                                            // V-Sync mit 60 Hz erkannt
 } VIDEO;
 
 
@@ -106,4 +111,5 @@ void RestoreDesktop(void);
 int32_t SetWindowDisplayMode(int32_t nWidth, int32_t nHeight, Uint32 uFormat, int32_t nRefreshRate);
 int32_t CenterWindow(uint32_t uWidth, uint32_t uHeight);
 void MeasureFps(void);
+bool IsVsync(SDL_Renderer *pRenderer,float fCheckFramerate);
 #endif // MYSDL_H_INCLUDED

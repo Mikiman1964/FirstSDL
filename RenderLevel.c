@@ -2747,6 +2747,8 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP):
                 case (EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM):
                 case (EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM):
+                case (EMERALD_STEEL_STRIPE_TOP_BOTTOM):
+                case (EMERALD_STEEL_STRIPE_LEFT_RIGHT):
                 case (EMERALD_STEEL_HEART):
                 case (EMERALD_STEEL_PLAYERHEAD):
                 case (EMERALD_STEEL_PLAYERHEAD_2):

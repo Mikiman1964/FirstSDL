@@ -4,7 +4,7 @@ TODO
 * Leveleditor
     * Undo für Editor
 * Tasten für Gamespeed und Quicksave konfigurierbar
-
+* Leveleditor: Dynamit Phase 2,3 und 4
 
 Für V 1.14
 * SDL2-2.32.10
@@ -13,6 +13,9 @@ Für V 1.14
 * Fehlende Steel-Stripe-Elemente ergänzt (2 Stück, left/right und top/bottom)
 * Fehlende gezündete Dynamite-Elemente (Phase 2,3 und 4) ergänzt
 * ShowAuthorAndLevelname() zeigt, ob Quicksave erlaubt ist
+* V-Sync-Erkennung hinzugefügt und Frameratenmessung überarbeitet
+* RenderPresentAndClear() wartet jetzt pauschal 14 ms, wenn kein V-Sync detektiert wurde
+* Tray Icon und Icon für ausführbare Datei unter Windows
 */
 
 #include "gfx/textures.h"
@@ -88,6 +91,7 @@ Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
                Video.x, ManKey.x
 ------------------------------------------------------------------------------*/
 int32_t Menu(SDL_Renderer *pRenderer) {
+    char * pWarnVsyncMessage = VSYNC_WARNING_MESSAGE;
     uint8_t uMusicVolume;
     int32_t nErrorCode;
     int32_t nChoose;
@@ -193,6 +197,10 @@ int32_t Menu(SDL_Renderer *pRenderer) {
         if (strlen(Video.Fps.szFramesPerSecond) > 0) {
             PrintLittleFont(pRenderer,32,744,0,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
             PrintLittleFont(pRenderer,33,745,3,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
+            if (!Video.bVsync) {
+                PrintLittleFont(pRenderer,266,744,0,pWarnVsyncMessage,K_RELATIVE,1);
+                PrintLittleFont(pRenderer,267,745,3,pWarnVsyncMessage,K_RELATIVE,1);
+            }
         }
         nErrorCode = ShowButtons(pRenderer,K_RELATIVE);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME) || (ManKey.bFire)) {
@@ -1311,7 +1319,7 @@ void InitRollUnderground(void) {
     Playfield.uRollUnderground[EMERALD_STEEL_ACID] = 0xEB;                              // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_HEART] = 0xEB;                             // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_PLAYERHEAD] = 0xEB;                        // Nur Steine und Bomben rollen hier nicht herunter
-	Playfield.uRollUnderground[EMERALD_STEEL_PLAYERHEAD_2] = 0xEB;                        // Nur Steine und Bomben rollen hier nicht herunter
+	Playfield.uRollUnderground[EMERALD_STEEL_PLAYERHEAD_2] = 0xEB;                      // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_NO_ENTRY] = 0xEB;                          // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_GIVE_WAY] = 0xEB;                          // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_YING] = 0xEB;                              // Nur Steine und Bomben rollen hier nicht herunter
@@ -1329,6 +1337,12 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_LEFT_BOTTOM] = 0xEB;                // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_BOTTOM] = 0xEB;                     // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_RIGHT_BOTTOM] = 0xEB;               // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_TOP_BOTTOM] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
+    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_LEFT_RIGHT] = 0xEB;                 // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_GROW_RIGHT] = 0xEB;                        // Nur Steine und Bomben rollen hier nicht herunter
 	// Playfield.uRollUnderground[EMERALD_STEEL_GROWING_RIGHT] = 0xEB;                  // Nur Steine und Bomben rollen hier nicht herunter
 	Playfield.uRollUnderground[EMERALD_STEEL_GROW_LEFT] = 0xEB;                         // Nur Steine und Bomben rollen hier nicht herunter
@@ -1541,10 +1555,6 @@ void InitRollUnderground(void) {
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_6] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_7] = 0x1FF;                        // Alles rollt von Schatztruhen
 	Playfield.uRollUnderground[EMERALD_TREASURECHEST_8] = 0x1FF;                        // Alles rollt von Schatztruhen
-    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP] = 0xEB;            // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP] = 0xEB;           // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM] = 0xEB;         // Nur Steine und Bomben rollen hier nicht herunter
-    Playfield.uRollUnderground[EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM] = 0xEB;        // Nur Steine und Bomben rollen hier nicht herunter
 }
 
 

@@ -33,7 +33,7 @@ int32_t CheckHighScoresDir(void) {
 /*----------------------------------------------------------------------------
 Name:           WriteHighScoreFile
 ------------------------------------------------------------------------------
-Beschreibung: Erzeugt ein Highscore-File für eine levelgruppe.
+Beschreibung: Erzeugt ein Highscore-File für eine Levelgruppe.
 Parameter
       Eingang: puLevelgroupHash, uint8_t *, Zeiger auf Levelgruppenhash (16 Bytes)
       Ausgang: -

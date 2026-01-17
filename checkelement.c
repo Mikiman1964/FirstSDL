@@ -1,8 +1,6 @@
 #include "checkelement.h"
 #include "EmeraldMine.h"
 
-extern PLAYFIELD Playfield;
-
 
 /*----------------------------------------------------------------------------
 Name:           IsElementAlive
@@ -13,7 +11,7 @@ Parameter
       Eingang: uElement, uint16_t, Element, das geprüft werden soll
       Ausgang: -
 Rückgabewert:  bool, true = Element lebt, sonst nicht
-Seiteneffekte: Playfield.x
+Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 bool IsElementAlive(uint16_t uElement) {
     bool bAlive;
@@ -592,7 +590,7 @@ Parameter
       Eingang: uElement, uint16_t, Element
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: Playfield.x
+Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 bool IsContactMineExplode(uint16_t uElement) {
     return ( (uElement == EMERALD_ALIEN) || (uElement == EMERALD_YAM) ||

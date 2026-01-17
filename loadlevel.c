@@ -2911,6 +2911,7 @@ int32_t ReadNamesFile(void) {
             for (I = 0; I < 16; I++) {
                 uResultHash[I] = MD5Names.digest[I] ^ MD5NameCount.digest[I];
             }
+            // if (true) {
             if (memcmp(uResultHash,Names.uSecurityHash,16) == 0) {
                 bDataOK = true;
                 nErrorCode = 0;

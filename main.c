@@ -149,10 +149,12 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     // Renderer mit schwarz löschen
     SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
     RenderPresentAndClear(pRenderer);
+
     if (LoadTextures(pRenderer) != 0) {         // Für alle Bitmaps Texturen erzeugen
         RestoreDesktop();
         return -1;
     }
+    IsVsync(pRenderer,60);
     nMenuChoose = Menu(pRenderer);              // Demomenü aufrufen
     if ((nMenuChoose == 3) || (nMenuChoose == -1)) {
         RestoreDesktop();
