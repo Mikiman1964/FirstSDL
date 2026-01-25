@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>TRAINING</groupname>
-<create_timestamp>20260116_231548</create_timestamp>
-<levelcount>65</levelcount>
+<create_timestamp>20260117_200548</create_timestamp>
+<levelcount>60</levelcount>
 <level000>
   <title>FIRST CONTACT</title>
   <author>MIK</author>
@@ -1294,644 +1294,6 @@
   <leveldata_md5_hash>44A86C63ECD24FE2A9F3315AB4754C58</leveldata_md5_hash>
 </level006>
 <level007>
-  <title>ACTIVE 42</title>
-  <author>ACTIVE</author>
-  <version>00.00</version>
-  <values>
-    <emeralds_to_collect>360</emeralds_to_collect>
-    <score_time_factor>200</score_time_factor>
-    <speed_cheese_spread>0</speed_cheese_spread>
-    <speed_grass_spread>0</speed_grass_spread>
-  </values>
-  <leveldimension>
-    <x>25</x>
-    <y>60</y>
-  </leveldimension>
-  <scores>
-    <emerald>1</emerald>
-    <ruby>0</ruby>
-    <sapphire>3</sapphire>
-    <perl>0</perl>
-    <crystal>0</crystal>
-    <letter>0</letter>
-    <key>0</key>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <nutcracking>0</nutcracking>
-    <stoning_beetle>0</stoning_beetle>
-    <stoning_mine>0</stoning_mine>
-    <stoning_alien>0</stoning_alien>
-    <stoning_yam>0</stoning_yam>
-    <timecoin>0</timecoin>
-  </scores>
-  <times>
-    <to_play>620</to_play>
-    <wheel_rotation>0</wheel_rotation>
-    <magic_wall>110</magic_wall>
-    <light>0</light>
-    <timedoor>0</timedoor>
-    <timecoin>0</timecoin>
-  </times>
-  <inventory>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <white_key>0</white_key>
-  </inventory>
-  <replicators>
-    <red>
-      <active>0</active>
-      <element>128</element>
-    </red>
-    <green>
-      <active>0</active>
-      <element>128</element>
-    </green>
-    <blue>
-      <active>0</active>
-      <element>128</element>
-    </blue>
-    <yellow>
-      <active>0</active>
-      <element>128</element>
-    </yellow>
-  </replicators>
-  <lightbarriers>
-    <red>
-      <active>0</active>
-    </red>
-    <green>
-      <active>0</active>
-    </green>
-    <blue>
-      <active>0</active>
-    </blue>
-    <yellow>
-      <active>0</active>
-    </yellow>
-  </lightbarriers>
-  <conveyorbelts>
-    <red>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </red>
-    <green>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </green>
-    <blue>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </blue>
-    <yellow>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </yellow>
-  </conveyorbelts>
-  <messages>
-    <m1></m1>
-    <m2></m2>
-    <m3></m3>
-    <m4></m4>
-    <m5></m5>
-    <m6></m6>
-    <m7></m7>
-    <m8></m8>
-  </messages>
-  <max_yam_explosions>1</max_yam_explosions>
-  <yam_explosions>
-    <explosion01>
-      <element01>128</element01>
-      <element02>128</element02>
-      <element03>128</element03>
-      <element04>128</element04>
-      <element05>128</element05>
-      <element06>128</element06>
-      <element07>128</element07>
-      <element08>128</element08>
-      <element09>128</element09>
-    </explosion01>
-  </yam_explosions>
-  <leveldata>eNrtlFvOgjAUhB2X4yr+/fy6hwbig8tgkeqLJoIFzm2qNkajiZmQ0NP5OJcC7aKtVuqv5mFlYtdfcQ+95L4ZVwPxp3Jg9mFeTTGoHG14pl9JZCLirqagokKAOBsX9VXFSkAibLq+H5ubdx4JYWznCNOPuThh52T37KxQeDP4rBBOQs5ax/x0S+ctMTsrz9inD3fdTHRhmuwN6K7eTKSRAc0kfk0klcfmgvJbwjKgfk9IbbH+EmGZTGk/IzIjs7V+Tuh+vL9EpNEZ/WWiLE4cICoR+g+ZXIT/RWuJSUd4YlPMwaod/HtkLZecWC94DkZsr74zeB+MuN35VNug2lkJ8eyZP06sjF6T4x3ECVbf14fXyun+9/FJ5/EjvpX4ryRqdQFkpMHS</leveldata>
-  <leveldata_md5_hash>3B4CCF023910535F56CE742D860657BB</leveldata_md5_hash>
-</level007>
-<level008>
-  <title>ACTIVE 61 (MODIFIED)</title>
-  <author>ACTIVE</author>
-  <version>00.00</version>
-  <values>
-    <emeralds_to_collect>400</emeralds_to_collect>
-    <score_time_factor>20</score_time_factor>
-    <speed_cheese_spread>0</speed_cheese_spread>
-    <speed_grass_spread>0</speed_grass_spread>
-  </values>
-  <leveldimension>
-    <x>60</x>
-    <y>30</y>
-  </leveldimension>
-  <scores>
-    <emerald>1</emerald>
-    <ruby>2</ruby>
-    <sapphire>3</sapphire>
-    <perl>5</perl>
-    <crystal>0</crystal>
-    <letter>0</letter>
-    <key>10</key>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <nutcracking>0</nutcracking>
-    <stoning_beetle>0</stoning_beetle>
-    <stoning_mine>0</stoning_mine>
-    <stoning_alien>0</stoning_alien>
-    <stoning_yam>0</stoning_yam>
-    <timecoin>0</timecoin>
-  </scores>
-  <times>
-    <to_play>800</to_play>
-    <wheel_rotation>0</wheel_rotation>
-    <magic_wall>110</magic_wall>
-    <light>0</light>
-    <timedoor>0</timedoor>
-    <timecoin>0</timecoin>
-  </times>
-  <inventory>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <white_key>0</white_key>
-  </inventory>
-  <replicators>
-    <red>
-      <active>0</active>
-      <element>128</element>
-    </red>
-    <green>
-      <active>0</active>
-      <element>128</element>
-    </green>
-    <blue>
-      <active>0</active>
-      <element>128</element>
-    </blue>
-    <yellow>
-      <active>0</active>
-      <element>128</element>
-    </yellow>
-  </replicators>
-  <lightbarriers>
-    <red>
-      <active>0</active>
-    </red>
-    <green>
-      <active>0</active>
-    </green>
-    <blue>
-      <active>0</active>
-    </blue>
-    <yellow>
-      <active>0</active>
-    </yellow>
-  </lightbarriers>
-  <conveyorbelts>
-    <red>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </red>
-    <green>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </green>
-    <blue>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </blue>
-    <yellow>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </yellow>
-  </conveyorbelts>
-  <messages>
-    <m1></m1>
-    <m2></m2>
-    <m3></m3>
-    <m4></m4>
-    <m5></m5>
-    <m6></m6>
-    <m7></m7>
-    <m8></m8>
-  </messages>
-  <max_yam_explosions>1</max_yam_explosions>
-  <yam_explosions>
-    <explosion01>
-      <element01>128</element01>
-      <element02>128</element02>
-      <element03>128</element03>
-      <element04>128</element04>
-      <element05>128</element05>
-      <element06>128</element06>
-      <element07>128</element07>
-      <element08>128</element08>
-      <element09>128</element09>
-    </explosion01>
-  </yam_explosions>
-  <leveldata>eNrFVUtugzAQBSeRKnVjiHqZrHqhqDkCYtwvWZYDNDfJobrv+Af+YWyKEj0Nb8DYj2ePDRRwJzQFxfjC0FcNsO4+I2323TnSdsI4KN0f6yvcHhViSmlJ26HYKCXAL7yKkO+8Ih5Uj99SQvd/R/C2LtD2gZjq94LQuodB96qUIXku7bsuY9ZN3bNqD6/oU0Q3ve1R3W2Cfl3syPqVfPL8+lFjaxUMWrTILaIU11SWirZfN0Do0kC0uAtqwVD0mdw49ez7BaxLUL78MHXrDJa6ZdSvPEvCsdzv0dm/djTi+y6qJv0wdUkGS91nwy/BefXXl03EWut7DazvdD2Pa9+LXZnOfj03wXreknCs6dcOOTao/WfuRbeeqwxO9StH5/1a0Vc+KW/il2c1ci2ebBD9P3XflN9m1u+3dcq2Yo3zdC+CO2ucLnKStxFAJrNhnjlKDCZmkWPMSPR/tCXLGIbZBpyD6fFpJngFlBjS4ZjrDIY/zPxIuejVqabzMTN1YRg7xDTTs951Gr2RhXT3E+x+247EYXo8DvnR88sMDsX4DhMnbD2DVL/7BM+a03XttQ6tL69v6uQxZjNI0x2rga4EJua0Mq42w93wB4ZcGNQ=</leveldata>
-  <leveldata_md5_hash>AF9584F163039D304383122366381A3D</leveldata_md5_hash>
-</level008>
-<level009>
-  <title>ACTIVE 73</title>
-  <author>ACTIVE</author>
-  <version>00.00</version>
-  <values>
-    <emeralds_to_collect>540</emeralds_to_collect>
-    <score_time_factor>40</score_time_factor>
-    <speed_cheese_spread>0</speed_cheese_spread>
-    <speed_grass_spread>0</speed_grass_spread>
-  </values>
-  <leveldimension>
-    <x>43</x>
-    <y>30</y>
-  </leveldimension>
-  <scores>
-    <emerald>1</emerald>
-    <ruby>2</ruby>
-    <sapphire>3</sapphire>
-    <perl>5</perl>
-    <crystal>0</crystal>
-    <letter>0</letter>
-    <key>15</key>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <nutcracking>0</nutcracking>
-    <stoning_beetle>20</stoning_beetle>
-    <stoning_mine>20</stoning_mine>
-    <stoning_alien>0</stoning_alien>
-    <stoning_yam>20</stoning_yam>
-    <timecoin>0</timecoin>
-  </scores>
-  <times>
-    <to_play>320</to_play>
-    <wheel_rotation>0</wheel_rotation>
-    <magic_wall>110</magic_wall>
-    <light>0</light>
-    <timedoor>0</timedoor>
-    <timecoin>0</timecoin>
-  </times>
-  <inventory>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <white_key>0</white_key>
-  </inventory>
-  <replicators>
-    <red>
-      <active>0</active>
-      <element>128</element>
-    </red>
-    <green>
-      <active>0</active>
-      <element>128</element>
-    </green>
-    <blue>
-      <active>0</active>
-      <element>128</element>
-    </blue>
-    <yellow>
-      <active>0</active>
-      <element>128</element>
-    </yellow>
-  </replicators>
-  <lightbarriers>
-    <red>
-      <active>0</active>
-    </red>
-    <green>
-      <active>0</active>
-    </green>
-    <blue>
-      <active>0</active>
-    </blue>
-    <yellow>
-      <active>0</active>
-    </yellow>
-  </lightbarriers>
-  <conveyorbelts>
-    <red>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </red>
-    <green>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </green>
-    <blue>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </blue>
-    <yellow>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </yellow>
-  </conveyorbelts>
-  <messages>
-    <m1></m1>
-    <m2></m2>
-    <m3></m3>
-    <m4></m4>
-    <m5></m5>
-    <m6></m6>
-    <m7></m7>
-    <m8></m8>
-  </messages>
-  <max_yam_explosions>2</max_yam_explosions>
-  <yam_explosions>
-    <explosion01>
-      <element01>18</element01>
-      <element02>18</element02>
-      <element03>18</element03>
-      <element04>18</element04>
-      <element05>520</element05>
-      <element06>18</element06>
-      <element07>18</element07>
-      <element08>18</element08>
-      <element09>18</element09>
-    </explosion01>
-    <explosion02>
-      <element01>19</element01>
-      <element02>19</element02>
-      <element03>19</element03>
-      <element04>19</element04>
-      <element05>519</element05>
-      <element06>19</element06>
-      <element07>19</element07>
-      <element08>19</element08>
-      <element09>19</element09>
-    </explosion02>
-  </yam_explosions>
-  <leveldata>eNq1VW0KwjAMdfhL/OVgZ9g1vJBUb1Ay/NrEj99ewUPatV1pYofQNDy68l7CW1bSrFt0Ingj8PnRumoEPgfrCggluHM9JbLOiF+iuIqyVYLL1grmPMZn49Um5LhzgxCN45rwKR9CH1xn+qM3a5iJ3RLaPrjqwoDg/7+KPqENyW+Na12R/svnIHgLJF3XJCufO9cNAp+DyMxyrjUCn4PIvHauSuRuOTzIG++EPwl/IXb4qRWiCQSZXCcmYeWVyqtcLjm1W6+0XuVy2T8M31URV5lbsDN9sbWzZ+lnEG+fXEelNutTZJc5gRFf94xfYg==</leveldata>
-  <leveldata_md5_hash>BE49D75274AB026E24F0C27DBB340A3A</leveldata_md5_hash>
-</level009>
-<level010>
-  <title>ACTIVE 76</title>
-  <author>ACTIVE</author>
-  <version>00.00</version>
-  <values>
-    <emeralds_to_collect>785</emeralds_to_collect>
-    <score_time_factor>40</score_time_factor>
-    <speed_cheese_spread>200</speed_cheese_spread>
-    <speed_grass_spread>0</speed_grass_spread>
-  </values>
-  <leveldimension>
-    <x>35</x>
-    <y>45</y>
-  </leveldimension>
-  <scores>
-    <emerald>1</emerald>
-    <ruby>2</ruby>
-    <sapphire>3</sapphire>
-    <perl>5</perl>
-    <crystal>0</crystal>
-    <letter>0</letter>
-    <key>10</key>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <nutcracking>5</nutcracking>
-    <stoning_beetle>20</stoning_beetle>
-    <stoning_mine>20</stoning_mine>
-    <stoning_alien>5</stoning_alien>
-    <stoning_yam>20</stoning_yam>
-    <timecoin>0</timecoin>
-  </scores>
-  <times>
-    <to_play>800</to_play>
-    <wheel_rotation>0</wheel_rotation>
-    <magic_wall>110</magic_wall>
-    <light>0</light>
-    <timedoor>0</timedoor>
-    <timecoin>0</timecoin>
-  </times>
-  <inventory>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <white_key>0</white_key>
-  </inventory>
-  <replicators>
-    <red>
-      <active>0</active>
-      <element>128</element>
-    </red>
-    <green>
-      <active>0</active>
-      <element>128</element>
-    </green>
-    <blue>
-      <active>0</active>
-      <element>128</element>
-    </blue>
-    <yellow>
-      <active>0</active>
-      <element>128</element>
-    </yellow>
-  </replicators>
-  <lightbarriers>
-    <red>
-      <active>0</active>
-    </red>
-    <green>
-      <active>0</active>
-    </green>
-    <blue>
-      <active>0</active>
-    </blue>
-    <yellow>
-      <active>0</active>
-    </yellow>
-  </lightbarriers>
-  <conveyorbelts>
-    <red>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </red>
-    <green>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </green>
-    <blue>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </blue>
-    <yellow>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </yellow>
-  </conveyorbelts>
-  <messages>
-    <m1></m1>
-    <m2></m2>
-    <m3></m3>
-    <m4></m4>
-    <m5></m5>
-    <m6></m6>
-    <m7></m7>
-    <m8></m8>
-  </messages>
-  <max_yam_explosions>2</max_yam_explosions>
-  <yam_explosions>
-    <explosion01>
-      <element01>128</element01>
-      <element02>128</element02>
-      <element03>128</element03>
-      <element04>128</element04>
-      <element05>128</element05>
-      <element06>128</element06>
-      <element07>128</element07>
-      <element08>128</element08>
-      <element09>128</element09>
-    </explosion01>
-    <explosion02>
-      <element01>128</element01>
-      <element02>128</element02>
-      <element03>128</element03>
-      <element04>128</element04>
-      <element05>128</element05>
-      <element06>128</element06>
-      <element07>128</element07>
-      <element08>128</element08>
-      <element09>128</element09>
-    </explosion02>
-  </yam_explosions>
-  <leveldata>eNqtVEtSwzAMVdsNTDcJoUeAQ7DiPFAuUFpqMP92GBawYtV9cjz22K7tyIkjy0znjfyL86wnyZYgDwLRwQju7WhjZtveDo0LBMdy6b/+jvYcr8qkmu3gC75JiIhfO2VjNaoti157ICE6iqS1WrVjND8j0bJMApbWF208RcKcTvnCVXRs2kcoIr7wFGEU3hfxD0UuukXgW66iF8QSZj4nR7Vn6dZojiIc3X6cOIqG75WrXY6iyvxR2b5fyzxFjeFoFCqzotWVRmVOjvS/jTm78b64aD9731KKGruvMhYq0ljALSzZd7oxhlk2ZscK7mAdfanC065gPvgOutF71ospB8YpXwSceAg0F4Ev6de79hBo3rL8EOApkkldPBZuXKZ2NvXrR9nRxZjDdW9NV90wlkzVuuqGsfYsVP44OZZkBFsWKs+YJX5GWnOX5Vy1N9YEWudm+iOy+xNOPcuCyFDX8zIA9mVFZKivPx4XwbyN2mZWCe5bltRdTNcLr/rdrYn3knmL3pKaqRztM8HxmMoRl6VMwkVw4u0JjWUmC5UjLssMVUq33TJZDoE/LY7QuQ==</leveldata>
-  <leveldata_md5_hash>DA639E50F61A6376DDB8A756CBB00DA3</leveldata_md5_hash>
-</level010>
-<level011>
-  <title>ACTIVE 79</title>
-  <author>ACTIVE</author>
-  <version>00.00</version>
-  <values>
-    <emeralds_to_collect>1000</emeralds_to_collect>
-    <score_time_factor>40</score_time_factor>
-    <speed_cheese_spread>0</speed_cheese_spread>
-    <speed_grass_spread>0</speed_grass_spread>
-  </values>
-  <leveldimension>
-    <x>40</x>
-    <y>35</y>
-  </leveldimension>
-  <scores>
-    <emerald>1</emerald>
-    <ruby>2</ruby>
-    <sapphire>3</sapphire>
-    <perl>5</perl>
-    <crystal>0</crystal>
-    <letter>0</letter>
-    <key>10</key>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <nutcracking>5</nutcracking>
-    <stoning_beetle>20</stoning_beetle>
-    <stoning_mine>20</stoning_mine>
-    <stoning_alien>5</stoning_alien>
-    <stoning_yam>20</stoning_yam>
-    <timecoin>0</timecoin>
-  </scores>
-  <times>
-    <to_play>650</to_play>
-    <wheel_rotation>0</wheel_rotation>
-    <magic_wall>110</magic_wall>
-    <light>0</light>
-    <timedoor>0</timedoor>
-    <timecoin>0</timecoin>
-  </times>
-  <inventory>
-    <dynamite>0</dynamite>
-    <hammer>0</hammer>
-    <white_key>0</white_key>
-  </inventory>
-  <replicators>
-    <red>
-      <active>0</active>
-      <element>128</element>
-    </red>
-    <green>
-      <active>0</active>
-      <element>128</element>
-    </green>
-    <blue>
-      <active>0</active>
-      <element>128</element>
-    </blue>
-    <yellow>
-      <active>0</active>
-      <element>128</element>
-    </yellow>
-  </replicators>
-  <lightbarriers>
-    <red>
-      <active>0</active>
-    </red>
-    <green>
-      <active>0</active>
-    </green>
-    <blue>
-      <active>0</active>
-    </blue>
-    <yellow>
-      <active>0</active>
-    </yellow>
-  </lightbarriers>
-  <conveyorbelts>
-    <red>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </red>
-    <green>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </green>
-    <blue>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </blue>
-    <yellow>
-      <direction_at_start>off</direction_at_start>
-      <next_direction>left</next_direction>
-    </yellow>
-  </conveyorbelts>
-  <messages>
-    <m1></m1>
-    <m2></m2>
-    <m3></m3>
-    <m4></m4>
-    <m5></m5>
-    <m6></m6>
-    <m7></m7>
-    <m8></m8>
-  </messages>
-  <max_yam_explosions>2</max_yam_explosions>
-  <yam_explosions>
-    <explosion01>
-      <element01>128</element01>
-      <element02>128</element02>
-      <element03>128</element03>
-      <element04>128</element04>
-      <element05>128</element05>
-      <element06>128</element06>
-      <element07>128</element07>
-      <element08>128</element08>
-      <element09>128</element09>
-    </explosion01>
-    <explosion02>
-      <element01>128</element01>
-      <element02>128</element02>
-      <element03>128</element03>
-      <element04>128</element04>
-      <element05>128</element05>
-      <element06>128</element06>
-      <element07>128</element07>
-      <element08>128</element08>
-      <element09>128</element09>
-    </explosion02>
-  </yam_explosions>
-  <leveldata>eNrVlk0OwiAQhUmjC3Wl3saVF+odSPEWc1mjlZbhzfBT0MS8pGmm5WOYedA64zrLdtTMm7kE/DlmIeKAQQHpdb0scsF7ccTHYt76ns5LzcGrVcILI9osPk7N+fEnZevV6ofuiO+t6h/sb5lfWtxGkH/soRqeVI/v8M5vOaj7JFR2jXA3pngHkO6a2C/Im8wJNDXwnDmC0uulDE+qoMbL96O2v3o/tB1FsMMsW6dcv1h+3PCRY6N5pq08fqq38nJ+SX2v6nm5Pm7Pj8QcOY9EHjHeVdFjYdXl9w+83bBy/H17fvvh9+vF03kL77bwRnMPTpdR4KUcSLBfwjFWOK96/v/11RMHigCy</leveldata>
-  <leveldata_md5_hash>B1E8E8FBAC37BFB094103443361CB596</leveldata_md5_hash>
-</level011>
-<level012>
   <title>ABWAERTS</title>
   <author>LEE KING</author>
   <version>00.00</version>
@@ -2095,8 +1457,8 @@
   </yam_explosions>
   <leveldata>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</leveldata>
   <leveldata_md5_hash>209108A3775B4F29E5E2A15B750DE4E9</leveldata_md5_hash>
-</level012>
-<level013>
+</level007>
+<level008>
   <title>AUF GEHTS! NOCHMAL!</title>
   <author>LEE KING</author>
   <version>01.08</version>
@@ -2297,8 +1659,8 @@
   </yam_explosions>
   <leveldata>eNrtksEJg0AQRecXkRrSRhpKD8KkhRSQEpJDEr0LIqJ4FCzGkfGmFw9fRIfH378s7D4GVkVnNCjQWRqoZPjZmqOHnxfWNSq0KG03tsofXyOFyjKgEob9GF7WvPhvehLjJMQ4V2LYEySTgckeDbcDzBCGMIQhDGE4i+EhSsPfvlDZxrCGj9yN96o7AzsluNc=</leveldata>
   <leveldata_md5_hash>9799E85B59A55A72A82D7C744C1EA6AC</leveldata_md5_hash>
-</level013>
-<level014>
+</level008>
+<level009>
   <title>WENIG IST OFT MEHR</title>
   <author>LEE KING + ABC</author>
   <version>01.08</version>
@@ -2422,8 +1784,8 @@
   </yam_explosions>
   <leveldata>eNp9kksKwjAQhud3585LeAlXCl5BqCIWFy48gdsh7SEED6GV4gvEjXouJ4/mUVR+ppM0H/PIpKADasqRiQpaYI4lZrKqxJ544S3+SENiUY9Kgpj2jUCF00CkRJZREaP/WqbZW+OIYR8nMGxU+oyaqR3TS2Kwz6iZLVWGUUmtOlbD7MQsE9cQMqdx/jF7Vw+bXIo6zmImR2BUcjOh9wyh9/Zpw6wNw74bOxPlbynE4daU9L7fqqeT1LKJumzP4ltNmrmZOF2ZN//UHTZSeAOp+s5P5f1NsMJY+JHYGQ/UOOEq34t4vfoAoDun8g==</leveldata>
   <leveldata_md5_hash>07607AC569BC63C97DFF1FAC94B9AAF2</leveldata_md5_hash>
-</level014>
-<level015>
+</level009>
+<level010>
   <title>NEON</title>
   <author>LEE KING</author>
   <version>01.11</version>
@@ -2566,8 +1928,8 @@
   </yam_explosions>
   <leveldata>eNptkDsOwjAMhu3MPI4BE2fogEopfUBbHoIWxAG4Q6TeB0TVjYGVjZnb4DgBUlT9itP6i50/LkQNuShhBSUrMrtWBRKuMKAoiUiWDwnviquYmbytGXio6byFriFm+sRPJqW1+PIx0wfRGAL6SsidJiEtF/sUXyiNj6Ym2DO1SrGJGd8aUecu35uwr+Cv1sMOxUL8MqFV77KrG6pJTNlRbNVqeke735LO6ff6ZhrNvqn5q2nODoxEm4Zwgp24UK2DB9yQSthjjkfcYkXsDG+t52NC</leveldata>
   <leveldata_md5_hash>5C08D22641273615967F70B75C986FE3</leveldata_md5_hash>
-</level015>
-<level016>
+</level010>
+<level011>
   <title>BUNT GEMISCHT</title>
   <author>LEE KING  BJOERN THE KING</author>
   <version>01.11</version>
@@ -2710,8 +2072,8 @@
   </yam_explosions>
   <leveldata>eNptVUtuFDEQdbHy0rJ8Bdt3mBVLVoglO9Zcgb/cPgQHiSaJxIJFUIYoIkQIIqEchnL92j2DWu6Zfu169ernvoFX8BJe43oFL+A5PINruIKdW6+n7pM7wM8NNq4/cIA37q17N2G38Aveuw/u44TdwN2J7T36aEfYAR4huYF2vFdczV3D4gr9C7iS83hf3LAdSHYR9ya0+Ab3hLFdQLy4R4yEMY87Kr35inyd+BlvxHcP6qHRu+zuMDb+v8OnTr4P8Jf2FdrJLAfky4gU5IrCurjvwufJa8b/53ALg6OTbSTbL6Z5xFXI7xnlpRKW6be7PeavCXcR7ZfodzxVUpcIO8Pcd1ERJBMXcCWaefe47+G38em1hwfCMirpkkf24Ykt4HPE+4KZXnM3Mj+wRxjPSSo18MWxvp1webzUNhLS8d3Y9wBJ6sCWBbEfUCl7I3rWs2DlCnnLxOnNB6uNVI+h5RKCZCAS37DdS2xrvAtmq0ocmeLLiJ1LbDvphSaYd2t/sC3v8sRZCLuAKoozsQbyW8VvIKyIligVU75L8JI7LzUfsQ32RM9V+BaZimYdPLBRm0SMnhbnhetWSGcTrFEVG01DMizKvRjfqEKyGRlYphniPmgTn0ayM9vhtW/0NXsOFluWKddMM8bdu7VlDZ5mfca0zzkvSerQZUYYSxRxoEt96DTMPkYnBvHbja/brm6xcY92yiDbalfNeQm2gu2LdnJE6rXFzotE/jV/YTOXqmVoqJvZypSVNNWI46rSaWy7w38ac5nqwZOZTV+Qk4k7hOMtk45stsW8xIlPZ3dbty791iY+jjBPtmsHabx1qkYU2zpVvcksJPLK50cxv0ly2ifMT2eMYkH6sUxYt5rkKQ7WFzf1jSd8ax/o/I5desqUqf/qkW2yPpq1eJsY7UnW6o/81ql6OvvpqMerZTiTKtVSpyopH/fGOqvDK89loLNBY+viu53kL9B3T7UEOfHbZgbT9D1f3PH3SHvSG2u13EeLpUy1zJtZVc1N3vK8Bcte3GgZ7IXOgPU8aLRf4+Uvtj85T9mSq6yY5rnbHHXJ+87m9wkyz4tnNch5GEzzZ/ydF+dlu/5//QOLkN2m</leveldata>
   <leveldata_md5_hash>4243158E58814DB58F2215242FF39DD0</leveldata_md5_hash>
-</level016>
-<level017>
+</level011>
+<level012>
   <title>LAUF MAL WIEDER</title>
   <author>LEE KING</author>
   <version>01.08</version>
@@ -2835,8 +2197,8 @@
   </yam_explosions>
   <leveldata>eNrdmluO1DAQRe0teEV8IB4SC0AIgVgAG+CtmzXUQuATNsDffLMbeujJJLbrce10I4QsmHQ6yfGj6laV00tadu1bepu+Vmde5+entqRX+WV+k1+cjh7nZ/lhfpSfnv5/cvp7e7QkrW1Pk7uGuya7Vp+pr1iPtjOlunu9dmO0TxeVqH+CesV6vGf0BJaI+0+jDO/525PX72LG/hnFvFpj1Nf4DDGvRtf6GYJ6tDHau+GsY21PWu/7c3vbFZIhFQNhH1v/sObKWg8xR2AxanuRgBIx1mYzNH/s11zclTh/6v0cyjj0/tuMWn96H7TWAQHDvtpj6DPUrxsCnan9HM4c+eOAo9W9n+v9ihmtf2znNb3S7A/0OPp1qe0KrhUKZR19X1stgeLxDENoRtt/3bujcbSjihhojkH3nmX48xYzYDIQxAOGsR9zPA6PgXCu2niuxUmNUZQ18hRZi+dRfJdQb1gGb0XiZBdQ9crSJxArpN9fM4qqbNZ8zzF6DfUUd5wRa7k4araNtJgMGVDwKEbZDF3xYPienrdxjDYv8edcGz/DqPMruFmQroItVavVYCivTOVcdq0Gwn/3dsQw/MqP9wabATUPibLbUQafsflWFI+DYXgKJoHucholQQzQetvnV32dwuigZ9Wan+s1iJ95jTNKmDkcZ4jD6PUJRu4drUeUz4C0W+lqTvapQkQav65lGKLo5/m4dL29ZZSwcvL2AaAoAAzdZfI4ube5Ef30GV67BANBpePVtDDWHMRuITNGz3aZ/CrWqVlGoXYGIkY86jFGnX3EcXCOsffKyzIwyIjsxdObeldTZ4AaR+SNtX8gIHhW4fv/Wp/P7U8yGeWeET+NZWjf/l+MEua1nC5G4/CVlLEDqx/9XPn2wkT4tr4dYUhX1+h1jqa7Uc0YryyXX6GKFby2zzAkqAAQass4A8ZbyJEY7zP4GOvlQDojiho+AyaDiUjePk/E4PYrWLuyGNo9ZZCg75HXcRBE8y1J9959HGTe4DCVls4QmuFZnecf7JuoGX2RiuHbi9Vv20JAMUo1B5EnYorB77559oDu/fm41Vr2wNXOjMYz2esIY0wjOUah4twxBlMjM7GQ+y2OvdfDxJXarvicgH+TI05+NcfQfCtilMMMhAz8hXFgsLX2iCSEloxHca02mM1vxxklxZUBnB0yex609zhjo4p3fG1G5OHtd2WCMet9NqO4OVK5CKOPZtZd0e4hjN9GjfyuZNzbe0b0Ruo4w84OjzP8N1LeXhLC/Gsbh33X/H7KWRks/5ALMKzfl/hzxWWl7bn13YR9RSHHoa2Y0HbFnbev8Papj0atXkt4HRrth73mRxqcHO467Zbx5crt32Q8mGK8S++v2D78YXxMn67YPqdloN3kn/nX6d9NXtL3/CPzd/4G8a6GFQ==</leveldata>
   <leveldata_md5_hash>E04A8C66310122E50EB6B727AB88CC19</leveldata_md5_hash>
-</level017>
-<level018>
+</level012>
+<level013>
   <title>HELLFIGHTER (MODIFIED)</title>
   <author>ABC + BJOERN THE KING</author>
   <version>01.08</version>
@@ -2960,8 +2322,8 @@
   </yam_explosions>
   <leveldata>eNrtlbtKA0EUhs+/YJNqEyTv4laCINonQRFEhEUs0lsOuxtjjG+Qp9BCFFsRwSI2Fr6Nc9u57OylsQmEw2xmvnycnNnsnH2iKa3xiV8+1sjpBW+Y0iPltKKsEitOc/npR2Z4n8a4wjkO0Hf4KS6R4gTXfKTYQ9aRJwzBGY+YjznN9IxpDrqVKxF3fMWMf0MLuqcHWvIZc3hh/MJwyFXpFzJvm88C39bj+uj0N6OeJn8Y+L1/zd/s9zx/uK1/I+tvfv7h+Wh9/r9Rl/8C75IvjL+U1xF+oM4Tkz7T5y3FB1S+RHqJ/r0JvjS3vlifIXfO005UnjfRR8X3M96nVMylf4RnMF1xwSPXVR1KrjLt6uyQ/NX49sroGOXM+vZ+xnpnalexc5/r/TC/4HFQT9zq1+2r5KoDRbr7uH5BA+f/dDkLuOqIkeZw+qQiA+2jI08XjwIO48Prz3798OpkDXVGgd++33JfqNQZBf6+JAkPy0cYY8Lfx9V38B/louG5</leveldata>
   <leveldata_md5_hash>A02E9677456931DC13D8AC2D981A8F74</leveldata_md5_hash>
-</level018>
-<level019>
+</level013>
+<level014>
   <title>RUECKWEG</title>
   <author>LEE KING</author>
   <version>01.08</version>
@@ -3085,8 +2447,8 @@
   </yam_explosions>
   <leveldata>eNq1VUtOAzEM9VujMlFPgBACcQsuhOAIVSL+HIBbICokJFZdsuua2+CGzCQT25OqVWVlPJ5J/HnPSVa0OrgEusAJy4LOcYZLnPLbDHMc4RgdPzvMWDoE2kU+WTb6ju7pgbVj8bTg4flN2n6wN7q0fbJ9Nd/TFdsfRQxPSHNRrNFsqZF0ziWkv0+xjke64aGthaH/fWDwNf5e+glcR4hzEfNwKQ+51iefEHnr8/L/PoadRwu7sXZqHc8xhis4qvPQcW/xBYGVrEPWbnGPRk/IGHmuK2w0852q4yXFGOcDAyOIumrtTM77Na6RH6r+golpidV8qEPHaBwLBv5Q9mKO8WryAUNb+wNGz2TOe7yt/oDoo+l+yt+X9BbPKyjcYqJ3Lc6x1f6A0V/O9IlGDoFuh/NK49ju/5r7bfagnzzr0MDI5q2Ood81+9pLuo6cr/GDXx5rvk+/8bXjrWrJO48/pnbRXg==</leveldata>
   <leveldata_md5_hash>6FAC10E0590AF19D7DAD0487D225DC0B</leveldata_md5_hash>
-</level019>
-<level020>
+</level014>
+<level015>
   <title>IS THIS THE PARADISE?</title>
   <author>BJOERN THE KING</author>
   <version>01.08</version>
@@ -3210,8 +2572,8 @@
   </yam_explosions>
   <leveldata>eNqtl4ttwzAMRH0bHDSDBulC2aFAF8toDeq4lsgjKRWF4CCw9UyKfz+Px+Z6vq7Poy2ujzcx3uPrws/SjCUw7L7+MSHGN3OiFHFqc93vw5uRyrA7/HlGAkZjJcESdjcLW0X2nK3h/dESXzRJqP1IPai1z63blmVk2kMQeFuDRfRa4rJhd9FsCRjPMdTrcXwJQlEzgYBgSXDBWpdWeWxAEvcTy2LKAxWJNlruPOtOhtYI0zsq4tYQhVbeFv7kDOMiIvRzOnmK0HWuhQREnZszqrKuPeEKYTPK22q1MvRtGdqDcHJzYkcGk64WETu28tnI4Tf3+ZpW2LYuivP8jwxOq+pRdlcvZNS94CI45Vvuy3HKYHLyPBJ3PfiX/EDRDW7rMqxuZ/TDZS0TOfd74ro717kVoonOUxG6uudEE2eriNEGCGYfhrkEMfug6NE49LQUT5gRkU9m0USmZ6GMaK6zrRJ+/snmRLjagGDquzTRM1lEqDzJCIo+HhMMMguS4NSbKL06Ez3wJMS8y/BbyEZnZCtsTeF5d1M5SMnwt3M+p24wxwWG786eyMgryknsrW/htfj/</leveldata>
   <leveldata_md5_hash>5C530BBB68931010A4756279EB3D8B8D</leveldata_md5_hash>
-</level020>
-<level021>
+</level015>
+<level016>
   <title>A LITTLE STONE LEVEL</title>
   <author>ABC</author>
   <version>01.08</version>
@@ -3335,8 +2697,8 @@
   </yam_explosions>
   <leveldata>eNrFkkEKwjAQRf/vxoUbD2Clu64LHkCvpbUJJugVeg3FA5qJpVGhnezKh+Qz8/gThji4Gb2+/IqWjmt2vIXT8B7kaVFyzwO2LLmjcEdcFdmYZzO5muI5IenVcW41csUPUYxcFblGzWv+8qa4T17e+57ooXE9HrIXNc/GuV7lPNOeZ/OwPKf/gyLqhDPaUJM7uXboCreJuqCDCRW5kzND12XrDf9ldSU=</leveldata>
   <leveldata_md5_hash>64616D389ACA2C4E9C2FFF0FF9E6C2BC</leveldata_md5_hash>
-</level021>
-<level022>
+</level016>
+<level017>
   <title>DEATH PUZZLE!!!</title>
   <author>ABC</author>
   <version>01.08</version>
@@ -3460,8 +2822,8 @@
   </yam_explosions>
   <leveldata>eNrFV0uOFDEMzcuGBZvMHthyh2YDdwDEAgkNEh8hTsBv0k7DsOqu2XELBEJihbgaVfnaSaq6ejbImq4uT+JnO/aL2yl3RB7jBd7iJV7hIZ7BqUd4jnO8HjVOneMJ3ozPp6PGqd/4O8ofOHWKfFX2v8mEb5kvw0qfrxpNb+cxXcHXCopGsf5zkkkXfCxPN+rhhUcAvyv9wWtIGWYt6NLO9I3jB7vJCjw+Gin4ycuwV0pYVd6lNT2Dz71dh38DFyj4xSuXUcuzby3hDxnbiihaK5bh38Jlxp/i0nlV2QOREy7UxE/xdMif6xBPk9hTxn/b419Fn3TMbNhpmNeTtQOLLEV66OC3Hid8iCimFXdi/q3I/5y1OsNWxI8T8B+IKFzOD89S+K7FyVGsbbsCH6yuZU28U+/Vhwafqo5o6790VupXjr/JVYTFjtXqo/qkLkT/t5yGynPEVSUntsJfkuEkNufMeDiylucf2d9QzcFj2RNzLFLHb+M5l+eB2YbPQa//iHVbqqvt+LltKotzAjV9Pb8q1Viv/zmz2sg1pHajt7uYByeq9Bg+mMVl/MI16PDPLnfWnq1LuoHVZ+EfEjkglmGua+8f3v9osuIay3Y2/hYrvH8Wntf4qbIo16S82WyuI8o1OZ9/zfJvqzOR/Wcr/im1XtA33rIV2e+fvxWcVHqi1Un+o8yNFGcSZL7cMHy5jtSXbFdn/JaTpAZd/ulxzX6l7nTmqvmHM1A/Ci1YJcxkZyL/Z6PGRLH5m4ucQ+zZ1j/E/GOrzoKYdXif9FeZEcNU3cRvpSX+Cfi7alefWaTn/OY01Uw4N/8ExrgU/LfP+CEOwzipxSeWmaG5kTkn6awdxPwddps8R/P4t1VPymyjyWuKHiL/8/NnySFE/e1EVfZmberO3yZmjWIFmJmd7f0HNv9zfJu5rj8nb/z/N1lj2CoT2UTu1Kv7v6eV/f/Lrxmu/ftrSe6pbx3tffVD3cVNbEH42V2x/vfndeT7wttp8g/CrC3H</leveldata>
   <leveldata_md5_hash>A5801B86A44D92A515DE327F517BFED7</leveldata_md5_hash>
-</level022>
-<level023>
+</level017>
+<level018>
   <title>* UP *</title>
   <author>ABC</author>
   <version>01.08</version>
@@ -3585,8 +2947,8 @@
   </yam_explosions>
   <leveldata>eNp9VktOwzAQzcuGBZscoKGFBEoj0QjEAeBitDgIrtAzABIC9QScjDj+zMcOsiDJeDyfN2/GHYpBrGN8a0DSn+JQfPv31surwowLxZ6dbieZtNh7fbtTMXnH7Osz5MH+ldPX2utjskQnVgjW5ekgr1Qu1oJdFcuFIgxWrrHAEjq6XulX3n4H6dsIWy3D053hdluEd4cn+SujDW6PYoD3bhSe8LoSEUxyZ9f+X3q/mHwSQjcI/uCj2057C9iKgNXQIXwBitxFVyPEQzW3Xy7TDVKEUlTn+GBm9uD920ysnx4ddE0lT8OJ5ai5Gmu9/kefo5erNFULDP+Uc7IDCAWnfQKuSzqPylc4s4PMPfqE7MXwPGUdxBn4xORgHl6R6wwT7RB/HGt3Sl55+Vum+1L5EKN9SboSCZsNk9fgDCE79+BSd6Zkdox6LkBzinurISMJ60zIIfZC3yPLhiHDhgauewzLLcyHjs2y1A8hbp+XI58bbMbl8s/pQ2VSxZ7gMRF/ZA7GVzeti2F9Yma8GRWvnHTktUmmr6tKCzmHOVYWpwaaIby6/OZyX3fQE8btXCGdPRLJT+R23nEofpMZbdcH5CxoM7NEVwts6snMqCot0lvUJLwgeY9UXhbEsvyEHZK5XEf9/bgQcaAbf+99OE5cgfNNv2l+hntf3/xD5uaXcd0if4usMMQb22J5DrJvGLs6xa4Q49bLn5l+D5LbuXv00dB9534/Pcyg+qW+/wCDzAvr</leveldata>
   <leveldata_md5_hash>E03794095BE7ABDB8E1F2E95351B0BF1</leveldata_md5_hash>
-</level023>
-<level024>
+</level018>
+<level019>
   <title>* UP AND DOWN *</title>
   <author>ABC</author>
   <version>01.08</version>
@@ -3710,8 +3072,8 @@
   </yam_explosions>
   <leveldata>eNqFVltOJDEMTPXPfuxPDjDs9O5kGWgJRiAOABeDUcLjCtwCgTggnVfbTtygqKWkkjh2le2ZYMIyPtk8mMH4eQTzYV7Nu9khmL+IuE+fL7tuxqaCO4OC5nGJOsOCHlBxFDzfiDZcwu+EfRp+sQVmL+K/yvvyDq3c/Fm28wCac/xxBf+d8D3anfuEj5CvBfOc8KuC28bOCPKP+7Pv8BfwaLDMM+5RmYXw/wn1vO+4k36eFPs2xURnbhLuEgblZsv/pmMgr09Q/ct7Q8H/oPWPfOToXuhK+IhepX8g3DLWL8D9t8LGpmM84+dKPDFvt2iV4DkeBB7HDvSuT1mY7Wh8xfy/htSqjlNFUf6qV3Gp3sBO9ZXC79nyET6U87bY9OpLVYsdYh0foPs2LbFU3/4jqNk5QYujsppVBltH1VzCbhPuGK7l5w2k9gcEtfonaN7pZ3NV9VnF7XtV3Yxb5R7lvzVHRas4jl3uUa8k3rIuEzTv+j67nU+O2GL/zXkNbTV3K2ftCqMZO7KesVupC/djJJjt9ApkxqgbTAK3qiWr1rwX6o9NpkBkxLEwQ/VTM9R1NzQ+hyb/a6/k1s5AFcNZ2YgasE1HqzuOsYGV2P2KmrU76Lnbei57sYPGprRhOx39wgy6jqFnlmPxDIZHH0TPu4AewwZ9xPW3RzL02eVVViv+k6KORONtmX0BcXIh1Q==</leveldata>
   <leveldata_md5_hash>9C75900E0335429B162E80BE05539BB5</leveldata_md5_hash>
-</level024>
-<level025>
+</level019>
+<level020>
   <title>DIFFICULT AND NERVED PART 2</title>
   <author>LEE KING</author>
   <version>01.08</version>
@@ -3868,8 +3230,8 @@
   </yam_explosions>
   <leveldata>eNrFVztuwzAMFbt0JYIcICiKGh27empP1oIBmr1TgZ7GN2uiLyWRlJIlIGzJtqJHPj5JzNEd72w7936+o2kgGLo/bxjvyJ7KKHKLv/bna/Ftst+zBfwPNmfd8icSvRhZwU497kHAhyn8MqOEAsIv0H9JmBIHNj6yefr5MeJih1l7RhGVoi/cg4Jf5zr1qJkTDZ5lLgrrCZmYB7fwDxPe1PgJvfiweC44PlVKQyWbEs+oxJ3afeNB8mIR+QcxG2PWNU4oa79wX9YE5x/VXKOCV48g0QcSGEgZWJr4az2XGdGM0lYHZc5JyEKrP3nGGZ1xDqjjf8ks1K2MP6tzMnVf+JdtcwsE/JGh8E7L0Hitpt4jHDw+3BD/zowapxjcnI1PU/h4Q96CfcLmAj7fQaQzF7tc7xTl9acliu8v/RO85PjR3IHn+b9Gpyd4ZvzXJ89o/wv4VvZw+IXglcUv1zrtO8r4yY5u7UxTPTb6exL4t9TUeidhr5mTUb20xfqv9XO+ClxFgy4r8gl5jPsPKKrXGCijNHxgqgKldrpwd6j0d038OMDXOeCZe/P466QCehYtfDDWRtLNgeGPFTOff9uDotol4q9mBVjXwvyLhl9G/AhWRn65Fl/POvcCI1NW/Ho+y8jvHP8qrm+9EsQp/rXspZEnj//QsTarATt+zGutP13CyLADPXgPYPAPVNofrom/rW8L/n3tHzGW9bc=</leveldata>
   <leveldata_md5_hash>B9277824095D68456A031C640D3407B5</leveldata_md5_hash>
-</level025>
-<level026>
+</level020>
+<level021>
   <title>01.01.2000</title>
   <author>ABC</author>
   <version>01.08</version>
@@ -3993,8 +3355,8 @@
   </yam_explosions>
   <leveldata>eNqNWEtu1EAQ7TcnaPkOcw+4Q0gCQkJBSrKBtSW+UfeGRe6CkFACN8gua26DPXa7q6pf9Yxaihz7ub6vXjk5Rw6nnGdcI4X53Ie7kDrnCZcTEmGY3lruxOkw5D+cHZA4IHfqmX7nCbfAhoyO5/n+8+R9xu037/WZPjlcCO8aM6rf/2JB4FCJXu6PeLXaTEeQOXw4IJNBlryjQOagbS7PdhsmrjHncIYUdE6e9xJnzSk6yPMtzjYnGWuNE01O+q03eFi55EVa3rjGI6xNHuclfoN7b5Hc+7ja3m1eblfvPHcZyVvhvc/RK/xBiVJ6b/GlSpIjkeJvDkisWF7P0qOHpko7Guctcig20a38e4PUOY2KSxWZnEiXaM6UTZZ9XHN6R5HsVKStU2w4n0OtfM/mxWQTQdeeV+l8Q0L5kDO8ZDQ/gZgk3/9rkVHqTkip56yLLPuqtleoU8wrWrA3jnemIbLvvTirhgybd645tUdQfYrN9rDdlBUdad8lNncz0tnnjiqmo8yXmfb9LwyBsJoM90oEhUut951jM4louZLZyuMIEqryie5lbROO5vEqoVtPGSOf+lFtLonM3R7JGLKbkcXm5tvGToc/9ZpLIMzzeqSrH904e3Ovuzn/3B9FLpOchDqPnW7a3kfRJZkRn+U+69g3ia0b1AZPxHtqLFsbrYZ4Odl6WiXrsc7LnsfJJrQg90bFUjMj+rtOW+7H6W8mqTbJ2M1Kn2Q9YSZETlMkffdYwljXPh2djSDfqh1lSFAd5wxJDhIkb/1Vpr0Pbp8isVn6D9d7alic1IxE2iPL+0ynWG6lwaie1Lrk5BTJ5kKnomzDst0UyT6yXc3dXcx0XFcpEX3Opp5oJrQiR0dDLEeLrVqlocENqqKc8yBfJaybfNu330ttpWbMjuwjPk2xwzrt/35FDk6c9f4Po0uDm9nH8MvZCNb/zxP6XjuVHbYvPZLzxBnS6mNFDi5TKhIquoEwanDiTE0/0cTpaR6Edz6X9bw0Nrnasy9/VlPJPRgk6+pAM+LT13oH2RCnIUs/rCp6arbYHERkA8ltr3LXvqH+WtVxJsM2fQ1HQ0DfXJB36/8U76Z75SqJqxReTBP3KXw+6XwJX8O3k8738B9kXyAA</leveldata>
   <leveldata_md5_hash>132FEB51CA6AA017655B9B8469E911BF</leveldata_md5_hash>
-</level026>
-<level027>
+</level021>
+<level022>
   <title>DANGEROUS CHARM</title>
   <author>ABC</author>
   <version>01.08</version>
@@ -4195,8 +3557,8 @@
   </yam_explosions>
   <leveldata>eNrNWktu3DAM9bsC0bRH6DV6tIK+UBdFkaIoummK7rIOkMPEiaMR+Sg5E2csBoTtGVu2nvinpHmad9M3zNM1fuM7fuDXcr5ero80Tze4X85/cYN/WNve4j/uluN2+f8Tf9D+oh5E6N7DE/GzFhaY75S3YO6C2ugkC+nT4b8B02tpI6adnPqoWOqX5XSW0/vrMzl9x/Yp7klta9+XgEDovKKxfBHXC/8Xhy6OVKhnCRjb/KmjXbHwXaWWBb02x6k0Au1IXYjP9g3LFxAnau+60a+SDoKewLXhq8XUklHUCKuH0QbQ5QJeZWkFS31PwpjP+eJ+8uOufJFgk6NICAuchY1CAcebgkVSsSDISDfs5SgsaNgRnCcZiaZ6nRIDYDBmYJHll7ej4624b0lwvq5GwAwZMV8khSclUlubzkMDitOgzGakh7H+RVzk3KIPnWuLPneuLW/Hfnesz42eN/pdSdCX9ag5Qw4Om7dbvuAMGV11rvv1hWOAz/jH80XIv+hZfDlKVwoWGKllYOFc6lwpfexc9+kLnD+pdSNXYiO9iwa+aAKJseHCF18PZ2ivhpxhbO7Srhv93bH6IhfWl69vjgLqfN1++nIRW6p1QI7m2kp+ay5oZDwqWGR3nfaSZ/1E3vmqE6erHUlipAbFI0mMjWX2LOYvGTUs597YieVS+tKKRzJcSiC/a2cYMqoAXweomb9FEpqY774Oy9v1Rad23Zgho1g3xvnwsVhgZOQtGgl8UVeT5FgRmvlLTtYQsRQflzHrEeNRjuZ6DxP1JSsGVN21VbYmEAxfNI0vfb87HgvXAVWDMqyIa5IsX8d2ZH3daI2Jc0HyzBkkaC+vq/lc9+h1JDT0lueabW1iKwa7ym33V7A9IKxit1fHEWSkLveOmoumZDXkXWhUOlyhatjjwTUZXGwUxx1b6fb2Svg2XtKtfRkem0fnsWiIS3ArFrZXuLHx7g5t8kImP5uroY73+1+4Zy8rv2oQ9QZBYtzK6io6Nr2lJ+jagRAyIf1o+dYtC53fFT0AIrBqMw==</leveldata>
   <leveldata_md5_hash>01948D9BA5F9928D0CA73392DB361419</leveldata_md5_hash>
-</level027>
-<level028>
+</level022>
+<level023>
   <title>PLAY IT WITH ACID</title>
   <author>ABC</author>
   <version>01.08</version>
@@ -4353,8 +3715,8 @@
   </yam_explosions>
   <leveldata>eNq1WFuO1DAQTN3Al4j6GlyIO1jeC8EKiRVC8MMi/vYbicOQmUziflTb4QNFM5PX2P2ori77eXm/fFye0uMDnpZX/Nm+f+AVP7ffF3zBJ3zGy/37+/3Y333DL/zePm/b9Td8RR/l+TELlras26dun37gfv84b+Tw7x8fqHP9/Dbn8WYNI/T5ihuz3we5ezuXYNs+l7ZBzLX9v/cVicfWo/q4errHECROoL8wd8TFoAZvEPzqHsDZH70Tk5tGLPB58vlqNCKrGtvOwHCDgJNCsVGpTW2Ya+3lmuYMJIbR55JkWmg+j7PibN/js57Y0BHMfAO1VT+VFJlI/NKzIlTsqMZn9xk2dG7gsHe8U02GEKqvmUqCwobFLIaVCWq1rjkknrEYtpQHMw7hdoByVM6v+v4a6kefScI15bTC+oWkmsrE04gXVo0d8zw3bRjhyNEI/aXb3v2qAd08ntl7mFrIeKOQ995RzDXHeePKv80l6T9s78QFrzHIXYb5PMOddUFrz3dyON7wsWFnMxaC+q40nt4vEBSxseXehef9DMGvNuEoHZU1zZ1XLN6Dfa6OY1sncgENdo6oByzmhVqRcUPnFAz5Y6Rt9uhgwr55vDHweudF31MiYnm+9fVKaoXpF617x13LV0AJNshAKRw8D1WHUZVjmsmWVqFGrTzmKoMxDouz/gTnFetdkTc6/4FW9hgxSPkG6dqhLXZdw5lYLvKxftvzIYK2z3Hfnx1cUNwzJP1LFHfzyh+r0bkq0hpADNPAeVAV18mJh5qODxftcX1l/2kTLrG/1axTQKsV6epqjKBsHdb9KpdjX0jfyDSoGKxZPX/8ehaWC6rN96NM98LFDYtVNWOejDrYo301MaxpV0ao48iQ62O0QpVLcfmqy79pXu/BmuqhluDQjiIGD6M1BFJLot7IdjFwyUuQHQCNQxjeyHk8614gdQKXXa9TtGYT143YWitnu76mtArI+sX2ABgnCJ0DgWf8+k0SLSono4rz1sZnti5i9cfXDrP9MyTMYbs678uRXyIzYaD7RzqS7xHxXZ+iavXAsFyo9ajpNM/nuwjrWb+xt0vYGwIdo5y8Abfi4bwtqSbIjlWxjNVsdagrxudlkKl97L6b/X+PfZa/3nur4A==</leveldata>
   <leveldata_md5_hash>00B127C85FD700EDF27A67DA4728FC3D</leveldata_md5_hash>
-</level028>
-<level029>
+</level023>
+<level024>
   <title>SMALL, BUT OH MY</title>
   <author>MIK</author>
   <version>00.00</version>
@@ -4474,8 +3836,8 @@
   </yam_explosions>
   <leveldata>eNp1UMENxDAIy1z3uoXumQn6vskiRUKCzFPb0LSfCkESDNjhaMerzebwAf/VyTcRngserSNvwqx6DNmFCsahPhdi6u/KdWFW0xbeAWwg0qeqiAzcZk3J7EB1KniyeOHZM4uFDNkTQlJt+qXD97QuFVQWwqKmUeVnmz8U8D83EmK8eEK5r+LaClxa7x5uy4uHGv7buKncaK8tLPGFtu3FY8iafpFVXjt4sxOYCKA4</leveldata>
   <leveldata_md5_hash>4FD2566F3D9785C9C7C7CCC6C8AFBA8B</leveldata_md5_hash>
-</level029>
-<level030>
+</level024>
+<level025>
   <title>THIS IS THE END</title>
   <author>MIK</author>
   <version>01.06</version>
@@ -4639,8 +4001,8 @@
   </yam_explosions>
   <leveldata>eNrNkusJAyEQhAeryAtNUkNe5FcaSgN5CqaR/L8irrRIVoNeODhdhWNY5GNlnF00MNk6R9TaklBYQv+Ux+S1srwOev0sRX+fvHQRxV4bbLELumkce+1tHYK7aVxvRp6UqJVrgilmQTeNY6+5rUVwN427+zJ/uYczefFm80xevNk8+xlN570cHvfuy/7Vo2POSV6vrzTzLJ+L7xPvnjtnrVyl/sQbjS3NOhvnpcSJnUoK8rrgytbN5brjwdbTeZVSiw+hGRLb</leveldata>
   <leveldata_md5_hash>BBC21DF2C83E932C4F3155EC39486225</leveldata_md5_hash>
-</level030>
-<level031>
+</level025>
+<level026>
   <title>EINFACH GESTRICKT</title>
   <author>MIK</author>
   <version>01.10</version>
@@ -4783,8 +4145,8 @@
   </yam_explosions>
   <leveldata>eNqtlVsKxCAMRb1uJsvoLE1wE7POgv+DiGiedqCE0tbqNTlJbE31ZfukIgzOCMI53boe/97vN+SqMbLGxzOU9tKbc+edklRYK8lcQ0yvsJnFiW8qwIl76HkqMj7rjbPh/p180DkgscfQQ+ADCU5kZFvmg+ucq2LPNlhEe7xwqUExLg7jXW//Qm5eeJQyZs5P84386U+S8T/8zlx1PcPl51Ujwv7VpMgga2UPTv+e+O07a9pdr0Gazhvcql8+z3678m4lNej+vGH7C6Pfrpy368oN1llj85O93vWyUGyIz2sE503kn5dDv1pP/kliFkE+Fvvnndue0UN+T+37+r+3ph8mwuA+</leveldata>
   <leveldata_md5_hash>081170C558C2B68EA8267170310CD37C</leveldata_md5_hash>
-</level031>
-<level032>
+</level026>
+<level027>
   <title>MORE CLAUSTROPHOBIA</title>
   <author>MIK</author>
   <version>01.10</version>
@@ -4927,8 +4289,8 @@
   </yam_explosions>
   <leveldata>eNp1kEsOwCAIRAcXrhsv0WPYc/W78BK9KPuGKhFMDJmoDA8DBWUaCUw5LMghop5M6XeYmGLLV0lGnF6rkrc4vl7lmXVgbI/etzOizdz1n5GJjtlx4IRldJ4LNx43T92BeG+r1x3M4gNDKzaT</leveldata>
   <leveldata_md5_hash>C6E9BD5F99519261E11C86A6916DF13F</leveldata_md5_hash>
-</level032>
-<level033>
+</level027>
+<level028>
   <title>DOORKEEPER</title>
   <author>MIK</author>
   <version>01.06</version>
@@ -5052,8 +4414,8 @@
   </yam_explosions>
   <leveldata>eNq9V0tuw0AItbKcZU8TZdUeqLtZ9TtqpG45Q27aOpFtPg+YiZIIyf+BgQcPfJyOD5CnO8tso/wLnY9c7BP8hpzzdrXY6Fm/HJvQc7nTZ37FbegdYG3Ycu4HKY37XQm0bc9y/dgP9H0Ta8hY8uNEEA8d32if8iv9HsXK8xsh0kz8/HXSD+o89+bvllfkxNXGGccjWzfih4drjx+98fHjteQ6lg3zcsW57xvOV1lcET4xdrw+bu8HATwOQn7V/SwZ//rvFz8OqdidtkG+yiy8QFbCmGj7Sw2O+5HxaIbHoQOPDA1bH7mNiCulL9qbfj8Q11tMUBfrx2PWwTmDgp5AkNtHY4W5mGA0R+rD604Zd2I/nl0bNdX9arpwPx5e52tOxtEVeDRnUokyaxQPjkOF2jweGK+PFsxyKCtosD683hHV/TX14dWIz2Dj9YGiEbHJGO9SwIu4yxYxw43WR4S69mm0f9A6T8WMQmAu6Zv5LBLNnYELmK96ZirEVtV0da/XZrNUDbPUi5s/U9ezlJVpdd1VxinxZEVq3t3vvP+mZT9VZK+t+4sGWyn6X43v3+9HfX/ZFnOeH3xFBZqqeFIdXj8pLmlixrMrKsut4kaMH0+rFWmjCj/4HUF8iviSPzkxX2YbVcVK519Lerg3c/0YzKvI3sJ2SvC9vLZfvk3v0wfMq9vJ5/Q1fa827i9/uEghBQ==</leveldata>
   <leveldata_md5_hash>B4649C83CE0A07A016995219728B8775</leveldata_md5_hash>
-</level033>
-<level034>
+</level028>
+<level029>
   <title>FOLLOW THE MOLES</title>
   <author>MIK</author>
   <version>01.00</version>
@@ -5173,8 +4535,8 @@
   </yam_explosions>
   <leveldata>eNrtlNsJACAMA4P4WMvduoTQZRU6gBUigpT7PY5CIQK5gCItdENyWGZYk0s0/2rmg+ZwmQ0dhX5njb9H80mTv8l8JnO/5lY=</leveldata>
   <leveldata_md5_hash>04BABE39BC90D814C4E667AF97174633</leveldata_md5_hash>
-</level034>
-<level035>
+</level029>
+<level030>
   <title>UND RAUS BIST DU</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -5507,8 +4869,8 @@
   </yam_explosions>
   <leveldata>eNrt2k9qwkAUx/F55gKll/AM3ZQueoGCklJcaKFW6LIeICSBXqFbr+gJ+uJknPxxkgi2ea/++BKdhCw+DiEZxcxkCCGEEEIIIfHN6I2WtKAVrXl7pTnvzw77xd5LOX7i0ZI+6JFieibM2vW0p0sE92Xdtwbz/bvuxAw7JstdCJvKxBRJdjt1VWnVIbkEtxVboVPafQrKx3d7tZdX907Lx3bX1XVr87gcd1jZJx/T3b5Cmk2C8vHchSKqiKKj3B3d8siNo/JV8ny7z+PvLO4zSb++3f3Qv0q6vrvle5oeR9LuJ91Xi73mT6klPi+bdw+pz0t/b/HqbW325a8HXbnpXlXJWn/3P91lft/Z8fqPDmtA+74zOr6nZSx15bxlatyZ+eZ5/uRtyLmS3BmbJyrdObtzle6biU43KZ3vqVL3l1J3otT9oNQdwQ33We60TJo7NdXC7rb+791psD53+1y44YYb7m7L/RnnSnInytyuZMA5Mt2JSvcQuUx3Wv46qM+dVn7blOH+P21oRTGvTIv/s21ozaM5Lfj9nUcxH7nD/9gQQgghhBBCCCGkuB8OsLLI</leveldata>
   <leveldata_md5_hash>19FECC86D16C5D00822EA472712576B3</leveldata_md5_hash>
-</level035>
-<level036>
+</level030>
+<level031>
   <title>DREI HAEMMER FUER CHARLY!</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -5632,8 +4994,8 @@
   </yam_explosions>
   <leveldata>eNrt2EuqwjAYBeCc3skdOcgi3IMzB25A8K1gFXSiiKALKDZTZw7ck5syLQq+UBsw+ZXDh5gUSn8OSdMkVSkREREREX1QGxN0MECq+lggtjr2Sqq6WOb/LfTRsK0h5qiAeZ3tVeLMT4VlFUXF71p6q8+N8fgkFwdv9W2cJMLr2zG/q/qqb9a1DZZf9kbTuWfvvHDjL8nnpX46a5OA469YfSHz0w/Jye9RhlpUfuZmVhhx+b2qj/l9d37/zO+nx9+llbj87tcOSfkZ0euHFr3+GuHfL0bw9987QuW3Fb//KLp/g/D6/FRXiqTvf138RWuPT8vORWN7djrC1P7GaNp+I+9nvd6pXbetGDPU0LZnq5LTIyIiIiIiIiIi2Y6V/POE</leveldata>
   <leveldata_md5_hash>58A9AC973648FBF436DC7554033979A3</leveldata_md5_hash>
-</level036>
-<level037>
+</level031>
+<level032>
   <title>JA! ICH HAB BOMBEN SATT!</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -5757,8 +5119,8 @@
   </yam_explosions>
   <leveldata>eNrtmEtOwzAQhj2uKrG02g2PAtvCDboDiQsgtYBokUqllgWbSFzAsjkEUle9KeMkJYnzABXPSIXolxN7EvnTn8c4Eytsqz+vruQm9tk96pbYEltijXrtVWUjamZiV0aEGb6KKIXBxkXsSIiZyZ7HI6BMvOUiKmT1sSkioqwkAiGxyuOhOBLHrMQTjA4IiE8whhFoMYM7mIIVUxxPcL9G6XhrxQQWMMfoAzzjkRWe8YIaQViP6y/RXVUtImyJotTfOu73ctGQxKgQicQGo5tSNKxHi+98Xtob28Ae64nARhyye3xjI4JH4vNIT+xKaOABAdGwe9yOTLoWQ7ouO9ZFTTYMQ7xGRpZXTWP+3VWX3mynNZk8DLEj3z2P9WtHWCL8O2JC/X7l/g3xDL/4h0LK4vOUyR0Ltz5aMZBujVcNHlX8DTAIWIk4j8pj+KOQHpN7pHJPjC8lQtd3ZaJiIWbacjJRECGnxGM+QkEsyhC9j/WzDdmJpvQfgJp4UMp81ERXBfASgfg+XpUiH8TE6Afzh86rWf3odC6TpgtVpd1LjWGJVf4Ma/wVtgXW+0us9N3YjR7T/i325vAKN3CP/wP202mrXfQJ9NROhA==</leveldata>
   <leveldata_md5_hash>FA2146E2D32DD087D40759E42E38832B</leveldata_md5_hash>
-</level037>
-<level038>
+</level032>
+<level033>
   <title>GIB MIR FUENF!</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -5882,8 +5244,8 @@
   </yam_explosions>
   <leveldata>eNrt2U9OwkAUx/G+ebrXcAjP4M6FFzCBKMQFmuDGjQsOMGE8AgsPwelI3Dv9g1H6x2oLnYnffNKhTfrCL4+ZlmRc4gDgCMaykLncy4M8+eNRJv56nF2nV7Pi/MafzeVZruVW7oSutbHq2ZCZNcLM8fT5993VwPuszI1/mFl7e36E22dlbnTMrH9Oq5H0WYOdG6NMWHNDe1l9rMHu/+uWrXt/7Mz1v/sysneK9TbZGFPm/M5YMtvPxHlqG0Xm73eHntmWErfp9dCZnX+SiD++Mmb4zLbWqXF7efPMTTV24MyvSciZR6Vx9/1VmW1NzSiAPjdnDm9uaPCZ16Vx82Pmdc04XGYXdOatbGVdGl0xXiRne4zRmppd5eFtvKoxfducm6qKE1Ndo2ZVVB6amrfkKltz3Y93McYlqDPzuyQTPxPTnZSF/5zKi981mcoleyUAAAAAAAAAAAAAAAAAgAYfUpwxLg==</leveldata>
   <leveldata_md5_hash>CA907DCDAE0ED4B0377B71DF771342CF</leveldata_md5_hash>
-</level038>
-<level039>
+</level033>
+<level034>
   <title>APROPOS DURCHFALL (MODIFIED)</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -6007,8 +5369,8 @@
   </yam_explosions>
   <leveldata>eNrt2MtKw0AUxvF+y6KrPpGL7lwJ1XoDq9IiuAn4AsK8QhZu84p9Ak8ms4hU49BbTsmfHylzpjPwMQy5TBgFAACQZaalFnrUs1Z2veja6lms6+o+ta+stdC7pprrVqxavs+9IPOQM8tp5nbvtjOPm7ndW+4w93iZwxaZg4vMTXvc+bs5vu/Mf48sW/97yzz5RXPfKE4qc+O01nkz8yXrfKDM+pH1nHUeYOau56DPzLmKdPl/3yizZpN518zBVeYifY2s1dRrqfPb5MPVfq5ST5UqRe1qEsf42hvV6CJl7H4z9bWfv/6d139m2d4cRzn35jNT7/t+93N/84eauT4fXdpJ6KtdKzv5nOvN6hs96M7ORp/MNGKdh5KZc1EyAwAAAAAAAAAAAADg3TfrN/RG</leveldata>
   <leveldata_md5_hash>5F02668B57DDE80D6144355083A84442</leveldata_md5_hash>
-</level039>
-<level040>
+</level034>
+<level035>
   <title>DAS GRUENE NACH UNTEN!</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -6132,8 +5494,8 @@
   </yam_explosions>
   <leveldata>eNrtlkFOAkEQRev3DBcgXsFDuHPhBUxQCLpgTEQTNyw4QGXGI7gwYaO38ULurQEMBGgSQrqmFz8v3enOLPpNVU1PNdIQQgghhJCOGeAZEzyiwtTGE+5sP1ju2914vb611QRvuMEQI6T06YWFhNBdPIrwKSqQX9QS49LFcGYWasQsfKJRSxn0iIeXRSMqcQ9/C83EQjOx0EwsNBMLzcRCM7HQTCxWHv0OLPp7HmXwtqjtn1LvePhnBHJto+X/+Vfi84fWx0yxbfHt8t6n3RfpMzK27m5m/dxoKxa7kbhYzr51sZ8NXc+9hN9IZVVxjweLxSJyU2xWHtEoA6y3xMHusggf8pPo3FeriBeriQpXRmEW84hFm5H3TvvzVSzm0hBCCCGEEEIIIWfwB2QQQVU=</leveldata>
   <leveldata_md5_hash>6D137A756DD949D02A1D4331C59E58F3</leveldata_md5_hash>
-</level040>
-<level041>
+</level035>
+<level036>
   <title>SCHALTBLOCKADE!</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -6257,8 +5619,8 @@
   </yam_explosions>
   <leveldata>eNrtmFFOg0AQhueflne9gxzCNx+8gAlVo0ZbE+uD8Q5N9nJeqO9OoU0FKUoxu0P886WEYWn65S8LOwQJhBBCCCGEEELIv2SiKsO4iGQ55iyDLHGNexR4witmtn22+tHqG9ziHD7c/eSYH0Ql176o0nIclofmz2lHVSeO5c+JdmWb3rKZl0fL3Vj3VRrXsv/TMY1lM6Vse7Q9Sy+WVb67rVfLr/9q26gXy/3ZtBw6x4NkNof8ZqlyYmaZrpHbR9XrneisPLLGu2xMP76l6SPLDdNall4tg3lO7ddVfc+e/Rz3eV1W4yuZyKpacyTPsn11Vj+/fV0X17J/B9H8bhzLAi+Y4wELLK33nllVlNXCqrvt/pXtzfGGy7IrT2E5hiyPxUNH8atOgpajsxxKqjcwR2VLS+eWhBBCCCGEEEII+Us+Afw9tKc=</leveldata>
   <leveldata_md5_hash>B4837086A8A60495D42E62DD35CA578C</leveldata_md5_hash>
-</level041>
-<level042>
+</level036>
+<level037>
   <title>COME IN AND FIND OUT...</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -6382,8 +5744,8 @@
   </yam_explosions>
   <leveldata>eNrt281unDAQAGCGKi+w56a3qjxGD3mBSmnTVj1sVuqP1EsO+wCW4dK/e69+0xooAoMN9thjjGSNkiy7gXyxvWbGC3VR58iRI8eOcQ+f4Qyf4BG+yK8LvJXb9912u/Xx/+M38tEZvsMdPMB7SEN+Ux653aHgiceaXhxaX2d91qP0qdvzyEnVnvVZj9PflEfWv8wzTh73CejFgfWCIOOOpRckFUMcvSCqeGLoBVnFRq8XhBUntV6QVsy0ekFc8VPqxcaxRcJ6sXlsfz+V3sbu76fR29p9/RR6F7ufP7SeFbeIlVuRiF5Iv/vKMyuel/vr+zFTFY30gPyyD1z7h9SPeWTr59byRv4+bvyE06t5ZN/+LnaMP5R+sD8rr/J7Y+2f2t39YfRjuw96O39vb9D+EPrpmBn0V4vxM9gZev7016vnpnHksI32H+0MPf/76ufn1UE/CE3+qZ2hz19++mVOoOpNftXO0OdfH70un5nrdf7W/kt5Bps/4PX6XGypn/vn7W7Wb/uxelMeqdNP/To7Q+dvOL05B9brW/WPzl9pX8Xmnxj9Wv5u0rPuDFYZXsPmz+769dpjTV8Z509s/u+q36qbzCOntZvmf2z94qbfrvlM79refjL4sfWXi96mXtXPmIP9ZPBj60e3tsfoVbvej61/Xce9q35p1/mx9bv7nOOi19uXfnu9/3xvqzfb536cHXuutdGv21U/zo7Pc9b1Vwv71I+z++SYpj2uRVna2Xv/71ldHmYMtLG+wmXer7G09/5604/Jc25Ll9Ww1/Jor4qfcg0NrFqzRr9Xbdv+xebqom4v6EL3H540z8HGrEO7pqDb68mpbZ9W9PTrObrWH9v2zyROytbY+hXyr4dZS1u2ZmPd8k3gfnfX88V6fKONv9pnQ/Y6dg1ZPWfZzzqVPD+E6nO8Xj3WO7jAubuPoL23oL0H4REe5M8P3b0G7aMLfIOvcNdFmB730/OiDhJ8Jz2Paqf4xDOenebz2lh2qs/K49jprlOIYae8RoTeTnt9DrWd+tooWjv9dWn1rr3Lif08cT3fsWc5oZ8fRM+j92pYPY/YpxR6HqVH6fScuD+p9dxihShlPSuOrOdR9Tly5MiRI0d68Q8hbMgw</leveldata>
   <leveldata_md5_hash>44E7152AB9279824DC7623C258FA88E7</leveldata_md5_hash>
-</level042>
-<level043>
+</level037>
+<level038>
   <title>ICH BIN KEIN STAR - WIE GEHTS ..</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -6507,8 +5869,8 @@
   </yam_explosions>
   <leveldata>eNrtmEFOwkAUhud/rXvScUlYkh7DRC9gBDVADJqIRrccoGlZuPAAbt1zPfe+mWlLG1oSBlpAJ38GprT055v35g3TRCROTk5OTg1ogGdMMcEjZtyeMOTjgT5WR6O0f829Kd5xhTvc43RppYhEsEFyw7ldfOMdZesb7UH/0fmMzugwznOrTNvPaAeCqAnnuQC3H0Q113vUFLO6DnrOJ5ovEZ86tia6kVhYMsdcKapmJfhuKNwRBWfklYTY34Y51ESy5hxRWGJZOQd5n2hhGWdTxapHY9XWnX3mVOQ8KpZxTmqZNztn7j55Vswqf1BiDrdwNs2zYla5hVL9iyyc7eMclX5LVgmbZV53jrlmHIZZxT2rEM0zx/xdpFUpyiPfBnOHvcARlqVsa4cZ+ZxuN7elbhmzUtgSs9RrgOotW2ae71hJ7JkhetR+DSv/d0M66mXnHs+1LhmfLskKZ8njtq030txaqY45W5M/Cmu0cQ7Marml87fo15zpF5rJw6V+P2ePQFeBjs4QT4+UXYZVyyfTFPNXOtMyXbCTr7U/v+PTBLcY8355qHfRiXjg3bPpzfACtfdOxOUJ76er9MaE6hnBiF/HTDnj/lh/pmjV04VX/uzmj1E7OR2nfgFEn+rW</leveldata>
   <leveldata_md5_hash>D0BBBF8CE659616E97E492A6D50F3A59</leveldata_md5_hash>
-</level043>
-<level044>
+</level038>
+<level039>
   <title>BOMBEN-SICHER!</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -6632,8 +5994,8 @@
   </yam_explosions>
   <leveldata>eNrt2D9OwzAUBvD3TLtHPQF/D8GGBBdAaqEChoDULiyV6AEsJQtSRwbWnAU2dg4SqTvPjisF1IomcV0Pn35qmzRx9PXZjexklAEAAAAENuQJp/zAjzyV1xOPZH9o983endu+lq2Un/mKb3nMu0/VV33V9RqnahfJBsSkxZxKbmZAr7blzLXX7kp+ch2ogbzn9EYFNc1VSMuy1qvmO3PEZ7KSdatc2dpWfpM160t2uUIka1OvEMm0tW2ygrI9JfuvZ7O9JVunfjSuZPHWrBr3muJLtrqvxpasynWsqvNOVCzJVvevT3feR8CaLbY8+1AldKRC9uZ3h5nK71Rz8pvsTG2mabP6lWaeZ2c+krHMotjK6ctzMt1SNSPOZSuxtGSLJVlu65W4mpnPOJIt5PUi82yT6D2qZPHWLKOe6sk4W3I1zpYczzgzktp/M/GcrAtTtTqfybq5oJGs41NZ149lHX/pde3+91c3NZVnCzd8L8kmfB7gqQIAAAAAAAAAAAAAAAAAAIAvPxQUlhk=</leveldata>
   <leveldata_md5_hash>3CFB107F0A4E0039BCC1A0C00D17E1F5</leveldata_md5_hash>
-</level044>
-<level045>
+</level039>
+<level040>
   <title>PFEIF AUF DIE NUESSE!</title>
   <author>ARMIN</author>
   <version>01.08</version>
@@ -6757,8 +6119,8 @@
   </yam_explosions>
   <leveldata>eNrtV0tOwzAQ9SAhsQ3qFSpxBXYsuABSUQF10YKokFjQBQdw7GyzR+rK+xyS8dgxTpqKEtv8ZD35M46T5/lkbEsmMzIyMjIyEmMGj7CEBaxgjeUerlGekaylO9u/wt4SnuES5nADYYzHRz+la8EAi2n5CAh8byx3xWosptd+TQ1wKBwfZlcB3Nxyy4N11euYOklG5xY4qscBUbm5LadkDXopDXdJ0GOKuD98WjvbiyTc3RkKnys7t5155q0zHreOM2AvFPXa3lq7wjFvPT/E5xYka00VOyWdDZdE3i6+w+YGLSPYtTSJ4rw7w9h+SzV4o62HUnBXri4p0oFiHtATr9bektpQbs42Xk6V7I38ObGyifNW537ei6H3buRWVBRpbDILt5bn9Ken8Xfl1jP18jWgJJylRUJucJDk8278iehxLuw/LlHD0o2btVR2z+Vk8wsb5fG4lcvVXdbCY/fRJNnH+ieE/c/icquB7+/nLqJxFy6SP0dNpwjAXS2c23iwv4Ny2lcUMe2+L4LOTJOezb/ehp8VJTuhXAW2FQe2IWfkwkbLdKTeEMD+m/AAt3jXWWCtb0lP1M5R1vefFWzwvrTG/jn8D20zMjIy/h7eAcGOSbw=</leveldata>
   <leveldata_md5_hash>DB6824417BFA43B7E4401D47645EFAFE</leveldata_md5_hash>
-</level045>
-<level046>
+</level040>
+<level041>
   <title>WITH A LITTLE HELP...</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -6901,8 +6263,8 @@
   </yam_explosions>
   <leveldata>eNrtlksKwjAQhvMrXsVDdOXCCwiKokJ9oIIiuvAAYuLbnSfwpk5CqhaRribFMnw0zaSBL5NMIVppQRAEQRD+iiYmGKCPIab0jNCiuOliG3V9v0G9ARaoo40OipL79if6o8dj1goqcgakzFAbP85nflC7I4t2brjW0Oh7Bpf5e08vqlIybgXnoGYbRZTzLkjO8PHyYyXHIGZDb6PWtIJKKTGv2c32PA/ObEeiV84rdnOCSf3jyTdOs61jW8l7yjd65Xz1Z89pLvtskapuHcD8ULWv0buvuSqjORv+Cntzy5zBZT4FMee123kxpzvPDD3Y25FWsYtmiN3Np0dtjDHdhCzFylsQBEEQhHA8AUx3YxY=</leveldata>
   <leveldata_md5_hash>A71363E8528B94D13A6FE402DB3CC47E</leveldata_md5_hash>
-</level046>
-<level047>
+</level041>
+<level042>
   <title>SCHO(E)N SCHWER!</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -7045,8 +6407,8 @@
   </yam_explosions>
   <leveldata>eNrtmE2KwkAQhfMCs5lVCHOIXGE2M7OYCwj+oS5U0IVuPUBhcgjBlVcMuLdsE40mKkhXYbR5FFSlIV8eKaqbjr3YyelJNEUbfYzxgy5+MUL+ZMb1BN+oo6flTTnSc5LwQp7IqJzbJ31ylr/9q5DrePqzSvrw7X73dQX89VHlSuj5vptGj5OgQCKzslEgxYUM1jrj3n/SI4UCJBL2dNonwgpSwOskdq4oeoCRxrQCO9WZi5srU1HGlcbc2/dIpEKyO2XLM0+LtFAiUYUrCRIdJU9aZ/FaHUFqHUEqHRGa819wsX9IkKJszkXipIQ5K45EmJQi4foQKeRIKQ5aHDMZUv528rYc5yybpBMnV5Flj1TmnLPi2qjJ909DDPhOasoxRovrpqn3VS/LG5wNMcc/OnxjVR93Tu+sHd/pGYs=</leveldata>
   <leveldata_md5_hash>36F4AB5718B01033CF878932548D7836</leveldata_md5_hash>
-</level047>
-<level048>
+</level042>
+<level043>
   <title>NOCH EIN QUICKIE?</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -7189,8 +6551,8 @@
   </yam_explosions>
   <leveldata>eNrtlTEKwkAQReeHpBY8hF7DwsZSjHFRkSgqgo1HCK5HsLDNTf27CFZ2zkLI8NjZneoxww7jxRtGpylxQo0t9jjzHLBkXsY8ZOvPe85XjSumWMHBuvalIYhR0xFim8DhZZbpO56drwNkJGPGG7OXUh2tDLJGHsq9SuHI6cgzXYdPMh/m6Kej4O8NG7HCBjqOu0x4u7hvdXt1xIWWCjtGhwX+6ygSzDlU93lgGLe6NwzD+Mkbz/gLSw==</leveldata>
   <leveldata_md5_hash>23F80578CEFD33DDE23902C2EEE0A45D</leveldata_md5_hash>
-</level048>
-<level049>
+</level043>
+<level044>
   <title>SCHIEBUNG!</title>
   <author>ARMIN</author>
   <version>01.09</version>
@@ -7314,8 +6676,8 @@
   </yam_explosions>
   <leveldata>eNrtmV1Kw0AQx2c2eRWKT37exSMJ7gEKm0N4Bd+9gFC1VB+qYBG8RcF3Z5PGNCYppm32o/z5sWQ33U7n12HZtGvIAAAAAAAAz5zQKZ3JdcIfPOdXfuOFtHd+lPEkH9vRbNV/kN6cv/ien3nK4Vic0zdfBPsdL3lMQ+PCYngPNxZDe7iyGM7DxnZnMYRHGdmlxX491uO6tdiXRz2me4vdPf7G82Oxi0ebgS+L7Ty6DPxZbOMRosUmDx2RRbdH/ZWbwC3Ws63m18fh16Lf+gjZ4v8esVkYWARiYeiy1SNUC03285sWxxFZ2N2trRZLTlp/q4e8XzTzzeReFvm60GJxRUdKR21hKBWDVJmILbTMz3JM45kwHovSofCo7x6hWXT9M1JUQq9aUY3qmTDMWrTPTlVJn6h+LJiYbqWNpV0T5+jfXnXVtTtV1TgIC+th8lyYEmVz7X6/9VOK89nDZ9vHoj4jUaP8uuAnfpHTiamcWXzKGcWM72TmSBz8Zb95dcfGITgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgUPgBZBmrdw==</leveldata>
   <leveldata_md5_hash>DA8A8D8EAC6E5DDD2F1C562C1EAB0C73</leveldata_md5_hash>
-</level049>
-<level050>
+</level044>
+<level045>
   <title>DIE URSACHE VON PROBLEMEN ...</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -7458,8 +6820,8 @@
   </yam_explosions>
   <leveldata>eNrtmU9u1DAUxv2czD6TYdkD9ArsWHABpMKggtQpiFERCzZzgKd4EEKIHQskrsAhWMOWq8we2/EkfnGaZtp4klZPn6KJp67zy+fn5z+jhGKxHoBmchociSxEt7ChHUg5Dmd3jZLuUXWHo/nZh9MXc96FM29Q5hPlTGVOKFM5TU6fdCzKfpyGFDQljEbZl1OJrebcCiWmzplKHNHN/pxKnI7o5iGceE842U/2sxRU6z66ElTiRE7Jz8IjrO9A/LbvdAbvYAWv4RLW+noDz3X5zJZN6dzdP9N3K/gAT2EJLyGOn0lFt/9M9PUpSizfzc9CZC3rfyWKScUn9XL/mXl1TesYUEsS0VkV1bH8pE/DitX3sxB/xDdBd1T1f+XeO8bz07S+CPyknNjaUtt+MZ6feevztoRu73LuMljN6eezJKqfdWxJtzvJ3bN/2tUq2Aybyn+NNtCS4VH8NOcP4U7+S/UGdE2oyPc+4cKL6hh+7mAH6MZPUo0Jv0drx3LnvLKOhzMYRvTTrJrD2MzdE5GMatqzvyKPIwxKbXM7nUvRRTB1DFvXBbH8VIQMG4z+t80MicFbYVQ/sUHm87U53Z4/5zZfxPQzcVSZy01lnkTiZTmeEzvejpPnsbXfw1irz05ko2/Ls9SZxCAqjhOfTcJ65qGcp64dDFYwcePT9PEi8AU9XjrGxpjfSz+BzNBlHgKPdOPlVSTzT+Kt6dDNArH8PGQtcLs6w/jZVdesQ75ad38cxDO0n/POup8HYWtyzmQfZeL6UnfdfrqZcwp6MpjzfztK3XWPq++NUldPmbpLfY5gTg6u9PnCWp8qvIBXtvxenzJcQizK+eB5KY5SubH7HXQ7n7J03S+IG3291T6a05oL7eJKX8bDtT2rWeq7C/ioXb7SpXP7t8eDOQwH1D0Z8YQchLoXSifyCzeLxWKxWCwWi8VisVgsFovFYrFYLBaLxWJNUf8BQ2isXg==</leveldata>
   <leveldata_md5_hash>5CFB224F70366606B838382D6006F5D0</leveldata_md5_hash>
-</level050>
-<level051>
+</level045>
+<level046>
   <title>SECURITY</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -7602,8 +6964,8 @@
   </yam_explosions>
   <leveldata>eNqtVUFOxDAMrHkB8iP2HfAnHmDZQoDgxIkrdx7JtrEndhJpWbGKtN228cT2eKa22c0WHcs22XRj/92f6rHEr7EIcXLex+UZISpWQ7L0xNKVPDJHiCNZ2hsRLUc5UPd7Pk7IeSn21EzbvnhnKS7nlKthj2U/2couQ3URFbGK0wKrnSgJadVXm+5l2GP43VmKehsHgpMam53LnpskpIjpHPBiMr7BZzDLpe+yvePty8AmHSzeH1WQd0ZLHzX9F+eGPC6QWtcefR57ru108UxomE/2vVSqi65SmQ0DZxGj6OMKScEonfvzudCSpCp6ZOcmkGIOzdXX1mW96oBsmMCKJH9Ufq1uRPpKeKu1R35sTxO2eKeuz0k9qlYnjnS6gEPJP0Ido36t8N/fcdIK+767wR0s5fS6RBJMohTHIHgmJzWwZxlIzwVDhxy7Q8nkyQTXI1dHY4dRGcOxBd15g1/xMBkG1TFQs9oIrtN1a0mL13+JtEzBD/K04vUtgzov3d0k+a9Bq/kJD25LPltdATQ5cvOC7oHzd8uS653ARu57Z53Tl7LOOLmzZQ3MX1WCImakBzgNJ+Y1qYERrzjVMBu8mOj/rV+1+bSR</leveldata>
   <leveldata_md5_hash>9E745D7639F64401E5F2046018DAE91D</leveldata_md5_hash>
-</level051>
-<level052>
+</level046>
+<level047>
   <title>ABRAHAMS SAFE!</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -7746,8 +7108,8 @@
   </yam_explosions>
   <leveldata>eNrtl01OwzAQhTOuWMKmd8g5WHABpCJ+FwWJbliSA1gz2VRqVmy4BHdk4rjRuLUhigchkPXJyTiZ5uXFE9ehigqFQqGgxgqeYQ0P8Agbbk9wxf2V6/e9Ox9fcrSGF7iAa7iBv+7ZjrRuC+LI97SC+crkrkS+od9bEdNBrKkMI9PiXOUm4nlqnKeMv+YZhec9NsiRsczRUd5GlM8M+vNYnRpd5f4324g3HJWJ64BGZQxyNGq78e9zCFZLM+QtDUbON9nKb86LjWbUjvhvNeaw2o3zLnBUs6cdbxd9M02FR09k2L9nzp5pzx8/6tkmxrnxeceOrarygutoYdAfHyqncezfI+tq2pih6SlT1fF1OzGTWqfdir7M0VRGHlMMjtuD5yxz+iucmPnqciY59Ezj2xrz3N8VZIy5jc7PKbRqu2Nqt6Wj9Ubcs1Ztd2If/gOmkDl6yvEVQJtcGRDr40z/uZ5h9pPP9wyzlfek6/k8eWbLurVCtUkgSRswrMxeFZWngu5uSFF55b+w7rmt+ZuLqg1Ht//gq6pQKBQKX/MJxWoZkg==</leveldata>
   <leveldata_md5_hash>48BAA085C1E1F7019D53C78AB9F0FC9C</leveldata_md5_hash>
-</level052>
-<level053>
+</level047>
+<level048>
   <title>SCHLUESSELPROBLEME ?</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -7890,8 +7252,8 @@
   </yam_explosions>
   <leveldata>eNrdVktOxDAMTXoAhMIZEMcAcSZWfC0ngBDqnkNwPA5Ax3E8iZtPC7vRk5toGufl+ZOpN/4kYDe9OZvQQAVoLqYRwxs9nZkFbtkbyVvvd1cZkfxRUM4PAHrO5scm3CwMcYd0iuhnTWDPfAReATsYZt4zqnDMBeaSx7X5Qq8ju5IT5gyTSQxAXo7MMsv3gAE5Zts0RN+wmM20jxhwJ4OjfMRI+ebuZSyOCDLrMcToWs7KGDEDjqoCFHdZrZ5rHWg1ds/f0oDST1DtkvWv55nh8kSeH1beitqaJ1DHOqmceq+ByVeUq/NMl9HMGXCoIawsZGdOlRqVlP2aNASp6FilOreec1+aZrDCqhniDZByFNSaNNc6UPV0flvWNXg+1ZqhfQMDvweqHstRwoYGS0ga3un91zL/XOYfFPmwGo/5xA0akk8rSm0NKQ9Obo2/5WHEEDoMW2ppps4vTUcpzXKG60n3AxbV3O8JzxVUu6VeOz29D7V/d6uilOPePAgeOfd9jL4ENMOTeRa8nMj31P/wC4kdgmY=</leveldata>
   <leveldata_md5_hash>D530A6AAC48CAC79C36013FDD17EF69A</leveldata_md5_hash>
-</level053>
-<level054>
+</level048>
+<level049>
   <title>KOPFNUSS!</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -8034,8 +7396,8 @@
   </yam_explosions>
   <leveldata>eNrtlktOBCEQhpluFy4NnsFzqHdi5bNSaKKJ7k1Yzd5DSoPNq3k3s5v8YWDI8FVRMFVwws8arvcTsr8JyubPHQbyMfgOcgaG2YCovdXGXomEPYz8sl0gFZ8v+4EFcUX3Y6SjIgoxvFd0yAgDquWU6TcVdHRODzxSno5mbVkx3+J06FALffW9joyJuKbp86TZlFzLxsgsP5eekkmNqJxh5C7gt/gOhsi8kW1gItlO18zVVxb01OO306mJi+v9dj+80/dZrZ8ikbG7Yp309ixZS99/3yFL5w02/D3YLJmjt3ju2hHm3HojcyUb2/hfogun5WrnUc4cnVUQOc0a+u2k88I2g/IoXTTQ111/qPHBuR32NN0qt4wZ+ZT/QiA/1XQeVPmlv/Rq8VfinqTp9sze/nOhHqPJjWBqduwNUI67G+vfLKGHXv8iwyJ/D/0iS38gj56ehvr+TF48vQ55ZZ6V0x/8c3Sp</leveldata>
   <leveldata_md5_hash>CE294CA455ADA0A94E29DE85BDEFDDD4</leveldata_md5_hash>
-</level054>
-<level055>
+</level049>
+<level050>
   <title>IF I HAD A HAMMER?</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -8178,8 +7540,8 @@
   </yam_explosions>
   <leveldata>eNrtlVEOgyAMht28AS67wTKPsd2JAxC6170v8Qo75IShQ6QdWHwwMX+ihNrPQguFCjYvwfK+EzbNIivCwhX1V41IoBZjk1XdvxUZa/5aDx4F9zGjBomsRuabZHLcf8gwZomv6j/5V5EUe1nMlJaQBSo+uYvE2LHJgFaxCL7bHnlQWfLbecpeyj59csvIIIzkr7dE7s78qqPJLeOk0GQIyLAauXzM2t786X1rSo7Vht8Brmjfms+G5CNJVsRpUrPOVq9Evrm9lhPFyA8rMzolkM9eJ/RFk9NiziFfRnJKBkPykyC/HHlXWX0AaIPQRg==</leveldata>
   <leveldata_md5_hash>DC744BF86B2F92EEFF92F307E3DFB3D7</leveldata_md5_hash>
-</level055>
-<level056>
+</level050>
+<level051>
   <title>SCH... GEQUIETSCHE!</title>
   <author>ARMIN</author>
   <version>01.12</version>
@@ -8344,8 +7706,8 @@
   </yam_explosions>
   <leveldata>eNrtlktugzAQhj1uu6+UXqFpxSl6rj4tmxXKLl1UYtV9jscB6ldgbA9gwJWyiH4BNoz5POPxQzF11YXouMBWFBToa5p1LjWZvWsmarkskR2J8drTZLQpFvSxxXFWjM+yYLaXImol0RjgEZWzLFqVl+gvYZ+VLw+l+K3o26Y1Woo965ikudR6T2pdavUdl4wPLTsE0TosnAEhTfq7ZDv9Z6mvna0N31x+Q9LPJiOignXA+bxfD96vX12DjBwdtxgyL81A/Nbcax3/GuXPGpar85F1gSMWRNG/T7i00nlzIkinoGeASMtmAGUXkmK7sixFkpydZI+FWYocA/euA8z6KcCivY39VihXt7CqLBb0efn/fmHWHS85XuFXiFgSrV7Sz6cteYh3LEArsbA7omR7suXa+TXsdYbm1mbz7Ya/WPb5/JEzMum6kXMuGaz2msT5t37Sp4FYHYTPPB2tt1LvBuN9MrMzpL+yN6v37FOg6CO7NA8/2KfVVybJnKPc2MlZO7VZgt1ypzVzeSmrrN2UoMA/rqL0B+eInzE=</leveldata>
   <leveldata_md5_hash>128C9A6BA508F1971E89E6CADE03B2B9</leveldata_md5_hash>
-</level056>
-<level057>
+</level051>
+<level052>
   <title>SYMETRIE-ZUSAMMENARBEIT (MOD.)</title>
   <author>RUBEN WOLF</author>
   <version>01.11</version>
@@ -8488,8 +7850,8 @@
   </yam_explosions>
   <leveldata>eNq1WDtuwzAMFdUb2Gdw+kNRdO3UHqZjtzhZBUfo0Flec5YeKgdo5K9k1+aja4OIkuH56fFZJKjs9O0o7vSn+pmIe/2u3lQxiCc9hX/QLeZCfiUWT1dMIuYnsZ7wuTn8a4VJux0SQH+cM6aHYP0XSgYZcPw9dyryhwB/wjwl/vu3TACeRqeN40+FfhaLzrMPvQG/VXXI9Ngo5vFOmK9T5fXjqufqdQ6fNvz1W3AQf81bdnvgfvLnOdTtmn14/a5hRvwpB/z4eXBNBnP40Pt2J8l585lw/ocelUC+Q494Pb07nH4X6JHXr2HxZmG9m+Cb7/++Cr+7Okbqt2a2bD//qnpb2x+suhH0E4L6Qxbpz2D/zeb91geqJxPwZ4v1ZKvna9Q4OPxZiLcN7izEWxDfckvwVqB/CT7UJcHbjfFmZfx/64vDn1QbRfcL4T81H2Teowr7UeH5+TZZ1H/QeX54t8DmbYr24PXoDsvxJ5Fy3M9eFwn80YB+CrQQ4I8W3dcowhLwvuIMaPX+vK9qMFy5ecOoeOX5e/Y9xN+zFxD/lvq37W9+JsmDu86BmWfCe1EOzD+HwV3KQvz5Ij0Yf6zoCPEfOy12ZT2yenkU4nd//Bv1op8n8dL4Be5qi+U=</leveldata>
   <leveldata_md5_hash>3FEEDC82CE3269F2AC931BD28C85357B</leveldata_md5_hash>
-</level057>
-<level058>
+</level052>
+<level053>
   <title>JEWELS 2 - ROCK GARDEN</title>
   <author>ABC</author>
   <version>01.11</version>
@@ -8632,8 +7994,8 @@
   </yam_explosions>
   <leveldata>eNrFVzmOG0EMFJU45QNsw5E2dspN7H/4LbawBcFf8DcM7AN3NOqDVezZdNEQNNMHyeZRxcEJHzzO2y+28clw+mN/t/GyPX22L/bVbFuzfUQbaDM4Pdk3+779nrbdL/Z739vX5tP95/t7NEne/i+7Zmz/ea+lgX03z/lYuT/72Pl4usm8k8z8BLHT6aS3G3cp1Tajm8bYB7EfSYvJ+jzvQ4ZaOv2Vd4BWOC7TRzHsyqdyTNCepiXYZandLvY/JINsBd04xh4kjd40WMo/G3qD7NMIZnshq07eAlkV5e7RYjZv6OTTmR1Gcyg6IF4xsbTHhiMTtGsV8772SpWatfJsfnOyfSU1ikezfTkTfrQ4XpuEazvN0iNJsTFjqTb5piGW28gI9unzNv889F9HPF+38evMdcqZ+pgL0cIas8+CKnRmbvf/z6b9uu/9t43/cmMvNnB1hMQDC2u6H2LYcR3+7x6A4DAjhEbbKOecPHyT6GNo7vLZ/z3+OU6RtECqBGJbxghf8ITJyRVXPU46eRkLD2TEdsl+lHflAU9oPjkoBA18IS/SUCYIuWMI+kfBmkiMhLSSI6/Y4oXpjGIWVCM4PA/JnxnxIM6oiKs1gMK2NlAISwzO1VmZO4Q7p/ZY5tya+03iXutG+aN63SiqnIkzfqzfFx7xZL+X3sASu0BYL2MV9ype7h6FryqDMVtjyVK5tkA2u/iJsWHVMdzHrdhSUSAKA6N4tp6Ogx4Qqbo1Tl0+dzhB0WCc90W9uNRXxq3cQ2W26Tblrs5Sx8Q9EkR3pFt4YRyUHshKV+GLfLDCMjioKkuyXPonxVw7+E5Ydci1el3wGQd8pygMYYmQqNUOxakzwjvI5qXCI3XAykgP2bFAv9pvVzRgLI4DbJv3rwjE+Hc5iIlR/XF35gfVV7+OGGmDvnIu7fszRr+W+Q6L2wStzJ03qUbNdU9oOW06f/i3N05vDI7QHQ==</leveldata>
   <leveldata_md5_hash>BE009583A24AB7787C3F14572DCE2CB4</leveldata_md5_hash>
-</level058>
-<level059>
+</level053>
+<level054>
   <title>PIPE RUNNING</title>
   <author>THEO BOETZKES</author>
   <version>01.11</version>
@@ -8776,8 +8138,8 @@
   </yam_explosions>
   <leveldata>eNq1lUtygzAMhlU2bKkv0Tt01W1v0ucdXFt9Uba9bxQZjGVk4yST0diBoPny67dEPPiG6MDCM60ncBQWpmRZMEnmKy1Hy873yPvE+5vghJxv2n/5yopffBGcP84K3+gcHzkO7hQ9wxmcfT1TA6fmz2mca/pjL/LnH8ZKXZ4csNw3I+03BX+O+2O3EOsck+Ro/hw5RuG4Bs7iT02PzhmK/pT0tNV1nj9fDf703fX9sXBP4XfmC6t1Ibs7Roc1f5CfDpHjFE5grJy+0/wZ5sxyXTlHn69LOft6tLpc1ofr+2fJ2p77lL3vsTJflmOdYq2uD7pCkL2R+4P0iaSmxkEOL2rX+2d9qp17rlmeuylq3vbhVnPuj6Y5ryvXrPkjNT80+IyRg8LDVDNGDoq6Us3p6Xue363mvgschHe+Dzm38EPLiH88O+d8ZpxyHAB7MgZO</leveldata>
   <leveldata_md5_hash>2A083A4045662B674352CEE21F000767</leveldata_md5_hash>
-</level059>
-<level060>
+</level054>
+<level055>
   <title>GIB ALLES EXTRA !</title>
   <author>LEE KING</author>
   <version>01.13</version>
@@ -8921,8 +8283,8 @@
   </yam_explosions>
   <leveldata>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</leveldata>
   <leveldata_md5_hash>3FF3C2DEF6A9C3E86610E7F0A1E08951</leveldata_md5_hash>
-</level060>
-<level061>
+</level055>
+<level056>
   <title>MACH DEN WEG FREI (MODIFIED)</title>
   <author>LEE KING</author>
   <version>01.13</version>
@@ -9066,8 +8428,8 @@
   </yam_explosions>
   <leveldata>eNrt1TsKwkAUheF7OgsXlUoULC1EfGAh2LgB32SW4Sq0FKtUdqndjUewUsEk5AZCDj8ZZobJfOVECDbDkAWbYow5RpxNMOBsyXHBVRcd1uMsSynuePBLef6GK8eTay/TXzi6JkFC/YTkYz/5Ovl/5/daggQJEiR4CcG5al4gCRIkNFWICgixrW3j0JY3x7y/zXFne4cOb6FvLdckSChPyNfFVuyc658nhTc2HQ==</leveldata>
   <leveldata_md5_hash>3FC2BB5D3512009E89BAAF3CD654AC79</leveldata_md5_hash>
-</level061>
-<level062>
+</level056>
+<level057>
   <title>AUSWEGLOS ?</title>
   <author>LEE KING</author>
   <version>01.13</version>
@@ -9211,8 +8573,8 @@
   </yam_explosions>
   <leveldata>eNrtmFFOAjEQhlueOIncwScSE6Mv+uKDUZH4YKIP3GHTLijiDXoIouEEnMkDON3uapftTNvFxQSaP20KTOefLxNgspLJnUl1Ksky9grLOOl93YkUm4NLVjplP1wCRFcorJ2OExZT3cnUoCOoGoW1U1FVRI4w+blCmOoZNplyZ0VtmOq3FcFEc/mYmjexPvm4aKbmrdzDVFUXL/f3CevTmqjbxxT6fWp2JK5PIUyqI6b8H5lSn1KfUp/2oU/YL7MgeV13/H1yVy68vPF9UigTzUszjXorx8SJMQn0M9fcuqo5fbIJ7JrzHdYC1hss/J81Q983NxdlJp1xwj7gbFz77La3jJqv5xGxS4upHynDlAVpWrBt5xSmKeQ/LtTeKSxS7MhJKzkdgtNwD5lEckpOyemPnMyzrTZO3auaWF7YF4976mBmuEGxzzyTxMCaI+wcRwHLTFq/OcKdtmPCNdtwGnLJxvwaJNk9v+MP/AZOI34FpyfYH+HVGT8FncPppIx+hjWG8wW/5KHd+gYYYKyt</leveldata>
   <leveldata_md5_hash>2D79C7410BC22CC69CF6E7A15AA57C9D</leveldata_md5_hash>
-</level062>
-<level063>
+</level057>
+<level058>
   <title>LUSTIG ????</title>
   <author>LEE KING</author>
   <version>01.13</version>
@@ -9433,8 +8795,8 @@
   </yam_explosions>
   <leveldata>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</leveldata>
   <leveldata_md5_hash>113685CA30ED9C400E63A9CD6A93709B</leveldata_md5_hash>
-</level063>
-<level064>
+</level058>
+<level059>
   <title>DE BOND LEVEL 20 (MODIFIED)</title>
   <author>DE BOND - CONVERT BY TEDDY</author>
   <version>01.14</version>
@@ -9578,7 +8940,7 @@
   </yam_explosions>
   <leveldata>eNrtl0sOgCAMRKtHmBN5Lr9ELuFxRfeGFmjrgkxckGieHaZ8IkVnTRTc9PBD53f+b/insvL8QUlITzkfmTFPJXywq8t/weWDzdKvv6TOr3fk9UOYsDb+8z0fk3T8B8vTK4nfH3XzX5671v0H4T+iWf7t65f0V64PavInHfvMv+X6J3dDN38w819z//c9//TzrzV/psVJ68vfaHfS4X73jnQDVa2BSw==</leveldata>
   <leveldata_md5_hash>A37830D99BEA758CD8B8E81FCC5F6B3C</leveldata_md5_hash>
-</level064>
+</level059>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>35C5D7F192664B50F926F8D5DB6AA6CD</levelgroup_md5_hash>
+<levelgroup_md5_hash>0356A45CA839F6DC7A8ACE82CDE95095</levelgroup_md5_hash>
 </levelgroup>

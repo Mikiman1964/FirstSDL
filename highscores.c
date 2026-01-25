@@ -120,7 +120,7 @@ int32_t ReadHighScoreFile(uint8_t *puLevelgroupHash) {
         }
         if (nErrorCode != 0) {
             memset(&HighscoreFile,0,sizeof(HIGHSCOREFILE));
-            nErrorCode = WriteFile(szFilename,(uint8_t*)&HighscoreFile,sizeof(HIGHSCOREFILE),false);
+            nErrorCode = WriteHighScoreFile(puLevelgroupHash);
         }
     }
     return nErrorCode;

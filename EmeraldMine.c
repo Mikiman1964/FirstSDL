@@ -4,14 +4,15 @@ TODO
 * Leveleditor
     * Undo für Editor
 * Tasten für Gamespeed und Quicksave konfigurierbar
-* Leveleditor: Dynamit Phase 2,3 und 4
+* Leveleditor: Dynamit Phase 2,3 und 4 ergänzen
+* Leveleditor: Fehlende Steel-Stripe-Elemente ergänzen
 
 Für V 1.14
 * SDL2-2.32.10
 * Struktur FPS in Struktur VIDEO und Variablenname korrigiert
 * komprimierte Highscores -> sparte ca. 27 MB
-* Fehlende Steel-Stripe-Elemente ergänzt (2 Stück, left/right und top/bottom)
-* Fehlende gezündete Dynamite-Elemente (Phase 2,3 und 4) ergänzt
+* Fehlende Steel-Stripe-Elemente für DC3-Levelimport ergänzt (2 Stück, left/right und top/bottom). Wird noch nicht im Editor unterstützt
+* Fehlende gezündete Dynamite-Elemente (Phase 2,3 und 4) für DC3-Levelimport ergänzt. Wird noch nicht im Editor unterstützt
 * ShowAuthorAndLevelname() zeigt, ob Quicksave erlaubt ist
 * V-Sync-Erkennung hinzugefügt und Frameratenmessung überarbeitet
 * RenderPresentAndClear() wartet jetzt pauschal 14 ms, wenn kein V-Sync detektiert wurde
