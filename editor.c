@@ -538,7 +538,7 @@ char ge_szElementNames[][64] =
                           "STEEL, ADD LEVEL",                   // 0X1EC
                           "STEEL, COPY LEVEL",                  // 0X1ED
                           "STEEL, MSDOS IMPORT",                // 0X1EE
-                          "STEEL, DC3 IMPORT",                  // 0X1EF
+                          "STEEL, LEVEL IMPORT",                // 0X1EF
                           "STEEL, RENAME LEVELGROUP",           // 0X1F0
                           "STEEL, PASSWORD",                    // 0X1F1
                           "GRASS",                              // 0X1F2
@@ -2057,6 +2057,8 @@ void SetAcidPool(uint16_t uElement, uint32_t uLevelPosX, uint32_t uLevelPosY) {
                 Ed.pLevel[(uLevelPosY - 1) * Ed.uLevel_X_Dimension + uLevelPosX + 1] = EMERALD_ACIDPOOL_TOP_MID;
                 Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_BOTTOM_LEFT;
                 Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 1] = EMERALD_ACIDPOOL_BOTTOM_MID;
+            } else {
+                Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_BOTTOM_LEFT; // Dürfen als Cheese-Abschluss gesetzt werden
             }
             break;
         case (EMERALD_ACIDPOOL_TOP_RIGHT):
@@ -2073,6 +2075,8 @@ void SetAcidPool(uint16_t uElement, uint32_t uLevelPosX, uint32_t uLevelPosY) {
                 Ed.pLevel[(uLevelPosY - 1) * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_TOP_RIGHT;
                 Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX - 1] = EMERALD_ACIDPOOL_BOTTOM_MID;
                 Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_BOTTOM_RIGHT;
+            } else {
+                Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_BOTTOM_RIGHT; // Dürfen als Cheese-Abschluss gesetzt werden
             }
             break;
         // Die folgenden Elemente werden eigentlich nicht mehr zum Zeichnen eines Säurebeckens benötigt.
@@ -5150,10 +5154,10 @@ uint32_t GetImportFilesBeamPosition(void) {
 
     // Prüfen, ob Mauspfeil über Levelnamenliste steht und ggf. Balken einblenden
     if ((InputStates.nMouseXpos_Relative >= FONT_W) && (InputStates.nMouseXpos_Relative < (DEFAULT_WINDOW_W - FONT_W) )) {
-        for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (!bMouseFound); I++) {
+        for (I = 0; (I < IMPORT_MAX_FILES_IN_LIST) && (!bMouseFound); I++) {
             if ((InputStates.nMouseYpos_Absolute >= (35 + (I * 20))) && (InputStates.nMouseYpos_Absolute < (55 + (I * 20)))) {
                 bMouseFound = true;
-                if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
+                if (MainMenu.uImportFileList[I] != 0xFFFF) {
                     uBeamPosition = I;
                 }
             }
@@ -5268,7 +5272,7 @@ Rückgabewert:  int32_t, gedrückter Button
                     7 = Copy Level
                     8 = Delete Level
                     9 = Markiertes Level in Clipboard
-                   10 = Import DC3-Level
+                   10 = Import Level
                    11 = Levelnamensliste Pfeil hoch
                    12 = Levelnamensliste Pfeil runter
 Seiteneffekte: InputStates.x, SelectedLevelgroup, MainMenu.x, ImportLevel.x,
@@ -5313,7 +5317,7 @@ int32_t HandlePreEditorButtons(int32_t nSelectedLevel) {
     SetMenuText(MainMenu.pMenuScreen,"                   ",20,18,EMERALD_FONT_BLUE);
     MainMenu.pMenuScreen[20 * MainMenu.uXdim + 18] = EMERALD_SPACE; // Clipboard
     SetMenuText(MainMenu.pMenuScreen,"                   ",20,20,EMERALD_FONT_BLUE);
-    MainMenu.pMenuScreen[22 * MainMenu.uXdim + 18] = EMERALD_SPACE; // DC3-Level-Import
+    MainMenu.pMenuScreen[22 * MainMenu.uXdim + 18] = EMERALD_SPACE; // Level-Import
     SetMenuText(MainMenu.pMenuScreen,"                   ",20,22,EMERALD_FONT_BLUE);
     // Obere Leiste mit Levelgruppennamen und Levelnummer
     if (nSelectedLevel == -1) { // Ist ein Level ausgewählt?
@@ -5347,9 +5351,9 @@ int32_t HandlePreEditorButtons(int32_t nSelectedLevel) {
     }
     SetMenuText(MainMenu.pMenuScreen,"                                      ",1,1,EMERALD_FONT_BLUE);
     SetMenuText(MainMenu.pMenuScreen,szText,-1,1,EMERALD_FONT_BLUE);
-    if (ImportLevel.uDc3FileCount > 0) {
-        MainMenu.pMenuScreen[22 * MainMenu.uXdim + 18] = EMERALD_STEEL_DC3_IMPORT;
-        SetMenuText(MainMenu.pMenuScreen,"IMPORT DC3-LEVEL",20,22,EMERALD_FONT_BLUE);
+    if (ImportLevel.uFileCount > 0) {
+        MainMenu.pMenuScreen[22 * MainMenu.uXdim + 18] = EMERALD_STEEL_LEVEL_IMPORT;
+        SetMenuText(MainMenu.pMenuScreen,"IMPORT LEVEL",20,22,EMERALD_FONT_BLUE);
         bButtons[10] = true;
     }
     if (InputStates.bLeftMouseButton) {
@@ -5475,7 +5479,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
     if (CreateButton(BUTTONLABEL_EXIT_HIGHSCORES,"Back to main menu",1102 + Video.uXoffs,MainMenu.uYdim * FONT_H - 26,true,false) != 0) {
         return -1;
     }
-    ImportLevel.uDc3FileCount = 0;
+    ImportLevel.uFileCount = 0;
     if (CheckImportLevelFiles() != 0) {
         return -1;
     }
@@ -5643,7 +5647,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nSelectedLevel = -1;
                     DimmMainMenu(pRenderer,false);
                     // SDL_Log("%s:   import diamond caves 3 level",__FUNCTION__);
-                    nErrorCode = LevelgroupOperaton_ImportDC3(pRenderer);
+                    nErrorCode = LevelgroupOperaton_LevelImport(pRenderer);
                     InitLevelTitleList();
                     PreparePreEditormenu();
                     nColorDimm = 0;

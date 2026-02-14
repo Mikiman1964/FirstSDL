@@ -121,7 +121,7 @@ bool IsSteel(uint16_t uElement) {
         case (EMERALD_STEEL_MOVE_LEVEL):
         case (EMERALD_STEEL_COPY_LEVEL):
         case (EMERALD_STEEL_CLIPBOARD_LEVEL):
-        case (EMERALD_STEEL_DC3_IMPORT):
+        case (EMERALD_STEEL_LEVEL_IMPORT):
         case (EMERALD_STEEL_ADD_LEVELGROUP):
         case (EMERALD_REPLICATOR_RED_TOP_LEFT):
         case (EMERALD_REPLICATOR_RED_TOP_MID):

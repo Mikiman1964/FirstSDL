@@ -2027,7 +2027,6 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
     for (nI = 0; (nI <= nMaxIndex) && (nErrorCode == 0); nI++) {
         uElement = pLevel[nI];
         switch (uElement) {
-            // Roter Replikator
             case (EMERALD_ACIDPOOL_TOP_LEFT):
                 if ((nI + nXdim) <= nMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
                     if (pLevel[nI + nXdim] == EMERALD_ACIDPOOL_BOTTOM_LEFT) {
@@ -2079,6 +2078,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                     nErrorCode = -1;
                 }
                 break;
+            /* Auskommentiert: Element darf ab V 1.14 als Einzelelement gesetzt sein
             case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
                 if ((nI - nXdim) >= 0) {
                     if (pLevel[nI - nXdim] == EMERALD_ACIDPOOL_TOP_LEFT) {
@@ -2096,6 +2096,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                     nErrorCode = -1;
                 }
                 break;
+            */
             case (EMERALD_ACIDPOOL_BOTTOM_MID):
                 if ((nI - nXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
                     if (pLevel[nI - nXdim] == EMERALD_ACIDPOOL_TOP_MID) {
@@ -2117,6 +2118,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                     nErrorCode = -1;
                 }
                 break;
+            /* Auskommentiert: Element darf ab V 1.14 als Einzelelement gesetzt sein
             case (EMERALD_ACIDPOOL_BOTTOM_RIGHT):
                 if ((nI - nXdim) >= 0) { // Schließt folgende Prüfung (I - 1) mit ein
                     if (pLevel[nI - nXdim] == EMERALD_ACIDPOOL_TOP_RIGHT) {
@@ -2130,6 +2132,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                     nErrorCode = -1;
                 }
                 break;
+            */
         }
     }
     if (nErrorCode != 0) {

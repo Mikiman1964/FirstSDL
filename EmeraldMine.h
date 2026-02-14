@@ -486,7 +486,7 @@
 #define EMERALD_STEEL_ADD_LEVELGROUP                0x01EC        // Stahl erzeuge neue Levelgruppe
 #define EMERALD_STEEL_COPY_LEVEL                    0x01ED        // Stahl Level kopieren
 #define EMERALD_STEEL_CLIPBOARD_LEVEL               0x01EE        // Stahl Clipboard-Level
-#define EMERALD_STEEL_DC3_IMPORT                    0x01EF        // Stahl DC3 (Diamond Caves 3)-Level-Import
+#define EMERALD_STEEL_LEVEL_IMPORT                  0x01EF        // Stahl Level-Import
 #define EMERALD_STEEL_RENAME_LEVELGROUP             0x01F0        // Stahl Levelgruppe umbenennen
 #define EMERALD_STEEL_PASSWORD                      0x01F1        // Stahl Passwort
 #define EMERALD_GRASS                               0x01F2        // Gras, kann sich ähnlich wie grüner Käse ausbreiten

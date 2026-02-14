@@ -17,6 +17,10 @@ Für V 1.14
 * V-Sync-Erkennung hinzugefügt und Frameratenmessung überarbeitet
 * RenderPresentAndClear() wartet jetzt pauschal 14 ms, wenn kein V-Sync detektiert wurde
 * Tray Icon und Icon für ausführbare Datei unter Windows
+* EMERALD_MAX_SHOWFILENAME_LEN: von 120 auf 87 verringert
+* Level importer kann Emerald Mine 1 Levels importieren
+* Acid-Pools werden beim Laden und im Editor eines Level nicht mehr komplett geprüft.
+  BOTTOM_LEFT und BOTTOM_RIGHT dürfen nun als Einzelelemente gesetzt sein. Alte Kingsoft-Level verwenden diese Elemente als Cheese-Abschluss.
 */
 
 #include "gfx/textures.h"
@@ -291,7 +295,6 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     SDL_ShowCursor(SDL_DISABLE);    // Mauspfeil verstecken
     SetTreasureChestStart();
     ClearFkeys();
-    // Playfield.bQuicksaveAllowed = true;
     while (bLevelRun) {
         UpdateManKey();
         if ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bExit)) {
@@ -1787,7 +1790,7 @@ int32_t CheckGameDirectorys(void) {
     int32_t nErrorCode = -1;
 
     if (CheckHighScoresDir() == 0) {
-        if (CheckAndCreateDir(EMERALD_IMPORTDC3_DIRECTORYNAME) == 0) {
+        if (CheckAndCreateDir(IMPORT_DIRECTORYNAME) == 0) {
             nErrorCode = CheckAndCreateDir(EMERALD_LEVELGROUPS_DIRECTORYNAME);
         }
     }

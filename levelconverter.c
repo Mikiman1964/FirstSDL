@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <stdint.h>
@@ -18,10 +19,55 @@
 
 BITMAP Bitmap;
 IMPORTLEVEL ImportLevel;
-LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
+LEVELFILESLIST ImportLevelFileList[IMPORT_MAX_FILES_IN_LIST];
 extern ED Ed;
 extern INPUTSTATES InputStates;
 extern MAINMENU MainMenu;
+
+// Aus Rock'n'Diamonds
+static const unsigned char map_v4[256] =
+{
+  /* filter for v4 */
+
+  0,0,2,2,         4,4,118,118,     8,9,10,11,       12,13,14,15,	//   0
+  16,16,18,18,     20,21,22,23,     24,25,26,27,     28,28,128,28,	//  16
+  0,16,2,18,       36,37,37,37,     147,41,42,43,    44,45,128,128,	//  32
+  128,148,148,148, 45,45,45,148,    0,153,153,59,    60,61,62,63,	//  48
+
+  64,65,66,153,    153,153,153,153, 153,153,153,153, 153,153,153,153,	//  64
+  153,153,153,153, 153,153,153,153, 153,153,153,153, 153,153,153,153,	//  80
+  153,153,153,153, 153,153,153,153, 153,153,153,153, 153,153,153,153,	//  96
+  153,118,114,115, 179,62,118,119,  120,121,122,118, 118,118,118,118,	// 112
+
+  128,180,189,179, 252,133,134,135, 136,137,138,139, 140,141,142,143,	// 128
+  144,145,146,147, 148,149,150,151, 152,68,248,249,  250,251,158,160,	// 144
+  160,160,160,160, 160,160,160,160, 160,160,160,160, 160,160,160,175,	// 160
+  153,153,153,153, 153,153,153,153, 153,153,153,153, 153,153,68,153,	// 176
+
+  153,153,153,153, 153,153,153,153, 200,201,202,203, 204,205,206,207,	// 192
+  208,209,210,211, 212,213,214,215, 216,217,218,219, 220,221,222,223,	// 208
+  224,225,226,227, 228,229,230,231, 232,233,234,235, 236,237,238,239,	// 224
+  240,241,153,153, 153,153,153,153, 153,153,153,153, 153,153,153,153	// 240
+};
+
+static const unsigned char map_v4_eater[28] =
+{
+  /* filter for v4 eater */
+
+  128,18,2,0,      4,8,16,20,       28,37,41,45,     189,180,179,252,	//   0
+  133,134,135,136, 146,147,175,65,  66,64,2,18				//  16
+};
+
+
+// maximal 24 Zeichen + Stringende
+char g_szImportLevelType[][25] =
+    {
+        "UNKNOWN",
+        "DIAMOND CAVES 3 BITMAP",
+        "EMERALD MINE (KINGSOFT)",
+        "ROCKS'N'DIAMONDS"
+    };
+
 
 char g_szDC3_MD5[][33] =
     {
@@ -576,14 +622,9 @@ char g_szDC3_MD5[][33] =
         "20842FD15FB48C1237ADCAD2BF4BDE65",        // EMERALD_DYNAMITE_ON_P3
         "B6EFDB25B04C849BEF7A431095F3A776",        // EMERALD_DYNAMITE_ON_P4
 
-
-
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",        // ENDE der MD5-Liste
     };
 
-
-/*
-*/
 
 uint16_t g_DC3_Elements[] = {
          EMERALD_STEEL
@@ -1178,7 +1219,7 @@ int32_t LevelConverterFromBitap(char *pszFilename) {
         return -1;
     }
     Bitmap.uFilesize = Fileinfo.st_size;
-    if  (Bitmap.uFilesize < BITMAP_MINSIZE) {
+    if  (Bitmap.uFilesize < IMPORT_BITMAP_MINSIZE) {
         SDL_Log("%s: bitmap to small (< 4096 Bytes), filesize: %u",__FUNCTION__,Bitmap.uFilesize);
         return -1;
     }
@@ -1276,6 +1317,7 @@ int32_t LevelConverterFromBitap(char *pszFilename) {
         GetLevelTitleFromFilename(pszFilename,Ed.szLevelTitle);
         Ed.uTimeToPlay = 100;
         Ed.uEmeraldsToCollect = 50;
+        InitYamExplosions(Ed.YamExplosions);
         for (I = 0; I < EMERALD_MAX_TREASURECHESTS; I++) {
             Ed.uTreasureChestElement[I] = EMERALD_SPACE;
         }
@@ -1284,6 +1326,556 @@ int32_t LevelConverterFromBitap(char *pszFilename) {
     }
     fclose(Readfile);
     return nErrorCode;
+}
+
+/*----------------------------------------------------------------------------
+Name:           LevelConverterFromEmeraldMineKingsoft
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert ein Emerald Mine (Kingsoft)-Level
+              in Leveldaten. Das Ergebnis wird in Ed.x abgelegt.
+              Die Struktur Ed.x muss bereits teilweise initialisiert sein.
+
+              Im Erfolgsfall alloziert die Funktion in Ed.pLevel Speicher für
+              das konvertierte Level.
+Parameter
+      Eingang: pszFilename, char *, Dateiname der Bitmap
+      Ausgang: -
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
+Seiteneffekte: Ed.x
+------------------------------------------------------------------------------*/
+int32_t LevelConverterFromEmeraldMineKingsoft(char *pszFilename) {
+    uint8_t *pFileData;
+    uint32_t uFileLen;
+    int nErrorCode = -1;
+    uint16_t uElement;
+    uint32_t I,Y;
+    uint8_t uManX, uManY;
+    uint16_t uManPosValues;
+    uint32_t uManLinearPos;
+    char *pStart;
+
+    if (pszFilename == NULL) {
+        return -1;
+    }
+    pFileData = ReadFile(pszFilename,&uFileLen);
+    if ((pFileData != NULL) && (uFileLen == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE)) {
+        Ed.uLevel_X_Dimension = IMPORT_EMERALDMINE_KINGSOFT_X_DIM;
+        Ed.uLevel_Y_Dimension = IMPORT_EMERALDMINE_KINGSOFT_Y_DIM;
+        Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
+        Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
+        Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
+
+        Ed.pLevel = malloc(Ed.uLevel_XY_Dimension * sizeof(uint16_t));
+        if (Ed.pLevel != NULL) {
+            nErrorCode = 0;
+        }
+    }
+    if (nErrorCode == 0) {
+        EncryptEmeraldMineKingsoftLeveldata(pFileData);
+        // WriteFile("LEVEL.DAT",pFileData,IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE,false);
+        for (I = 0; I < Ed.uLevel_XY_Dimension; I++) {
+            uElement = ConvertEmeraldMineKingsoft(pFileData[I]);
+            Ed.pLevel[I] = uElement;
+        }
+        // X- und Y-Position des Player 1 bestimmen und EMERALD_MAN setzen
+        uManPosValues = (uint16_t)(pFileData[2096]) << 8 |  (uint16_t)(pFileData[2097]);
+        uManX = uManPosValues & 63;
+        uManY = (uManPosValues >> 6) & 63;
+        uManLinearPos = uManY * 64 + uManX;
+        Ed.pLevel[uManLinearPos] = EMERALD_MAN;
+        // Scores setzen
+        Ed.uScoreEmerald = pFileData[2084];
+        Ed.uScoreSaphir = pFileData[2085];
+        Ed.uScoreStoningAlien = pFileData[2086];
+        Ed.uScoreStoningMine = pFileData[2087];
+        Ed.uScoreStoningBeetle = pFileData[2088];
+        Ed.uScoreStoningYam = pFileData[2089];
+        Ed.uScoreNutCracking = pFileData[2090];
+        Ed.uScoreDynamite = pFileData[2091];
+        Ed.uScoreKey = pFileData[2092];
+        Ed.uTimeScoreFactor = pFileData[2093];
+        //
+        Ed.uEmeraldsToCollect = pFileData[2095];
+        // Playtime
+        Ed.uTimeToPlay = (uint16_t)(pFileData[2094]) * 16;
+        // Wheeltime
+        Ed.uTimeWheelRotation = ConvertTime((uint16_t)(pFileData[2104]) << 8 | (uint16_t)(pFileData[2105]));
+        // MagicWalltime
+        Ed.uTimeMagicWall = ConvertTime((uint16_t)(pFileData[2102]) << 8 | (uint16_t)(pFileData[2103]));
+        // Spreadspeed green cheese
+        Ed.uGreenCheeseSpreadSpeed = ((uint16_t)(pFileData[2100]) << 8 | (uint16_t)(pFileData[2101])) * 100;
+        if (Ed.uGreenCheeseSpreadSpeed > 5000) {
+            Ed.uGreenCheeseSpreadSpeed = 5000;
+        }
+        // 4 Yams befüllen
+        Ed.uMaxYamExplosionIndex = 3; // 0 bis 3 = 4
+        for (Y = 0; Y < 4; Y++) {
+            for (I = 0; I < 9; I++) {
+                uElement = ConvertEmeraldMineKingsoft(pFileData[2048 + Y * 9 + I]);
+                Ed.YamExplosions[Y].uElement[I] = uElement;
+            }
+        }
+
+        // Level-Titel erstellen
+        pStart = strstr(pszFilename,IMPORT_DIRECTORYNAME);
+        if (pStart != NULL) {
+            pStart = pStart + strlen(IMPORT_DIRECTORYNAME) + 1;
+            strcpy(Ed.szLevelTitle,"LEVEL ");
+            if ( (strlen(pStart) + strlen("LEVEL ")) < EMERALD_TITLE_LEN) {
+                strcat(Ed.szLevelTitle,pStart);
+                for (I = 0; I < strlen(Ed.szLevelTitle); I++) {
+                    Ed.szLevelTitle[I] = toupper(Ed.szLevelTitle[I]);
+                }
+            }
+        }
+        // level-Author aus File lesen
+        GetLevelAuthorFromFile(Ed.szLevelAuthor);
+    }
+    SAFE_FREE(pFileData);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           EncryptEmeraldMineKingsoftLeveldata
+------------------------------------------------------------------------------
+Beschreibung: Entschlüsselt ggf. ein Emerald Mine Level von Kingsoft.
+              Code stammt aus Rock'n'Diamonds.
+Parameter
+      Eingang: pData, uint8_t * , Zeiger auf verschlüsselte Leveldaten
+      Ausgang: pData, uint8_t * , Zeiger auf unverschlüsselte Leveldaten
+Rückgabewert:  -
+Seiteneffekte: map_v4_eater[]
+------------------------------------------------------------------------------*/
+void EncryptEmeraldMineKingsoftLeveldata(uint8_t *pData) {
+    uint32_t I;
+    uint8_t uCode0;
+    uint8_t uCode1;
+    uint8_t uFirstByte;
+    bool bFixCopyrightFont = false;
+    int32_t nFirstWheel = -1;
+
+    if (pData[0x7BF] == 0x1B) {     // verschlüsselt?
+        uFirstByte = pData[0];
+        uCode0 = 0x65;
+        uCode1 = 0x11;
+        for (I = 0; I < IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE; I++) {
+            pData[I] = pData[I] ^ uCode0;
+            pData[I] = pData[I] - uCode1;
+            uCode0 = (uCode0 + 7) & 0xFF;
+        }
+        pData[1] = 131;              // wird für alle Emerald Mine-Level benötigt
+        if (uFirstByte == 0xF5) {   // Wird für EM2 benötigt
+            pData[0] = 131;
+            // Fix Copyright
+            bFixCopyrightFont = true;
+        }
+    }
+    // Aus Rock'n'Diamonds
+    for (I = 0; I < 2048; I++) {	// CAVE
+        pData[I] = map_v4[pData[I]];
+    }
+    for (I = 2048; I < 2084; I++) {	// YAMS
+        pData[I] = map_v4_eater[pData[I] < 28 ? pData[I] : 0];
+    }
+    if (bFixCopyrightFont) {
+        for (I = 0; I < 2048; I++) {
+            if (pData[I] == 0xF1) {
+                pData[I] = 0xFE;
+            }
+        }
+    }
+    // Fix Wheel, unsauberen Code aus Rock'n'Diamonds durch Copilot aufarbeiten lassen
+    // Suche nach dem ersten Wheel
+    for (I = 0; I < 2048; I++) {
+        if (pData[I] == 0x28) {
+            nFirstWheel = (int32_t)I;
+            break;
+        }
+    }
+    // Wenn ein Wheel gefunden wurde, ersetze alle weiteren
+    if (nFirstWheel != -1) {
+        for (I = nFirstWheel + 1; I < 2048; I++) {
+            if (pData[I] == 0x28) {
+                pData[I] = 0x93;
+            }
+        }
+    }
+    // Fix acid pools pass 1
+    for (I = 64; I < 2048; I++) {
+        if (pData[I] == 0x3F) {
+          pData[I - 64] = 0x65;
+        }
+    }
+    // Fix acid pools pass 2
+    for (I = 64; I < 2048; I++) {
+        // Acid Pool "oben Mitte"
+        if (pData[I] == 0x65) {
+            if ((I + 64) < 2048) {
+                pData[I + 64] = 0x3F;   // Bottom Mid
+            }
+            if ((pData[I - 1] != 0x65) && (pData[I - 1] != 0x95)) {
+                pData[I - 1] = 0x95;    // acid top left
+            }
+            if ((I + 1) < 2048) {
+                if ((pData[I + 1] != 0x65) && (pData[I + 1] != 0x96)) {
+                    pData[I + 1] = 0x96;    // acid top right
+                }
+            }
+        } else if (pData[I] == 0x3F) {
+            if ((pData[I - 1] != 0x3F) && (pData[I - 1] != 0x97)) {
+                pData[I - 1] = 0x97;    // acid bottom left
+            }
+            if ((I + 1) < 2048) {
+                if ((pData[I + 1] != 0x3F) && (pData[I + 1] != 0x98)) {
+                    pData[I + 1] = 0x98;    // acid bottom right
+                }
+            }
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ConvertEmeraldMineKingsoft
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert ein einzelnes Emerald Mine Kingsoft-Element in ein aktuelles Element.
+Parameter
+      Eingang: uEmeraldMineKingosftElement, uint8_t, Emerald Mine-Kingsoft-Element, das konvertiert werden soll
+Rückgabewert:  uint16_t, konvertiertes, aktuelles Levelelement
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+uint16_t ConvertEmeraldMineKingsoft(uint8_t uEmeraldMineKingosftElement) {
+    uint16_t uElement;
+
+    switch (uEmeraldMineKingosftElement) {
+        case (0x00):
+            uElement = EMERALD_STONE;
+            break;
+        case (0x02):
+            uElement = EMERALD_SAPPHIRE;
+            break;
+        case (0x04):
+            uElement = EMERALD_ALIEN;
+            break;
+        case (0x08):
+            uElement = EMERALD_MINE_UP;
+            break;
+        case (0x09):
+            uElement = EMERALD_MINE_RIGHT;
+            break;
+        case (0x0A):
+            uElement = EMERALD_MINE_DOWN;
+            break;
+        case (0x0B):
+            uElement = EMERALD_MINE_LEFT;
+            break;
+        case (0x10):
+            uElement = EMERALD_BOMB;
+            break;
+        case (0x12):
+            uElement = EMERALD_EMERALD;
+            break;
+        case (0x14):
+            uElement = EMERALD_BEETLE_UP;
+            break;
+        case (0x15):
+            uElement = EMERALD_BEETLE_RIGHT;
+            break;
+        case (0x16):
+            uElement = EMERALD_BEETLE_DOWN;
+            break;
+        case (0x17):
+            uElement = EMERALD_BEETLE_LEFT;
+            break;
+        case (0x1C):
+            uElement = EMERALD_GREEN_DROP;
+            break;
+        case (0x25):
+            uElement = EMERALD_NUT;
+            break;
+        case (0x29):
+            uElement = EMERALD_YAM;
+            break;
+        case (0x2D):
+            uElement = EMERALD_QUICKSAND_STONE;
+            break;
+        case (0x3B):
+            uElement = EMERALD_DYNAMITE_ON;
+            break;
+        case (0x3C):
+            uElement = EMERALD_DYNAMITE_ON_P2;      // Wurde in DC3 so gelöst
+            break;
+        case (0x3D):
+            uElement = EMERALD_DYNAMITE_ON_P3;      // Wurde in DC3 so gelöst
+            break;
+        case (0x3E):
+            uElement = EMERALD_DYNAMITE_ON_P4;      // Wurde in DC3 so gelöst
+            break;
+        case (0x3F):
+            uElement = EMERALD_ACIDPOOL_BOTTOM_MID;
+            break;
+        case (0x40):
+            uElement = EMERALD_DOOR_END_READY;
+            break;
+        case (0x65):
+            uElement = EMERALD_ACIDPOOL_TOP_MID;
+            break;
+        case (0x76):
+            uElement = EMERALD_MINE_EARTH;          // Wurde in DC3 so gelöst
+            break;
+        case (0x7B):
+            uElement = EMERALD_ACIDPOOL_TOP_MID;
+            break;
+        case (0x80):
+            uElement = EMERALD_SPACE;
+            break;
+        case (0x81):
+            uElement = EMERALD_WALL_ROUND;
+            break;
+        case (0x82):
+            uElement = EMERALD_EARTH;
+            break;
+        case (0x83):
+            uElement = EMERALD_STEEL;
+            break;
+        case (0x84):
+            uElement = EMERALD_WALL_CORNERED;
+            break;
+        case (0x85):
+            uElement = EMERALD_KEY_RED;
+            break;
+        case (0x86):
+            uElement = EMERALD_KEY_YELLOW;
+            break;
+        case (0x87):
+            uElement = EMERALD_KEY_BLUE;
+            break;
+        case (0x88):
+            uElement = EMERALD_KEY_GREEN;
+            break;
+        case (0x89):
+            uElement = EMERALD_DOOR_RED;
+            break;
+        case (0x8A):
+            uElement = EMERALD_DOOR_YELLOW;
+            break;
+        case (0x8B):
+            uElement = EMERALD_DOOR_BLUE;
+            break;
+        case (0x8C):
+            uElement = EMERALD_DOOR_GREEN;
+            break;
+        case (0x8E):
+            uElement = EMERALD_DOOR_GREY_RED;
+            break;
+        case (0x8F):
+            uElement = EMERALD_DOOR_GREY_YELLOW;
+            break;
+        case (0x90):
+            uElement = EMERALD_DOOR_GREY_BLUE;
+            break;
+        case (0x91):
+            uElement = EMERALD_DOOR_GREY_GREEN;
+            break;
+        case (0x92):
+            uElement = EMERALD_MAGIC_WALL;
+            break;
+        case (0x93):
+            uElement = EMERALD_WHEEL;
+            break;
+        case (0x94):
+            uElement = EMERALD_QUICKSAND;
+            break;
+        case (0x95):
+            uElement = EMERALD_ACIDPOOL_TOP_LEFT;
+            break;
+        case (0x96):
+            uElement = EMERALD_ACIDPOOL_TOP_RIGHT;
+            break;
+        case (0x97):
+            uElement = EMERALD_ACIDPOOL_BOTTOM_LEFT;
+            break;
+        case (0x98):
+            uElement = EMERALD_ACIDPOOL_BOTTOM_RIGHT;
+            break;
+        case (0x99):
+            uElement = EMERALD_WALL_INVISIBLE;
+            break;
+        case (0x9A):
+        case (0x9B):
+        case (0x9C):
+        case (0x9D):
+            uElement = EMERALD_GREEN_CHEESE;
+            break;
+        case (0x9E):
+            uElement = EMERALD_DOOR_END_NOT_READY;
+            break;
+        case (0xA8):
+            uElement = EMERALD_WALL_INVISIBLE;  // vielleicht auch unsichtbarer Stahl?
+            break;
+        case (0xAF):
+            uElement = EMERALD_DYNAMITE_OFF;
+            break;
+        case (0xB3):
+            uElement = EMERALD_STEEL;
+            break;
+        case (0xB4):
+            uElement = EMERALD_WALL_ROUND;
+            break;
+        case (0xBD):
+            uElement = EMERALD_EARTH;
+            break;
+        case (0xC8):
+            uElement = EMERALD_FONT_BLUE_A;
+            break;
+        case (0xC9):
+            uElement = EMERALD_FONT_BLUE_B;
+            break;
+        case (0xCA):
+            uElement = EMERALD_FONT_BLUE_C;
+            break;
+        case (0xCB):
+            uElement = EMERALD_FONT_BLUE_D;
+            break;
+        case (0xCC):
+            uElement = EMERALD_FONT_BLUE_E;
+            break;
+        case (0xCD):
+            uElement = EMERALD_FONT_BLUE_F;
+            break;
+        case (0xCE):
+            uElement = EMERALD_FONT_BLUE_G;
+            break;
+        case (0xCF):
+            uElement = EMERALD_FONT_BLUE_H;
+            break;
+        case (0xD0):
+            uElement = EMERALD_FONT_BLUE_I;
+            break;
+        case (0xD1):
+            uElement = EMERALD_FONT_BLUE_J;
+            break;
+        case (0xD2):
+            uElement = EMERALD_FONT_BLUE_K;
+            break;
+        case (0xD3):
+            uElement = EMERALD_FONT_BLUE_L;
+            break;
+        case (0xD4):
+            uElement = EMERALD_FONT_BLUE_M;
+            break;
+        case (0xD5):
+            uElement = EMERALD_FONT_BLUE_N;
+            break;
+        case (0xD6):
+            uElement = EMERALD_FONT_BLUE_O;
+            break;
+        case (0xD7):
+            uElement = EMERALD_FONT_BLUE_P;
+            break;
+        case (0xD8):
+            uElement = EMERALD_FONT_BLUE_Q;
+            break;
+        case (0xD9):
+            uElement = EMERALD_FONT_BLUE_R;
+            break;
+        case (0xDA):
+            uElement = EMERALD_FONT_BLUE_S;
+            break;
+        case (0xDB):
+            uElement = EMERALD_FONT_BLUE_T;
+            break;
+        case (0xDC):
+            uElement = EMERALD_FONT_BLUE_U;
+            break;
+        case (0xDD):
+            uElement = EMERALD_FONT_BLUE_V;
+            break;
+        case (0xDE):
+            uElement = EMERALD_FONT_BLUE_W;
+            break;
+        case (0xDF):
+            uElement = EMERALD_FONT_BLUE_X;
+            break;
+        case (0xE0):
+            uElement = EMERALD_FONT_BLUE_Y;
+            break;
+        case (0xE1):
+            uElement = EMERALD_FONT_BLUE_Z;
+            break;
+        case (0xE2):
+            uElement = EMERALD_FONT_BLUE_0;
+            break;
+        case (0xE3):
+            uElement = EMERALD_FONT_BLUE_1;
+            break;
+        case (0xE4):
+            uElement = EMERALD_FONT_BLUE_2;
+            break;
+        case (0xE5):
+            uElement = EMERALD_FONT_BLUE_3;
+            break;
+        case (0xE6):
+            uElement = EMERALD_FONT_BLUE_4;
+            break;
+        case (0xE7):
+            uElement = EMERALD_FONT_BLUE_5;
+            break;
+        case (0xE8):
+            uElement = EMERALD_FONT_BLUE_6;
+            break;
+        case (0xE9):
+            uElement = EMERALD_FONT_BLUE_7;
+            break;
+        case (0xEA):
+            uElement = EMERALD_FONT_BLUE_8;
+            break;
+        case (0xEB):
+            uElement = EMERALD_FONT_BLUE_9;
+            break;
+        case (0xEC):
+            uElement = EMERALD_FONT_BLUE_DOT;
+            break;
+        case (0xED):
+            uElement = EMERALD_FONT_BLUE_EXCLAMATION;
+            break;
+        case (0xEE):
+            uElement = EMERALD_FONT_BLUE_DOUBLE_DOT;
+            break;
+        case (0xEF):
+            uElement = EMERALD_FONT_BLUE_QUESTION_MARK;
+            break;
+        case (0xF0):
+            uElement = EMERALD_FONT_BLUE_ARROW_RIGHT;
+            break;
+        case (0xF1):
+            uElement = EMERALD_FONT_BLUE_COPYRIGHT;
+            break;
+        case (0xF8):
+            uElement = EMERALD_GREEN_CHEESE;
+            break;
+        case (0xF9):
+            uElement = EMERALD_GREEN_CHEESE;
+            break;
+        case (0xFA):
+            uElement = EMERALD_GREEN_CHEESE;
+            break;
+        case (0xFB):
+            uElement = EMERALD_GREEN_CHEESE;
+            break;
+        case (0xFC):
+            uElement = EMERALD_WALL_CORNERED;
+            break;
+        case (0xFE):
+            uElement = EMERALD_FONT_BLUE_COPYRIGHT;
+            break;
+        default:
+            SDL_Log("%s: warning, unhandled element: 0X%02X",__FUNCTION__,uEmeraldMineKingosftElement);
+            uElement = EMERALD_FONT_BLUE_STEEL_QUESTION_MARK;
+            break;
+    }
+    return uElement;
 }
 
 
@@ -1460,7 +2052,7 @@ int32_t GetLevelAuthorFromFile(char *pszLevelAuthor) {
     nErrorCode = -1;
     pszData = NULL;
     if (pszLevelAuthor != NULL) {
-        sprintf(szFullfileName,"%s/%s",EMERALD_IMPORTDC3_DIRECTORYNAME,IMPORTDC3_NAME_FILENAME);
+        sprintf(szFullfileName,"%s/%s",IMPORT_DIRECTORYNAME,IMPORT_LEVELAUTHOR_FILENAME);
         pszData = (char *)ReadFile(szFullfileName,&uFileLen);
         if (pszData != NULL) {
             uLen = strlen(pszData);
@@ -1492,7 +2084,7 @@ Beschreibung: Ermittelt anhand des Filenamens den Leveltitel.
 
 
 Parameter
-      Eingang: pszFilename, char *, Zeiger auf Filenamen im Format "importdc3/num name.bmp"
+      Eingang: pszFilename, char *, Zeiger auf Filenamen im Format "import/num name.bmp"
       Ausgang: pszLevelTitle, char *, Zeiger auf mindestens EMERALD_TITLE_LEN + 1 Bytes Speicher für den Level-Titel
 Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler oder keine Ermittlung möglich
 Seiteneffekte: -
@@ -1510,9 +2102,9 @@ int32_t GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle) {
         for (I = 0; I < strlen(szFilename); I++) {
             szFilename[I] = tolower(szFilename[I]);
         }
-        pStart = strstr(szFilename,EMERALD_IMPORTDC3_DIRECTORYNAME);
+        pStart = strstr(szFilename,IMPORT_DIRECTORYNAME);
         if (pStart != NULL) {
-             pStart = pStart + strlen(EMERALD_IMPORTDC3_DIRECTORYNAME) + 1;
+             pStart = pStart + strlen(IMPORT_DIRECTORYNAME) + 1;
              while ((*pStart != 0) && (isdigit(*pStart))) {
                 pStart++;
              }
@@ -1528,7 +2120,7 @@ int32_t GetLevelTitleFromFilename(char *pszFilename, char *pszLevelTitle) {
              }
              // SDL_Log("%s: filename: %s ",__FUNCTION__,pStart);
         } else {
-             SDL_Log("%s: %s not found",__FUNCTION__,EMERALD_IMPORTDC3_DIRECTORYNAME);
+             SDL_Log("%s: %s not found",__FUNCTION__,IMPORT_DIRECTORYNAME);
         }
     }
     return nErrorCode;
@@ -1766,23 +2358,23 @@ uint16_t GetElementByMD5(char *szMd5) {
 /*----------------------------------------------------------------------------
 Name:           CheckImportLevelFiles
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt die Dateien für den DC3-Level-Import.
+Beschreibung: Ermittelt die Dateien für den Level-Import.
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t , 0 = OK, sonst Fehler
-Seiteneffekte: ImportLevel.x, MainMenu.x
+Seiteneffekte: ImportLevel.x, MainMenu.x, ImportLevelFileList.x
 ------------------------------------------------------------------------------*/
 int32_t CheckImportLevelFiles(void) {
     uint32_t I;
     uint32_t uFileCount;    // Zugriff sollte atomar (Thread) sein
 
-    if (GetLevelFileList(EMERALD_IMPORTDC3_DIRECTORYNAME,"BMP",(LEVELFILESLIST*)&Dc3LevelFileList,&uFileCount) == 0) {
-        ImportLevel.uDc3FileCount = uFileCount; // Zugriff sollte atomar (Thread) sein
-        // Filelisten für Level-Import (DC3) initialisieren
-        memset(MainMenu.uImportFileListDc3,0xFF,sizeof(MainMenu.uImportFileListDc3));
-        for (I = 0; (I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST) && (I < ImportLevel.uDc3FileCount); I++) {
-            MainMenu.uImportFileListDc3[I] = I;
+    if (GetLevelFileList(IMPORT_DIRECTORYNAME,(LEVELFILESLIST*)&ImportLevelFileList,&uFileCount) == 0) {
+        ImportLevel.uFileCount = uFileCount; // Zugriff sollte atomar (Thread) sein
+        // Filelisten für Level-Import initialisieren
+        memset(MainMenu.uImportFileList,0xFF,sizeof(MainMenu.uImportFileList));
+        for (I = 0; (I < IMPORT_MAX_FILES_IN_LIST) && (I < ImportLevel.uFileCount); I++) {
+            MainMenu.uImportFileList[I] = I;
         }
         return 0;
     } else {
@@ -1791,67 +2383,67 @@ int32_t CheckImportLevelFiles(void) {
 }
 
 
-// Ab hier der Thread, der das DC3-Import-Verzeichnis überwacht
-SDL_Thread *g_pCheckDC3ImportDirectoryThreadHandle = NULL;
-bool g_CheckDC3ImportDirectoryThreadRunning = false;
-bool g_CheckDC3ImportDirectoryThreadExit = true;
+// Ab hier der Thread, der das Level-Import-Verzeichnis überwacht
+SDL_Thread *g_pCheckLevelImportDirectoryThreadHandle = NULL;
+bool g_CheckLevelImportDirectoryThreadRunning = false;
+bool g_CheckLevelImportDirectoryThreadExit = true;
 
 
 /*----------------------------------------------------------------------------
-Name:           CheckDC3ImportDirectoryThread
+Name:           CheckLevelImportDirectoryThread
 ------------------------------------------------------------------------------
-Beschreibung: Thread, der alle 3000 ms das DC3-Importverzeichnis aktualisiert.
-              Der Thread wird durch die Funktion StartCheckDC3ImportDirectoryThread() gestartet.
+Beschreibung: Thread, der alle 3000 ms das Importverzeichnis aktualisiert.
+              Der Thread wird durch die Funktion StartCheckLevelImportDirectoryThread() gestartet.
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
+Seiteneffekte: g_CheckLevelImportDirectoryThreadRunning, g_CheckLevelImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
-void CheckDC3ImportDirectoryThread(void) {
+void CheckLevelImportDirectoryThread(void) {
     uint32_t uTicks;
 
     uTicks = SDL_GetTicks();
-    g_CheckDC3ImportDirectoryThreadRunning = true;
-    g_CheckDC3ImportDirectoryThreadExit = false;
-    while (g_CheckDC3ImportDirectoryThreadRunning) {
+    g_CheckLevelImportDirectoryThreadRunning = true;
+    g_CheckLevelImportDirectoryThreadExit = false;
+    while (g_CheckLevelImportDirectoryThreadRunning) {
         if ((SDL_GetTicks() - uTicks) >= 3000) {
             CheckImportLevelFiles();
             uTicks = SDL_GetTicks();
         }
         SDL_Delay(200);
     }
-    g_CheckDC3ImportDirectoryThreadExit = true;
+    g_CheckLevelImportDirectoryThreadExit = true;
 }
 
 
 /*----------------------------------------------------------------------------
-Name:           StartCheckDC3ImportDirectoryThread
+Name:           StartCheckLevelImportDirectoryThread
 ------------------------------------------------------------------------------
-Beschreibung: Startet den Thread CheckDC3ImportDirectoryThread.
+Beschreibung: Startet den Thread StartCheckLevelImportDirectoryThread.
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler durch Timeout bzw. bei Thread-Erstellung
-Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
+Seiteneffekte: g_CheckLevelImportDirectoryThreadRunning, g_CheckLevelImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
-int32_t StartCheckDC3ImportDirectoryThread(void) {
+int32_t StartCheckLevelImportDirectoryThread(void) {
     int32_t nErrorCode;
 
-    if (!g_CheckDC3ImportDirectoryThreadExit) {
-        nErrorCode = CloseCheckDC3ImportDirectoryThread();
+    if (!g_CheckLevelImportDirectoryThreadExit) {
+        nErrorCode = CloseCheckLevelImportDirectoryThread();
     } else {
         nErrorCode = 0;
     }
     if (nErrorCode == 0) {
-        g_pCheckDC3ImportDirectoryThreadHandle = SDL_CreateThread((SDL_ThreadFunction)&CheckDC3ImportDirectoryThread,"CheckDC3ImportDirectory",NULL);
-        if (g_pCheckDC3ImportDirectoryThreadHandle != NULL) {
+        g_pCheckLevelImportDirectoryThreadHandle = SDL_CreateThread((SDL_ThreadFunction)&CheckLevelImportDirectoryThread,"CheckLevelImportDirectory",NULL);
+        if (g_pCheckLevelImportDirectoryThreadHandle != NULL) {
             // SDL_Log("WorkThread sucessfully started");
-            SDL_DetachThread(g_pCheckDC3ImportDirectoryThreadHandle);  // Damit beim Beenden des Threads keine weiteren Schritte notwendig sind
+            SDL_DetachThread(g_pCheckLevelImportDirectoryThreadHandle);  // Damit beim Beenden des Threads keine weiteren Schritte notwendig sind
         } else {
             SDL_Log("%s: SDL_CreateThread failed: %s",__FUNCTION__,SDL_GetError());
-            g_CheckDC3ImportDirectoryThreadRunning = false;
-            g_CheckDC3ImportDirectoryThreadExit = true;
+            g_CheckLevelImportDirectoryThreadRunning = false;
+            g_CheckLevelImportDirectoryThreadExit = true;
             nErrorCode = -1;
         }
     }
@@ -1860,25 +2452,25 @@ int32_t StartCheckDC3ImportDirectoryThread(void) {
 
 
 /*----------------------------------------------------------------------------
-Name:           CloseCheckDC3ImportDirectoryThread
+Name:           CloseCheckLevelImportDirectoryThread
 ------------------------------------------------------------------------------
-Beschreibung: Beendet den Thread CheckDC3ImportDirectoryThread.
+Beschreibung: Beendet den Thread CheckLevelImportDirectoryThread.
 Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler durch Timeout
-Seiteneffekte: g_CheckDC3ImportDirectoryThreadRunning, g_CheckDC3ImportDirectoryThreadExit
+Seiteneffekte: g_CheckLevelImportDirectoryThreadRunning, g_CheckLevelImportDirectoryThreadExit
 ------------------------------------------------------------------------------*/
-int32_t CloseCheckDC3ImportDirectoryThread(void) {
+int32_t CloseCheckLevelImportDirectoryThread(void) {
     int32_t nErrorCode;
     uint32_t uTimeout;
 
-    g_CheckDC3ImportDirectoryThreadRunning = false; // Thread stoppen
+    g_CheckLevelImportDirectoryThreadRunning = false; // Thread stoppen
     uTimeout = SDL_GetTicks();                      // und auf Beendigung warten
-    while ((!g_CheckDC3ImportDirectoryThreadExit) && (SDL_GetTicks() - uTimeout < 5000)) {
+    while ((!g_CheckLevelImportDirectoryThreadExit) && (SDL_GetTicks() - uTimeout < 5000)) {
         SDL_Delay(30);
     }
-    if (g_CheckDC3ImportDirectoryThreadExit) {
+    if (g_CheckLevelImportDirectoryThreadExit) {
         nErrorCode = 0;
     } else {
         nErrorCode = -1;
@@ -1895,39 +2487,28 @@ Beschreibung: Ermittelt eine Datei-Liste eines bestimmten Verzeichnisses mit ein
               anzugebenen Datei-Extension.
 Parameter
       Eingang: pszDirectoryName, char *, Zeiger auf Verzeichnisname
-               pszFileExtension, char *, Zeiger auf Datei-Extension
-                    (nur 3-stellig und ohne Punkt oder NULL)
       Ausgang: pLevelFileList, LEVELFILESLIST *, Zeiger auf zu befüllende Fileliste
                puFileCount, uint32_t *, Zeiger auf Anzahl Files, Zugriff sollte atomar (Thread) sein
 Rückgabewert:  int32_t , 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int32_t GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount) {
+int32_t GetLevelFileList(char *pszDirectoryName, LEVELFILESLIST *pLevelFileList, uint32_t *puFileCount) {
     DIR *dir;
     struct dirent *entry;
     int32_t nErrorCode = -1;
     uint32_t I;
     uint32_t U;
     uint32_t uFilenameLen;
-    bool bNoExtensionFilter;
-    char szFileExtensionFilter[8];        // Beispiel: ".BMP\0"
-    char szFileExtension[8];
+    char *pszFileExtension;
+    char szFileExtension[64];
+    struct stat Fileinfo;
+    char szFullfilename[EMERALD_MAX_FILENAME_LEN * 2];
 
     if ( (pszDirectoryName == NULL) || (pLevelFileList == NULL) || (puFileCount == NULL) ) {
         SDL_Log("%s: bad pointer",__FUNCTION__);
         return nErrorCode;
     }
-    memset(szFileExtensionFilter,0,sizeof(szFileExtensionFilter));
-    if (pszFileExtension != NULL) {
-        if (strlen(pszFileExtension) == 3) {
-            strcpy(szFileExtensionFilter,".");
-            strcat(szFileExtensionFilter,pszFileExtension);
-            for (U = 0; U < strlen(szFileExtensionFilter); U++) {
-                szFileExtensionFilter[U] = toupper(szFileExtensionFilter[U]);
-            }
-        }
-    }
-    bNoExtensionFilter = (strlen(szFileExtensionFilter) == 0);
+
     *puFileCount = 0;
     if ((dir = opendir(pszDirectoryName)) == NULL) {
         SDL_Log("%s: can not open current directory, error: %s",__FUNCTION__,strerror(errno));
@@ -1935,14 +2516,35 @@ int32_t GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFI
     } else {
         nErrorCode = 0;
         I = 0;
-        while (((entry = readdir(dir)) != NULL) && (I < EMERALD_MAX_IMPORTFILES)) {
+        while (((entry = readdir(dir)) != NULL) && (I < IMPORT_MAX_FILES_IN_LIST)) {
             uFilenameLen = strlen(entry->d_name);
-            if ((uFilenameLen > 4) && (uFilenameLen <= EMERALD_MAX_FILENAME_LEN)) {          // a.bbb    muss es wenigstens sein
-                strcpy(szFileExtension,entry->d_name + uFilenameLen - 4);
-                for (U = 0; U < strlen(szFileExtension); U++) {
-                    szFileExtension[U] = toupper(szFileExtension[U]);
-                }
-                if ( (bNoExtensionFilter) || (strcmp(szFileExtension,szFileExtensionFilter) == 0) ) {
+            // Fullfilename wird für Dateigröße benötigt -> stat()
+            strcpy(szFullfilename,pszDirectoryName);
+            strcat(szFullfilename,"/");
+            strcat(szFullfilename,entry->d_name);
+            if (stat(szFullfilename,&Fileinfo) == 0) {
+                if ((Fileinfo.st_size > 0) && (uFilenameLen <= EMERALD_MAX_FILENAME_LEN) && (strcmp(entry->d_name,".") != 0) && (strcmp(entry->d_name,"..") != 0) && (strcmp(entry->d_name,IMPORT_LEVELAUTHOR_FILENAME) != 0)) {
+                    memset(szFileExtension,0,sizeof(szFileExtension));
+                    pszFileExtension = get_file_extension(entry->d_name);
+                    if (pszFileExtension != NULL) {
+                        if (strlen(pszFileExtension) < sizeof(szFileExtension)) {
+                            strcpy(szFileExtension,pszFileExtension);
+                            for (U = 0; U < strlen(szFileExtension); U++) {
+                                szFileExtension[U] = toupper(szFileExtension[U]);
+                            }
+                        }
+                    }
+                    if (Fileinfo.st_size < 9999999999) {    // String darf nicht größer als 10-stellig werden
+                        sprintf(pLevelFileList[I].szFileSize,"%u",(uint32_t)Fileinfo.st_size);
+                    } else {
+                        strcpy(pLevelFileList[I].szFileSize,"VERY BIG");
+                    }
+
+                    if (strcasecmp(szFileExtension,"BMP")  == 0) {
+                        pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_DC3;
+                    } else if (Fileinfo.st_size == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE) {
+                        pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_EMERALDMINE_KINGSOFT;
+                    }
                     // SDL_Log("%s: Filename: %s",__FUNCTION__,entry->d_name);
                     strcpy(pLevelFileList[I].szFilename,entry->d_name);
                     strcpy(pLevelFileList[I].szShowFilename,entry->d_name);
@@ -1963,8 +2565,9 @@ int32_t GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFI
                             pLevelFileList[I].szShowFilename[U] = 'S';
                         }
                     }
-                    if (strlen(pLevelFileList[I].szShowFilename) > EMERALD_MAX_SHOWFILENAME_LEN) {
-                        pLevelFileList[I].szShowFilename[EMERALD_MAX_SHOWFILENAME_LEN] = 0; // Anzeige-Filename kürzen
+                    if (strlen(pLevelFileList[I].szShowFilename) > IMPORT_MAX_SHOWFILENAME_LEN) {
+                        pLevelFileList[I].szShowFilename[IMPORT_MAX_SHOWFILENAME_LEN] = 0; // Anzeige-Filename kürzen
+                        strcat(pLevelFileList[I].szShowFilename,"....");
                     }
                     I++;
                 }
@@ -1975,4 +2578,27 @@ int32_t GetLevelFileList(char *pszDirectoryName, char *pszFileExtension, LEVELFI
         closedir(dir);
     }
     return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ConvertTime
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert eine Anzahl Felder (DC3, Emerald Mine) in eine Zeit.
+
+Parameter
+      Eingang: uFields, uint32_t, Anzahl Felder
+      Ausgang: -
+Rückgabewert:  uint32_t , Zeiteinheit für Levelsettings
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+uint32_t ConvertTime(uint32_t uFields) {
+    float fFields;
+    float fDivisor;
+    float fTime;
+
+    fFields = (float)uFields;
+    fDivisor = 3.75;
+    fTime = fFields / fDivisor;
+    return (uint32_t)ceilf(fTime);
 }

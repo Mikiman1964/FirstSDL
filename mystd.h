@@ -48,6 +48,7 @@ uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64L
 int32_t GetLineFeedCount(char *pszText);
 int32_t GetLineLen(char *pszText, int32_t nCursorPos);
 float myrandom(void);
+char* get_file_extension(char *filename);
 /*
 Copyright (c) 2012, Cameron Harper
 All rights reserved.

@@ -186,7 +186,6 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
     uint32_t uTicks;
 
     uTicks = SDL_GetTicks();
-
     if (uTicks - g_TreasureChestTicks > TREASURECHEST_TIMER) {
         g_TreasureChestTicks = uTicks;
         g_TreasureChestOpenTicks = uTicks;
@@ -2767,7 +2766,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 case (EMERALD_STEEL_ADD_LEVELGROUP):
                 case (EMERALD_STEEL_COPY_LEVEL):
                 case (EMERALD_STEEL_CLIPBOARD_LEVEL):
-                case (EMERALD_STEEL_DC3_IMPORT):
+                case (EMERALD_STEEL_LEVEL_IMPORT):
                 case (EMERALD_STEEL_RENAME_LEVELGROUP):
                 case (EMERALD_STEEL_PASSWORD):
                 case (EMERALD_STEEL_FORBIDDEN):

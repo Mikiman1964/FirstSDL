@@ -733,8 +733,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CHAR0A  0x0A
 #define CHAR20  0x20
 
-int decode_char(uint8_t in)
-{
+int decode_char(uint8_t in) {
     if((in >= 'A') && (in <= 'Z'))
         return (in - 'A');
     else if((in >= 'a') && (in <= 'z'))
@@ -805,4 +804,17 @@ int Base64ToBin(uint8_t *pcBinary, uint8_t *pcBase64, uint32_t uBase64Len, uint3
         }
     }
     return 0;
+}
+
+
+// Vom Copiloten ;-)
+char* get_file_extension(char *filename) {
+    if (filename == NULL) {
+            return NULL;
+    }
+    char *dot = strrchr(filename, '.');
+    if (!dot || dot == filename) {
+        return NULL; // kein Punkt oder Punkt am Anfang
+    }
+    return dot + 1; // Extension ohne Punkt
 }

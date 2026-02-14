@@ -1732,9 +1732,9 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     strcpy(szLastPlayername,Actualplayer.szPlayername); // Aktuellen Spielernamen merken
                                     // SDL_Log("Last Player:%s",szLastPlayername);
                                     memset(&Actualplayer,0,sizeof(Actualplayer));
-                                    StartCheckDC3ImportDirectoryThread();   // Startet Thread, der das DC3-Import-Verzeichnis überwacht
+                                    StartCheckLevelImportDirectoryThread();   // Startet Thread, der das Level-Import-Verzeichnis überwacht
                                     nErrorCode = PreEditorMenu(pRenderer);
-                                    CloseCheckDC3ImportDirectoryThread();  // Thread wieder beenden
+                                    CloseCheckLevelImportDirectoryThread();  // Thread wieder beenden
                                     if (nErrorCode == 0) {
                                         // Eine ggf. geänderte Levelgruppe nun mit Highscorefile ausstatten
                                         nErrorCode = SelectAlternativeLevelgroup(Config.uLevelgroupMd5Hash,true);

@@ -37,7 +37,7 @@ typedef struct {
     uint32_t uMaxLevelTitlesInList;
     uint16_t *puLevelTitleList;
     uint16_t *puLevelTitleListCopy;
-    uint16_t uImportFileListDc3[EMERALD_MAX_MAXIMPORTFILES_IN_LIST];
+    uint16_t uImportFileList[IMPORT_MAX_FILES_IN_LIST];
     uint8_t  uFlashBrightness[20];
     char     szTempName[EMERALD_PLAYERNAME_LEN + 1];
     uint32_t uCursorPos;

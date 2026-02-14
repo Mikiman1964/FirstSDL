@@ -1751,7 +1751,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
         case (EMERALD_STEEL_CLIPBOARD_LEVEL):
             uTextureIndex = TEX_STEEL_CLIPBOARD;
             break;
-        case (EMERALD_STEEL_DC3_IMPORT):
+        case (EMERALD_STEEL_LEVEL_IMPORT):
             uTextureIndex = TEX_STEEL_DC3;
             break;
         case (EMERALD_STEEL_RENAME_LEVELGROUP):

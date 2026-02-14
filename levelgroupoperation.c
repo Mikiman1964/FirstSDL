@@ -16,8 +16,9 @@ extern unsigned char ge_new_levelgroup[];
 extern ED Ed;
 extern INPUTSTATES InputStates;
 extern MAINMENU MainMenu;
-extern LEVELFILESLIST Dc3LevelFileList[EMERALD_MAX_IMPORTFILES];
+extern LEVELFILESLIST ImportLevelFileList[IMPORT_MAX_FILES_IN_LIST];
 extern VIDEO Video;
+extern char g_szImportLevelType[][25];
 
 
 /*----------------------------------------------------------------------------
@@ -1068,16 +1069,17 @@ int32_t LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
 
 
 /*----------------------------------------------------------------------------
-Name:           LevelgroupOperaton_ImportDC3
+Name:           LevelgroupOperaton_LevelImport
 ------------------------------------------------------------------------------
-Beschreibung: Bietet eine Dateiauswahl für den DC3-Levelimport an.
+Beschreibung: Bietet eine Dateiauswahl für den Levelimport an.
 Parameter
       Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Inputstates.x, MainMenu.x, Dc3LevelFileList[].x, Ed.x, Video.x
+Seiteneffekte: Inputstates.x, MainMenu.x, ImportLevelFileList[].x, Ed.x, Video.x,
+               g_szImportLevelType[]
 ------------------------------------------------------------------------------*/
-int32_t LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
+int32_t LevelgroupOperaton_LevelImport(SDL_Renderer *pRenderer) {
     int32_t nErrorCode = 0;
     int32_t nColorDimm;
     int32_t nNewLevelCount = 0;
@@ -1112,7 +1114,13 @@ int32_t LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
     nColorDimm = 0;
     uMusicVolume = 0;
     SetMenuBorderAndClear();
-    SetMenuText(MainMenu.pMenuScreen,"SELECT BITMAP TO IMPORT",-1,0,EMERALD_FONT_BLUE_STEEL);
+    for (I = 1; I < MainMenu.uYdim - 1; I++) {
+        MainMenu.pMenuScreen[I * MainMenu.uXdim + 25] = EMERALD_STEEL;
+        MainMenu.pMenuScreen[I * MainMenu.uXdim + 30] = EMERALD_STEEL;
+    }
+    SetMenuText(MainMenu.pMenuScreen,"SELECT A FILE TO IMPORT",1,0,EMERALD_FONT_BLUE_STEEL);
+    SetMenuText(MainMenu.pMenuScreen,"SIZE",26,0,EMERALD_FONT_BLUE_STEEL);
+    SetMenuText(MainMenu.pMenuScreen,"TYPE",33,0,EMERALD_FONT_BLUE_STEEL);
     while ((nErrorCode == 0) && (!bExit)) {
         UpdateInputStates();
 
@@ -1120,20 +1128,33 @@ int32_t LevelgroupOperaton_ImportDC3(SDL_Renderer *pRenderer) {
             nErrorCode = RenderMenuElements(pRenderer);
         }
         // Import-Dateien auflisten
-        for (I = 0; I < EMERALD_MAX_MAXIMPORTFILES_IN_LIST; I++) {
-            if (MainMenu.uImportFileListDc3[I] != 0xFFFF) {
-                PrintLittleFont(pRenderer,40 + Video.uXoffs,37 + I * 20,0,Dc3LevelFileList[MainMenu.uImportFileListDc3[I]].szShowFilename,K_ABSOLUTE,1);
+        for (I = 0; I < IMPORT_MAX_FILES_IN_LIST; I++) {
+            if (MainMenu.uImportFileList[I] != 0xFFFF) {
+                PrintLittleFont(pRenderer,40 + Video.uXoffs,37 + I * 20,0,ImportLevelFileList[MainMenu.uImportFileList[I]].szShowFilename,K_ABSOLUTE,1);
+                PrintLittleFont(pRenderer,1000 + Video.uXoffs,37 + I * 20,0,g_szImportLevelType[ImportLevelFileList[I].uLevelType],K_ABSOLUTE,1);
+                PrintLittleFont(pRenderer,842 + Video.uXoffs,37 + I * 20,0,ImportLevelFileList[MainMenu.uImportFileList[I]].szFileSize,K_ABSOLUTE,1);
             }
         }
         nErrorCode = ImportMenuSelectFile(pRenderer,&uBeamPosition);
         if ((uBeamPosition != 0xFFFFFFFF) && (!bPrepareExit)) {
-            strcpy(szFullFilename,EMERALD_IMPORTDC3_DIRECTORYNAME);
+            // Dateiname wurde ausgewählt
+            strcpy(szFullFilename,IMPORT_DIRECTORYNAME);
             strcat(szFullFilename,"/");             // Funktioniert auch unter Windows
-            strcat(szFullFilename,Dc3LevelFileList[MainMenu.uImportFileListDc3[uBeamPosition]].szFilename);
-            if (LevelConverterFromBitap(szFullFilename) == 0) {
+            strcat(szFullFilename,ImportLevelFileList[MainMenu.uImportFileList[uBeamPosition]].szFilename);
+            switch (ImportLevelFileList[MainMenu.uImportFileList[uBeamPosition]].uLevelType) {
+                case (IMPORT_LEVELTYPE_DC3):
+                    nErrorCode = LevelConverterFromBitap(szFullFilename);
+                    break;
+                case (IMPORT_LEVELTYPE_EMERALDMINE_KINGSOFT):
+                    nErrorCode = LevelConverterFromEmeraldMineKingsoft(szFullFilename);
+                    break;
+                default:
+                    nErrorCode = -1;
+                    break;
+            }
+            if (nErrorCode == 0) {
                 // Ab hier befindet sich das konvertierte Bitmap-Level in Ed.x
                 if (SetLevelBorder(Ed.pLevel,false,false) == 0) { // 1. false = Level nicht auf EMERALD_SPACE setzen, 2. false = Nur auf EMERALD_STEEL setzen, wenn noch kein kompatibles Stahl-Element
-                    InitYamExplosions(Ed.YamExplosions);
                     Ed.uReplicatorRedObject = EMERALD_SPACE;
                     Ed.uReplicatorGreenObject = EMERALD_SPACE;
                     Ed.uReplicatorBlueObject = EMERALD_SPACE;
