@@ -42,72 +42,6 @@ extern GAMECONTROLLER GameController;
 extern JOYSTICK Joystick;
 extern IMPORTLEVEL ImportLevel;
 
-/*----------------------------------------------------------------------------
-Name:           GetRainbowColors
-------------------------------------------------------------------------------
-Beschreibung: Berechnung eines Regenbogen-Farbverlaufs.
-              Als Eingabe dient ein Wert zwischen 0 und 254, der die Position
-              im Regenbogen angibt.
-              0 = oberer Bereich des Regenbogens (rot)
-              254 = unterer Bereich des Regenbogens (violett)
-              Quelle: https://www.mikrocontroller.net/topic/238304
-              Benutzername: kbuchegg: Karl-Heinz Buchegger
-              Bei ungültigen Eingabewerten wird der Regenbogen umgebrochen, d.h.
-              er fängt wieder am Anfang an.
-              Quelle:
-              https://www.mikrocontroller.net/topic/238304
-              Karl-Heinz BuchEgg
-Parameter
-      Eingang: uWert, uint16_t, Position im Regenbogen (0 ... 254)
-      Ausgang: -
-      Rückgabewert: uint32_t, RGB (höchtes Byte unbesetzt = NN)
-                    NNRRGGBB
-Seiteneffekte: -
-------------------------------------------------------------------------------*/
-uint32_t GetRainbowColors(uint16_t uWert) {
-    int32_t nRed, nGreen, nBlue;
-    int32_t nPhase;
-    int32_t nLevel;
-    uint32_t uRGB = 0;
-
-    uWert = uWert % 254;
-    nPhase = uWert / 51;
-    nLevel = uWert % 51;
-    switch (nPhase) {
-        case 0:
-            nRed = 255;
-            nGreen = nLevel * 5;
-            nBlue = 0;
-            break;
-        case 1:
-            nRed = 255 - nLevel * 5;
-            nGreen = 255;
-            nBlue = 0;
-            break;
-        case 2:
-            nRed = 0;
-            nGreen = 255;
-            nBlue = nLevel * 5;
-            break;
-        case 3:
-            nRed = 0;
-            nGreen = 255 - nLevel * 5;
-            nBlue = 255;
-            break;
-        case 4:
-            nRed = nLevel * 5;
-            nGreen = 0;
-            nBlue  = 255;
-            break;
-        default:
-            nRed = nGreen = nBlue = 255;
-    }
-    uRGB = uRGB | ((uint8_t)nRed) << 16;
-    uRGB = uRGB | ((uint8_t)nGreen) << 8;
-    uRGB = uRGB | (uint8_t)nBlue;
-    return uRGB;
-}
-
 
 /*----------------------------------------------------------------------------
 Name:           GetMainMenuButton
@@ -809,19 +743,19 @@ Beschreibung: Erledigt die Auswahl einer Levelgruppe aus dem Hauptmenü und
               blendet die Balken für die Auswahl einer Levelgruppe ein, wenn sich
               der Mauspfeil über den Namen einer Gruppe befindet.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: Actualplayer.x, SelectedLevelgroup.x, InputStates.x, MainMenu.x, Video.x
+Seiteneffekte: Actualplayer.x, SelectedLevelgroup.x, InputStates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int32_t MenuSelectLevelgroup(SDL_Renderer *pRenderer) {
+int32_t MenuSelectLevelgroup(void) {
     int32_t nErrorCode = 0;
     uint32_t uBeamPosition;
     char szPlayername[EMERALD_PLAYERNAME_LEN + 1];
 
     uBeamPosition = GetLevelgroupBeamPosition();
     if (uBeamPosition != 0xFFFFFFFF) {
-        nErrorCode = DrawBeam(pRenderer,FONT_W + Video.uXoffs,608 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 2 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_ABSOLUTE);
+        nErrorCode = DrawBeam(FONT_W + Video.uXoffs,608 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 2 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_ABSOLUTE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
             if (SelectAlternativeLevelgroup(LevelgroupFiles[MainMenu.pLevelgroupList[uBeamPosition]].uMd5Hash,true) == 0) {
                 // SDL_Log("Select %s, OK",SelectedLevelgroup.szLevelgroupname);
@@ -853,18 +787,18 @@ Beschreibung: Erledigt die Auswahl eines Namens aus dem Hauptmenü und
               blendet die Balken für die Auswahl eines Namens an, wenn sich
               der Mauspfeil über einem Namen befindet.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, Names.x, SelectedLevelgroup.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t MenuSelectName(SDL_Renderer *pRenderer) {
+int32_t MenuSelectName(void) {
     int32_t nErrorCode = 0;
     uint32_t uBeamPosition;
 
     uBeamPosition = GetNamesBeamPosition();
     if (uBeamPosition != 0xFFFFFFFF) {
-        nErrorCode = DrawBeam(pRenderer,Video.uXoffs + FONT_W,448 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 7 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_ABSOLUTE);
+        nErrorCode = DrawBeam(Video.uXoffs + FONT_W,448 + FONT_H * uBeamPosition, DEFAULT_WINDOW_W - 7 * FONT_W, FONT_H, 0x20,0x20,0xF0,0xC0,K_ABSOLUTE);
         if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
             if (SelectName(Names.Name[MainMenu.uNamesList[uBeamPosition]].szName,SelectedLevelgroup.uMd5Hash) == 0) {
                 // SDL_Log("select name: %s, OK",Names.Name[MainMenu.uNamesList[uBeamPosition]].szName);
@@ -1113,12 +1047,12 @@ Name:           RenderMenuElements
 ------------------------------------------------------------------------------
 Beschreibung: Alle Menü-Elemente im Menü-Screen pMenuScreen werden in den Renderer geschrieben.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t RenderMenuElements(SDL_Renderer *pRenderer) {
+int32_t RenderMenuElements(void) {
     uint32_t I;
     int32_t nErrorCode = 0;
     uint32_t uTextureIndex;
@@ -1139,7 +1073,7 @@ int32_t RenderMenuElements(SDL_Renderer *pRenderer) {
         DestR.w = FONT_W;
         DestR.h = FONT_H;
         if (nErrorCode == 0) {
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 nErrorCode = -1;
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
             }
@@ -1547,16 +1481,16 @@ Name:           EmeraldMineMainMenu
 Beschreibung: Baut das Hauptmenü auf. Hier kann Levelgruppe, Name und Level ausgewählt werden.
               Mit Hauptschleifen-Funktion für das Spiel.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
-
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x
                SelectedLevelgroup.x, Config.x, Audioplayer.x, Actualplayer.x
                Video.x, GameSound.x, ge_TotalLevelCount
 ------------------------------------------------------------------------------*/
-int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
+int32_t EmeraldMineMainMenu(void) {
     char * pWarnVsyncMessage = VSYNC_WARNING_MESSAGE;
+    char * pNoUsageVsyncMessage = VSYNC_NOUSAGE_MESSAGE;
     int32_t nErrorCode;
     uint8_t uMusicVolume;
     uint32_t uHighscoreLevel;
@@ -1660,7 +1594,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                     }
                     while ((bMenuRun) && (nErrorCode == 0)) {
                         if (Actualplayer.bValid) {
-                            DoScroller(pRenderer,&Scroller);
+                            DoScroller(&Scroller);
                         }
                         UpdateManKey(); // Ruft UpdateInputStates() auf
                         MeasureFps();
@@ -1702,7 +1636,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
                                     SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-                                    nErrorCode = ShowHighScores(pRenderer,Actualplayer.uLevel,-1);
+                                    nErrorCode = ShowHighScores(Actualplayer.uLevel,-1);
                                     SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
                                     if (Actualplayer.bValid) {
                                         SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
@@ -1733,7 +1667,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     // SDL_Log("Last Player:%s",szLastPlayername);
                                     memset(&Actualplayer,0,sizeof(Actualplayer));
                                     StartCheckLevelImportDirectoryThread();   // Startet Thread, der das Level-Import-Verzeichnis überwacht
-                                    nErrorCode = PreEditorMenu(pRenderer);
+                                    nErrorCode = PreEditorMenu();
                                     CloseCheckLevelImportDirectoryThread();  // Thread wieder beenden
                                     if (nErrorCode == 0) {
                                         // Eine ggf. geänderte Levelgruppe nun mit Highscorefile ausstatten
@@ -1767,7 +1701,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                     SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
                                     FreeScroller(&Scroller);    // Scroller muss nach Settings ggf. neu initialisiert und gestartet werden
                                     CloseJoystickOrGameController();
-                                    nErrorCode = SettingsMenu(pRenderer);
+                                    nErrorCode = SettingsMenu();
                                     // Nach Settings wegen möglicher Auflösungsänderung MainMenu und Levelgroup-/Player-Listen neu aufbauen
                                     InitMainMenu(WINDOW_FULL_SIZE);
                                     InitLists();
@@ -1802,7 +1736,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                 } else if (nErrorCode == 0) {
                                     // Das Spielergebnis (Erfolg oder Versagen) kann in Playfield.x abgefragt werden.
                                     // SDL_Log("Start Game with level %u",Actualplayer.uLevel);
-                                    nErrorCode = RunGame(pRenderer,Actualplayer.uLevel);
+                                    nErrorCode = RunGame(Actualplayer.uLevel);
                                     SDL_Log("%s: RunGame() ErrorCode: %u",__FUNCTION__,nErrorCode);
                                     if (nErrorCode == 0) {
                                         nErrorCode = EvaluateGame(&nNewHighscoreIndex,&uHighscoreLevel);
@@ -1813,7 +1747,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                                         SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,false);
                                         SetButtonActivity(BUTTONLABEL_LEVELEDITOR,false);
                                         SetButtonActivity(BUTTONLABEL_HIGHSCORES,false);
-                                        nErrorCode = ShowHighScores(pRenderer,uHighscoreLevel,nNewHighscoreIndex);
+                                        nErrorCode = ShowHighScores(uHighscoreLevel,nNewHighscoreIndex);
                                         SetButtonActivity(BUTTONLABEL_CREATE_PLAYER,true);
                                         if (Actualplayer.bValid) {
                                             SetButtonActivity(BUTTONLABEL_DELETE_PLAYER,true);
@@ -1839,9 +1773,9 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                         // printf("x:%u  y:%u\n",InputStates.nMouseXpos,InputStates.nMouseYpos);
                         if (!bPrepareExit) {
                             if (MainMenu.nState == 0) {     // Levelgruppen- und Spieler-Auswahl nur während Namenseingabe nicht aktiv
-                                nErrorCode = MenuSelectLevelgroup(pRenderer);
+                                nErrorCode = MenuSelectLevelgroup();
                                 if (nErrorCode == 0) {
-                                    nErrorCode = MenuSelectName(pRenderer);
+                                    nErrorCode = MenuSelectName();
                                 }
                                 nLastPlayerlistButton = nPlayerlistButton;
                                 nPlayerlistButton = GetPlayerListButton();
@@ -1895,28 +1829,31 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
                         }
                         PlayMusic(false);
                         if (nErrorCode == 0) {
-                            nErrorCode = RenderMenuElements(pRenderer);
+                            nErrorCode = RenderMenuElements();
                             if ((nErrorCode == 0) && (MainMenu.nState == 0)) {
-                                nErrorCode = RenderSettingsbutton(pRenderer);
+                                nErrorCode = RenderSettingsbutton();
                             }
                         }
                         // FPS
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,0,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 1,MainMenu.uYdim * FONT_H - 24,3,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
+                        PrintLittleFont(FONT_W + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,0,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
+                        PrintLittleFont(FONT_W + Video.uXoffs + 1,MainMenu.uYdim * FONT_H - 24,3,Video.Fps.szFramesPerSecond,K_ABSOLUTE,1);
                         // V-SYNC
-                        if (!Video.bVsync) {
-                            PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 240,MainMenu.uYdim * FONT_H - 25,0,pWarnVsyncMessage,K_ABSOLUTE,1);
-                            PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 241,MainMenu.uYdim * FONT_H - 24,3,pWarnVsyncMessage,K_ABSOLUTE,1);
+                        if (!Config.bUseVSync) {
+                            PrintLittleFont(FONT_W + Video.uXoffs + 240,MainMenu.uYdim * FONT_H - 25,0,pNoUsageVsyncMessage,K_ABSOLUTE,1);
+                            PrintLittleFont(FONT_W + Video.uXoffs + 241,MainMenu.uYdim * FONT_H - 24,3,pNoUsageVsyncMessage,K_ABSOLUTE,1);
+                        } else if (!Video.bVsync) {
+                            PrintLittleFont(FONT_W + Video.uXoffs + 240,MainMenu.uYdim * FONT_H - 25,0,pWarnVsyncMessage,K_ABSOLUTE,1);
+                            PrintLittleFont(FONT_W + Video.uXoffs + 241,MainMenu.uYdim * FONT_H - 24,3,pWarnVsyncMessage,K_ABSOLUTE,1);
                         }
                         // Gesamtanzahl Levels
                         sprintf(szTotalLevelCount,"TOTAL LEVELS: %u",ge_TotalLevelCount);
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 960,MainMenu.uYdim * FONT_H - 25,0,szTotalLevelCount,K_ABSOLUTE,1);
-                        PrintLittleFont(pRenderer,FONT_W + Video.uXoffs + 961,MainMenu.uYdim * FONT_H - 24,3,szTotalLevelCount,K_ABSOLUTE,1);
-                        ShowButtons(pRenderer,K_ABSOLUTE);
+                        PrintLittleFont(FONT_W + Video.uXoffs + 960,MainMenu.uYdim * FONT_H - 25,0,szTotalLevelCount,K_ABSOLUTE,1);
+                        PrintLittleFont(FONT_W + Video.uXoffs + 961,MainMenu.uYdim * FONT_H - 24,3,szTotalLevelCount,K_ABSOLUTE,1);
+                        ShowButtons(K_ABSOLUTE);
                         if ((MainMenu.nState == 0) && (IsButtonPressed(BUTTONLABEL_CREATE_PLAYER))) {
                             ActivateInputPlayernameMode();  // Eingabemodus für Namenseingabe aktivieren
                         }
-                        RenderPresentAndClear(pRenderer);
+                        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
                         Playfield.uFrameCounter++;
                     }
                 } else {
@@ -1933,7 +1870,7 @@ int32_t EmeraldMineMainMenu(SDL_Renderer *pRenderer) {
     FreeButton(BUTTONLABEL_LEVELEDITOR);
     FreeButton(BUTTONLABEL_HIGHSCORES);
     FreeScroller(&Scroller);
-    CleanUpMemoryAndSDL(pRenderer);
+    CleanUpMemoryAndSDL();
     return nErrorCode;
 }
 
@@ -1944,12 +1881,12 @@ Name:           CleanUpMemoryAndSDL
 Beschreibung: Gibt allozierten Speicher und SDL-Resourcen (Renderer und Fenster)
               wieder frei.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: Video.x, Audioplayer.x, GameSound.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-void CleanUpMemoryAndSDL(SDL_Renderer *pRenderer) {
+void CleanUpMemoryAndSDL(void) {
     FreeSaveGame();
     RestoreDesktop();
     SDL_CloseAudioDevice(Audioplayer.audio_device);
@@ -1964,7 +1901,7 @@ void CleanUpMemoryAndSDL(SDL_Renderer *pRenderer) {
     SAFE_FREE(MainMenu.pLevelgroupList);
     SAFE_FREE(MainMenu.puLevelTitleList);
     SAFE_FREE(MainMenu.puLevelTitleListCopy);
-    SDL_DestroyRenderer(pRenderer);
+    SDL_DestroyRenderer(Video.pRenderer);
     SDL_DestroyWindow(Video.pWindow);
     SDL_Quit();
 }
@@ -2005,13 +1942,12 @@ Name:           ShowControllersAndJoysticks
 Beschreibung: Zeigt die Gamecontroller, Joysticks und das Keyboard im
               Settingsmenü an.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
-
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
+int32_t ShowControllersAndJoysticks(void) {
     uint32_t I;
     SDL_Rect DestR;
     int32_t nErrorCode = 0;
@@ -2021,14 +1957,14 @@ int32_t ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
         DestR.y = Video.uYoffs + 112 + I * 160;
         DestR.w = 117;
         DestR.h = 95;
-        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_GAME_CONTROLLER),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+        nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_GAME_CONTROLLER),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
     }
     for (I = 0; (I < MAX_JOYSTICKS) && (nErrorCode == 0); I++) {
         DestR.x = Video.uXoffs + 342;
         DestR.y = Video.uYoffs + 90 + I * 160;
         DestR.w = 123;
         DestR.h = 129;
-        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_JOYSTICK),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+        nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_JOYSTICK),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
     }
     DestR.x = Video.uXoffs + 70;
     DestR.y = Video.uYoffs + 570;
@@ -2036,7 +1972,7 @@ int32_t ShowControllersAndJoysticks(SDL_Renderer *pRenderer) {
     DestR.h = 146;
     // Keyboard
     if (nErrorCode == 0) {
-        nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_KEYBOARD),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
+        nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_KEYBOARD),NULL,&DestR,0,NULL, SDL_FLIP_NONE);
     }
     return nErrorCode;
 }
@@ -2048,8 +1984,7 @@ Name:           ShowRec
 Beschreibung: Zeigt einen farbigen Rahmen für die Gamecontroller, Joysticks
               und das Keyboard im Settingsmenü an.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               pColors, RGBCOLOR *, Zeiger auf Farbpalette für Farb-Rahmen (mind. 700 Elemente)
+      Eingang: pColors, RGBCOLOR *, Zeiger auf Farbpalette für Farb-Rahmen (mind. 700 Elemente)
                nXpos, int32_t, X-Position für Rahmen, relative Position im Menü
                nYpos, int32_t, Y-Position für Rahmen, relative Position im Menü
                nWidth, int32_t, Breite des Rahmen in Pixeln
@@ -2059,7 +1994,7 @@ Parameter
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int32_t nXpos, int32_t nYpos, int32_t nWidth, int32_t nHeight, int32_t nDimm) {
+int32_t ShowRec(RGBCOLOR *pColors, int32_t nXpos, int32_t nYpos, int32_t nWidth, int32_t nHeight, int32_t nDimm) {
     int32_t nP;
     int32_t nX,nY;
     int32_t nErrorCode = 0;
@@ -2067,36 +2002,36 @@ int32_t ShowRec(SDL_Renderer *pRenderer, RGBCOLOR *pColors, int32_t nXpos, int32
     nP = 0;
     // Obere Line
     for (nX = 0; (nX < nWidth) && (nErrorCode == 0); nX++) {
-        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + 1 + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + 2 + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(Video.pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + 1 + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + 2 + Video.uYoffs);
         nP++;
     }
     // Rechte senkrechte Linie
     for (nY = 0; (nY < nHeight - 2) && (nErrorCode == 0); nY++) {
-        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX - 1 + Video.uXoffs, nYpos + nY + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX - 2 + Video.uXoffs, nYpos + nY + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(Video.pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX - 1 + Video.uXoffs, nYpos + nY + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX - 2 + Video.uXoffs, nYpos + nY + Video.uYoffs);
         nP++;
     }
     // Untere Linie
     // for (ohne init., da nX noch auf richtigem Wert)
     for (; (nX > 0) && (nErrorCode == 0); nX--) {
-        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY - 1 + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + 1 + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(Video.pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY - 1 + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + 1 + Video.uYoffs);
         nP++;
     }
     // Linke senkrechte Linie
     // for (ohne init., da nY noch auf richtigem Wert)
     for (; (nY > 0) && (nErrorCode == 0); nY--) {
-        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + 1 + Video.uXoffs, nYpos + nY + Video.uYoffs);
-        nErrorCode = nErrorCode + SDL_RenderDrawPoint(pRenderer,nXpos + nX + 2 + Video.uXoffs, nYpos + nY + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_SetRenderDrawColor(Video.pRenderer,(pColors[nP].uRed * nDimm) / 100,(pColors[nP].uGreen * nDimm) / 100,(pColors[nP].uBlue * nDimm) / 100,pColors[nP].uAlpha);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + Video.uXoffs, nYpos + nY + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + 1 + Video.uXoffs, nYpos + nY + Video.uYoffs);
+        nErrorCode = nErrorCode + SDL_RenderDrawPoint(Video.pRenderer,nXpos + nX + 2 + Video.uXoffs, nYpos + nY + Video.uYoffs);
         nP++;
     }
     return nErrorCode;
@@ -2141,14 +2076,16 @@ Name:           SettingsMenu
 Beschreibung: Baut das Setup-Menü auf. Hier kann das Eingabegerät, Fenstergröße,
               usw. konfiguriert werden
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, MainMenu.x, Config.x,
                GameController.x, Joystick.x, Video.x,
                g_uScanCodes[], g_ScanCodeNames[]
 ------------------------------------------------------------------------------*/
-int32_t SettingsMenu(SDL_Renderer *pRenderer) {
+int32_t SettingsMenu(void) {
+    char * pWarnVsyncMessage = VSYNC_WARNING_MESSAGE;
+    char * pNoUsageVsyncMessage = VSYNC_NOUSAGE_MESSAGE;
     SDL_Rect RecAxisButton;
     SDL_Rect KeyboardButton;
     int32_t nDisplays;
@@ -2214,6 +2151,7 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
     CHECKBOX Checkbox_Gamemusic;
     CHECKBOX Checkbox_ShowHighScores;
     CHECKBOX Checkbox_FullScreen;
+    CHECKBOX Checkbox_UseVsync;
     CHECKBOX Checkbox_Resolution[MAX_SHOWABLE_DISPLAYMODES];
     CHECKBOX Checkbox_Display1;
     CHECKBOX Checkbox_Display2;
@@ -2389,15 +2327,18 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
     if (RegisterCheckbox(&Checkbox_ShowHighScores,Config.bShowHighscores,"SHOW HIGHSCORES",980,92,false,CHK_USE) != 0) {
         return -1;
     }
-    if (RegisterCheckbox(&Checkbox_FullScreen,Config.bFullScreen,"FULL SCREEN",980,156,false,!Video.bMustUseFullScreen) != 0) {
+    if (RegisterCheckbox(&Checkbox_FullScreen,Config.bFullScreen,"FULL SCREEN",980,144,false,CHK_USE) != 0) {
+        return -1;
+    }
+    if (RegisterCheckbox(&Checkbox_UseVsync,Config.bUseVSync,"USE V-SYNC",980,210,false,CHK_USE) != 0) {
         return -1;
     }
     bActive = (Config.uDisplay == 0);   // Primary Display
-    if (RegisterCheckbox(&Checkbox_Display1,bActive,"DISPLAY 1 (RESTART APP)",980,178,true,(nDisplays > 1)) != 0) {
+    if (RegisterCheckbox(&Checkbox_Display1,bActive,"DISPLAY 1 (RESTART APP)",980,166,true,(nDisplays > 1)) != 0) {
         return -1;
     }
     bActive = (Config.uDisplay == 1);   // Secondary Display
-    if (RegisterCheckbox(&Checkbox_Display2,bActive,"DISPLAY 2 (RESTART APP)",980,200,true,(nDisplays > 1)) != 0) {
+    if (RegisterCheckbox(&Checkbox_Display2,bActive,"DISPLAY 2 (RESTART APP)",980,188,true,(nDisplays > 1)) != 0) {
         return -1;
     }
     if ((Video.nShowableDisplayModeCount > 0 ) && (Video.nShowableDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES)) {
@@ -2440,17 +2381,15 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
     WaitNoKey();
     PrepareSettingsMenu();
     do {
-        UpdateInputStates();
+        UpdateManKey();
         /////////////////////  Stern-Start
         fColorDimmP = (float)nColorDimm / 100;
         NewCenterX = 400 * cos(fAngle);
         NewCenterY = 150 * sin(fAngle);
-        // SDL_RenderDrawPoint(pRenderer,NewCenterX + CenterX,NewCenterY + CenterY);
         // Neue Punkte mit Matrix-Multiplikation berechnen
         for (I = 0; I < MAX_STAR_POINTS; I++) {
             NewStarX[I] = (StarX[I] * cos(-fAngle * 2 * fF) - StarY[I] * sin(fAngle * 4)) + CenterX + NewCenterX ;
             NewStarY[I] = (StarX[I] * sin(fAngle * 4) + StarY[I] * cos(-fAngle * 2 * fF)) + CenterY  + NewCenterY;
-            //SDL_RenderDrawPoint(pRenderer,NewStarX[I],NewStarY[I]);
         }
         if (bUp) {
             fF = fF + 0.001;
@@ -2479,22 +2418,20 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
             uRain++;
             if (uRain == 255) uRain = 0;
         }
-        SDL_SetRenderDrawColor(pRenderer,(float)uRed * fColorDimmP,(float)uGreen * fColorDimmP,(float)uBlue * fColorDimmP,SDL_ALPHA_OPAQUE);
+        SDL_SetRenderDrawColor(Video.pRenderer,(float)uRed * fColorDimmP,(float)uGreen * fColorDimmP,(float)uBlue * fColorDimmP,SDL_ALPHA_OPAQUE);
         // Linien
         for (I = 0; I < MAX_STAR_POINTS; I++) {
             if (I < (MAX_STAR_POINTS - 1)) {
-                SDL_RenderDrawLine(pRenderer,NewStarX[I],NewStarY[I],NewStarX[I + 1],NewStarY[I + 1]);
+                SDL_RenderDrawLine(Video.pRenderer,NewStarX[I],NewStarY[I],NewStarX[I + 1],NewStarY[I + 1]);
             } else {
-                SDL_RenderDrawLine(pRenderer,NewStarX[I],NewStarY[I],NewStarX[0],NewStarY[0]);
+                SDL_RenderDrawLine(Video.pRenderer,NewStarX[I],NewStarY[I],NewStarX[0],NewStarY[0]);
             }
         }
         /////////////////////  Stern-Ende
-        PrintLittleFont(pRenderer,570, 50,0,"KEYBOARD",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,950, 50,0,"OTHER SETTINGS",K_RELATIVE,1);
-        if (!Video.bMustUseFullScreen) {
-            PrintLittleFont(pRenderer,950, 138,0,"VIDEO",K_RELATIVE,1);
-        }
-        PrintLittleFont(pRenderer,950, 242,0,"VIDEO RESOLUTION",K_RELATIVE,1);
+        PrintLittleFont(570,50,0,"KEYBOARD",K_RELATIVE,1);
+        PrintLittleFont(950,50,0,"OTHER SETTINGS",K_RELATIVE,1);
+        PrintLittleFont(950,124,0,"VIDEO",K_RELATIVE,1);
+        PrintLittleFont(950,242,0,"VIDEO RESOLUTION",K_RELATIVE,1);
         if (Config.uInputdevice == 1) {         // Joystick?
             Checkbox_Joy_Btn_Fire_A.bUse = CHK_USE;
             Checkbox_Joy_Btn_Fire_B.bUse = CHK_USE;
@@ -2525,9 +2462,9 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
             Checkbox_GC_Btn_Exit_X.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_Y.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_None.bUse = CHK_UNUSE;
-            PrintLittleFont(pRenderer,570,220,0,"JOYSTICK FIRE BUTTON",K_RELATIVE,1);
-            PrintLittleFont(pRenderer,570,348,0,"JOYSTICK DYNAMITE BUTTON",K_RELATIVE,1);
-            PrintLittleFont(pRenderer,570,478,0,"JOYSTICK EXIT BUTTON",K_RELATIVE,1);
+            PrintLittleFont(570,220,0,"JOYSTICK FIRE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(570,348,0,"JOYSTICK DYNAMITE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(570,478,0,"JOYSTICK EXIT BUTTON",K_RELATIVE,1);
         } else if (Config.uInputdevice == 2) {  // GameController?
             Checkbox_GC_Dir_Digitalpad.bUse = CHK_USE;
             Checkbox_GC_Dir_LeftAxis.bUse = CHK_USE;
@@ -2558,60 +2495,60 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
             Checkbox_Joy_Btn_Exit_X.bUse = CHK_UNUSE;
             Checkbox_Joy_Btn_Exit_Y.bUse = CHK_UNUSE;
             Checkbox_Joy_Btn_Exit_None.bUse = CHK_UNUSE;
-            PrintLittleFont(pRenderer,570,114,0,"GAMECONTROLLER DIRECTION",K_RELATIVE,1);
-            PrintLittleFont(pRenderer,570,220,0,"GAMECONTROLLER FIRE BUTTON",K_RELATIVE,1);
-            PrintLittleFont(pRenderer,570,348,0,"GAMECONTROLLER DYNAMITE BUTTON",K_RELATIVE,1);
-            PrintLittleFont(pRenderer,570,478,0,"GAMECONTROLLER EXIT BUTTON",K_RELATIVE,1);
+            PrintLittleFont(570,114,0,"GAMECONTROLLER DIRECTION",K_RELATIVE,1);
+            PrintLittleFont(570,220,0,"GAMECONTROLLER FIRE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(570,348,0,"GAMECONTROLLER DYNAMITE BUTTON",K_RELATIVE,1);
+            PrintLittleFont(570,478,0,"GAMECONTROLLER EXIT BUTTON",K_RELATIVE,1);
             sprintf(szText,"AXIS LEFT: -%05d",abs(Config.nAxisLeftThreshold));
-            PrintLittleFont(pRenderer,570, 620,0,szText,K_RELATIVE,1);
+            PrintLittleFont(570, 620,0,szText,K_RELATIVE,1);
             sprintf(szText,"AXIS RIGHT: %05d",Config.nAxisRightThreshold);
-            PrintLittleFont(pRenderer,570, 647,0,szText,K_RELATIVE,1);
+            PrintLittleFont(570, 647,0,szText,K_RELATIVE,1);
             sprintf(szText,"AXIS UP:   -%05d",abs(Config.nAxisUpThreshold));
-            PrintLittleFont(pRenderer,570, 674,0,szText,K_RELATIVE,1);
+            PrintLittleFont(570, 674,0,szText,K_RELATIVE,1);
             sprintf(szText,"AXIS DOWN:  %05d",Config.nAxisDownThreshold);
-            PrintLittleFont(pRenderer,570, 701,0,szText,K_RELATIVE,1);
+            PrintLittleFont(570, 701,0,szText,K_RELATIVE,1);
             // Minus-Buttons für AXIS
             RecAxisButton.x = Video.uXoffs + 760;
             RecAxisButton.y = Video.uYoffs + 616;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = Video.uXoffs + 760;
             RecAxisButton.y = Video.uYoffs + 643;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = Video.uXoffs + 760;
             RecAxisButton.y = Video.uYoffs + 670;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = Video.uXoffs + 760;
             RecAxisButton.y = Video.uYoffs + 697;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_MINUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             // Plus-Buttons für AXIS
             RecAxisButton.x = Video.uXoffs + 810;
             RecAxisButton.y = Video.uYoffs + 616;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = Video.uXoffs + 810;
             RecAxisButton.y = Video.uYoffs + 643;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = Video.uXoffs + 810;
             RecAxisButton.y = Video.uYoffs + 670;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             RecAxisButton.x = Video.uXoffs + 810;
             RecAxisButton.y = Video.uYoffs + 697;
             RecAxisButton.w = 22;
             RecAxisButton.h = 22;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_FONT_BLUE_STEEL_PLUS),NULL,&RecAxisButton,0,NULL, SDL_FLIP_NONE);
             nLastAxisButton = nAxisButton;
             nAxisButton = GetSettingsMenuAxisButton();
             if ((nAxisButton == 0) && (nLastAxisButton != 0)) {
@@ -2691,56 +2628,56 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
             Checkbox_GC_Btn_Exit_X.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_Y.bUse = CHK_UNUSE;
             Checkbox_GC_Btn_Exit_None.bUse = CHK_UNUSE;
-            PrintLittleFont(pRenderer,600,100,0,"KEYBINDING",K_RELATIVE,1);
-            PrintLittleFont(pRenderer,630,123,0,"LEFT:",K_RELATIVE,1);
+            PrintLittleFont(600,100,0,"KEYBINDING",K_RELATIVE,1);
+            PrintLittleFont(630,123,0,"LEFT:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeLeft);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,123,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
+                PrintLittleFont(700,123,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,123,0,"UNKNOWN",K_RELATIVE,1);
+                PrintLittleFont(700,123,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,146,0,"RIGHT:",K_RELATIVE,1);
+            PrintLittleFont(630,146,0,"RIGHT:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeRight);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,146,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
+                PrintLittleFont(700,146,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,146,0,"UNKNOWN",K_RELATIVE,1);
+                PrintLittleFont(700,146,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,169,0,"UP:",K_RELATIVE,1);
+            PrintLittleFont(630,169,0,"UP:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeUp);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,169,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
+                PrintLittleFont(700,169,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,169,0,"UNKNOWN",K_RELATIVE,1);
+                PrintLittleFont(700,169,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,192,0,"DOWN:",K_RELATIVE,1);
+            PrintLittleFont(630,192,0,"DOWN:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeDown);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,192,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
+                PrintLittleFont(700,192,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,192,0,"UNKNOWN",K_RELATIVE,1);
+                PrintLittleFont(700,192,0,"UNKNOWN",K_RELATIVE,1);
             }
-            PrintLittleFont(pRenderer,630,215,0,"FIRE:",K_RELATIVE,1);
+            PrintLittleFont(630,215,0,"FIRE:",K_RELATIVE,1);
             nScanCodeIndex = GetSdlScanCodeNameIndex(Config.uKeyboardScancodeFire);
             if (nScanCodeIndex != -1) {
-                PrintLittleFont(pRenderer,700,215,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
+                PrintLittleFont(700,215,0,g_ScanCodeNames[nScanCodeIndex],K_RELATIVE,1);
             } else {
-                PrintLittleFont(pRenderer,700,215,0,"UNKNOWN",K_RELATIVE,1);
+                PrintLittleFont(700,215,0,"UNKNOWN",K_RELATIVE,1);
             }
             // Buttons für Tastenbelegung zeichnen
             KeyboardButton.w = 18;
             KeyboardButton.h = 18;
             KeyboardButton.x = Video.uXoffs + 601;
             KeyboardButton.y = Video.uYoffs + 121;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = Video.uYoffs + 144;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = Video.uYoffs + 167;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = Video.uYoffs + 190;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             KeyboardButton.y = Video.uYoffs + 213;
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_STEEL_GROW_ALL),NULL,&KeyboardButton,0,NULL, SDL_FLIP_NONE);
             nKeyboardButton = GetSettingsMenuKeyboardButton();
             switch (nKeyboardButton) {
                 case (1):
@@ -2773,8 +2710,8 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
                 } else {
                     uBlinkColor = 2;
                 }
-                PrintLittleFont(pRenderer,600,250,uBlinkColor,"PRESS A KEY FOR ",K_RELATIVE,1);
-                PrintLittleFont(pRenderer,760,250,uBlinkColor,szSubString,K_RELATIVE,1);
+                PrintLittleFont(600,250,uBlinkColor,"PRESS A KEY FOR ",K_RELATIVE,1);
+                PrintLittleFont(760,250,uBlinkColor,szSubString,K_RELATIVE,1);
                 nScanCodeIndex = GetScancodeIndex(); // ScanCode einer gedrückten Taste ermitteln
                 if (nScanCodeIndex != -1) {
                     // SDL_Log("ScanCode: %s",g_ScanCodeNames[nScanCodeIndex]);
@@ -2817,6 +2754,23 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
             }
             Checkbox_Gamemusic.bChanged = false; // bestätigen
             nErrorCode = WriteConfigFile();
+        }
+        if (Checkbox_UseVsync.bChanged) {
+            if (Checkbox_UseVsync.bActive) {
+                Config.bUseVSync = true;
+            } else {
+                Config.bUseVSync = false;
+                Config.uGameSpeed = EMERALD_DEFAULT_GAMESPEED;
+            }
+            Checkbox_UseVsync.bChanged = false; // bestätigen
+            nErrorCode = WriteConfigFile();
+            // Alte Texturen und Renderer zerstören
+            FreeTextures();
+            SDL_DestroyRenderer(Video.pRenderer);
+            // Renderer und Texturen erneuern
+            Video.pRenderer = CreateRenderer(Video.pWindow);
+            LoadTextures();
+            IsVsync(60);
         }
         if (Checkbox_ShowHighScores.bChanged) {
             if (Checkbox_ShowHighScores.bActive) {
@@ -2865,7 +2819,7 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
                     Config.uResY = Video.ShowableDisplayModes[I].nH;
                     // SDL_Log("Resolution changed to %d X %d",Video.ShowableDisplayModes[I].nW,Video.ShowableDisplayModes[I].nH);
                     // Fenstergröße ändern
-                    if (Video.bMustUseFullScreen || Config.bFullScreen) {
+                    if (Config.bFullScreen) {
                         nErrorCode = SetWindowDisplayMode(Config.uResX,Config.uResY,Video.DesktopDisplayMode.format,60);
                     } else {
                         // Fenster muss nur zentriert werden, wenn kein FullScreen
@@ -3172,7 +3126,7 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
             Config.uDisplay = 1;
             nErrorCode = WriteConfigFile();
         }
-        if (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit)) {
+        if (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bFire)) {
             bPrepareExit = true;
         }
         //printf("x:%u  y:%u\n",InputStates.nMouseXpos,InputStates.nMouseYpos);
@@ -3216,37 +3170,37 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
         }
         for (I = 0; I < MAX_GAMECONTROLLERS; I++) {
             if (GameController.ID[I] != -1) {
-                DrawGrid(pRenderer,32,96 + I * 160, 224,128,0,(128 * nColorDimm) / 100,0,255,4);
+                DrawGrid(32,96 + I * 160, 224,128,0,(128 * nColorDimm) / 100,0,255,4);
             } else {
-                DrawGrid(pRenderer,32,96 + I * 160, 224,128,(128 * nColorDimm) / 100,0,0,255,4);
+                DrawGrid(32,96 + I * 160, 224,128,(128 * nColorDimm) / 100,0,0,255,4);
             }
         }
         for (I = 0; I < MAX_JOYSTICKS; I++) {
             if (Joystick.ID[I] != -1) {
-                DrawGrid(pRenderer,288,96 + I * 160, 224,128,0,(128 * nColorDimm) / 100,0,255,4);
+                DrawGrid(288,96 + I * 160, 224,128,0,(128 * nColorDimm) / 100,0,255,4);
             } else {
-                DrawGrid(pRenderer,288,96 + I * 160, 224,128,(128 * nColorDimm) / 100,0,0,255,4);
+                DrawGrid(288,96 + I * 160, 224,128,(128 * nColorDimm) / 100,0,0,255,4);
             }
         }
-        nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+        nErrorCode = SDL_SetRenderDrawColor(Video.pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
         if (nErrorCode == 0) {
-            nErrorCode = RenderMenuElements(pRenderer);
+            nErrorCode = RenderMenuElements();
             if (nErrorCode == 0) {
-                nErrorCode = ShowControllersAndJoysticks(pRenderer);
+                nErrorCode = ShowControllersAndJoysticks();
                 if (nErrorCode == 0) {
                     if (bShowRec1) {
                         // Farbe für Rahmen 1 scrollen
                         RotateColors(RgbColorsRec1,nRec1PixelCount,5);
-                        nErrorCode = ShowRec(pRenderer,RgbColorsRec1,nXpos,nYpos,COLOR_REC_1_W,COLOR_REC_1_H,nColorDimm);
+                        nErrorCode = ShowRec(RgbColorsRec1,nXpos,nYpos,COLOR_REC_1_W,COLOR_REC_1_H,nColorDimm);
                     } else {
                         // Farbe für Rahmen 2 scrollen
                         RotateColors(RgbColorsRec2,nRec2PixelCount,5);
-                        nErrorCode = ShowRec(pRenderer,RgbColorsRec2,nXpos,nYpos,COLOR_REC_2_W,COLOR_REC_2_H,nColorDimm);
+                        nErrorCode = ShowRec(RgbColorsRec2,nXpos,nYpos,COLOR_REC_2_W,COLOR_REC_2_H,nColorDimm);
                     }
                 }
             }
         }
-        ShowCheckboxes(pRenderer,nColorDimm,K_RELATIVE);
+        ShowCheckboxes(nColorDimm,K_RELATIVE);
         nLastButton = nButton;
         nButton = GetSettingsMenuButton();
         if (((nButton != 0) && (nLastButton != nButton)) && (nErrorCode == 0)) {
@@ -3284,9 +3238,18 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
             nErrorCode = WriteConfigFile();
         }
         PlayMusic(false);
-        ShowButtons(pRenderer,K_RELATIVE);
-        RenderPresentAndClear(pRenderer);
-        SDL_Delay(5);
+        MeasureFps();
+        PrintLittleFont(32,744,0,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
+        PrintLittleFont(33,745,3,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
+        if (!Config.bUseVSync) {
+            PrintLittleFont(266,744,0,pNoUsageVsyncMessage,K_RELATIVE,1);
+            PrintLittleFont(267,745,3,pNoUsageVsyncMessage,K_RELATIVE,1);
+        } else if (!Video.bVsync) {
+            PrintLittleFont(266,744,0,pWarnVsyncMessage,K_RELATIVE,1);
+            PrintLittleFont(267,745,3,pWarnVsyncMessage,K_RELATIVE,1);
+        }
+        ShowButtons(K_RELATIVE);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         Playfield.uFrameCounter++;
     } while ((!bExit) && (nErrorCode == 0));
     FreeButton(BUTTONLABEL_EXIT_HIGHSCORES);
@@ -3323,6 +3286,7 @@ int32_t SettingsMenu(SDL_Renderer *pRenderer) {
     DeRegisterCheckbox(&Checkbox_Gamemusic);
     DeRegisterCheckbox(&Checkbox_ShowHighScores);
     DeRegisterCheckbox(&Checkbox_FullScreen);
+    DeRegisterCheckbox(&Checkbox_UseVsync);
     DeRegisterCheckbox(&Checkbox_Display1);
     DeRegisterCheckbox(&Checkbox_Display2);
     for (I = 0; I < Video.nShowableDisplayModeCount; I++) {
@@ -3472,12 +3436,11 @@ Name:           RenderSettingsbutton
 ------------------------------------------------------------------------------
 Beschreibung: Zeigt im Hauptmenü des Spiels oben links den drehenden Settingsbutton.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-
+      Eingang: -
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t RenderSettingsbutton(SDL_Renderer *pRenderer) {
+int32_t RenderSettingsbutton(void) {
     int32_t nErrorCode = 0;
     SDL_Rect DestR;
 
@@ -3485,7 +3448,7 @@ int32_t RenderSettingsbutton(SDL_Renderer *pRenderer) {
     DestR.y = 1;
     DestR.w = 30;
     DestR.h = 30;
-    if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_SETTINGS),NULL,&DestR,MainMenu.fSettingsbuttonAngle,NULL, SDL_FLIP_NONE) != 0) {
+    if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_SETTINGS),NULL,&DestR,MainMenu.fSettingsbuttonAngle,NULL, SDL_FLIP_NONE) != 0) {
         nErrorCode = -1;
         SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
     }
@@ -3499,13 +3462,12 @@ Name:           ShowAuthorAndLevelname
 ------------------------------------------------------------------------------
 Beschreibung: Zeigt vor dem Spiel den Level-Author und den Levelnamen.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
                uLevel, uint32_t, Levelnummer
-
 Rückgabewert:  int32_t, 0 = kein Fehler, 5 = Abbruch durch ESC, sonst Fehler
-Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, MainMenu.x
+Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
+int32_t ShowAuthorAndLevelname(uint32_t uLevel) {
     int32_t nErrorCode = 0;
     int32_t nColorDimm;
     char szText[EMERALD_AUTHOR_LEN + 128];
@@ -3518,7 +3480,7 @@ int32_t ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
     bPlayGame = true;
     bMenuRun = true;
     bPrepareExit = false;
-    SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+    SDL_RenderClear(Video.pRenderer);     // Renderer für nächstes Frame löschen
     SetMenuBorderAndClear();
     nColorDimm = 0;
     uMusicVolume = 0;
@@ -3546,7 +3508,7 @@ int32_t ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
 
     do {
         UpdateManKey();
-        RenderMenuElements(pRenderer);
+        RenderMenuElements();
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);
@@ -3569,7 +3531,7 @@ int32_t ShowAuthorAndLevelname(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 bMenuRun = false;
             }
         }
-        RenderPresentAndClear(pRenderer);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         Playfield.uFrameCounter++;
     } while (bMenuRun);
     if ((nErrorCode == 0) && (!bPlayGame)) {
@@ -3586,13 +3548,12 @@ Name:           DimmMainMenu
 Beschreibung: Dimmt das MainMenu auf oder ab. Gleichzeitig wird ein spielendes
               MOD-File ein- bzw. ausgeblendet
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
                bDimmUp, bool, true = aufdimmen, false = abdimmen
-
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x
 ------------------------------------------------------------------------------*/
-int32_t DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
+int32_t DimmMainMenu(bool bDimmUp) {
     int32_t nColorDimm;
     int32_t nErrorCode = 0;
     uint8_t uMusicVolume;
@@ -3606,9 +3567,9 @@ int32_t DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
             SetAllTextureColors(nColorDimm);
             SetMusicVolume(uMusicVolume);
             PlayMusic(false);
-            nErrorCode = RenderMenuElements(pRenderer);
+            nErrorCode = RenderMenuElements();
             if (nErrorCode == 0) {
-                RenderPresentAndClear(pRenderer);
+                RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
                 SDL_Delay(5);
                 Playfield.uFrameCounter++;
             }
@@ -3622,9 +3583,9 @@ int32_t DimmMainMenu(SDL_Renderer *pRenderer, bool bDimmUp) {
             SetAllTextureColors(nColorDimm);
             SetMusicVolume(uMusicVolume);
             PlayMusic(false);
-            nErrorCode = RenderMenuElements(pRenderer);
+            nErrorCode = RenderMenuElements();
             if (nErrorCode == 0) {
-                RenderPresentAndClear(pRenderer);
+                RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
                 SDL_Delay(5);
                 Playfield.uFrameCounter++;
             }
@@ -3639,8 +3600,7 @@ Name:           ShowHighScores
 ------------------------------------------------------------------------------
 Beschreibung: Zeigt die Highscoreliste eines bestimmten Levels einer Levelgruppe an.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uLevel, uint32_t, Levelnummer
+      Eingang: uLevel, uint32_t, Levelnummer
                nNewHighScoreIndex, int32_t, Markierung einer Zeile für neuen Highscore
                     Falls der Marker negativ oder ungültig ist, wird keine Markierung ausgeführt.
                     Die Nummerierung wird ab 0 durchgeführt, d.h. 0 = erster Platz.
@@ -3649,7 +3609,7 @@ Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, MainMenu.x, HighscoreFile,
                SelectedLevelgroup.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int32_t nNewHighScoreIndex) {
+int32_t ShowHighScores(uint32_t uLevel, int32_t nNewHighScoreIndex) {
     int32_t nErrorCode = 0;
     int32_t nColorDimm;
     char szText[1024];
@@ -3672,7 +3632,7 @@ int32_t ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int32_t nNewHig
     bPlayGame = true;
     bMenuRun = true;
     bPrepareExit = false;
-    SDL_RenderClear(pRenderer);     // Renderer für nächstes Frame löschen
+    SDL_RenderClear(Video.pRenderer);     // Renderer für nächstes Frame löschen
     SetMenuBorderAndClear();
     nColorDimm = 0;
     uRand = randn(0,3);             // Zufallszahl 0 bis 3
@@ -3721,13 +3681,13 @@ int32_t ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int32_t nNewHig
             nRed = (((uRainBowRGB >> 16) & 0xFF) * nColorDimm) / 100;
             nGreen = (((uRainBowRGB >> 8) & 0xFF) * nColorDimm) / 100;
             nBlue = ((uRainBowRGB & 0xFF) * nColorDimm) / 100;
-            SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue,SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer,Video.uXoffs + 0, Video.uYoffs + ((I + 3) * FONT_H), Video.uXoffs + DEFAULT_WINDOW_W - 1, Video.uYoffs + ((I + 3) * FONT_H));
-            SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Muss am Ende stehen, damit Hintergrund wieder dunkel wird
+            SDL_SetRenderDrawColor(Video.pRenderer,nRed,nGreen,nBlue,SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_RenderDrawLine(Video.pRenderer,Video.uXoffs + 0, Video.uYoffs + ((I + 3) * FONT_H), Video.uXoffs + DEFAULT_WINDOW_W - 1, Video.uYoffs + ((I + 3) * FONT_H));
+            SDL_SetRenderDrawColor(Video.pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Muss am Ende stehen, damit Hintergrund wieder dunkel wird
         }
         UpdateManKey();
         PlayMusic(false);
-        RenderMenuElements(pRenderer);
+        RenderMenuElements();
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 2;
             SetAllTextureColors(nColorDimm);
@@ -3752,8 +3712,8 @@ int32_t ShowHighScores(SDL_Renderer *pRenderer, uint32_t uLevel, int32_t nNewHig
                 bMenuRun = false;
             }
         }
-        ShowButtons(pRenderer,K_RELATIVE);
-        RenderPresentAndClear(pRenderer);
+        ShowButtons(K_RELATIVE);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         Playfield.uFrameCounter++;
     } while (bMenuRun);
     if ((nErrorCode == 0) && (!bPlayGame)) {

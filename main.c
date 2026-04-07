@@ -21,6 +21,7 @@
 #include "mystd.h"
 #include "levelconverter.h"
 #include "scroller.h"
+#include "vectorobj.h"
 
 void PrintSDLVersion(void);
 
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
     // | = Ö
     // { = Ä
     // } = Ü
-    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - FEBRUARY 2026. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - MARCH 2026. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS15, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
@@ -59,7 +60,6 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
 
 
     uint32_t uLastKeyTime = 0;
-    SDL_Renderer *pRenderer = NULL;
     uint32_t uCurrentTicks;
     SCROLLER Scroller1;
     SCROLLER Scroller2;
@@ -75,6 +75,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     float fScroller3NeueSteigung;
     bool bAsteroidsStarted = false;
     uint32_t uAsteroidsTimer;
+    uint32_t uCubeTimer;
     uint32_t X;
     int32_t nMenuChoose;
     uint32_t uCopperTimer;
@@ -84,11 +85,8 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     uint8_t uMusicVolume = 100;
 
     PrintSDLVersion();
-    Video.uXoffs = 0;
-    Video.uYoffs = 0;
-    Video.pWindow = NULL;
     InitXorShift();
-    memset(&Video,0,sizeof(Video));
+    memset(&Video,0,sizeof(Video));         // Setzt Fensterhandle, Renderer und Offsets auf NULL bzw. 0
     if (ReadConfigFile() != 0) {            // Konfigurationsfile wird für Fenstergröße bzw. Bildschirmauflösung früh eingelesen.
         return -1;
     }
@@ -104,6 +102,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     InitCheckboxes();
     InitLevelgroups();
     InitAsteroidLayer();
+    InitCubes();
     if (InitVisibibleCopperSegments() != 0) {
         return -1;
     }
@@ -114,14 +113,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     if (Video.pWindow == NULL) {
         return -1;
     }
-    if (Video.bMustUseFullScreen) {
-        SDL_SetWindowFullscreen(Video.pWindow,SDL_WINDOW_FULLSCREEN);
-        if (SetWindowDisplayMode(Config.uResX,Config.uResY,Video.DesktopDisplayMode.format,60) != 0) {
-            RestoreDesktop();
-            SDL_DestroyWindow(Video.pWindow);
-            return -1;
-        }
-    } else if (Config.bFullScreen) {
+    if (Config.bFullScreen) {
         if (SDL_SetWindowFullscreen(Video.pWindow,SDL_WINDOW_FULLSCREEN) != 0) {
             RestoreDesktop();
             SDL_DestroyWindow(Video.pWindow);
@@ -130,8 +122,8 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     }
     DetectJoystickAndGameController();
     OpenJoystickOrGameController();
-    pRenderer = CreateRenderer(Video.pWindow);        // Renderer für erzeugtes Fenster erstellen
-    if (pRenderer == NULL) {
+    Video.pRenderer = CreateRenderer(Video.pWindow);        // Renderer für erzeugtes Fenster erstellen
+    if (Video.pRenderer == NULL) {
         RestoreDesktop();
         return -1;
     }
@@ -147,21 +139,21 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         return -1;
     }
     // Renderer mit schwarz löschen
-    SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
-    RenderPresentAndClear(pRenderer);
+    SDL_SetRenderDrawColor(Video.pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+    RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
 
-    if (LoadTextures(pRenderer) != 0) {         // Für alle Bitmaps Texturen erzeugen
+    if (LoadTextures() != 0) {         // Für alle Bitmaps Texturen erzeugen
         RestoreDesktop();
         return -1;
     }
-    IsVsync(pRenderer,60);
-    nMenuChoose = Menu(pRenderer);              // Demomenü aufrufen
+    IsVsync(60);
+    nMenuChoose = Menu();              // Demomenü aufrufen
     if ((nMenuChoose == 3) || (nMenuChoose == -1)) {
         RestoreDesktop();
         return nMenuChoose;
     }
     if (nMenuChoose == 1) {
-        return EmeraldMineMainMenu(pRenderer);  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop() und räumt Speicher auf;
+        return EmeraldMineMainMenu();  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop() und räumt Speicher auf;
     }
     // Ab hier SDL2-Demo
     if (SetMusic(3) != 0) {                  // Mit MOD 3 class_cracktro#15 starten
@@ -195,6 +187,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     }
     uAsteroidsTimer = SDL_GetTicks();
     uCopperTimer = SDL_GetTicks();
+    uCubeTimer = SDL_GetTicks();
     //////////////////////////////////////////////////////////////// Hauptschleife START
     bRun = true;
     bPrepareExit = false;
@@ -241,7 +234,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
             uLastKeyTime = SDL_GetTicks();
         }
 
-        DoCopper(pRenderer,bCopperScoll);
+        DoCopper(bCopperScoll);
         uCurrentTicks = SDL_GetTicks();
         if (uCurrentTicks - uScroller1Timer > 0) {
             bScroller1Started = true;
@@ -257,13 +250,13 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         }
 
         if (!bScroller3Vor && bScroller3Started) {
-            DoScroller(pRenderer,&Scroller3);
+            DoScroller(&Scroller3);
         }
         if (bScroller2Started) {
-            DoScroller(pRenderer,&Scroller2);
+            DoScroller(&Scroller2);
         }
         if (bScroller1Started) {
-            DoScroller(pRenderer,&Scroller1);
+            DoScroller(&Scroller1);
         }
         // Scroller2 mit Sinus-Verlauf
         fAngle2 = fAngle2 + 0.01;
@@ -285,11 +278,11 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
             bAsteroidsStarted = true;
         if (bAsteroidsStarted) {
             if (uAsteroidsGfx == 1) {
-                MoveAsteroids(pRenderer,GetTextureByIndex(TEX_BALLONS_MULTICOLOR));     // Ballons
+                MoveAsteroids(GetTextureByIndex(TEX_BALLONS_MULTICOLOR));     // Ballons
             } else if (uAsteroidsGfx == 2) {
-                MoveAsteroids(pRenderer,GetTextureByIndex(TEX_SMILEY_128));    // Smileys
+                MoveAsteroids(GetTextureByIndex(TEX_SMILEY_128));    // Smileys
             } else {    // 0
-                MoveAsteroids(pRenderer,GetTextureByIndex(TEX_ASTEROID));     // Asteroide
+                MoveAsteroids(GetTextureByIndex(TEX_ASTEROID));     // Asteroide
             }
         }
         // Ballons anzeigen
@@ -299,22 +292,27 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         DestR_Ballon.h = nBallonSize; // 360;
 
         if (uBallonsGfx == 1) {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_ASTEROID),NULL,&DestR_Ballon); // Asteroide
+            SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_ASTEROID),NULL,&DestR_Ballon); // Asteroide
         } else if (uBallonsGfx == 2) {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_SMILEY_128),NULL,&DestR_Ballon); // Smileys
+            SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_SMILEY_128),NULL,&DestR_Ballon); // Smileys
         } else {
-            SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_BALLONS_MULTICOLOR),NULL,&DestR_Ballon); // Ballons
+            SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_BALLONS_MULTICOLOR),NULL,&DestR_Ballon); // Ballons
         }
 
         if (bScroller3Vor && bScroller3Started) {
-            DoScroller(pRenderer,&Scroller3);
+            DoScroller(&Scroller3);
         }
 
         // Nachdem Scroller2 gestarted ist, die Ballons langsam aufblasen
         if ((bScroller2Started) && (nBallonSize < 360)) {
                 nBallonSize++;
         }
-        RenderPresentAndClear(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+        if (uCurrentTicks - uCubeTimer > 4000) {
+            DoCubes();
+        }
+
+
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         if (bPrepareExit) {
             nBallonSize = nBallonSize + 16; // Ballons bis fast zum Platzen aufblasen
             if (nBallonSize > 1600) {
@@ -339,7 +337,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     FreeScroller(&Scroller1);
     FreeScroller(&Scroller2);
     FreeScroller(&Scroller3);
-    CleanUpMemoryAndSDL(pRenderer);
+    CleanUpMemoryAndSDL();
     return 0;
 }
 

@@ -50,12 +50,12 @@ Name:           ShowPanel
 Beschreibung: Zeigt das Spielepanel mit den aktuellen Werten wie z.B. Time,
               Score, Emeralds, usw.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Video.x, Config.x
 ------------------------------------------------------------------------------*/
-int32_t ShowPanel(SDL_Renderer *pRenderer) {
+int32_t ShowPanel(void) {
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
     int32_t nErrorCode;
     char szNumber[8];
@@ -79,7 +79,7 @@ int32_t ShowPanel(SDL_Renderer *pRenderer) {
     DestR.y = Config.uResY - FONT_H;
     DestR.w = Config.uResX;
     DestR.h = PANEL_H;
-    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_PANEL_1024),NULL,&DestR) != 0) {
+    if (SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_PANEL_1024),NULL,&DestR) != 0) {
         SDL_Log("%s: SDL_RenderCopy() failed: %s",__FUNCTION__,SDL_GetError());
         return - 1;
     }
@@ -90,31 +90,31 @@ int32_t ShowPanel(SDL_Renderer *pRenderer) {
             uWarnRecWidth = 108;
         }
         if ((Playfield.uFrameCounter % Video.DesktopDisplayMode.refresh_rate) == 0) {
-            nErrorCode = CopyColorRect(pRenderer,255,0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
+            nErrorCode = CopyColorRect(255,0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
             PreparePlaySound(SOUND_END_BELL,0);
         } else {
-            nErrorCode = CopyColorRect(pRenderer,255 - 4 * (Playfield.uFrameCounter % 60),0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
+            nErrorCode = CopyColorRect(255 - 4 * (Playfield.uFrameCounter % 60),0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
         }
     } else {
         nErrorCode = 0;
     }
     if (nErrorCode == 0) {
         nErrorCode = -1;
-        if (WritePanelText(pRenderer,"TIME:",8, Config.uResY - FONT_H + 7, 18, EMERALD_FONT_BLUE) == 0) {
+        if (WritePanelText("TIME:",8, Config.uResY - FONT_H + 7, 18, EMERALD_FONT_BLUE) == 0) {
             if (Playfield.bUnlimtedTime) {
                 strcpy(szNumber,"----");
             } else {
                 sprintf(szNumber,"%u",uRemainingSeconds);
             }
-            if (PrintLittleFont(pRenderer,96,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
-                if (WritePanelText(pRenderer,"SCORE:",184,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
+            if (PrintLittleFont(96,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
+                if (WritePanelText("SCORE:",184,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
                     sprintf(szNumber,"%u",Playfield.uTotalScore);
-                    if (PrintLittleFont(pRenderer,290,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
-                        if (WritePanelText(pRenderer,"EMERALDS:",396,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
+                    if (PrintLittleFont(290,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
+                        if (WritePanelText("EMERALDS:",396,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
                             sprintf(szNumber,"%u",Playfield.uEmeraldsToCollect);
-                            if (PrintLittleFont(pRenderer,556,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
-                                if (WritePanelDynamitHammerKeys(pRenderer) == 0) {
-                                    if (WriteShieldValue(pRenderer) == 0) {
+                            if (PrintLittleFont(556,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szNumber,K_ABSOLUTE,2.2) == 0) {
+                                if (WritePanelDynamitHammerKeys() == 0) {
+                                    if (WriteShieldValue() == 0) {
                                         nErrorCode = 0;
                                     }
                                 }
@@ -134,12 +134,12 @@ Name:           WriteShieldValue
 ------------------------------------------------------------------------------
 Beschreibung: Zeichnet für die Schildmünze den verbleibenden Schutz.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x, Config.x
+Seiteneffekte: Playfield.x, Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t WriteShieldValue(SDL_Renderer *pRenderer) {
+int32_t WriteShieldValue(void) {
     SDL_Rect DestR;             // Zum Kopieren in den Renderer
     int32_t nErrorCode;
     char szShieldString[16];    // ":xxxx", 6 Bytes inkl. \0
@@ -155,10 +155,10 @@ int32_t WriteShieldValue(SDL_Renderer *pRenderer) {
     DestR.y = Config.uResY - FONT_H + 6;
     DestR.w = FONT_H / 2 + 4;
     DestR.h = FONT_H / 2 + 4;
-    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_COIN_SHIELD_1),NULL,&DestR) == 0) {
+    if (SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_COIN_SHIELD_1),NULL,&DestR) == 0) {
         sprintf(szShieldString,"%u",uShieldValue);
-        if (WritePanelText(pRenderer,":",1188,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
-            if (PrintLittleFont(pRenderer,1204,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szShieldString,K_ABSOLUTE,2.2) == 0) {
+        if (WritePanelText(":",1188,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
+            if (PrintLittleFont(1204,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szShieldString,K_ABSOLUTE,2.2) == 0) {
                 nErrorCode = 0;
             }
         }
@@ -173,12 +173,12 @@ Name:           WritePanelDynamitHammerKeys
 Beschreibung: Zeichnet Dynamit- und Hammer-Anzahl ins Panel.
               Zusätzlich werden noch aufgesammelte Schlüssel eingeblendet.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x, Config.x
+Seiteneffekte: Playfield.x, Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
+int32_t WritePanelDynamitHammerKeys(void) {
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
     int32_t nErrorCode;
     uint32_t uDynamiteCount;
@@ -205,26 +205,26 @@ int32_t WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
     DestR.w = FONT_H / 2 + 4;
     DestR.h = FONT_H / 2 + 4;
 
-    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_DYNAMITE_OFF),NULL,&DestR) == 0) {
-        if (WritePanelText(pRenderer,":",658,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
+    if (SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_DYNAMITE_OFF),NULL,&DestR) == 0) {
+        if (WritePanelText(":",658,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
             sprintf(szString,"%u",uDynamiteCount);
-            if (PrintLittleFont(pRenderer,674,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
-                if (WritePanelText(pRenderer,":",1080,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
+            if (PrintLittleFont(674,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
+                if (WritePanelText(":",1080,Config.uResY - FONT_H + 7,18, EMERALD_FONT_BLUE) == 0) {
                     sprintf(szString,"%u",uHammerCount);
-                    if (PrintLittleFont(pRenderer,1096,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
-                        if (WritePanelText(pRenderer,":",972,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
+                    if (PrintLittleFont(1096,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
+                        if (WritePanelText(":",972,Config.uResY - FONT_H + 7,18,EMERALD_FONT_BLUE) == 0) {
                             sprintf(szString,"%u",uWhiteKeyCount);
-                            if (PrintLittleFont(pRenderer,988,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
+                            if (PrintLittleFont(988,Config.uResY - 3 * FONT_ARCADE_H + 1,4,szString,K_ABSOLUTE,2.2) == 0) {
                                 DestR.x = 1060;
                                 DestR.y = Config.uResY - FONT_H + 6;
                                 DestR.w = FONT_W / 2 + 4;
                                 DestR.h = FONT_H / 2 + 4;
-                                if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_HAMMER),NULL,&DestR) == 0) { // Hammer
+                                if (SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_HAMMER),NULL,&DestR) == 0) { // Hammer
                                     DestR.x = 952;
                                     DestR.y = Config.uResY - FONT_H + 6;
                                     DestR.w = FONT_W / 2 + 4;
                                     DestR.h = FONT_H / 2 + 4;
-                                    if (SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_WHITE),NULL,&DestR) == 0) { // Weißer Schlüssel
+                                    if (SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_KEY_WHITE),NULL,&DestR) == 0) { // Weißer Schlüssel
                                         nErrorCode = 0;
                                     }
                                 }
@@ -240,35 +240,35 @@ int32_t WritePanelDynamitHammerKeys(SDL_Renderer *pRenderer) {
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_RED),NULL,&DestR); // roter Schlüssel
+        nErrorCode = SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_KEY_RED),NULL,&DestR); // roter Schlüssel
     }
     if ((Playfield.bHasYellowKey) && (nErrorCode == 0)) {
         DestR.x = 804;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_YELLOW),NULL,&DestR); // gelber Schlüssel
+        nErrorCode = SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_KEY_YELLOW),NULL,&DestR); // gelber Schlüssel
     }
     if ((Playfield.bHasGreenKey) && (nErrorCode == 0)) {
         DestR.x = 830;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GREEN),NULL,&DestR); // grüner Schlüssel
+        nErrorCode = SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_KEY_GREEN),NULL,&DestR); // grüner Schlüssel
     }
     if ((Playfield.bHasBlueKey) && (nErrorCode == 0)) {
         DestR.x = 856;
         DestR.y = Config.uResY - FONT_H + 6;
         DestR.w = FONT_W - 12;
         DestR.h = FONT_H - 12;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_BLUE),NULL,&DestR); // blauer Schlüssel
+        nErrorCode = SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_KEY_BLUE),NULL,&DestR); // blauer Schlüssel
     }
     if ((Playfield.bHasGeneralKey) && (nErrorCode == 0)) {
         DestR.x = 882;
         DestR.y = Config.uResY - FONT_H;
         DestR.w = FONT_W;
         DestR.h = FONT_H;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(TEX_KEY_GENERAL),NULL,&DestR); // General-Schlüssel
+        nErrorCode = SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(TEX_KEY_GENERAL),NULL,&DestR); // General-Schlüssel
     }
     return nErrorCode;
 }
@@ -280,8 +280,7 @@ Name:           WritePanelText
 Beschreibung: Schreibt Text in den Renderer.
 
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
-               szText, const char *, Zeiger auf Text
+      Eingang: szText, const char *, Zeiger auf Text
                nXpos, int32_t, X-Position in Pixeln
                nYpos, int32_t, Y-Position in Pixeln
                nFontSize, int32_t, Skalierung für Font (Standard = 32, für Panel = 16)
@@ -293,14 +292,14 @@ Parameter
 
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t WritePanelText(SDL_Renderer *pRenderer, const char *szText, int32_t nXpos, int32_t nYpos, int32_t nFontSize,uint32_t uFont) {
+int32_t WritePanelText(const char *szText, int32_t nXpos, int32_t nYpos, int32_t nFontSize,uint32_t uFont) {
     int32_t nErrorCode;
     int32_t nI;
     SDL_Rect DestR;         // Zum Kopieren in den Renderer
 
-    if ((pRenderer == NULL) || (szText == NULL)) {
+    if (szText == NULL) {
         SDL_Log("%s: bad pointers",__FUNCTION__);
         return -1;
     }
@@ -311,7 +310,7 @@ int32_t WritePanelText(SDL_Renderer *pRenderer, const char *szText, int32_t nXpo
         DestR.y = nYpos;
         DestR.w = nFontSize;
         DestR.h = nFontSize;
-        nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(GetTextureIndexByElement(GetFontElementByChar(szText[nI],uFont),0,NULL,false,EMERALD_CONVEYORBELT_OFF)),NULL,&DestR);
+        nErrorCode = SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(GetTextureIndexByElement(GetFontElementByChar(szText[nI],uFont),0,NULL,false,EMERALD_CONVEYORBELT_OFF)),NULL,&DestR);
         nI++;
         nXpos = nXpos + nFontSize;
     }
@@ -326,12 +325,12 @@ Beschreibung: Erzeugt ein Fenster mit Text und wartet auf "Fire" oder "Space".
               Wurde keine Text hinterlegt, so wird ein Standardtext angezeigt.
 
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t ConfirmMessage(SDL_Renderer *pRenderer) {
+int32_t ConfirmMessage(void) {
     char szText[128];
     uint32_t uFireState;
     uint32_t uSpaceState;
@@ -346,9 +345,9 @@ int32_t ConfirmMessage(SDL_Renderer *pRenderer) {
     nErrorCode = -1;
     uFireState = 0;
     uSpaceState = 0;
-    if (CreateMessageWindow(pRenderer,-1,-1,0,pszMessage,NULL,NULL) == 0) {
+    if (CreateMessageWindow(-1,-1,0,pszMessage,NULL,NULL) == 0) {
         nErrorCode = 0;
-        SDL_RenderPresent(pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+        SDL_RenderPresent(Video.pRenderer);   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
         do {
             UpdateManKey();
             if ((uFireState == 0) && (!ManKey.bFire)) {

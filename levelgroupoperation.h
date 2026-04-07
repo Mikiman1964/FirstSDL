@@ -12,8 +12,8 @@ int32_t LevelgroupOperaton_CopyClipboard(uint32_t uLevelNumber);
 int32_t LevelgroupOperaton_Delete(uint32_t uLevelNumber);
 int32_t LevelgroupOperaton_Move(uint32_t uSrcLevelNumber,uint32_t uDestLevelNumber);
 int32_t LevelgroupOperaton_NewGroup(void);
-int32_t LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer);
-int32_t LevelgroupOperaton_Password(SDL_Renderer *pRenderer);
-int32_t LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer);
-int32_t LevelgroupOperaton_LevelImport(SDL_Renderer *pRenderer);
+int32_t LevelgroupOperaton_RenameGroupname(void);
+int32_t LevelgroupOperaton_Password(void);
+int32_t LevelgroupOperaton_AskPassword(void);
+int32_t LevelgroupOperaton_LevelImport(void);
 #endif // LEVELGROUPOPERATION_H_INCLUDED

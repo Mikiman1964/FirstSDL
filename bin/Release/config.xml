@@ -4,10 +4,12 @@
   <!--primary display is num 0, second display 1-->
   <display_num>0</display_num>
   <resolution>
-    <x>1280</x>
-    <y>960</y>
+    <x>1680</x>
+    <y>1050</y>
   </resolution>
   <fullscreen>0</fullscreen>
+  <use_vsync>0</use_vsync>
+  <game_speed>14</game_speed>
 </screen>
 <start_dynamite_with_space>1</start_dynamite_with_space>
 <last_played_levelgroup_md5_hash>7CC4A0E3E51EC05DD1D71F65AE0C94E6</last_played_levelgroup_md5_hash>

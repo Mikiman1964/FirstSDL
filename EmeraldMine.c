@@ -7,20 +7,15 @@ TODO
 * Leveleditor: Dynamit Phase 2,3 und 4 ergänzen
 * Leveleditor: Fehlende Steel-Stripe-Elemente ergänzen
 
-Für V 1.14
-* SDL2-2.32.10
-* Struktur FPS in Struktur VIDEO und Variablenname korrigiert
-* komprimierte Highscores -> sparte ca. 27 MB
-* Fehlende Steel-Stripe-Elemente für DC3-Levelimport ergänzt (2 Stück, left/right und top/bottom). Wird noch nicht im Editor unterstützt
-* Fehlende gezündete Dynamite-Elemente (Phase 2,3 und 4) für DC3-Levelimport ergänzt. Wird noch nicht im Editor unterstützt
-* ShowAuthorAndLevelname() zeigt, ob Quicksave erlaubt ist
-* V-Sync-Erkennung hinzugefügt und Frameratenmessung überarbeitet
-* RenderPresentAndClear() wartet jetzt pauschal 14 ms, wenn kein V-Sync detektiert wurde
-* Tray Icon und Icon für ausführbare Datei unter Windows
-* EMERALD_MAX_SHOWFILENAME_LEN: von 120 auf 87 verringert
-* Level importer kann Emerald Mine 1 Levels importieren
-* Acid-Pools werden beim Laden und im Editor eines Level nicht mehr komplett geprüft.
-  BOTTOM_LEFT und BOTTOM_RIGHT dürfen nun als Einzelelemente gesetzt sein. Alte Kingsoft-Level verwenden diese Elemente als Cheese-Abschluss.
+Für V 1.15
+* Levelkonverter: Rocks'n'Diamonds-Level werden teilweise unterstützt
+* Renderer-Handle nun in Struktur Video.x
+* Video.bMustUseFullScreen entfernt
+* Framerate wird im Setup-Menü angezeigt
+* V-SYNC ein-/ausschaltbar
+* Gamespeed mit F3/F4 einstellbar, wenn V-SYNC nicht aktiv
+* Fire beendet auch Settings-Menü
+* Vektor-Würfel im SDL2-Demo
 */
 
 #include "gfx/textures.h"
@@ -31,6 +26,7 @@ Für V 1.14
 #include "beetle.h"
 #include "bomb.h"
 #include "buttons_checkboxes.h"
+#include "config.h"
 #include "crystal.h"
 #include "drop.h"
 #include "earth.h"
@@ -71,6 +67,7 @@ Für V 1.14
 
 PLAYFIELD Playfield;
 int32_t g_nGameSpeed;
+extern CONFIG Config;
 extern GAMESOUND GameSound;
 extern INPUTSTATES InputStates;
 extern MANKEY ManKey;
@@ -89,14 +86,15 @@ Name:           Menu
 ------------------------------------------------------------------------------
 Beschreibung: Hauptmenü, um den entsprechenden SDL2-Programmteil aufzurufen.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 1 = Game, 2 = SDL2-Demo, 3 = Quit
 Seiteneffekte: Playfield.x für FrameCounter, Audioplayer.x, MainMenu.x,
-               Video.x, ManKey.x
+               Video.x, ManKey.x, Config.x
 ------------------------------------------------------------------------------*/
-int32_t Menu(SDL_Renderer *pRenderer) {
+int32_t Menu(void) {
     char * pWarnVsyncMessage = VSYNC_WARNING_MESSAGE;
+    char * pNoUsageVsyncMessage = VSYNC_NOUSAGE_MESSAGE;
     uint8_t uMusicVolume;
     int32_t nErrorCode;
     int32_t nChoose;
@@ -133,7 +131,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
         1120,288,EMERALD_STEEL,1120,320,EMERALD_STEEL,1120,352,EMERALD_STEEL,1120,384,EMERALD_STEEL,1120,416,EMERALD_STEEL,1120,448,EMERALD_STEEL,1120,480,EMERALD_STEEL,1120,512,EMERALD_STEEL,
         1120,544,EMERALD_STEEL,1120,576,EMERALD_STEEL,1120,608,EMERALD_STEEL,1120,640,EMERALD_STEEL,1120,672,EMERALD_STEEL,1120,704,EMERALD_STEEL,
         // "Menüpunkte"
-        128,224,EMERALD_RUBY,128,288,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
+        128,224,EMERALD_RUBY,128,352,EMERALD_SAPPHIRE,128,576,EMERALD_STEEL_EXIT,
         // "PROGRAMMED IN 2022 - 2025"
         144,672,EMERALD_FONT_BLUE_P,176,672,EMERALD_FONT_BLUE_R,208,672,EMERALD_FONT_BLUE_O,240,672,EMERALD_FONT_BLUE_G,272,672,EMERALD_FONT_BLUE_R,304,672,EMERALD_FONT_BLUE_A,336,672,EMERALD_FONT_BLUE_M,368,672,EMERALD_FONT_BLUE_M,
         400,672,EMERALD_FONT_BLUE_E,432,672,EMERALD_FONT_BLUE_D,496,672,EMERALD_FONT_BLUE_I,528,672,EMERALD_FONT_BLUE_N,592,672,EMERALD_FONT_BLUE_2,624,672,EMERALD_FONT_BLUE_0,656,672,EMERALD_FONT_BLUE_2,688,672,EMERALD_FONT_BLUE_2,
@@ -146,7 +144,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
     nChoose = -1;
     // Buttons erzeugen
     nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_GAME,"Try the game",320,228,true,false);
-    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",320,292,true,false);
+    nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_DEMO,"SDL2 Demo",320,356,true,false);
     nErrorCode = nErrorCode + CreateButton(BUTTONLABEL_CALL_QUIT,"Quit program",320,580,true,false);
     nErrorCode = nErrorCode + SetMusic(5);
     SDL_PauseAudioDevice(Audioplayer.audio_device, 0);
@@ -158,8 +156,22 @@ int32_t Menu(SDL_Renderer *pRenderer) {
     memset(&Video.Fps,0,sizeof(Video.Fps));
     while (((nErrorCode == 0) && (nChoose == -1)) || (nColorDimm > 0) ) {
         MeasureFps();
-        MoveSmileys(pRenderer);
+        MoveSmileys();
         UpdateManKey();
+        GetFkeys();
+        if (InputStates.bFkey[3]) {
+            InputStates.bFkey[3] = false;
+            if (Config.uGameSpeed < EMERALD_MAX_GAMESPEED) {
+                Config.uGameSpeed++;
+                WriteConfigFile();
+            }
+        } else if (InputStates.bFkey[4]) {
+            InputStates.bFkey[4] = false;
+            if (Config.uGameSpeed > EMERALD_MIN_GAMESPEED) {
+                Config.uGameSpeed--;
+                WriteConfigFile();
+            }
+        }
         if ((nChoose == -1) && (nColorDimm < 100)) {
             nColorDimm++;
             SetAllTextureColors(nColorDimm);
@@ -174,40 +186,39 @@ int32_t Menu(SDL_Renderer *pRenderer) {
             DestR.w = FONT_W;
             DestR.h = FONT_H;
             if (nErrorCode == 0) {
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                     nErrorCode = -1;
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 }
             }
         }
-        PrintLittleFont(pRenderer,448,232,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,448,247,0,"F1 = NORMAL SPEED, F2 = FAST SPEED, F9 = QUICK SAVE, F10 = QUICK LOAD",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,448,296,0,"USE THE FOLLOWING KEYS:",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,311,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,326,0,"* MOUSEWHEEL TO ZOOM BALLONS",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,341,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS, ASTEROIDS AND SMILEYS",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,356,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,371,0,"* '1' FOR MUSIC 1 -> ECHOING BY BANANA (CHRISTOF M\x63HLAN), 1988",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,386,0,"* '2' FOR MUSIC 2 -> CIRCUS TIME 2 VOYCE/DELIGHT, 1993",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,401,0,"* '3' FOR MUSIC 3 -> CLASS15 BY MAKTONE (MARTIN NORDELL), 1999",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,416,0,"* '4' FOR MUSIC 4 -> GLOBAL TRASH 3 V2 BY JESPER KYD, 1991",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,431,0,"* '5' FOR MUSIC 5 -> CLASS11.TIME FLIES BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,446,0,"* '6' FOR MUSIC 6 -> 2000AD:CRACKTRO:IV BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,461,0,"* '7' FOR MUSIC 7 -> 2000AD:CRACKTRO02 BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,476,0,"* '8' FOR MUSIC 8 -> BREWERY BY MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,491,0,"* '9' FOR MUSIC 9 -> CLASS05 BY MAKTONE, 1999",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,468,506,0,"* '0' FOR MUSIC 0 -> SOFTWORLD BY OXYGENER/MAKTONE",K_RELATIVE,1);
-        PrintLittleFont(pRenderer,448,584,0,"NUFF SAID",K_RELATIVE,1);
+        // Try the game
+        PrintLittleFont(448,232,0,"LEFT CONTROL = FIRE, FIRE CAN BE USED WITH CURSOR DIRECTION.",K_RELATIVE,1);
+        PrintLittleFont(448,247,0,"F1 = NORMAL GAME SPEED, F2 = FAST GAME SPEED",K_RELATIVE,1);
+        PrintLittleFont(448,262,0,"F9 = QUICK SAVE, F10 = QUICK LOAD",K_RELATIVE,1);
+        PrintLittleFont(448,277,0,"IF V-SYNC IS DISABLED: F3 = DECREASE GAME SPEED, F4 = INCREASE GAME SPEED",K_RELATIVE,1);
+        // SDL2 Demo
+        PrintLittleFont(448,360,0,"USE THE FOLLOWING KEYS:",K_RELATIVE,1);
+        PrintLittleFont(468,375,0,"* ESC OR LEFT MOUSEBUTTON TO EXIT",K_RELATIVE,1);
+        PrintLittleFont(468,390,0,"* MOUSEWHEEL TO ZOOM BALLONS",K_RELATIVE,1);
+        PrintLittleFont(468,405,0,"* 'A' / 'B' TO TOGGLE TEXTURE FOR BALLONS, ASTEROIDS AND SMILEYS",K_RELATIVE,1);
+        PrintLittleFont(468,420,0,"* 'D' TO TOGGLE 'DRUNKEN ASTEROIDS' MODE",K_RELATIVE,1);
+        PrintLittleFont(468,435,0,"* '1','2','3','4','5','6','7','8','9' AND '0' TO CHANGE MUSIC",K_RELATIVE,1);
+        // End program
+        PrintLittleFont(448,584,0,"NUFF SAID",K_RELATIVE,1);
         // Framerate anzeigen
         if (strlen(Video.Fps.szFramesPerSecond) > 0) {
-            PrintLittleFont(pRenderer,32,744,0,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
-            PrintLittleFont(pRenderer,33,745,3,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
-            if (!Video.bVsync) {
-                PrintLittleFont(pRenderer,266,744,0,pWarnVsyncMessage,K_RELATIVE,1);
-                PrintLittleFont(pRenderer,267,745,3,pWarnVsyncMessage,K_RELATIVE,1);
+            PrintLittleFont(32,744,0,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
+            PrintLittleFont(33,745,3,Video.Fps.szFramesPerSecond,K_RELATIVE,1);
+            if (!Config.bUseVSync) {
+                PrintLittleFont(266,744,0,pNoUsageVsyncMessage,K_RELATIVE,1);
+                PrintLittleFont(267,745,3,pNoUsageVsyncMessage,K_RELATIVE,1);
+            } else if (!Video.bVsync) {
+                PrintLittleFont(266,744,0,pWarnVsyncMessage,K_RELATIVE,1);
+                PrintLittleFont(267,745,3,pWarnVsyncMessage,K_RELATIVE,1);
             }
         }
-        nErrorCode = ShowButtons(pRenderer,K_RELATIVE);
+        nErrorCode = ShowButtons(K_RELATIVE);
         if (IsButtonPressed(BUTTONLABEL_CALL_GAME) || (ManKey.bFire)) {
             nChoose = 1;
         } else if (IsButtonPressed(BUTTONLABEL_CALL_DEMO)) {
@@ -221,7 +232,7 @@ int32_t Menu(SDL_Renderer *pRenderer) {
             uMusicVolume--;
             SetMusicVolume(uMusicVolume);
         }
-        RenderPresentAndClear(pRenderer);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         uFrameCounter++;
         Playfield.uFrameCounter++;
     }
@@ -240,18 +251,17 @@ Name:           RunGame
 ------------------------------------------------------------------------------
 Beschreibung: Hauptschleifen-Funktion für das Spielen eines Levels.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
                uLevel, uint32_t, Levelnummer
       Ausgang: -
 
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x, g_nGameSpeed
+Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x, g_nGameSpeed, Video.x
 ------------------------------------------------------------------------------*/
-int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
+int32_t RunGame(uint32_t uLevel) {
     bool bLevelRun;
     bool bPrepareLevelExit;
     bool bPause;
-    bool bDelay;
     int32_t nColorDimm;
     int32_t nCheckLevelCount;
     uint32_t uManDirection = EMERALD_ANIM_STAND;     // Rückgabe von CheckLevel() -> Wohin ist der Man gelaufen?
@@ -261,22 +271,28 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
     uint32_t uQuitTime;
     int32_t nRet;
     uint32_t uShowQuickSaveMessageTicks;
+    uint32_t uShowGameSpeedIncreased;
+    uint32_t uShowGameSpeedDecreased;
+    uint32_t uGameSpeed;
+    char szGameSpeedMessage[32];
 
     uShowQuickSaveMessageTicks = 0xFFFFFFFF;
+    uShowGameSpeedIncreased = 0xFFFFFFFF;
+    uShowGameSpeedDecreased = 0xFFFFFFFF;
+    uGameSpeed = EMERALD_MAX_GAMESPEED - Config.uGameSpeed + 1;
     bPause = false;
-    bDelay = false;
     nRet = 0;
     nColorDimm = 0;
     FillCheeseRandomNumbers();
     bLevelRun = (InitialisePlayfield(uLevel) == 0);
     // Renderer mit schwarz löschen
-    SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
-    RenderPresentAndClear(pRenderer);
+    SDL_SetRenderDrawColor(Video.pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+    RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
     bPrepareLevelExit = false;
     if (bLevelRun) {
         SetPipeLevel();
         SetActiveDynamite();
-        nRet = ShowAuthorAndLevelname(pRenderer,uLevel);
+        nRet = ShowAuthorAndLevelname(uLevel);
         if (nRet < 0) {
             bLevelRun = false; // Ein Fehler ist aufgetreten
         } else if (nRet > 0) {  // Abbruch durch ESC
@@ -323,19 +339,32 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             if (InputStates.bFkey[1]) {
                 SetGameSpeed(GAMESPEED_NORMAL);
                 InputStates.bFkey[1] = false;
-                bDelay = false;
             } else if (InputStates.bFkey[2]) {
                 SetGameSpeed(GAMESPEED_FAST);
                 InputStates.bFkey[2] = false;
-                bDelay = false;
             } else if (InputStates.bFkey[3]) {
-                SetGameSpeed(GAMESPEED_NORMAL);
                 InputStates.bFkey[3] = false;
-                bDelay = true;
+                if ((Config.uGameSpeed < EMERALD_MAX_GAMESPEED) && (!Video.bVsync)) {
+                    Config.uGameSpeed++;
+                    WriteConfigFile();
+                    uGameSpeed = EMERALD_MAX_GAMESPEED - Config.uGameSpeed + 1;
+                    sprintf(szGameSpeedMessage,"GAME SPEED DECREASED TO %u/%u",uGameSpeed,EMERALD_MAX_GAMESPEED - EMERALD_MIN_GAMESPEED + 1);
+                    uShowGameSpeedDecreased = SDL_GetTicks();
+                }
+            } else if (InputStates.bFkey[4]) {
+                InputStates.bFkey[4] = false;
+                if ((Config.uGameSpeed > EMERALD_MIN_GAMESPEED) && (!Video.bVsync)) {
+                    Config.uGameSpeed--;
+                    WriteConfigFile();
+                    uGameSpeed = EMERALD_MAX_GAMESPEED - Config.uGameSpeed + 1;
+                    sprintf(szGameSpeedMessage,"GAME SPEED INCREASED TO %u/%u",uGameSpeed,EMERALD_MAX_GAMESPEED - EMERALD_MIN_GAMESPEED + 1);
+                    uShowGameSpeedIncreased = SDL_GetTicks();
+                }
             } else if (InputStates.bFkey[9]) {
                 if ((Playfield.bQuicksaveAllowed) && (!Playfield.bManDead)) {
                     QuickSaveGame();
                 }
+                WaitNoSpecialKey(SDL_SCANCODE_F9);   // warten, dass "F9" wieder losgelassen wird
                 InputStates.bFkey[9] = false;
                 uShowQuickSaveMessageTicks = SDL_GetTicks();
             } else if (InputStates.bFkey[10]) {
@@ -350,8 +379,8 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                             nColorDimm = 0;
                         }
                         SetAllTextureColors(nColorDimm);
-                        RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);
-                        RenderPresentAndClear(pRenderer);
+                        RenderLevel(&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);
+                        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
                     }
                     QuickLoadGame();
                     // Neues Playfield aufdimmen
@@ -363,8 +392,8 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                             nColorDimm = 100;
                         }
                         SetAllTextureColors(nColorDimm);
-                        RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);
-                        RenderPresentAndClear(pRenderer);
+                        RenderLevel(&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);
+                        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
                     }
                 }
             }
@@ -400,20 +429,33 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
                 SetAllTextureColors(nColorDimm);
             }
         }
-        RenderLevel(pRenderer,&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);  // nCheckLevelCount 0 ... 15
+        RenderLevel(&Playfield.nTopLeftXpos,&Playfield.nTopLeftYpos,nCheckLevelCount);  // nCheckLevelCount 0 ... 15
         if (uShowQuickSaveMessageTicks != 0xFFFFFFFF) {
             if (SDL_GetTicks() - uShowQuickSaveMessageTicks < 5000) {
                 if (Playfield.bQuicksaveAllowed) {
                     if (Playfield.bManDead) {
-                        CreateMessageWindow(pRenderer, 10,10, 0, "YOU ARE DEAD! GAME NOT SAVED",NULL,NULL);
+                        CreateMessageWindow(10,10, 0, "YOU ARE DEAD! GAME NOT SAVED",NULL,NULL);
                     } else {
-                        CreateMessageWindow(pRenderer, 10,10, 0, "GAME SAVED",NULL,NULL);
+                        CreateMessageWindow(10,10, 0, "GAME SAVED",NULL,NULL);
                     }
                 } else {
-                    CreateMessageWindow(pRenderer, 10,10, 0, "QUICKSAVE NOT ALLOWED",NULL,NULL);
+                    CreateMessageWindow(10,10, 0, "QUICKSAVE NOT ALLOWED",NULL,NULL);
                 }
             } else {
                 uShowQuickSaveMessageTicks = 0xFFFFFFFF;
+            }
+        }
+        if (uShowGameSpeedDecreased != 0xFFFFFFFF) {
+            if (SDL_GetTicks() - uShowGameSpeedDecreased < 1500) {
+                CreateMessageWindow(10,60, 0,szGameSpeedMessage,NULL,NULL);
+            } else {
+                uShowGameSpeedDecreased = 0xFFFFFFFF;
+            }
+        } else if (uShowGameSpeedIncreased != 0xFFFFFFFF) {
+            if (SDL_GetTicks() - uShowGameSpeedIncreased < 1500) {
+                CreateMessageWindow(10,60, 0,szGameSpeedMessage,NULL,NULL);
+            } else {
+                uShowGameSpeedIncreased = 0xFFFFFFFF;
             }
         }
         if (!bPause) {
@@ -446,12 +488,9 @@ int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel) {
             SetAllTextureColors(nColorDimm);
         }
         if (Playfield.uShowMessageNo != 0) {
-            ConfirmMessage(pRenderer);  // Spiel pausiert hier, bis Nachricht bestätigt wurde
+            ConfirmMessage();  // Spiel pausiert hier, bis Nachricht bestätigt wurde
         }
-        RenderPresentAndClear(pRenderer);
-        if (bDelay) {
-            SDL_Delay(24);
-        }
+        RenderPresentAndClear(Config.uGameSpeed);
     }
     SDL_ShowCursor(SDL_ENABLE);    // Mauspfeil verstecken
     Playfield.uPlayTimeEnd = SDL_GetTicks();

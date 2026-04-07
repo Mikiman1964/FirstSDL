@@ -20,6 +20,6 @@ typedef struct {
 
 void InitSmileys(void);
 void BornSmileys(void);
-int32_t MoveSmileys(SDL_Renderer *pRenderer);
+int32_t MoveSmileys(void);
 
 #endif // SMILEYS_H_INCLUDED

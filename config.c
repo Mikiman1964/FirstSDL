@@ -93,6 +93,8 @@ int32_t WriteDefaultConfigFile(void) {
     memset(&Config,0,sizeof(Config));               // löscht auch letzten Spieler
     Config.bStartDynamiteWithSpace = true;          // true = Dynamite wird mit Space gezündet
     Config.bFullScreen = false;                     // Spiel läuft als Fullscreen
+    Config.bUseVSync = true;                        // V-SYNC verwenden
+    Config.uGameSpeed = EMERALD_DEFAULT_GAMESPEED;  // Spielgeschwindigkeit, wenn V-SYNC deaktiv
     Config.bEditorZoom = false;                     // Editor läuft mit 16x16 Pixeln
     Config.bGameMusic = true;                       // true = Modfiles in den Gamemenüs abspielen
     Config.bShowHighscores = true;                  // true = Highscores zeigen, wenn genug Punkte
@@ -159,6 +161,15 @@ int32_t WriteConfigFile(void) {
         strcat(szXML,"0");
     }
     strcat(szXML,"</fullscreen>\n");
+    strcat(szXML,"  <use_vsync>");
+    if (Config.bUseVSync) {
+        strcat(szXML,"1");
+    } else {
+        strcat(szXML,"0");
+    }
+    strcat(szXML,"</use_vsync>\n");
+    sprintf(szString,"  <game_speed>%d</game_speed>\n",Config.uGameSpeed);
+    strcat(szXML,szString);
     strcat(szXML,"</screen>\n");
     strcat(szXML,"<start_dynamite_with_space>");
     if (Config.bStartDynamiteWithSpace) {
@@ -298,7 +309,7 @@ Seiteneffekte: Config.x, Actualplayer.x, Video.x
 ------------------------------------------------------------------------------*/
 int32_t ReadConfigFile(void) {
     ezxml_t xml = NULL;
-    ezxml_t screen,fullscreen,resolution,display,x,y,dynamite,gamemusic,highscores,levelgrouphash,playername,editorzoom;
+    ezxml_t screen,fullscreen,vsync,gamespeed,resolution,display,x,y,dynamite,gamemusic,highscores,levelgrouphash,playername,editorzoom;
     ezxml_t inputdevice,devicename,deviceindex,controllersettings,joysticksettings,button,directions,threshold;
     int32_t nErrorCode;
     uint8_t *pXml;
@@ -326,6 +337,22 @@ int32_t ReadConfigFile(void) {
                         fullscreen = ezxml_child(screen,"fullscreen");
                         if (fullscreen != NULL) {
                             Config.bFullScreen = (strtol(fullscreen->txt,NULL,10) == 1);
+                            // use_vsync und game_speed kamen erst in Version 01.15
+                            vsync = ezxml_child(screen,"use_vsync");
+                            if (vsync != NULL) {
+                                Config.bUseVSync = (strtol(vsync->txt,NULL,10) == 1);
+                            } else {
+                                Config.bUseVSync = true;
+                            }
+                            gamespeed = ezxml_child(screen,"game_speed");
+                            if (gamespeed != NULL) {
+                                Config.uGameSpeed = strtol(gamespeed->txt,NULL,10);
+                                if ((Config.uGameSpeed > 30) || (Config.uGameSpeed < 4)) {
+                                    Config.uGameSpeed = EMERALD_DEFAULT_GAMESPEED;
+                                }
+                            } else {
+                                Config.uGameSpeed = EMERALD_DEFAULT_GAMESPEED;
+                            }
                             resolution = ezxml_child(screen,"resolution");
                             if (resolution != NULL) {
                                 x = ezxml_child(resolution,"x");

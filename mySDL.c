@@ -151,8 +151,6 @@ int32_t GetDesktopDisplayMode(void) {
         nRet = SDL_GetDesktopDisplayMode(Config.uDisplayUse,&Video.DesktopDisplayMode);
         if (nRet == 0) {
             SDL_Log("%s: display: %u   w: %03d   h: %d   refreshrate: %d",__FUNCTION__,Config.uDisplayUse,Video.DesktopDisplayMode.w,Video.DesktopDisplayMode.h,Video.DesktopDisplayMode.refresh_rate);
-            Video.bMustUseFullScreen = (Video.DesktopDisplayMode.refresh_rate != 60);
-            //Video.bMustUseFullScreen = false;
         } else {
             SDL_Log("%s: SDL_GetDesktopDisplayMode failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -415,12 +413,17 @@ Parameter
       Eingang: pWindow, SDL_Window, Zeiger auf Fenster-Handle
       Ausgang: -
 Rückgabewert:  SDL_Renderer *, Zeiger auf neuen Renderer, NULL = Fehler
-Seiteneffekte: -
+Seiteneffekte: Config.x
 ------------------------------------------------------------------------------*/
 SDL_Renderer *CreateRenderer(SDL_Window * pWindow) {
     SDL_Renderer *pRenderer = NULL;
+    uint32_t uFlags;
 
-    pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    uFlags = SDL_RENDERER_ACCELERATED;
+    if (Config.bUseVSync) {
+        uFlags = uFlags | SDL_RENDERER_PRESENTVSYNC;
+    }
+    pRenderer = SDL_CreateRenderer(pWindow, -1, uFlags);
     if (pRenderer != NULL) {
         // Set the blend mode used for drawing operations (Fill and Line).
         // Anmerkung: Der eingestellte Modus wirkt nur auf Flächen (Fill) oder Linien (Line), die auf
@@ -455,17 +458,18 @@ Beschreibung: Zeigt den Inhalt des Renderers an und löscht diesen anschließend
               Wegen g_LastRenderTicks wäre die Funktion nicht threadsicher!
 
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: uSpeed, uint32_t, falls V-Sync deaktiv, dann wird dieser Wert als Speed verwendet
       Ausgang: -
       Rückgabewert: int32_t, 0 = alles OK, -1 = Fehler
 Seiteneffekte: g_LastRenderTicks, Video.x
 ------------------------------------------------------------------------------*/
-int32_t RenderPresentAndClear(SDL_Renderer *pRenderer) {   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
+int32_t RenderPresentAndClear(uint32_t uSpeed) {   // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen
     if (!Video.bVsync) {
-        SDL_Delay(14);
+        SDL_Delay(uSpeed);
     }
-    SDL_RenderPresent(pRenderer);       // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen, hat keinen Rückgabewert
-    return SDL_RenderClear(pRenderer);  // Renderer für nächstes Frame löschen
+    SDL_RenderPresent(Video.pRenderer);       // Renderer anzeigen, lässt Hauptschleife mit ~ 60 Hz (Bild-Wiederholfrequenz) laufen, hat keinen Rückgabewert
+    Video.uFrameCounter++;
+    return SDL_RenderClear(Video.pRenderer);  // Renderer für nächstes Frame löschen
 }
 
 
@@ -498,12 +502,12 @@ Name:           LoadTextures
 Beschreibung: Erzeugt für allen Grafiken die Textures.
 
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
       Rückgabewert:  int32_t, 0 = alles OK, -1 = Fehler
-Seiteneffekte:  Gfx[], g_pTextures, g_nGfxCount, gfx_compressed[]
+Seiteneffekte:  Gfx[], g_pTextures, g_nGfxCount, gfx_compressed[], Video.x
 ------------------------------------------------------------------------------*/
-int32_t LoadTextures(SDL_Renderer *pRenderer) {
+int32_t LoadTextures(void) {
     int32_t nCount;                 // Anzahl vorhandener Grafiken
     int32_t nI;
     int32_t nGfxSize;               // Größe der Bitmap in Bytes
@@ -575,7 +579,7 @@ int32_t LoadTextures(SDL_Renderer *pRenderer) {
                     pSurface = SDL_LoadBMP_RW(pSDLStreamPointer,1);              // Surface aus Stream erzeugen, gibt Speicher für Stream frei
                     if (pSurface != NULL) {
                         if (SDL_SetColorKey(pSurface, SDL_TRUE, SDL_MapRGB(pSurface->format,255,0,255)) == 0) { // violett als transparent
-                            pTexture = SDL_CreateTextureFromSurface(pRenderer,pSurface);   // Texture aus Surface erzeugen
+                            pTexture = SDL_CreateTextureFromSurface(Video.pRenderer,pSurface);   // Texture aus Surface erzeugen
                             g_pTextures[nI] = pTexture;
                             SDL_FreeSurface(pSurface);  // Surface wird nicht mehr benötigt
                             if (pTexture == NULL) {
@@ -616,8 +620,7 @@ Name:           CopyTexture
 Beschreibung: Kopiert eine Texture in den Renderer.
 
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uTextureIndex, uint32_t, Textureindex (siehe externalpointer.h)
+      Eingang: uTextureIndex, uint32_t, Textureindex (siehe externalpointer.h)
                nXpos, int32_t, X-Position im Render wo Texture positioniert werden soll
                nYpos, int32_t, Y-Position im Render wo Texture positioniert werden soll
                uTextureW, uint32_t, Breite der Texture
@@ -627,9 +630,9 @@ Parameter
                fAngle, float, Rotationswinkel in Grad
       Ausgang: -
       Rückgabewert:   int32_t, 0 = alles OK, -1 = Fehler
-Seiteneffekte:  -
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int32_t nXpos, int32_t nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle) {
+int32_t CopyTexture(uint32_t uTextureIndex, int32_t nXpos, int32_t nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle) {
     int32_t nErrorCode = 0;
     SDL_Rect DestR;
 
@@ -637,7 +640,7 @@ int32_t CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int32_t nXp
     DestR.y = nYpos;
     DestR.w = uTextureW * fScaleW;
     DestR.h = uTextureH * fScaleH;
-    if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+    if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
         SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
         nErrorCode = -1;
     }
@@ -651,8 +654,7 @@ Name:           CopyColorRect
 Beschreibung: Kopiert eine gefülltes Rechteck  in den Renderer.
 
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               nRed, int32_t, Rotanteil für Rechteck (0 - 255)
+      Eingang: nRed, int32_t, Rotanteil für Rechteck (0 - 255)
                nGreen, int32_t, Grünanteil für Rechteck (0 - 255)
                nBlue, int32_t, Blauanteil für Rechteck (0 - 255)
                nXpos, int32_t, X-Position im Render wo Rechteck positioniert werden soll
@@ -664,7 +666,7 @@ Parameter
       Rückgabewert:   int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte:  Video.x
 ------------------------------------------------------------------------------*/
-int32_t CopyColorRect(SDL_Renderer *pRenderer, int32_t nRed, int32_t nGreen, int32_t nBlue, int32_t nXpos, int32_t nYpos, uint32_t uW, uint32_t uH, bool bAbsolute) {
+int32_t CopyColorRect(int32_t nRed, int32_t nGreen, int32_t nBlue, int32_t nXpos, int32_t nYpos, uint32_t uW, uint32_t uH, bool bAbsolute) {
     int32_t nErrorCode;
     SDL_Rect rect;
 
@@ -677,8 +679,8 @@ int32_t CopyColorRect(SDL_Renderer *pRenderer, int32_t nRed, int32_t nGreen, int
     }
     rect.w = uW;
     rect.h = uH;
-    if (SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0){  // Farbe für Rechteck setzen
-        if (SDL_RenderFillRect(pRenderer,&rect) != 0) {
+    if (SDL_SetRenderDrawColor(Video.pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0){  // Farbe für Rechteck setzen
+        if (SDL_RenderFillRect(Video.pRenderer,&rect) != 0) {
             nErrorCode = -1;
             SDL_Log("%s: SDL_RenderFillRect() failed: %s",__FUNCTION__,SDL_GetError());
         } else {
@@ -691,7 +693,7 @@ int32_t CopyColorRect(SDL_Renderer *pRenderer, int32_t nRed, int32_t nGreen, int
 
     // Anschließend wieder auf schwarz stellen
     if (nErrorCode == 0) {
-        if (SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE) != 0) {
+        if (SDL_SetRenderDrawColor(Video.pRenderer,0,0,0, SDL_ALPHA_OPAQUE) != 0) {
             nErrorCode = -1;
             SDL_Log("%s: SDL_SetRenderDrawColor() failed: %s",__FUNCTION__,SDL_GetError());
         }
@@ -767,8 +769,7 @@ Beschreibung: Schreibt einen Text mit dem "kleinen Zeichensatz" in den Renderer.
               daher gewandelt.
 
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               nXpos, int32_t, Start-X-Position der oberen linke Ecke des Textfeldes
+      Eingang: nXpos, int32_t, Start-X-Position der oberen linke Ecke des Textfeldes
                nYpos, int32_t, Start-Y-Position der oberen linke Ecke des Textfeldes
                uFont, uint32_t, Zeichensatzes
                         0 = LittleFont_Green.bmp
@@ -783,7 +784,7 @@ Parameter
       Rückgabewert: int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText, bool bAbsolute, float fSizeFactor) {
+int32_t PrintLittleFont(int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText, bool bAbsolute, float fSizeFactor) {
     // Der komplette Zeichensatz liegt in Texture 347 vor. Für ein Darstellung eines Zeichens, muss die "richtige" Stelle ausgewählt werden.
     // Der Zeichensatz ist so aufgebaut, dass alle vorhandenen Zeichen in einer Zeile vorliegen.
     int32_t nErrorCode;
@@ -824,7 +825,7 @@ int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, u
     }
     nPrintXpos = nXpos;
     nPrintYpos = nYpos;
-    if ((pRenderer != NULL) && (pszText != NULL)) {
+    if (pszText != NULL) {
         nErrorCode = 0;
         I = 0;
         uCharCountPerLine = 0;
@@ -876,7 +877,7 @@ int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, u
                 }
                 DestR.w = uFontW * fSizeFactor;
                 DestR.h = uFontH * fSizeFactor;
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),&SrcR,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),&SrcR,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
                 }
@@ -943,8 +944,6 @@ void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, 
     if (uXmax > EMERALD_MAX_CHARACTERS_PER_LINE) {
         uXmax = EMERALD_MAX_CHARACTERS_PER_LINE;
     }
-
-
     *puLines = uWinH;
     uWinW = ((uXmax * FONT_LITTLE_W) / (FONT_W / 2));
     if ( ((uXmax * FONT_LITTLE_W) % (FONT_W / 2)) != 0) {
@@ -970,17 +969,16 @@ Beschreibung: Erzeugt ein Fenster mit Text.
               daher gewandelt.
 
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               nXpos, int32_t, Start-X-Position der oberen linke Ecke des Fensters, -1 = auf Fenster horizontal zentrieren
+      Eingang: nXpos, int32_t, Start-X-Position der oberen linke Ecke des Fensters, -1 = auf Fenster horizontal zentrieren
                nYpos, int32_t, Start-Y-Position der oberen linke Ecke des Textfeldes, -1 = auf Fenster vertikal zentrieren
                uFont, uint32_t, Zeichensatz
                pszText, char *, Zeiger auf Text, der mit Stringende abgeschlossen sein muss.
       Ausgang: pnXpos, int32_t *, berechnete X-Position des Fensters, wenn Zentrierung aktiv, darf NULL sein
                pnXpos, int32_t *, berechnete XYPosition des Fensters, wenn Zentrierung aktiv, darf NULL sein
       Rückgabewert: 0 = OK, sonst Fehler
-Seiteneffekte: Config.x
+Seiteneffekte: Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText, int32_t *pnXpos, int32_t *pnYpos) {
+int32_t CreateMessageWindow(int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText, int32_t *pnXpos, int32_t *pnYpos) {
     int32_t nErrorCode;
     uint32_t X,Y;
     uint32_t uWinW;                     // benötigte Fensterbreite in Elementen
@@ -992,7 +990,7 @@ int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpo
     int32_t nPrintXpos;
     int32_t nPrintYpos;
 
-    if ((pRenderer != NULL) && (pszText != NULL)) {
+    if (pszText != NULL) {
         nErrorCode = 0;
         GetMessageWindowSize(&uWinW,&uWinH,&uLines,pszText);
         // Zentrierung
@@ -1023,7 +1021,7 @@ int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpo
             DestR.y = nPrintYpos;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -1037,7 +1035,7 @@ int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpo
             DestR.y = nPrintYpos;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_STRIPE_LEFT),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_STEEL_STRIPE_LEFT),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -1045,7 +1043,7 @@ int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpo
             DestR.y = nPrintYpos;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_STEEL_STRIPE_RIGHT),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_STEEL_STRIPE_RIGHT),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -1065,7 +1063,7 @@ int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpo
             DestR.y = nPrintYpos;
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,0,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -1077,16 +1075,16 @@ int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpo
             DestR.y = nYpos + FONT_H / 2;
             DestR.w = (uWinW - 2) * FONT_W / 2;
             DestR.h = uWinH * FONT_H / 2;
-            SDL_SetRenderDrawColor(pRenderer,0x20,0x20,0xF0,0xC0);  // dunkelblaue, halbtransparente Fensterfläche
-            nErrorCode = SDL_RenderFillRect(pRenderer,&DestR);
+            SDL_SetRenderDrawColor(Video.pRenderer,0x20,0x20,0xF0,0xC0);  // dunkelblaue, halbtransparente Fensterfläche
+            nErrorCode = SDL_RenderFillRect(Video.pRenderer,&DestR);
             if (nErrorCode == 0) {
                 nXoffset = ((uWinH * (FONT_H / 2)) - (uLines * FONT_LITTLE_H)) / 2;
                 //SDL_Log("Lines: %u    WinH: %u    XOffset: %d",uLines,uWinH,nXoffset);
-                nErrorCode = PrintLittleFont(pRenderer, nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, uFont ,pszText,K_ABSOLUTE,1);
+                nErrorCode = PrintLittleFont(nXpos + (FONT_W / 2) + 8, nYpos + (FONT_H / 2) + nXoffset, uFont ,pszText,K_ABSOLUTE,1);
             } else {
                 SDL_Log("%s: SDL_RenderFillRect() failed: %s",__FUNCTION__,SDL_GetError());
             }
-            SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+            SDL_SetRenderDrawColor(Video.pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
         }
     } else {
         SDL_Log("%s: bad input parameter, null pointer found.",__FUNCTION__);
@@ -1101,8 +1099,7 @@ Name:           DrawBeam
 ------------------------------------------------------------------------------
 Beschreibung: Zeichnet ein Rechteck / einen Balken für die Levelgruppen- und Namen-Auswahl.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uXpos, uint32_t, X-Position für Balken
+      Eingang: uXpos, uint32_t, X-Position für Balken
                uYpos, uint32_t, Y-Position für Balken
                uWidth, uint32_t, Breite des Balkens
                uHeight, uint32_t, Höhe des Balkens
@@ -1115,7 +1112,7 @@ Parameter
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute) {
+int32_t DrawBeam(uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute) {
     int32_t nErrorCode = -1;
     SDL_Rect DestR;
 
@@ -1129,9 +1126,9 @@ int32_t DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_
     }
     DestR.w = uWidth;
     DestR.h = uHeight;
-    if (SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uTransp) == 0) {   // dunkelblaue, halbtransparente Fensterfläche
-        if (SDL_RenderFillRect(pRenderer,&DestR) == 0) {
-            nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+    if (SDL_SetRenderDrawColor(Video.pRenderer,uRed,uGreen,uBlue,uTransp) == 0) {   // dunkelblaue, halbtransparente Fensterfläche
+        if (SDL_RenderFillRect(Video.pRenderer,&DestR) == 0) {
+            nErrorCode = SDL_SetRenderDrawColor(Video.pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
         }
     }
     return nErrorCode;
@@ -1143,8 +1140,7 @@ Name:           DrawGrid
 ------------------------------------------------------------------------------
 Beschreibung: Zeichnet ein Kreuzgitter mit anzugebender Farbe und Zeilen-/Spaltenabstand.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uXpos, uint32_t, X-Position für Gitter
+      Eingang: uXpos, uint32_t, X-Position für Gitter
                uYpos, uint32_t, Y-Position für Gitter
                uWidth, uint32_t, Breite des Gitters
                uHeight, uint32_t, Höhe des Gitters
@@ -1156,18 +1152,18 @@ Parameter
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace) {
+int32_t DrawGrid(uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace) {
     int32_t nErrorCode = 0;
     uint32_t X,Y;
 
-    nErrorCode = SDL_SetRenderDrawColor(pRenderer,uRed,uGreen,uBlue,uAlpha);
+    nErrorCode = SDL_SetRenderDrawColor(Video.pRenderer,uRed,uGreen,uBlue,uAlpha);
     // Vertikale Linien zeichnen
     for (X = uXpos; (X <= (uXpos + uWidth)) && (nErrorCode == 0); X = X + uGridSpace) {
-        nErrorCode = SDL_RenderDrawLine(pRenderer,X + Video.uXoffs, uYpos + Video.uYoffs, X + Video.uXoffs, uYpos + uHeight + Video.uYoffs);
+        nErrorCode = SDL_RenderDrawLine(Video.pRenderer,X + Video.uXoffs, uYpos + Video.uYoffs, X + Video.uXoffs, uYpos + uHeight + Video.uYoffs);
     }
     // Horizontale Linien zeichnen
     for (Y = uYpos; (Y <= (uYpos + uHeight)) && (nErrorCode == 0); Y = Y + uGridSpace) {
-        nErrorCode = SDL_RenderDrawLine(pRenderer,uXpos + Video.uXoffs, Y + Video.uYoffs, uXpos + uWidth + Video.uXoffs, Y + Video.uYoffs);
+        nErrorCode = SDL_RenderDrawLine(Video.pRenderer,uXpos + Video.uXoffs, Y + Video.uYoffs, uXpos + uWidth + Video.uXoffs, Y + Video.uYoffs);
     }
     return nErrorCode;
 }
@@ -1213,33 +1209,32 @@ Beschreibung: Prüft mit Hilfe eines Renderers, ob V-Sync mit der gewünschten F
               aktiv ist. Vor Aufruf dieser Funktion muss bereits ein Fenster und
               Renderer vorhanden sein.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               fCheckFramerate, float, Framerate, mit der geprüft wird.
+      Eingang: fCheckFramerate, float, Framerate, mit der geprüft wird.
       Ausgang: -
 Rückgabewert:  bool, true = V-Sync erkannt, false = V-Sync nicht erkannt
 Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-bool IsVsync(SDL_Renderer *pRenderer,float fCheckFramerate) {
+bool IsVsync(float fCheckFramerate) {
     uint32_t uFrames;
     char szText[128];
 
     uFrames = 0;
     memset(&Video.Fps,0,sizeof(Video.Fps));
     Video.bVsync = false;
-    if ((pRenderer != NULL) && (fCheckFramerate > 0)) {
-        SDL_SetRenderDrawColor(pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
-        RenderPresentAndClear(pRenderer);
+    if ((Video.pRenderer != NULL) && (fCheckFramerate > 0)) {
+        SDL_SetRenderDrawColor(Video.pRenderer,0,0,0,SDL_ALPHA_OPAQUE);
+        RenderPresentAndClear(0);
         while (uFrames < 4 * VSYNC_DETECTION_FRAMES) {
             uFrames++;
             sprintf(szText,"DETECTING V-SYNC ... FRAME: %u",uFrames);
-            PrintLittleFont(pRenderer,20,20,0,szText,K_ABSOLUTE,1);
+            PrintLittleFont(20,20,0,szText,K_ABSOLUTE,1);
             MeasureFps();
-            SDL_RenderPresent(pRenderer);
-            SDL_RenderClear(pRenderer);
+            SDL_RenderPresent(Video.pRenderer);
+            SDL_RenderClear(Video.pRenderer);
         }
     }
     // Untere Grenze wird hier bewusst nicht abgefragt. Falls Framerate << fCheckFramerate kann V-Sync-Flag aktiv sein.
-    Video.bVsync = (Video.Fps.fFramesPerSecond <= fCheckFramerate + 5.0);
+    Video.bVsync = (Video.Fps.fFramesPerSecond <= fCheckFramerate + 10.0);
     SDL_Log("%s: Framerate: %f  V-SYNC: %d",__FUNCTION__,Video.Fps.fFramesPerSecond,Video.bVsync);
     return Video.bVsync;
 }

@@ -1623,12 +1623,12 @@ Name:           FillPanel
 ------------------------------------------------------------------------------
 Beschreibung: Füllt das Editor-Panel mit Elementen aus dem Array g_PanelElements[].
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, g_PanelElements[], Playfiel.x
+Seiteneffekte: Ed.x, g_PanelElements[], Playfield.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t FillPanel(SDL_Renderer *pRenderer) {
+int32_t FillPanel(void) {
     uint32_t uI;
     uint32_t uX;
     uint32_t uY;
@@ -1649,7 +1649,7 @@ int32_t FillPanel(SDL_Renderer *pRenderer) {
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
             uTextureIndex = GetTextureIndexByElement(g_PanelElements[uI],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL,SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL,SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -1664,12 +1664,12 @@ Name:           DrawEditorPanel
 ------------------------------------------------------------------------------
 Beschreibung: Zeichnet das Editor-Panel.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, g_PanelColorPatterns[], Config.x
+Seiteneffekte: Ed.x, g_PanelColorPatterns[], Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t DrawEditorPanel(SDL_Renderer *pRenderer) {
+int32_t DrawEditorPanel(void) {
     uint32_t I;
     float fAngle;
     int32_t nErrorCode = 0;
@@ -1677,37 +1677,37 @@ int32_t DrawEditorPanel(SDL_Renderer *pRenderer) {
     uint32_t uTextureIndex;
 
     for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
-        SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+        SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
         Rect.x = Ed.uPanelXpos + 1 + 4 - I;
         Rect.y = Ed.uPanelYpos + 3 - I;
         Rect.w = Ed.uPanelW - 8 + I * 2;
         Rect.h = Ed.uPanelH - 6 + I * 2;
-        nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+        nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&Rect);
     }
     if (nErrorCode == 0) {
-        nErrorCode = FillPanel(pRenderer);
+        nErrorCode = FillPanel();
         for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
             // linkes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
             Rect.x = Config.uResX - 177 - I;
             Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
-            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+            nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&Rect);
             // rechtes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
             Rect.x = Config.uResX - 48 - I;
             Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
-            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+            nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&Rect);
             // mittleres Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
             Rect.x = Config.uResX - 112 - I;
             Rect.y = Config.uResY - FONT_H - 15 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
-            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+            nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&Rect);
         }
         if (nErrorCode == 0) {
             // selected element, left
@@ -1716,27 +1716,27 @@ int32_t DrawEditorPanel(SDL_Renderer *pRenderer) {
             Rect.w = FONT_W;
             Rect.h = FONT_H;
             uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementLeft[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
             // selected element, right
             Rect.x = Config.uResX - 48 + 1;
             Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
             uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementRight[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,fAngle,NULL, SDL_FLIP_NONE);
             // selected element, middle
             Rect.x = Config.uResX - 112 + 1;
             Rect.y = Config.uResY - FONT_H - 15 + 1;
             Rect.w = FONT_W;
             Rect.h = FONT_H;
             uTextureIndex = GetTextureIndexByElement(Ed.uSelectedElementMiddle[Ed.uMenuState],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
-            nErrorCode = SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,0,NULL, SDL_FLIP_NONE);
+            nErrorCode = SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&Rect,0,NULL, SDL_FLIP_NONE);
         }
     }
     if (nErrorCode == 0) {
         nErrorCode = -1;
-        if (PrintLittleFont(pRenderer,Config.uResX - 180,Config.uResY - 71,0,(char*)"SELECTED ELEMENTS",K_ABSOLUTE,1) == 0) {
-            nErrorCode = SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);
+        if (PrintLittleFont(Config.uResX - 180,Config.uResY - 71,0,(char*)"SELECTED ELEMENTS",K_ABSOLUTE,1) == 0) {
+            nErrorCode = SDL_SetRenderDrawColor(Video.pRenderer,0,0,0, SDL_ALPHA_OPAQUE);
         }
     }
     return nErrorCode;
@@ -1748,16 +1748,15 @@ Name:           RenderEditorLevel
 ------------------------------------------------------------------------------
 Beschreibung: Kopiert den sichtbaren Teil des Editor-Levels in den Renderer
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               pnXpos, int32_t *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
+      Eingang: pnXpos, int32_t *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int32_t *, Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
                nAnimationCount, int32_t, 0 - 15 für Animationsstufe
       Ausgang: pnXpos, int32_t *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int32_t *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, Config.x
+Seiteneffekte: Ed.x, Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t RenderEditorLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount)
+int32_t RenderEditorLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount)
 {
     int32_t nErrorCode;
     SDL_Texture *pTexture;
@@ -1769,7 +1768,7 @@ int32_t RenderEditorLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnY
     float fAngle;
 
     // Die Eingangsparameter "grob" prüfen, damit nichts Schlimmes passiert
-    if ((pRenderer == NULL) || (Ed.pLevel == NULL)) {
+    if ((Video.pRenderer == NULL) || (Ed.pLevel == NULL)) {
         SDL_Log("%s: bad input parameters",__FUNCTION__);
         return -1;
     }
@@ -1804,7 +1803,7 @@ int32_t RenderEditorLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnY
                 DestR.w = Ed.uFont_W;
                 DestR.h = Ed.uFont_H;
                 pTexture = GetTextureByIndex(GetTextureIndexByElement(uLevelElement,nAnimationCount,&fAngle,false,EMERALD_CONVEYORBELT_OFF));
-                if (SDL_RenderCopyEx(pRenderer,pTexture,NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,pTexture,NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                     SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
                 }
@@ -1822,12 +1821,12 @@ Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_LEVEL befindet,
               wird diese Funktion ausgeführt. Sie ermöglicht das Zeichnen von Elementen
               in einem Level.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, InputStates.x, Config.x
 ------------------------------------------------------------------------------*/
-int32_t EditorStateLevel(SDL_Renderer *pRenderer) {
+int32_t EditorStateLevel(void) {
     char szText[100];
     uint32_t uLevelX;
     uint32_t uLevelY;
@@ -1837,7 +1836,7 @@ int32_t EditorStateLevel(SDL_Renderer *pRenderer) {
     uint16_t uFillElement = EMERALD_NONE;
 
     //sprintf(szText,"x: %d   y: %d",InputStates.nMouseXpos,InputStates.nMouseYpos);
-    //PrintLittleFont(pRenderer,10,10,0,szText); // Maus-Koordinate anzeigen
+    //PrintLittleFont(10,10,0,szText); // Maus-Koordinate anzeigen
 
     if (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE])  {
         Ed.bEditorRun = false;
@@ -1870,7 +1869,7 @@ int32_t EditorStateLevel(SDL_Renderer *pRenderer) {
             Ed.nYpos = Ed.nYpos + Ed.uScrollPixelY;
         }
     }
-    RenderEditorLevel(pRenderer,&Ed.nXpos,&Ed.nYpos,Ed.uFrameCounter % 16);
+    RenderEditorLevel(&Ed.nXpos,&Ed.nYpos,Ed.uFrameCounter % 16);
     sprintf(szText,"X: -  Y: -");
     if ((InputStates.nMouseXpos_Absolute >= Ed.nMinXLevel) && (InputStates.nMouseXpos_Absolute <= Ed.nMaxXLevel) &&
         (InputStates.nMouseYpos_Absolute >= Ed.nMinYLevel) && (InputStates.nMouseYpos_Absolute <= Ed.nMaxYLevel)) {
@@ -1886,8 +1885,8 @@ int32_t EditorStateLevel(SDL_Renderer *pRenderer) {
                     if (SDL_GetTicks() - Ed.uTimeSameCoordinate > SHOW_HINT_MS) {
                         uMouseElement = Ed.pLevel[uLevelY * Ed.uLevel_X_Dimension + uLevelX];
                         //SDL_Log("Show Hint at X: %u  Y: %u   Element: %s",InputStates.nMouseXpos_Absolute,InputStates.nMouseYpos_Absolute,ge_szElementNames[uMouseElement]);
-                        CopyColorRect(pRenderer,220,220,220,InputStates.nMouseXpos_Absolute + 10,InputStates.nMouseYpos_Absolute,strlen(ge_szElementNames[uMouseElement]) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W,BUTTON_H,K_ABSOLUTE);
-                        PrintLittleFont(pRenderer,InputStates.nMouseXpos_Absolute + 4 + 10,InputStates.nMouseYpos_Absolute + 2,1,ge_szElementNames[uMouseElement],K_ABSOLUTE,1);
+                        CopyColorRect(220,220,220,InputStates.nMouseXpos_Absolute + 10,InputStates.nMouseYpos_Absolute,strlen(ge_szElementNames[uMouseElement]) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W,BUTTON_H,K_ABSOLUTE);
+                        PrintLittleFont(InputStates.nMouseXpos_Absolute + 4 + 10,InputStates.nMouseYpos_Absolute + 2,1,ge_szElementNames[uMouseElement],K_ABSOLUTE,1);
                     }
                 }
             } else {
@@ -1931,25 +1930,25 @@ int32_t EditorStateLevel(SDL_Renderer *pRenderer) {
     if (CheckReplicators(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension) == 0) {
         if (GetManCoordinates(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,NULL,NULL) == 0) {
             if (CheckAcidPools(Ed.pLevel,Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension) == 0) {
-                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: OK",K_ABSOLUTE,1);
+                PrintLittleFont(Config.uResX - 640, Config.uResY - 16,0,"LEVEL: OK",K_ABSOLUTE,1);
             } else {
-                PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: ACID POOL ERROR",K_ABSOLUTE,1);
+                PrintLittleFont(Config.uResX - 640, Config.uResY - 16,0,"LEVEL: ACID POOL ERROR",K_ABSOLUTE,1);
                 Ed.bFoundError = true;
             }
         } else {
-            PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: MAN ERROR",K_ABSOLUTE,1);
+            PrintLittleFont(Config.uResX - 640, Config.uResY - 16,0,"LEVEL: MAN ERROR",K_ABSOLUTE,1);
             Ed.bFoundError = true;
         }
     } else {
-        PrintLittleFont(pRenderer,Config.uResX - 640, Config.uResY - 16,0,"LEVEL: REPLICATOR ERROR",K_ABSOLUTE,1);
+        PrintLittleFont(Config.uResX - 640, Config.uResY - 16,0,"LEVEL: REPLICATOR ERROR",K_ABSOLUTE,1);
         Ed.bFoundError = true;
     }
     if (Ed.bHalfSize) {
-        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM OFF",K_ABSOLUTE,1);
+        PrintLittleFont(Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM OFF",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM ON",K_ABSOLUTE,1);
+        PrintLittleFont(Config.uResX - 832, Config.uResY - 16,0,"(Z)OOM ON",K_ABSOLUTE,1);
     }
-    return PrintLittleFont(pRenderer,Config.uResX - 350, Config.uResY - 16,0,szText,K_ABSOLUTE,1); // Level-Koordinaten anzeigen
+    return PrintLittleFont(Config.uResX - 350, Config.uResY - 16,0,szText,K_ABSOLUTE,1); // Level-Koordinaten anzeigen
 }
 
 
@@ -2235,12 +2234,12 @@ Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_YAMS befindet,
               wird diese Funktion ausgeführt. Sie ermöglicht das Zeichnen von Elementen
               für explodierende Yams.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, InputStates.x, Config.x
+Seiteneffekte: Ed.x, InputStates.x, Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t EditorStateYams(SDL_Renderer *pRenderer) {
+int32_t EditorStateYams(void) {
     char szText[64];
     char szSpace[2];
     uint32_t I;
@@ -2275,20 +2274,20 @@ int32_t EditorStateYams(SDL_Renderer *pRenderer) {
         sprintf(szText,"YAM%02d",uYam);
         uXpos = ((I % 10) * 80) + 4;
         uYpos = ((I / 10) * 74) + 4;
-        PrintLittleFont(pRenderer,uXpos,uYpos,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(uXpos,uYpos,0,szText,K_ABSOLUTE,1);
 
         for (uLine = 0; (uLine < 4) && (nErrorCode == 0); uLine++) {
             // Quadrat für Yam
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
             Rect.x = uXpos - uLine;
             Rect.y = uYpos - uLine;
             Rect.w = FONT_LITTLE_W * 5 + uLine * 2;
             Rect.h = FONT_LITTLE_W * 5 + 16 + uLine * 2;
-            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+            nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&Rect);
         }
         for (uLine = 0; (uLine < 4) && (nErrorCode == 0); uLine++) {
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1, uYpos + FONT_H / 2 - uLine, uXpos + 3 * FONT_W / 2, uYpos + FONT_H / 2 - uLine);
+            SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[uLine * 3 + 0],g_PanelColorPatterns[uLine * 3 + 1],g_PanelColorPatterns[uLine * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + 1, uYpos + FONT_H / 2 - uLine, uXpos + 3 * FONT_W / 2, uYpos + FONT_H / 2 - uLine);
         }
         for (E = 0; (E < 9) && (nErrorCode == 0); E++) {
             uElement = Ed.YamExplosions[I].uElement[E];
@@ -2297,7 +2296,7 @@ int32_t EditorStateYams(SDL_Renderer *pRenderer) {
             DestR.w = FONT_W / 2;
             DestR.h = FONT_H / 2;
             uTextureIndex = GetTextureIndexByElement(uElement,0,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }
@@ -2376,7 +2375,7 @@ int32_t EditorStateYams(SDL_Renderer *pRenderer) {
         } else {
             sprintf(szText,"YYAM[%02u]:ACID POOL ERROR",uYamErrorIndex);
         }
-        PrintLittleFont(pRenderer,Config.uResX - 740, Config.uResY - 16,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(Config.uResX - 740, Config.uResY - 16,0,szText,K_ABSOLUTE,1);
     }
 
     if (Ed.uMaxYamExplosionIndex < 99) {
@@ -2386,7 +2385,7 @@ int32_t EditorStateYams(SDL_Renderer *pRenderer) {
         szSpace[0] = 0;
     }
     sprintf(szText,"YAMS:%s%02u",szSpace,Ed.uMaxYamExplosionIndex + 1);
-    PrintLittleFont(pRenderer,Config.uResX  - 355,Config.uResY - 20,0,szText,K_ABSOLUTE,1);
+    PrintLittleFont(Config.uResX  - 355,Config.uResY - 20,0,szText,K_ABSOLUTE,1);
     return nErrorCode;
 }
 
@@ -2398,12 +2397,12 @@ Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_MACHINES befind
               wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration von
               Replikatoren, Lichtschranken und Laufbändern.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, InputStates.x
+Seiteneffekte: Ed.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
+int32_t EditorStateMachines(void) {
     int nAnimationCount;
     int nXoffs;
     int nYoffs;
@@ -2526,109 +2525,109 @@ int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
     }
 
     // Replikatoren
-    PrintLittleFont(pRenderer,80,24,0,"REPLICATORS",K_ABSOLUTE,1);
-    PrintLittleFont(pRenderer,192,112,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(80,24,0,"REPLICATORS",K_ABSOLUTE,1);
+    PrintLittleFont(192,112,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorRedOn) {
-        PrintLittleFont(pRenderer,352,112,0,"YES",K_ABSOLUTE,1);
+        PrintLittleFont(352,112,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,112,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(352,112,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,192,208,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(192,208,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorYellowOn) {
-        PrintLittleFont(pRenderer,352,208,0,"YES",K_ABSOLUTE,1);
+        PrintLittleFont(352,208,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,208,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(352,208,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,192,304,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(192,304,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorGreenOn) {
-        PrintLittleFont(pRenderer,352,304,0,"YES",K_ABSOLUTE,1);
+        PrintLittleFont(352,304,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,304,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(352,304,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,192,400,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(192,400,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bReplicatorBlueOn) {
-        PrintLittleFont(pRenderer,352,400,0,"YES",K_ABSOLUTE,1);
+        PrintLittleFont(352,400,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,352,400,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(352,400,0,"NO",K_ABSOLUTE,1);
     }
     // Lichtschranken
-    PrintLittleFont(pRenderer,80,464,0,"LIGHT BARRIERS",K_ABSOLUTE,1);
-    PrintLittleFont(pRenderer,240,520,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(80,464,0,"LIGHT BARRIERS",K_ABSOLUTE,1);
+    PrintLittleFont(240,520,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierRedOn) {
-        PrintLittleFont(pRenderer,400,520,0,"YES",K_ABSOLUTE,1);
+        PrintLittleFont(400,520,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,400,520,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(400,520,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,240,584,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(240,584,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierYellowOn) {
-        PrintLittleFont(pRenderer,400,584,0,"YES",K_ABSOLUTE,1);
+        PrintLittleFont(400,584,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,400,584,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(400,584,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,240,648,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(240,648,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierGreenOn) {
-        PrintLittleFont(pRenderer,400,648,0,"YES",K_ABSOLUTE,1);
+        PrintLittleFont(400,648,0,"YES",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,400,648,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(400,648,0,"NO",K_ABSOLUTE,1);
     }
-    PrintLittleFont(pRenderer,240,712,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(240,712,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.bLightBarrierBlueOn) {
-        nErrorCode = PrintLittleFont(pRenderer,400,712,0,"YES",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(400,712,0,"YES",K_ABSOLUTE,1);
     } else {
-        nErrorCode = PrintLittleFont(pRenderer,400,712,0,"NO",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(400,712,0,"NO",K_ABSOLUTE,1);
     }
     // Laufbänder
-    PrintLittleFont(pRenderer,682,24,0,"CONVEYOR BELTS",K_ABSOLUTE,1);
-    PrintLittleFont(pRenderer,848,72,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(682,24,0,"CONVEYOR BELTS",K_ABSOLUTE,1);
+    PrintLittleFont(848,72,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveyorbeltRedState == EMERALD_CONVEYORBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,72,0,"LEFT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,72,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveyorbeltRedState == EMERALD_CONVEYORBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,72,0,"RIGHT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,72,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,72,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,72,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveyorbeltRedDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
+            PrintLittleFont(672,110,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,110,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
+            PrintLittleFont(672,110,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
-    PrintLittleFont(pRenderer,848,168,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(848,168,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,168,0,"LEFT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,168,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveyorbeltYellowState == EMERALD_CONVEYORBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,168,0,"RIGHT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,168,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,168,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,168,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveyorbeltYellowDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
+            PrintLittleFont(672,206,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,206,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
+            PrintLittleFont(672,206,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
-    PrintLittleFont(pRenderer,848,264,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(848,264,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,264,0,"LEFT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,264,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveyorbeltGreenState == EMERALD_CONVEYORBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,264,0,"RIGHT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,264,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,264,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,264,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveyorbeltGreenDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
+            PrintLittleFont(672,302,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,302,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
+            PrintLittleFont(672,302,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
-    PrintLittleFont(pRenderer,848,360,0,"ACTIVE AT START:",K_ABSOLUTE,1);
+    PrintLittleFont(848,360,0,"ACTIVE AT START:",K_ABSOLUTE,1);
     if (Ed.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_LEFT) {
-        PrintLittleFont(pRenderer,848 + 160,360,0,"LEFT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,360,0,"LEFT",K_ABSOLUTE,1);
     } else if (Ed.uConveyorbeltBlueState == EMERALD_CONVEYORBELT_RIGHT) {
-        PrintLittleFont(pRenderer,848 + 160,360,0,"RIGHT",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,360,0,"RIGHT",K_ABSOLUTE,1);
     } else {
-        PrintLittleFont(pRenderer,848 + 160,360,0,"NO",K_ABSOLUTE,1);
+        PrintLittleFont(848 + 160,360,0,"NO",K_ABSOLUTE,1);
         if (Ed.uConveyorbeltBlueDirection == EMERALD_CONVEYORBELT_TO_LEFT) {
-            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
+            PrintLittleFont(672,398,0,"NEXT DIRECTION:LEFT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,672,398,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
+            PrintLittleFont(672,398,0,"NEXT DIRECTION:RIGHT",K_ABSOLUTE,1);
         }
     }
     for (I = 0; (I < sizeof(uPositionsAndElements) / (3 * sizeof(uint32_t))) && (nErrorCode == 0); I++) {
@@ -2734,7 +2733,7 @@ int32_t EditorStateMachines(SDL_Renderer *pRenderer) {
         DestR.w = FONT_W * fScaleW;
         DestR.h = FONT_H * fScaleH;
         if (nErrorCode == 0) {
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 nErrorCode = -1;
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
             }
@@ -2899,12 +2898,12 @@ Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_TREASURECHESTS,
               wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration der
               Schatztruhen.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, InputStates.x
+Seiteneffekte: Ed.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t EditorStateTreasureChests(SDL_Renderer *pRenderer) {
+int32_t EditorStateTreasureChests(void) {
     int32_t nErrorCode;
     uint32_t uTextureIndex;
     uint32_t I,Q;
@@ -2989,25 +2988,25 @@ int32_t EditorStateTreasureChests(SDL_Renderer *pRenderer) {
     for (Q = 0; Q < EMERALD_MAX_TREASURECHESTS; Q++) {
         for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
             // linkes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
             Rect.x = 319 + Q * 64 - I;
             Rect.y = 191 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
-            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+            nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&Rect);
         }
     }
-    PrintLittleFont(pRenderer,10,328,0,"WARNING OF DANGEROUS CONTENT:",K_ABSOLUTE,1);
+    PrintLittleFont(10,328,0,"WARNING OF DANGEROUS CONTENT:",K_ABSOLUTE,1);
     // Quadrate für Schatztruhen zeichnen (Warnung)
     for (Q = 0; Q < EMERALD_MAX_TREASURECHESTS; Q++) {
         for (I = 0; (I < 4) && (nErrorCode == 0); I++) {
             // linkes Quadrat, selected Element
-            SDL_SetRenderDrawColor(pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+            SDL_SetRenderDrawColor(Video.pRenderer,g_PanelColorPatterns[I * 3 + 0],g_PanelColorPatterns[I * 3 + 1],g_PanelColorPatterns[I * 3 + 2], SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
             Rect.x = 319 + Q * 64 - I;
             Rect.y = 319 - I;
             Rect.w = FONT_W + 2 + I * 2;
             Rect.h = FONT_H + 2 + I * 2;
-            nErrorCode = SDL_RenderDrawRect(pRenderer,&Rect);
+            nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&Rect);
         }
     }
     // Elemente zeichnen
@@ -3018,7 +3017,7 @@ int32_t EditorStateTreasureChests(SDL_Renderer *pRenderer) {
         DestR.w = FONT_W;
         DestR.h = FONT_H;
         if (nErrorCode == 0) {
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 nErrorCode = -1;
                 SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
             }
@@ -3077,12 +3076,12 @@ Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_TIME_AND_SCORES
               wird diese Funktion ausgeführt. Sie ermöglicht die Konfiguration von
               Zeiten und Scores.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Ed.x, InputStates.x, g_Checkbox_QuicksaveAllowed
+Seiteneffekte: Ed.x, InputStates.x, g_Checkbox_QuicksaveAllowed, Video.x
 ------------------------------------------------------------------------------*/
-int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
+int32_t EditorStateTimeAndScores(void) {
     int32_t nErrorCode;
     int32_t nXposMW;                // X-Position, Message Window
     int32_t nYposMW;                // Y-Position, Message Window
@@ -3404,33 +3403,33 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
     // Rahmen und Füllung für Level-Title und Level Author zeichnen
     // Rechtecke in Farbe 20,200,20 zeichnen
     if (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_MESSAGE) {
-        if (ShowCheckboxes(pRenderer,100,true) != 0) {
+        if (ShowCheckboxes(100,true) != 0) {
             return -1;
         }
         Ed.bQuicksaveAllowed = g_Checkbox_QuicksaveAllowed.bActive;
-        SDL_SetRenderDrawColor(pRenderer,20,200,20, SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
+        SDL_SetRenderDrawColor(Video.pRenderer,20,200,20, SDL_ALPHA_OPAQUE);  // Farbe für Rechteck setzen
         DestR.x = 28;
         DestR.y = 840;
         DestR.w = (EMERALD_TITLE_LEN + 15) * FONT_LITTLE_W;
         DestR.h = FONT_LITTLE_H + 8;
-        SDL_RenderDrawRect(pRenderer,&DestR);
+        SDL_RenderDrawRect(Video.pRenderer,&DestR);
         DestR.x = 28;
         DestR.y = 904;
         DestR.w = (EMERALD_AUTHOR_LEN + 15) * FONT_LITTLE_W;
         DestR.h = FONT_LITTLE_H + 8;
-        nErrorCode = SDL_RenderDrawRect(pRenderer,&DestR);
+        nErrorCode = SDL_RenderDrawRect(Video.pRenderer,&DestR);
         // Senkrechte Linien hinter Doppelpunkt setzen
-        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,840,31 + 13 *FONT_LITTLE_W,840 + FONT_LITTLE_H + 6); // Level-Title
-        SDL_RenderDrawLine(pRenderer,31 + 13 * FONT_LITTLE_W,904,31 + 13 *FONT_LITTLE_W,904 + FONT_LITTLE_H + 6); // Level-Author
+        SDL_RenderDrawLine(Video.pRenderer,31 + 13 * FONT_LITTLE_W,840,31 + 13 *FONT_LITTLE_W,840 + FONT_LITTLE_H + 6); // Level-Title
+        SDL_RenderDrawLine(Video.pRenderer,31 + 13 * FONT_LITTLE_W,904,31 + 13 *FONT_LITTLE_W,904 + FONT_LITTLE_H + 6); // Level-Author
         // Untergründe für Title und Author (vor Doppelunkt) zeichnen
-        DrawBeam(pRenderer,29, 841, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
-        DrawBeam(pRenderer,29, 905, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(29, 841, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(29, 905, 13 * FONT_LITTLE_W + 2,FONT_LITTLE_H + 6, 0,0,255,255,K_ABSOLUTE); // Level-Title
         // Untergründe für Title und Author (nach Doppelunkt) zeichnen
-        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 841, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
-        DrawBeam(pRenderer,32 + 13 * FONT_LITTLE_W, 905, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(32 + 13 * FONT_LITTLE_W, 841, (EMERALD_TITLE_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
+        DrawBeam(32 + 13 * FONT_LITTLE_W, 905, (EMERALD_AUTHOR_LEN + 1) * FONT_LITTLE_W + 5,FONT_LITTLE_H + 6, 30,30,255,255,K_ABSOLUTE); // Level-Title
     }
     if (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_MESSAGE) {
-        nErrorCode = CreateMessageWindow(pRenderer,-1,-1,0,Ed.MessageEditor.szMessageEditorMem,&nXposMW,&nYposMW);
+        nErrorCode = CreateMessageWindow(-1,-1,0,Ed.MessageEditor.szMessageEditorMem,&nXposMW,&nYposMW);
         // Message 1 - 8 über Messagebox anzeigen
         if ((Ed.MessageEditor.nEditMessage >= 0) && (Ed.MessageEditor.nEditMessage < EMERALD_MAX_MESSAGES)) {
             uTextureIndex = GetTextureIndexByElement(EMERALD_MESSAGE_1 + Ed.MessageEditor.nEditMessage,0,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
@@ -3439,16 +3438,16 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             DestR.w = FONT_W;
             DestR.h = FONT_H;
             if (nErrorCode == 0) {
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                     nErrorCode = -1;
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 }
             }
         }
         if (Ed.MessageEditor.bInsert) {
-            PrintLittleFont(pRenderer,10,10,0,"MODE: INSERT",K_ABSOLUTE,1);
+            PrintLittleFont(10,10,0,"MODE: INSERT",K_ABSOLUTE,1);
         } else {
-            PrintLittleFont(pRenderer,10,10,0,"MODE: OVERWRITE",K_ABSOLUTE,1);
+            PrintLittleFont(10,10,0,"MODE: OVERWRITE",K_ABSOLUTE,1);
         }
         Ed.MessageEditor.uFrameCounter++;
         if (Ed.MessageEditor.uFrameCounter - Ed.MessageEditor.uLastToggleCursorFrame >= Ed.MessageEditor.uCursorFlashSpeedFrames) {
@@ -3623,185 +3622,185 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
         }
         // 1. Zeile
         // Emerald
-        PrintLittleFont(pRenderer,100,60,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,100,86,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(100,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(100,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreEmerald);
-        PrintLittleFont(pRenderer,100,73,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(100,73,0,szText,K_ABSOLUTE,1);
         // Rubin
-        PrintLittleFont(pRenderer,260,60,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,260,86,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(260,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(260,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreRuby);
-        PrintLittleFont(pRenderer,260,73,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(260,73,0,szText,K_ABSOLUTE,1);
         // Saphir
-        PrintLittleFont(pRenderer,420,60,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,420,86,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(420,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(420,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreSaphir);
-        PrintLittleFont(pRenderer,420,73,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(420,73,0,szText,K_ABSOLUTE,1);
         // Perle
-        PrintLittleFont(pRenderer,580,60,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,580,86,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(580,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(580,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScorePerl);
-        PrintLittleFont(pRenderer,580,73,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(580,73,0,szText,K_ABSOLUTE,1);
         // Kristal
-        PrintLittleFont(pRenderer,740,60,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,740,86,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(740,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(740,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreCrystal);
-        PrintLittleFont(pRenderer,740,73,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(740,73,0,szText,K_ABSOLUTE,1);
         // Nuss
-        PrintLittleFont(pRenderer,900,60,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,900,86,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(900,60,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(900,86,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreNutCracking);
-        PrintLittleFont(pRenderer,900,73,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(900,73,0,szText,K_ABSOLUTE,1);
         // 2. Zeile
         // Nachricht
-        PrintLittleFont(pRenderer,100,124,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,100,150,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(100,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(100,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreMessage);
-        PrintLittleFont(pRenderer,100,137,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(100,137,0,szText,K_ABSOLUTE,1);
         // Schlüssel
-        PrintLittleFont(pRenderer,260,124,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,260,150,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(260,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(260,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreKey);
-        PrintLittleFont(pRenderer,260,137,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(260,137,0,szText,K_ABSOLUTE,1);
         // Dynamit
-        PrintLittleFont(pRenderer,420,124,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,420,150,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(420,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(420,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreDynamite);
-        PrintLittleFont(pRenderer,420,137,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(420,137,0,szText,K_ABSOLUTE,1);
         // Hammer
-        PrintLittleFont(pRenderer,580,124,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,580,150,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(580,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(580,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreHammer);
-        PrintLittleFont(pRenderer,580,137,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(580,137,0,szText,K_ABSOLUTE,1);
         // Time-Coin
-        PrintLittleFont(pRenderer,740,124,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,740,150,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(740,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(740,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreTimeCoin);
-        PrintLittleFont(pRenderer,740,137,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(740,137,0,szText,K_ABSOLUTE,1);
         // Shield-Coin
-        PrintLittleFont(pRenderer,900,124,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,900,150,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(900,124,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(900,150,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreShieldCoin);
-        PrintLittleFont(pRenderer,900,137,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(900,137,0,szText,K_ABSOLUTE,1);
         // 3. Zeile
-        PrintLittleFont(pRenderer,100,188,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,100,214,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(100,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(100,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningSlime);
-        PrintLittleFont(pRenderer,100,201,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(100,201,0,szText,K_ABSOLUTE,1);
         // Stoning Beetle
-        PrintLittleFont(pRenderer,260,188,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,260,214,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(260,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(260,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningBeetle);
-        PrintLittleFont(pRenderer,260,201,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(260,201,0,szText,K_ABSOLUTE,1);
         // Stoning Mine
-        PrintLittleFont(pRenderer,420,188,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,420,214,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(420,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(420,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningMine);
-        PrintLittleFont(pRenderer,420,201,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(420,201,0,szText,K_ABSOLUTE,1);
         // Stoning Alien
-        PrintLittleFont(pRenderer,580,188,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,580,214,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(580,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(580,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningAlien);
-        PrintLittleFont(pRenderer,580,201,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(580,201,0,szText,K_ABSOLUTE,1);
         // Stoning Yam
-        PrintLittleFont(pRenderer,740,188,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,740,214,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(740,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(740,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreStoningYam);
-        PrintLittleFont(pRenderer,740,201,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(740,201,0,szText,K_ABSOLUTE,1);
         // Open Treasure chest
-        PrintLittleFont(pRenderer,900,188,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,900,214,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(900,188,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(900,214,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uScoreTreasureChest);
-        PrintLittleFont(pRenderer,900,201,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(900,201,0,szText,K_ABSOLUTE,1);
         // 4. Zeile
         // Time to Play
         if ((Ed.uTimeToPlay == 0) && (((Ed.uFrameCounter >> 4) & 0x01) == 0)) {
-            PrintLittleFont(pRenderer,64,300,0,"INFINITE",K_ABSOLUTE,1);
+            PrintLittleFont(64,300,0,"INFINITE",K_ABSOLUTE,1);
         }
-        PrintLittleFont(pRenderer,100,316,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,100,342,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(100,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(100,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeToPlay);
-        PrintLittleFont(pRenderer,100,329,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(100,329,0,szText,K_ABSOLUTE,1);
         // Wheel rotation time
-        PrintLittleFont(pRenderer,260,316,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,260,342,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(260,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(260,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeWheelRotation);
-        PrintLittleFont(pRenderer,260,329,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(260,329,0,szText,K_ABSOLUTE,1);
         // Magic wall time
-        PrintLittleFont(pRenderer,420,316,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,420,342,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(420,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(420,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeMagicWall);
-        PrintLittleFont(pRenderer,420,329,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(420,329,0,szText,K_ABSOLUTE,1);
         // Light time
-        PrintLittleFont(pRenderer,580,316,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,580,342,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(580,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(580,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeLight);
-        PrintLittleFont(pRenderer,580,329,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(580,329,0,szText,K_ABSOLUTE,1);
         // Time door time
-        PrintLittleFont(pRenderer,740,316,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,740,342,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(740,316,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(740,342,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeDoorTime);
-        PrintLittleFont(pRenderer,740,329,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(740,329,0,szText,K_ABSOLUTE,1);
         // 5. Zeile
         // Additional Time for time coin
-        PrintLittleFont(pRenderer,100,380,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,100,406,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(100,380,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(100,406,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uAdditonalTimeCoinTime);
-        PrintLittleFont(pRenderer,100,393,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(100,393,0,szText,K_ABSOLUTE,1);
         // Shield coint [fields]
-        PrintLittleFont(pRenderer,260,380,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,260,406,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(260,380,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(260,406,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uShieldCoinTime);
-        PrintLittleFont(pRenderer,260,393,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(260,393,0,szText,K_ABSOLUTE,1);
         // Remaining Time factor
-        nErrorCode = PrintLittleFont(pRenderer,350,393,0,"REMAINING TIME FACTOR:",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,580,380,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,580,406,0,"----",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(350,393,0,"REMAINING TIME FACTOR:",K_ABSOLUTE,1);
+        PrintLittleFont(580,380,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(580,406,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uTimeScoreFactor);
-        PrintLittleFont(pRenderer,580,393,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(580,393,0,szText,K_ABSOLUTE,1);
         // 6. Zeile
         // Dynamite Count
-        PrintLittleFont(pRenderer,100,508,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,100,534,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(100,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(100,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uDynamiteCount);
-        PrintLittleFont(pRenderer,100,521,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(100,521,0,szText,K_ABSOLUTE,1);
         // Hammer Count
-        PrintLittleFont(pRenderer,260,508,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,260,534,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(260,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(260,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uHammerCount);
-        PrintLittleFont(pRenderer,260,521,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(260,521,0,szText,K_ABSOLUTE,1);
         // White key Count
-        PrintLittleFont(pRenderer,420,508,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,420,534,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(420,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(420,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uWhiteKeyCount);
-        PrintLittleFont(pRenderer,420,521,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(420,521,0,szText,K_ABSOLUTE,1);
         // Green Cheese spread speed
-        PrintLittleFont(pRenderer,580,508,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,580,534,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(580,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(580,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uGreenCheeseSpreadSpeed);
-        PrintLittleFont(pRenderer,580,521,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(580,521,0,szText,K_ABSOLUTE,1);
         // Yellow Cheese spread speed
-        PrintLittleFont(pRenderer,740,508,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,740,534,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(740,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(740,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uYellowCheeseSpreadSpeed);
-        PrintLittleFont(pRenderer,740,521,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(740,521,0,szText,K_ABSOLUTE,1);
         // Grass spread speed
-        PrintLittleFont(pRenderer,900,508,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,900,534,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(900,508,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(900,534,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uGrassSpreadSpeed);
-        PrintLittleFont(pRenderer,900,521,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(900,521,0,szText,K_ABSOLUTE,1);
         // 7. Zeile
         // Emeralds to collect
-        PrintLittleFont(pRenderer,260,636,0,"++++",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,260,662,0,"----",K_ABSOLUTE,1);
+        PrintLittleFont(260,636,0,"++++",K_ABSOLUTE,1);
+        PrintLittleFont(260,662,0,"----",K_ABSOLUTE,1);
         sprintf(szText,"%04d",Ed.uEmeraldsToCollect);
-        PrintLittleFont(pRenderer,260,649,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(260,649,0,szText,K_ABSOLUTE,1);
         // Level-Title
-        PrintLittleFont(pRenderer,32,844,0,"LEVEL-TITLE :",K_ABSOLUTE,1);
-        nErrorCode = PrintLittleFont(pRenderer,164,844,0,Ed.szLevelTitle,K_ABSOLUTE,1);
+        PrintLittleFont(32,844,0,"LEVEL-TITLE :",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(164,844,0,Ed.szLevelTitle,K_ABSOLUTE,1);
         // Level-Author
-        PrintLittleFont(pRenderer,32,908,0,"LEVEL-AUTHOR:",K_ABSOLUTE,1);
-        nErrorCode = PrintLittleFont(pRenderer,164,908,0,Ed.szLevelAuthor,K_ABSOLUTE,1);
+        PrintLittleFont(32,908,0,"LEVEL-AUTHOR:",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(164,908,0,Ed.szLevelAuthor,K_ABSOLUTE,1);
         for (I = 0; (I < sizeof(uPositionsAndElements) / (sizeof(uint32_t) * 3)) && (nErrorCode == 0); I++) {
             uTextureIndex = GetTextureIndexByElement(uPositionsAndElements[I * 3 + 2],Ed.uFrameCounter % 16,&fAngle,false,EMERALD_CONVEYORBELT_OFF);
             DestR.x = uPositionsAndElements[I * 3 + 0];
@@ -3809,7 +3808,7 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             DestR.w = FONT_W;
             DestR.h = FONT_H;
             if (nErrorCode == 0) {
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                     nErrorCode = -1;
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());
                 }
@@ -3883,7 +3882,7 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 szCursor[0] = 102;  // Cursor an
             }
             szCursor[1] = 0;
-            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),844,0,szCursor,K_ABSOLUTE,1);
+            PrintLittleFont(32 + 10 * (13 + uCursorPos),844,0,szCursor,K_ABSOLUTE,1);
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                if (uCursorPos < EMERALD_TITLE_LEN) {
@@ -3907,7 +3906,7 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
                 szCursor[0] = 102;  // Cursor an
             }
             szCursor[1] = 0;
-            PrintLittleFont(pRenderer,32 + 10 * (13 + uCursorPos),908,0,szCursor,K_ABSOLUTE,1);
+            PrintLittleFont(32 + 10 * (13 + uCursorPos),908,0,szCursor,K_ABSOLUTE,1);
             uKey = FilterBigFontKey(GetKey());
             if (uKey != 0) {
                 if (uCursorPos < EMERALD_AUTHOR_LEN) {
@@ -3925,7 +3924,7 @@ int32_t EditorStateTimeAndScores(SDL_Renderer *pRenderer) {
             }
         }
         // Level-Dimension
-        nErrorCode = PrintLittleFont(pRenderer,744,680,0,"LEVEL DIMENSION",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(744,680,0,"LEVEL DIMENSION",K_ABSOLUTE,1);
     }
     return nErrorCode;
 }
@@ -4243,12 +4242,12 @@ Beschreibung: Wenn sich der Leveleditor in Menustate = MENUSTATE_CONFIRM_NEWLEVE
               befindet, wird diese Funktion ausgeführt. Sie ermöglicht die Bestätigigung oder
               Ablehnung der neuen Level-Dimension.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Ed.x, MainMenu.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
+int32_t EditorStateConfirmNewLevelDimension(void) {
     int32_t nErrorCode;
     char szText[256];
 
@@ -4316,17 +4315,17 @@ int32_t EditorStateConfirmNewLevelDimension(SDL_Renderer *pRenderer) {
     MainMenu.pMenuScreen[14 * MainMenu.uXdim + 26] = EMERALD_STEEL_STRIPE_BOTTOM;
     MainMenu.pMenuScreen[14 * MainMenu.uXdim + 27] = EMERALD_STEEL_STRIPE_BOTTOM;
     MainMenu.pMenuScreen[14 * MainMenu.uXdim + 28] = EMERALD_STEEL_STRIPE_RIGHT_BOTTOM;
-    nErrorCode = RenderMenuElements(pRenderer);
+    nErrorCode = RenderMenuElements();
     if (nErrorCode == 0) {
         // 20 Pixel Zeilenabstand für LittleFont
-        nErrorCode = PrintLittleFont(pRenderer,364 + Video.uXoffs,234,0,"LEVEL DIMENSION WAS CHANGED FROM",K_ABSOLUTE,1);
+        nErrorCode = PrintLittleFont(364 + Video.uXoffs,234,0,"LEVEL DIMENSION WAS CHANGED FROM",K_ABSOLUTE,1);
         sprintf(szText,"%d X %d  TO  %d X %d.",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension,Ed.uTmpLevel_X_Dimension,Ed.uTmpLevel_Y_Dimension);
-        PrintLittleFont(pRenderer,364 + Video.uXoffs,254,0,szText,K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + Video.uXoffs,294,0,"COPY EXISTING LEVEL DATA FROM UPPER LEFT TO",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + Video.uXoffs,314,0,"NEW LEVEL (AS MUCH AS POSSIBLE)",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + Video.uXoffs,354,0,"CLEAR NEW LEVEL",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + Video.uXoffs,394,0,"DON'T CHANGE LEVEL DIMENSION AND",K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,404 + Video.uXoffs,414,0,"KEEP EXISTING LEVEL DATA",K_ABSOLUTE,1);
+        PrintLittleFont(364 + Video.uXoffs,254,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(404 + Video.uXoffs,294,0,"COPY EXISTING LEVEL DATA FROM UPPER LEFT TO",K_ABSOLUTE,1);
+        PrintLittleFont(404 + Video.uXoffs,314,0,"NEW LEVEL (AS MUCH AS POSSIBLE)",K_ABSOLUTE,1);
+        PrintLittleFont(404 + Video.uXoffs,354,0,"CLEAR NEW LEVEL",K_ABSOLUTE,1);
+        PrintLittleFont(404 + Video.uXoffs,394,0,"DON'T CHANGE LEVEL DIMENSION AND",K_ABSOLUTE,1);
+        PrintLittleFont(404 + Video.uXoffs,414,0,"KEEP EXISTING LEVEL DATA",K_ABSOLUTE,1);
     }
     return nErrorCode;
 }
@@ -4677,13 +4676,12 @@ Beschreibung: Hauptfunktion (Einsprungsfunktion) für den Level-Editor.
               Diese Funktion alloziert Speicher über die Funktion GetLevelXmlFile(),
               der wieder freigegeben werdn muss.
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
-               nLevel, int32_t, Levelnummer innerhalb einer gewählten Levelgruppe, -1 = Level wird nicht verwendet
+      Eingang: nLevel, int32_t, Levelnummer innerhalb einer gewählten Levelgruppe, -1 = Level wird nicht verwendet
       Ausgang: -
 Rückgabewert:  DYNSTRING , XML-Daten des Levels, NULL = Fehler oder Quit
 Seiteneffekte: Ed.x, InputStates.x, Config.x, ge_uXoffs, ge_uYoffs, g_Checkbox_QuicksaveAllowed
 ------------------------------------------------------------------------------*/
-DYNSTRING *Editor(SDL_Renderer *pRenderer, int32_t nLevel) {
+DYNSTRING *Editor(int32_t nLevel) {
     uint32_t uMouseElement;             // Levelelement, auf das Mauspfeil zeigt
     uint32_t I;
     DYNSTRING *XML = NULL;
@@ -4719,7 +4717,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int32_t nLevel) {
             Ed.uSelectedElementRight[Ed.uMenuState] = uMouseElement;
         }
         if ((Ed.uMenuState == MENUSTATE_LEVEL_STD) || (Ed.uMenuState == MENUSTATE_LEVEL_TEXT))  {
-            Ed.bEditorRun = (EditorStateLevel(pRenderer) == 0);
+            Ed.bEditorRun = (EditorStateLevel() == 0);
             if (GetKey() == 'Z') {  // Zoom toggeln
                 do {
                     UpdateInputStates();
@@ -4731,23 +4729,23 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int32_t nLevel) {
                 CalcEditorViewArea();
             }
         } else if ((Ed.uMenuState == MENUSTATE_YAMS) || (Ed.uMenuState == MENUSTATE_YAMS_TEXT)) {
-            Ed.bEditorRun = (EditorStateYams(pRenderer) == 0);
+            Ed.bEditorRun = (EditorStateYams() == 0);
         } else if (Ed.uMenuState == MENUSTATE_MACHINES) {
-            Ed.bEditorRun = (EditorStateMachines(pRenderer) == 0);
+            Ed.bEditorRun = (EditorStateMachines() == 0);
         } else if ((Ed.uMenuState == MENUSTATE_TREASURECHESTS) || (Ed.uMenuState == MENUSTATE_TREASURECHESTS_TEXT)) {
-            Ed.bEditorRun = (EditorStateTreasureChests(pRenderer) == 0);
+            Ed.bEditorRun = (EditorStateTreasureChests() == 0);
         } else if ((Ed.uMenuState == MENUSTATE_TIME_AND_SCORES) || (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_MESSAGE) ||
                    (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_EDIT_TITLE) || (Ed.uMenuState == MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR)) {
-            Ed.bEditorRun = (EditorStateTimeAndScores(pRenderer) == 0);
+            Ed.bEditorRun = (EditorStateTimeAndScores() == 0);
         } else if (Ed.uMenuState == MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION) {
-            Ed.bEditorRun = (EditorStateConfirmNewLevelDimension(pRenderer) == 0);
+            Ed.bEditorRun = (EditorStateConfirmNewLevelDimension() == 0);
         }
         if ((Ed.uMenuState != MENUSTATE_CONFIRM_NEWLEVEL_DIMENSION) && (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_MESSAGE) && (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES) &&
             (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_EDIT_TITLE) && (Ed.uMenuState != MENUSTATE_TIME_AND_SCORES_EDIT_AUTHOR)) {
-            DrawEditorPanel(pRenderer);
-            PrintLittleFont(pRenderer,0,Config.uResY - FONT_LITTLE_H,0,ge_szElementNames[uMouseElement],K_ABSOLUTE,1);// Element unten links anzeigen
+            DrawEditorPanel();
+            PrintLittleFont(0,Config.uResY - FONT_LITTLE_H,0,ge_szElementNames[uMouseElement],K_ABSOLUTE,1);// Element unten links anzeigen
         }
-        ShowButtons(pRenderer,K_ABSOLUTE);
+        ShowButtons(K_ABSOLUTE);
         if (IsButtonPressed(BUTTONLABEL_EDITOR_SAVE) && (!Ed.bFoundError)) {
             XML = GetLevelXmlFromEditor();
             Ed.bEditorRun = false;
@@ -4906,7 +4904,7 @@ DYNSTRING *Editor(SDL_Renderer *pRenderer, int32_t nLevel) {
             SetButtonPosition(BUTTONLABEL_EDITOR_TEXT,Config.uResX - 48,Config.uResY - 100);
             SetPanelElements(Ed.uMenuState);
         }
-        RenderPresentAndClear(pRenderer);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         Ed.uFrameCounter++;
         Playfield.uFrameCounter++;      // Einige Elemente benötigen den Playfield-Counter in der Funktion GetTextureIndexByElement();
         SDL_Delay(5);
@@ -5174,12 +5172,12 @@ Beschreibung: Erledigt die Auswahl eines Levels aus dem Pre-Editor-Menü und
               blendet die Balken für die Auswahl eines Levels ein, wenn sich
               der Mauspfeil über den Namen einer Gruppe befindet.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
+int32_t MenuSelectLevelname(uint32_t *puBeamPosition) {
     int32_t nErrorCode = -1;
     uint32_t uBeamPosition;
 
@@ -5188,7 +5186,7 @@ int32_t MenuSelectLevelname(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
         *puBeamPosition = 0xFFFFFFFF;
         uBeamPosition = GetLevelnameBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
-            nErrorCode = DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
+            nErrorCode = DrawBeam(FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
                 *puBeamPosition = uBeamPosition;
             }
@@ -5205,12 +5203,12 @@ Beschreibung: Erledigt die Auswahl einer Datei aus dem Import-Level-Menü
               und blendet die Balken für die Auswahl einer Datei ein, wenn sich
               der Mauspfeil über den Namen einer Datei befindet.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
       Ausgang: puBeamPosition, uint32_t *, Zeiger auf Beam-Position
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
 Seiteneffekte: MainMenu.x, InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) {
+int32_t ImportMenuSelectFile(uint32_t *puBeamPosition) {
     int32_t nErrorCode = -1;
     uint32_t uBeamPosition;
 
@@ -5219,7 +5217,7 @@ int32_t ImportMenuSelectFile(SDL_Renderer *pRenderer, uint32_t *puBeamPosition) 
         *puBeamPosition = 0xFFFFFFFF;
         uBeamPosition = GetImportFilesBeamPosition();
         if (uBeamPosition != 0xFFFFFFFF) {
-            nErrorCode = DrawBeam(pRenderer,FONT_W + Video.uXoffs,35 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
+            nErrorCode = DrawBeam(FONT_W + Video.uXoffs,35 + (FONT_LITTLE_H + 6) * uBeamPosition, FONT_W * 38, FONT_LITTLE_H + 6, 0x20,0x20,0xFF,0x60,K_ABSOLUTE);
             if ((InputStates.bLeftMouseButton) && (nErrorCode == 0)) {
                 *puBeamPosition = uBeamPosition;
             }
@@ -5423,13 +5421,13 @@ Beschreibung: Vor-Menü für den Leveleditor. Hier können die vorhandenen Level
               der SelectedLevelgroup angezeigt und ausgewählt werden.
 
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: InputStates.x, SelectedLevelgroup, MainMenu.x, Playfield.x
                ImportLevel.x, ManKey.x, Clipboard.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
+int32_t PreEditorMenu(void) {
     uint32_t I;
     int32_t nRet;
     int32_t nSelectedLevel = -1;
@@ -5470,7 +5468,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
     if (SetMusic(4) != 0) {
         return -1;
     }
-    nRet = LevelgroupOperaton_AskPassword(pRenderer);
+    nRet = LevelgroupOperaton_AskPassword();
     if (nRet == -1) {   // Fehler?
         return -1;
     } else if (nRet == -2) {   // Passwort falsch?
@@ -5492,12 +5490,12 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
         // Hervorhebung für ausgewähltes Level: Balken nicht anzeigen, wenn abgedimmt (PrepareExit) wird.
         if ((nSelectedBeamPosition >= 0) && (nSelectedBeamPosition < MainMenu.uMaxLevelTitlesInList) && (!bPrepareExit)) {
             if (nMoveState == 0) {
-                DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0x20,0x20,0x60,K_ABSOLUTE);
+                DrawBeam(FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0x20,0x20,0x60,K_ABSOLUTE);
             } else {
                 if (((Playfield.uFrameCounter >> 4) & 0x01) == 0) {
-                    DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0xF0,0x20,0x60,K_ABSOLUTE);
+                    DrawBeam(FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0xF0,0xF0,0x20,0x60,K_ABSOLUTE);
                 } else {
-                    DrawBeam(pRenderer,FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0xF0,0x20,0x60,K_ABSOLUTE);
+                    DrawBeam(FONT_W + Video.uXoffs,107 + (FONT_LITTLE_H + 6) * nSelectedBeamPosition, FONT_W * 15, FONT_LITTLE_H + 6, 0x20,0xF0,0x20,0x60,K_ABSOLUTE);
                 }
             }
         }
@@ -5522,7 +5520,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
                     // SDL_Log("%s:   create levelgroup",__FUNCTION__);
-                    DimmMainMenu(pRenderer,false);
+                    DimmMainMenu(false);
                     LevelgroupOperaton_NewGroup();
                     nColorDimm = 0;
                     uMusicVolume = 0;
@@ -5535,8 +5533,8 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
                     // SDL_Log("%s:   rename levelgroup",__FUNCTION__);
-                    DimmMainMenu(pRenderer,false);
-                    LevelgroupOperaton_RenameGroupname(pRenderer);
+                    DimmMainMenu(false);
+                    LevelgroupOperaton_RenameGroupname();
                     PreparePreEditormenu();
                     nColorDimm = 0;
                     uMusicVolume = 0;
@@ -5548,8 +5546,8 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
                     // SDL_Log("%s:   set/clr password",__FUNCTION__);
-                    DimmMainMenu(pRenderer,false);
-                    nErrorCode = LevelgroupOperaton_Password(pRenderer);
+                    DimmMainMenu(false);
+                    nErrorCode = LevelgroupOperaton_Password();
                     PreparePreEditormenu();
                     nColorDimm = 0;
                     uMusicVolume = 0;
@@ -5561,8 +5559,8 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveSrcLevel = -1;
                     nMoveDestLevel = -1;
                     // SDL_Log("%s:   test level",__FUNCTION__);
-                    DimmMainMenu(pRenderer,false);
-                    nErrorCode = RunGame(pRenderer,nSelectedLevel);
+                    DimmMainMenu(false);
+                    nErrorCode = RunGame(nSelectedLevel);
                     PreparePreEditormenu();
                     nColorDimm = 0;
                     uMusicVolume = 0;
@@ -5573,10 +5571,10 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveDestLevel = -1;
                     // SDL_Log("%s:   edit level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
-                    DimmMainMenu(pRenderer,false);
+                    DimmMainMenu(false);
                     // Level-Listenpositrion retten, da diese in LevelgroupOperaton_Edit() initialisiert wird
                     memcpy(MainMenu.puLevelTitleListCopy,MainMenu.puLevelTitleList,MainMenu.uMaxLevelTitlesInList * sizeof(uint16_t));
-                    XML = Editor(pRenderer,nSelectedLevel);
+                    XML = Editor(nSelectedLevel);
                     if (XML != NULL) {  // Hat Editor XML-Leveldaten bereitgestellt?
                         LevelgroupOperaton_Edit(nSelectedLevel,XML);    // ruft InitLists() -> InitLevelTitleList() auf !
                         DynStringFree(XML);
@@ -5601,7 +5599,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveDestLevel = -1;
                     // SDL_Log("%s:   copy level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
-                    DimmMainMenu(pRenderer,false);
+                    DimmMainMenu(false);
                     if (Clipboard.pLevelXml != NULL) {
                         nErrorCode = LevelgroupOperaton_CopyClipboard(nSelectedLevel);
                     } else {
@@ -5621,7 +5619,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveDestLevel = -1;
                     // SDL_Log("%s:   delete level",__FUNCTION__);
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
-                    DimmMainMenu(pRenderer,false);
+                    DimmMainMenu(false);
                     nErrorCode = LevelgroupOperaton_Delete(nSelectedLevel);
                     InitLevelTitleList();
                     SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,true);
@@ -5645,9 +5643,9 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
                     nMoveDestLevel = -1;
                     nSelectedBeamPosition = -1;
                     nSelectedLevel = -1;
-                    DimmMainMenu(pRenderer,false);
+                    DimmMainMenu(false);
                     // SDL_Log("%s:   import diamond caves 3 level",__FUNCTION__);
-                    nErrorCode = LevelgroupOperaton_LevelImport(pRenderer);
+                    nErrorCode = LevelgroupOperaton_LevelImport();
                     InitLevelTitleList();
                     PreparePreEditormenu();
                     nColorDimm = 0;
@@ -5674,11 +5672,11 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
         for (I = 0; I < MainMenu.uMaxLevelTitlesInList; I++) {
             if (MainMenu.puLevelTitleList[I] != 0xFFFF) {
                 sprintf(szText,"%03u",MainMenu.puLevelTitleList[I]);
-                PrintLittleFont(pRenderer,62 + Video.uXoffs,110 + I * 20,0,szText,K_ABSOLUTE,1);
-                PrintLittleFont(pRenderer,176 + Video.uXoffs,110 + I * 20,0,SelectedLevelgroup.szLevelTitle[MainMenu.puLevelTitleList[I]],K_ABSOLUTE,1);
+                PrintLittleFont(62 + Video.uXoffs,110 + I * 20,0,szText,K_ABSOLUTE,1);
+                PrintLittleFont(176 + Video.uXoffs,110 + I * 20,0,SelectedLevelgroup.szLevelTitle[MainMenu.puLevelTitleList[I]],K_ABSOLUTE,1);
             }
         }
-        nErrorCode = MenuSelectLevelname(pRenderer,&uBeamPosition);
+        nErrorCode = MenuSelectLevelname(&uBeamPosition);
         // Dieser Block macht Doppel-Click-Erkennung /////////////////////
         if (uBeamPosition != 0xFFFFFFFF) {
             if (uDoubleClickState == 0) {
@@ -5708,7 +5706,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
             if (nMoveState == 1) {
                 nMoveDestLevel = nSelectedLevel;
                 SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,false);
-                DimmMainMenu(pRenderer,false);
+                DimmMainMenu(false);
                 nErrorCode = LevelgroupOperaton_Move(nMoveSrcLevel,nMoveDestLevel);
                 InitLevelTitleList();
                 SetButtonActivity(BUTTONLABEL_EXIT_HIGHSCORES,true);
@@ -5749,7 +5747,7 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
         }
         PlayMusic(false);
         if (nErrorCode == 0) {
-            nErrorCode = RenderMenuElements(pRenderer);
+            nErrorCode = RenderMenuElements();
         }
 
         if (bWarnDefaultLevelGroup) {
@@ -5761,21 +5759,20 @@ int32_t PreEditorMenu(SDL_Renderer *pRenderer) {
             if ((Playfield.uFrameCounter % 10) == 0) {
                 bColorToggle = !bColorToggle;
             }
-            PrintLittleFont(pRenderer,100 + Video.uXoffs,5,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_ABSOLUTE,1.5);
+            PrintLittleFont(100 + Video.uXoffs,5,uFontColor,"WARNING: THE DEFAULT LEVELGROUP WILL BE OVERWRITTEN NEXT PROGRAM START !",K_ABSOLUTE,1.5);
         }
         if (Clipboard.pLevelXml != NULL) {
             strcpy(szText,Clipboard.szLevelTitle);
         } else {
             strcpy(szText,"CLIPBOARD IS EMPTY");
         }
-        PrintLittleFont(pRenderer,176 + Video.uXoffs,MainMenu.uYdim * FONT_H - 26,0,szText,K_ABSOLUTE,1);
-        PrintLittleFont(pRenderer,177 + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,3,szText,K_ABSOLUTE,1);
+        PrintLittleFont(176 + Video.uXoffs,MainMenu.uYdim * FONT_H - 26,0,szText,K_ABSOLUTE,1);
+        PrintLittleFont(177 + Video.uXoffs,MainMenu.uYdim * FONT_H - 25,3,szText,K_ABSOLUTE,1);
         if ((IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES)) ||  ((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || InputStates.bQuit)) {
             bPrepareExit = true;
         }
-        ShowButtons(pRenderer,K_ABSOLUTE);
-        RenderPresentAndClear(pRenderer);
-        SDL_Delay(5);
+        ShowButtons(K_ABSOLUTE);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         Playfield.uFrameCounter++;
     } while ((!bExit) && (nErrorCode == 0));
 

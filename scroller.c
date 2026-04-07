@@ -99,13 +99,13 @@ Name:           DoScroller
 ------------------------------------------------------------------------------
 Beschreibung: Führt den entsprechenden Scroller aus, der in der Struktur pScroller hinterlegt wurde.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
+      Eingang: -
                pScroller, SCROLLER *, Zeiger auf Scroller-Struktur
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-int32_t DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
+int32_t DoScroller(SCROLLER *pScroller) {
     uint8_t newchar;
     uint32_t I;
     int32_t nErrorCode;
@@ -148,8 +148,7 @@ int32_t DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller) {
             fRotation = 0;
         }
         uTextureIndex = GetTextureIndexByElement(GetFontElementByChar(pScroller->puBuffer[I],EMERALD_FONT_BLUE),0,NULL,false,EMERALD_CONVEYORBELT_OFF);
-        nErrorCode = CopyTexture(pRenderer,
-                                 uTextureIndex,        // TextureIndex
+        nErrorCode = CopyTexture(uTextureIndex,        // TextureIndex
                                  pScroller->uXStart + I * FONT_W - pScroller->uScrolledPixel,        // X-pos
                                  pScroller->nYpos + sin(pScroller->pfAngles[I]) * pScroller->fYamplitude,   // Y-pos
                                  FONT_W,                                        // Texture Width

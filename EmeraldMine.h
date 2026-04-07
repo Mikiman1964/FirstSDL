@@ -19,7 +19,7 @@
 
 #define PANEL_H                                     32            // Spiel-Anzeige (Time, Score usw.)
 
-#define EMERALD_VERSION                             "01.14"       // Version
+#define EMERALD_VERSION                             "01.15"       // Version
 
 #define EMERALD_VERSION_LEN                         5             // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                           32            // Maximale Titellänge
@@ -27,6 +27,9 @@
 #define EMERALD_MD5_STRING_LEN                      32            // MD5-Stringlänge
 #define EMERALD_MAX_YAM_EXPLOSIONS                  100           // Maximale Anzahl an verschiedenen YAM-Explosionen
 
+#define EMERALD_MIN_GAMESPEED                       4             // Kürzeste Wartezeit -> schnellste Geschwindigkeit
+#define EMERALD_MAX_GAMESPEED                       30            // Längste Wartezeit -> langsamste Geschwindigkeit
+#define EMERALD_DEFAULT_GAMESPEED                   14            // Default-Wartezeit in ms nach jedem Bild, wenn V-SYNC nicht aktiv
 #define GAMESPEED_NORMAL                            0             // 2 Pixel / Frame
 #define GAMESPEED_FAST                              1             // 4 Pixel / Frame
 
@@ -932,8 +935,8 @@ void SetElementToNextPosition(uint32_t I,uint32_t uStatusAnimation, uint32_t uNe
 uint32_t ControlGame(uint32_t uDirection);
 uint32_t GetTextureIndexByElementForAcidPool(uint16_t uElement,int32_t nAnimationCount, float *pfAngle);
 void ScrollAndCenterLevel(uint32_t uManDirection);
-int32_t Menu(SDL_Renderer *pRenderer);
-int32_t RunGame(SDL_Renderer *pRenderer, uint32_t uLevel);
+int32_t Menu(void);
+int32_t RunGame(uint32_t uLevel);
 void InitRollUnderground(void);
 uint8_t GetFreeRollDirections(uint32_t I);
 uint32_t GetTextureIndexByShrink(uint32_t uShrinkAnimation);

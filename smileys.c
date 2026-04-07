@@ -12,6 +12,7 @@ bool g_bT;  // Für rechts/links-Drall
 
 
 extern CONFIG Config;
+extern VIDEO Video;
 
 /*----------------------------------------------------------------------------
 Name:           InitSmileys
@@ -81,9 +82,10 @@ Beschreibung: Bewegt alle Smileys.
 Parameter
       Eingang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Smileys.x, g_bT, Config.x, g_uNextWaitTime, g_uLastSmileyRotation
+Seiteneffekte: Smileys.x, g_bT, Config.x, g_uNextWaitTime, g_uLastSmileyRotation,
+               Video.x
 ------------------------------------------------------------------------------*/
-int32_t MoveSmileys(SDL_Renderer *pRenderer) {
+int32_t MoveSmileys(void) {
     int32_t nErrorCode;
     uint32_t I;
     SDL_Rect DestR;                     // Zum Kopieren in den Renderer
@@ -100,7 +102,7 @@ int32_t MoveSmileys(SDL_Renderer *pRenderer) {
             DestR.y = Smileys[I].fYpos;
             DestR.w = 64 * Smileys[I].fSize;
             DestR.h = DestR.w;
-            if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(TEX_SMILEY_128),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
+            if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(TEX_SMILEY_128),NULL,&DestR,fAngle,NULL, SDL_FLIP_NONE) != 0) {
                 SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                 nErrorCode = -1;
             }

@@ -23,6 +23,7 @@ LEVELFILESLIST ImportLevelFileList[IMPORT_MAX_FILES_IN_LIST];
 extern ED Ed;
 extern INPUTSTATES InputStates;
 extern MAINMENU MainMenu;
+extern VIDEO Video;
 
 // Aus Rock'n'Diamonds
 static const unsigned char map_v4[256] =
@@ -1340,13 +1341,14 @@ Beschreibung: Konvertiert ein Emerald Mine (Kingsoft)-Level
 Parameter
       Eingang: pszFilename, char *, Dateiname der Bitmap
       Ausgang: -
+      Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
 int32_t LevelConverterFromEmeraldMineKingsoft(char *pszFilename) {
     uint8_t *pFileData;
     uint32_t uFileLen;
-    int nErrorCode = -1;
+    int32_t nErrorCode = -1;
     uint16_t uElement;
     uint32_t I,Y;
     uint8_t uManX, uManY;
@@ -1485,7 +1487,7 @@ void EncryptEmeraldMineKingsoftLeveldata(uint8_t *pData) {
             }
         }
     }
-    // Fix Wheel, unsauberen Code aus Rock'n'Diamonds durch Copilot aufarbeiten lassen
+    // Fix Wheel, Code aus Rock'n'Diamonds, durch Copilot aufarbeiten lassen
     // Suche nach dem ersten Wheel
     for (I = 0; I < 2048; I++) {
         if (pData[I] == 0x28) {
@@ -1570,6 +1572,18 @@ uint16_t ConvertEmeraldMineKingsoft(uint8_t uEmeraldMineKingosftElement) {
         case (0x0B):
             uElement = EMERALD_MINE_LEFT;
             break;
+        case (0x0C):
+            uElement = EMERALD_MINE_UP;     // Bond-Mine 01
+            break;
+        case (0x0D):
+            uElement = EMERALD_MINE_RIGHT;  // Bond-Mine 01
+            break;
+        case (0x0E):
+            uElement = EMERALD_MINE_DOWN;   // Bond-Mine 01
+            break;
+        case (0x0F):
+            uElement = EMERALD_MINE_LEFT;   // Bond-Mine 01
+            break;
         case (0x10):
             uElement = EMERALD_BOMB;
             break;
@@ -1588,14 +1602,34 @@ uint16_t ConvertEmeraldMineKingsoft(uint8_t uEmeraldMineKingosftElement) {
         case (0x17):
             uElement = EMERALD_BEETLE_LEFT;
             break;
+        case (0x18):
+            uElement = EMERALD_BEETLE_UP;   // Bond Mine 01
+            break;
+        case (0x19):
+            uElement = EMERALD_BEETLE_RIGHT;// Bond Mine 01
+            break;
+        case (0x1A):
+            uElement = EMERALD_BEETLE_DOWN; // Bond Mine 01
+            break;
+        case (0x1B):
+            uElement = EMERALD_BEETLE_LEFT; // Bond Mine 01
+            break;
         case (0x1C):
             uElement = EMERALD_GREEN_DROP;
+            break;
+        case (0x24):
+            uElement = EMERALD_MAGIC_WALL; // Bond Mine 01
             break;
         case (0x25):
             uElement = EMERALD_NUT;
             break;
         case (0x29):
             uElement = EMERALD_YAM;
+            break;
+        case (0x2A):
+        case (0x2B):
+        case (0x2C):
+            uElement = EMERALD_YAM;     // Bond-Mine 01
             break;
         case (0x2D):
             uElement = EMERALD_QUICKSAND_STONE;
@@ -1617,6 +1651,9 @@ uint16_t ConvertEmeraldMineKingsoft(uint8_t uEmeraldMineKingosftElement) {
             break;
         case (0x40):
             uElement = EMERALD_DOOR_END_READY;
+            break;
+        case (0x41):
+            uElement = EMERALD_DOOR_END_READY;      // Wurde in DC3 so gelöst
             break;
         case (0x65):
             uElement = EMERALD_ACIDPOOL_TOP_MID;
@@ -2133,15 +2170,14 @@ Name:           Show16x16Macroblock
 Beschreibung: Schreibt einen 16x16-Pixelblock in den Renderer.
 
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uXpos, uint32_t, X-Position für Block
+      Eingang: uXpos, uint32_t, X-Position für Block
                uYpos, uint32_t, Y-Position für Block
                puBlockbuf, uint8_t *, Zeiger auf RGB-Daten des 16x16-Makroblocks
       Ausgang: -
 Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
-Seiteneffekte: -
+Seiteneffekte: Video.x
 ------------------------------------------------------------------------------*/
-int32_t Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf) {
+int32_t Show16x16Macroblock(uint32_t uXpos,uint32_t uYpos,uint8_t *puBlockbuf) {
     uint32_t uLine;
     uint32_t uPoint;
     uint32_t uOff;
@@ -2152,13 +2188,13 @@ int32_t Show16x16Macroblock(SDL_Renderer *pRenderer,uint32_t uXpos,uint32_t uYpo
         for (uPoint = 0; (uPoint <= 15) && (nErrorCode == 0); uPoint++) {
             uOff = (uLine * 16 * 3) + (uPoint * 3);
             // Set our color for the draw functions
-            nErrorCode = SDL_SetRenderDrawColor(pRenderer, puBlockbuf[uOff + 2], puBlockbuf[uOff + 1], puBlockbuf[uOff + 0], 0xFF);
+            nErrorCode = SDL_SetRenderDrawColor(Video.pRenderer, puBlockbuf[uOff + 2], puBlockbuf[uOff + 1], puBlockbuf[uOff + 0], 0xFF);
             // Now we can draw our point
-            nErrorCode = SDL_RenderDrawPoint(pRenderer, uXpos + uPoint, uYpos + uLine);
+            nErrorCode = SDL_RenderDrawPoint(Video.pRenderer, uXpos + uPoint, uYpos + uLine);
         }
     }
     // Set the color to what was before
-    SDL_SetRenderDrawColor(pRenderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_SetRenderDrawColor(Video.pRenderer, 0x00, 0x00, 0x00, 0xFF);
     return nErrorCode;
 }
 
@@ -2483,8 +2519,7 @@ int32_t CloseCheckLevelImportDirectoryThread(void) {
 /*----------------------------------------------------------------------------
 Name:           GetLevelFileList
 ------------------------------------------------------------------------------
-Beschreibung: Ermittelt eine Datei-Liste eines bestimmten Verzeichnisses mit einer
-              anzugebenen Datei-Extension.
+Beschreibung: Ermittelt eine Datei-Liste eines bestimmten Verzeichnisses.
 Parameter
       Eingang: pszDirectoryName, char *, Zeiger auf Verzeichnisname
       Ausgang: pLevelFileList, LEVELFILESLIST *, Zeiger auf zu befüllende Fileliste
@@ -2544,6 +2579,8 @@ int32_t GetLevelFileList(char *pszDirectoryName, LEVELFILESLIST *pLevelFileList,
                         pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_DC3;
                     } else if (Fileinfo.st_size == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE) {
                         pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_EMERALDMINE_KINGSOFT;
+                    } else if ((strcasecmp(szFileExtension,"RND")  == 0) || (strcasecmp(szFileExtension,"level")  == 0)) {
+                        pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_ROCKSNDIAMONDS;
                     }
                     // SDL_Log("%s: Filename: %s",__FUNCTION__,entry->d_name);
                     strcpy(pLevelFileList[I].szFilename,entry->d_name);
@@ -2589,7 +2626,7 @@ Beschreibung: Konvertiert eine Anzahl Felder (DC3, Emerald Mine) in eine Zeit.
 Parameter
       Eingang: uFields, uint32_t, Anzahl Felder
       Ausgang: -
-Rückgabewert:  uint32_t , Zeiteinheit für Levelsettings
+Rückgabewert:  uint32_t, Zeiteinheit für Levelsettings
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 uint32_t ConvertTime(uint32_t uFields) {
@@ -2601,4 +2638,1395 @@ uint32_t ConvertTime(uint32_t uFields) {
     fDivisor = 3.75;
     fTime = fFields / fDivisor;
     return (uint32_t)ceilf(fTime);
+}
+
+
+// Ab hier Rocks'n'Diamonds
+RNDSEGMENTS RndSegments;
+/*----------------------------------------------------------------------------
+Name:           ConvertTimeRnd
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert eine Rocks'n'Diamonds-Zeit in die "eigene" Zeit
+
+Parameter
+      Eingang: uRnDTime, uint32_t, Rocks'n'Diamonds-Zeit
+      Ausgang: -
+Rückgabewert:  uint32_t, Zeiteinheit für Levelsettings
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+uint32_t ConvertTimeRnd(uint32_t uRnDTime) {
+    float fRndTime;
+    float fMultiplier;
+
+    fRndTime = (float)uRnDTime;
+    fMultiplier = 1.669;
+    return (uint32_t)ceilf(fRndTime * fMultiplier);
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           LevelConverterFromRocksnDiamonds
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert ein Rocks'n'Diamonds-Level
+              in Leveldaten. Das Ergebnis wird in Ed.x abgelegt.
+              Die Struktur Ed.x muss bereits teilweise initialisiert sein.
+
+              Im Erfolgsfall alloziert die Funktion in Ed.pLevel Speicher für
+              das konvertierte Level.
+Parameter
+      Eingang: pszFilename, char *, Dateiname der Bitmap
+      Ausgang: -
+Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
+Seiteneffekte: Ed.x
+------------------------------------------------------------------------------*/
+int32_t LevelConverterFromRocksnDiamonds(char *pszFilename) {
+    uint8_t *pFileData;
+    uint32_t uFileLen;
+    uint32_t uRnD_Level_X_Dimension;
+    uint32_t uRnD_Level_Y_Dimension;
+    int32_t nErrorCode = -1;
+    bool bValuesOK = false;
+    uint32_t I,X,Y;
+    uint16_t uRndElement;
+
+    bValuesOK = false;
+    if (pszFilename == NULL) {
+        return -1;
+    }
+    pFileData = ReadFile(pszFilename,&uFileLen);
+    // Info-Segment einlesen
+    if ((pFileData != NULL) && (uFileLen > 4)) {        // RND1 + 4 Bytes Länge
+        if (GetRndSegments(pFileData,uFileLen) == 0) {
+            // RND_INFO_EMERALDSTOCOLLECT ist größter Offset
+            if (RND_INFO_EMERALDSTOCOLLECT < RndSegments.uInfoLen) {
+                uRnD_Level_X_Dimension = Get16BitValueBigEndian(RndSegments.pInfo + RND_INFO_LEVEL_X_DIMENSION);
+                uRnD_Level_Y_Dimension = Get16BitValueBigEndian(RndSegments.pInfo + RND_INFO_LEVEL_Y_DIMENSION);
+                Ed.uTimeToPlay = ConvertTimeRnd(Get16BitValueBigEndian(RndSegments.pInfo + RND_INFO_TIMETOPLAY));
+                Ed.uEmeraldsToCollect = Get16BitValueBigEndian(RndSegments.pInfo + RND_INFO_EMERALDSTOCOLLECT);
+                if (RndSegments.uInfoLen == 19) {
+                    Ed.uTimeScoreFactor = Get16BitValueBigEndian(RndSegments.pInfo + RND_INFO_TIMESCOREFACTOR);
+                } else {
+                    Ed.uTimeScoreFactor = 0;
+                }
+                if ((uRnD_Level_X_Dimension >= MIN_LEVEL_W) && (uRnD_Level_X_Dimension + 2 <= MAX_LEVEL_W) && (uRnD_Level_Y_Dimension >= MIN_LEVEL_H) && (uRnD_Level_Y_Dimension + 2 <= MAX_LEVEL_H)) {
+                    Ed.uLevel_X_Dimension = uRnD_Level_X_Dimension + 2; // + 2, weil bei RnD
+                    Ed.uLevel_Y_Dimension = uRnD_Level_Y_Dimension + 2; // der Rand nicht mitgezählt wird
+                    Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
+                    Ed.uTmpLevel_X_Dimension = Ed.uLevel_X_Dimension;
+                    Ed.uTmpLevel_Y_Dimension = Ed.uLevel_Y_Dimension;
+                    Ed.pLevel = malloc(Ed.uLevel_XY_Dimension * sizeof(uint16_t));
+                    if (Ed.pLevel != NULL) {
+                        bValuesOK = true;
+                        SDL_Log("RND: Leveldimension: X: %u  Y: %u",Ed.uLevel_X_Dimension,Ed.uLevel_Y_Dimension);
+                        for (I = 0; I < Ed.uLevel_XY_Dimension; I++) {
+                            Ed.pLevel[I] = EMERALD_SPACE;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    SDL_Log("ValuesOK:%d",bValuesOK);
+
+    if (bValuesOK) {
+        // Versuchen Elemente einzulesen -> Holzhammermethode
+        GetRnDLevelElements();
+        // Level-Titel einlesen
+        GetRndLevelTitle();
+        // Level-Autor einlesen
+        GetLevelAuthorFromFile(Ed.szLevelAuthor);
+        // BODY-Segment (Level-Data) einlesen
+        if ((RndSegments.pBody != NULL) && (uRnD_Level_X_Dimension * uRnD_Level_Y_Dimension) == (RndSegments.uBodyLen / 2)) {
+            I = 0;
+            for (Y = 1; Y <= uRnD_Level_Y_Dimension; Y++) {
+                for (X = 1; X <= uRnD_Level_X_Dimension; X++) {
+                    uRndElement = RndSegments.pBody[I + 0] << 8 | RndSegments.pBody[I + 1];
+                    I = I + 2;
+                    Ed.pLevel[Y * Ed.uLevel_X_Dimension + X] = ConvertRocksnDiamonds(uRndElement);
+                }
+            }
+            nErrorCode = 0;
+        }
+    }
+    if (nErrorCode != 0) {
+        SAFE_FREE(Ed.pLevel);
+    }
+    SAFE_FREE(pFileData);
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetRndSegments
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt in einem RnD-Level die notwendigen Segmente. Die Startpointer
+              und Längen der Segmente werden in der Struktur RndSegments.x abgelegt.
+
+Parameter
+      Eingang: pMemory, uint8_t *, Zeiger auf Leveldaten
+               uMemorySize, uint32_t, Länge der Leveldaten in Bytes
+      Ausgang: -
+Rückgabewert:  int32_t, 0 = OK, sonst Fehler
+Seiteneffekte: RndSegments.x
+------------------------------------------------------------------------------*/
+int32_t GetRndSegments(uint8_t *pMemory, uint32_t uMemorySize) {
+    int32_t nErrorCode = -1;;
+    uint8_t* pReadPointer;      // aktueller Lesepointer
+    uint8_t* pEndPointer;       // letzte gültige Adresse des Memory-Blocks
+    uint32_t uSegmentLen;
+    char szSegmentName[64];
+    uint32_t I;
+
+    memset(&RndSegments,0,sizeof(RndSegments));
+    if ((pMemory != NULL) && (uMemorySize > sizeof(RND_HEADER_NAME) + 4)) {
+        pReadPointer = pMemory;
+        pEndPointer = pMemory + uMemorySize - 1;
+        // Header muss auf jeden Fall dabei sein
+        if (memcmp(pReadPointer,RND_HEADER_NAME,strlen(RND_HEADER_NAME)) == 0) {
+            pReadPointer = pReadPointer + strlen(RND_HEADER_NAME);
+            uSegmentLen = GetSegmentLen(pReadPointer);
+            pReadPointer = pReadPointer + uSegmentLen + 4;
+            while (pReadPointer + 4 < pEndPointer) {
+                // Ersten Segmentname holen
+                I = 0;
+                while ((pReadPointer < pEndPointer) && (I < 63) && (*pReadPointer != 0)) {
+                    szSegmentName[I] = *pReadPointer;
+                    I++;
+                    pReadPointer++;
+                }
+                szSegmentName[I] = 0; // Stringende
+                if (strlen(szSegmentName) > 0) {
+                    if (pReadPointer + 4 < pEndPointer) {
+                        uSegmentLen = GetSegmentLen(pReadPointer);
+                        pReadPointer = pReadPointer + 4;    // Länge überspringen und Pointer auf Segmentstart setzen
+                        // SDL_Log("Segmentname: %s  Len: %u",szSegmentName,uSegmentLen);
+                        CheckSegment(szSegmentName,pReadPointer,uSegmentLen);
+                        pReadPointer = pReadPointer + uSegmentLen;
+                    }
+                } else {
+                    pEndPointer = 0; // leerer Segmentname -> Abbruch
+                }
+            }
+            if (RndSegments.bAllSegmentsFound) {
+                nErrorCode = 0;
+            }
+        }
+    }
+    return nErrorCode;
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetSegmentLen
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt die Segmentlänge eines RnD-Level-Segments.
+
+Parameter
+      Eingang: pMemory, uint8_t *, Zeiger auf Segment-Länge (mindestens 4 Bytes).
+                                    Die aufrufende Funktion muss bereits geprüft
+                                    haben, dass nicht über Speicherende gelesen werden kann.
+                                    Die Segmentlänge ist BIGENDIAN kodiert.
+      Ausgang: -
+Rückgabewert:  int32_t, >= 0 = Segmentlänge, -1 = Fehler
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+int32_t GetSegmentLen(uint8_t *pMemory) {
+    if (pMemory == NULL) {
+        return -1;
+    } else {
+        return pMemory[0] << 24 | pMemory[1] << 16 | pMemory[2] << 8 | pMemory[3];
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           CheckSegment
+------------------------------------------------------------------------------
+Beschreibung: Prüft, ob es sich bei dem gesuchten Segment um ein Notweniges handelt. Falls ja, wird der
+              Startpointer und die Segmentlänge in die Struktur RndSegments.x eingetragen.
+
+Parameter
+      Eingang: pszSegmentName, char *, Zeiger auf Segmentnamen
+               pStartPointer, uint8_t *, Startpointer des Segments
+               uSegmentLen, uint32_t, Segmentlänge
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: RndSegments.x
+------------------------------------------------------------------------------*/
+void CheckSegment(char *pszSegmentName, uint8_t* pStartPointer, uint32_t uSegmentLen) {
+    if ((pszSegmentName != NULL) && (pStartPointer != NULL)) {
+        if (strcasecmp(pszSegmentName,"INFO") == 0) {
+            RndSegments.pInfo = pStartPointer;
+            RndSegments.uInfoLen = uSegmentLen;
+        } else if (strcasecmp(pszSegmentName,"NAME") == 0) {
+            RndSegments.pName = pStartPointer;
+            RndSegments.uNameLen = uSegmentLen;
+        } else if (strcasecmp(pszSegmentName,"AUTH") == 0) {
+            RndSegments.pAuth = pStartPointer;
+            RndSegments.uAuthLen = uSegmentLen;
+        } else if (strcasecmp(pszSegmentName,"BODY") == 0) {
+            RndSegments.pBody = pStartPointer;
+            RndSegments.uBodyLen = uSegmentLen;
+        } else if (strcasecmp(pszSegmentName,"ELEM") == 0) {
+            RndSegments.pElements = pStartPointer;
+            RndSegments.uElementsLen = uSegmentLen;
+        }
+    }
+    RndSegments.bAllSegmentsFound = ((RndSegments.pInfo != NULL) && (RndSegments.pName != NULL) && (RndSegments.pAuth) && (RndSegments.pBody != NULL) && (RndSegments.pElements != NULL) &&
+                                    (RndSegments.uInfoLen != 0) && (RndSegments.uNameLen != 0) && (RndSegments.uAuthLen != 0) && (RndSegments.uBodyLen != 0) && (RndSegments.uElementsLen));
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetRndLevelTitle
+------------------------------------------------------------------------------
+Beschreibung: Ermittelt den Level-Titel eines RnD-Levels.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Ed.x, RndSegments.x
+------------------------------------------------------------------------------*/
+void GetRndLevelTitle(void) {
+    uint32_t I;
+
+    strcpy(Ed.szLevelTitle,"UNKNOWN TITLE");
+    if ((RndSegments.pName != NULL) && (RndSegments.uNameLen != 0)) {
+        I = 0;
+        while ((I < EMERALD_TITLE_LEN) && (I < RndSegments.uNameLen)) {
+            Ed.szLevelTitle[I] = toupper(RndSegments.pName[I]);
+            I++;
+        }
+        Ed.szLevelTitle[I] = 0;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           GetRnDLevelElements
+------------------------------------------------------------------------------
+Beschreibung: Versucht per Holzhammermethode ein paar Werte aus dem ELEM-Segment zu lesen.
+               So hat sich der liebe Herr Schemel das bestimmt nicht gedacht.
+
+Parameter
+      Eingang: -
+      Ausgang: -
+Rückgabewert:  -
+Seiteneffekte: Ed.x, RndSegments.x
+------------------------------------------------------------------------------*/
+void GetRnDLevelElements(void) {
+    uint8_t *pResult;
+    int32_t nYams;
+    uint16_t uValue;
+    uint32_t Y,I;
+    uint8_t uYamSearch[8][5] =
+                         {"\x00\x0B\xC1\x00\x12",     // 1 YAM -> 0x12 = 1 * 9 * uint16 = 18
+                          "\x00\x0B\xC1\x00\x24",     // 2 YAM -> 0x24 = 2 * 9 * uint16 = 36
+                          "\x00\x0B\xC1\x00\x36",     // 3 YAM -> 0x36 = 3 * 9 * uint16 = 54
+                          "\x00\x0B\xC1\x00\x48",     // 4 YAM -> 0x48 = 4 * 9 * uint16 = 72
+                          "\x00\x0B\xC1\x00\x5A",     // 5 YAM -> 0x5A = 5 * 9 * uint16 = 90
+                          "\x00\x0B\xC1\x00\x6C",     // 6 YAM -> 0x6C = 6 * 9 * uint16 = 108
+                          "\x00\x0B\xC1\x00\x7E",     // 7 YAM -> 0x7E = 7 * 9 * uint16 = 126
+                          "\x00\x0B\xC1\x00\x90",     // 8 YAM -> 0x7E = 8 * 9 * uint16 = 144
+                         };
+
+    // YAM-Standard, 1 YAM
+    Ed.uMaxYamExplosionIndex = 0;
+    for (I = 0; I < 9; I++) {
+        Ed.YamExplosions[0].uElement[I] = EMERALD_SPACE;
+    }
+    if ((RndSegments.pElements != NULL) && (RndSegments.uElementsLen != 0)) {
+        // Emerald-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x06\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreEmerald = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreEmerald = 1;
+        }
+        // Sapphire-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x0E\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreSaphir = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreSaphir = 3;
+        }
+        // StonigBeetle-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x09\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreStoningBeetle = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreStoningBeetle = 12;
+        }
+        // StonigMine-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x0A\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreStoningMine = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreStoningMine = 11;
+        }
+        // StonigAlien-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x0C\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreStoningAlien = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreStoningAlien = 13;
+        }
+        // StonigYam-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x0B\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreStoningYam = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreStoningYam = 13;
+        }
+        // Nut-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x19\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreNutCracking = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreNutCracking = 16;
+        }
+        // Dynamit-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x2C\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreDynamite = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreDynamite = 20;
+        }
+        // Key-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x20\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreKey = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreKey = 30;
+        }
+        // Perl-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x01\x00\x41",3);
+        if (pResult != NULL) {
+            Ed.uScorePerl = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScorePerl = 5;
+        }
+        // Crystal-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x01\x01\x41",3);
+        if (pResult != NULL) {
+            Ed.uScoreCrystal = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreCrystal = 8;
+        }
+        // Shieldcoin-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x01\x07\x42",3);
+        if (pResult != NULL) {
+            Ed.uScoreShieldCoin = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreShieldCoin = 15;
+        }
+        // Time-Score
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x01\x08\x42",3);
+        if (pResult != NULL) {
+            Ed.uScoreTimeCoin = Get16BitValueBigEndian(pResult + 3);
+        } else {
+            Ed.uScoreTimeCoin = 15;
+        }
+        // Wheel-Time
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x1E\x41",3);
+        if (pResult != NULL) {
+            Ed.uTimeWheelRotation = ConvertTimeRnd(Get16BitValueBigEndian(pResult + 3));
+        } else {
+            Ed.uTimeWheelRotation = 15;
+        }
+        // Magicwall-Time
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x14\x41",3);
+        if (pResult != NULL) {
+            Ed.uTimeMagicWall = ConvertTimeRnd(Get16BitValueBigEndian(pResult + 3));
+        } else {
+            Ed.uTimeMagicWall = 15;
+        }
+        // Green cheese spread speed
+        pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,"\x00\x34\x42",3);
+        if (pResult != NULL) {
+            // * 10, da bei RnD max. 999 möglich ist und hier 9999
+            Ed.uGreenCheeseSpreadSpeed = Get16BitValueBigEndian(pResult + 3) * 10;
+            if (Ed.uGreenCheeseSpreadSpeed > 9999) {
+                Ed.uGreenCheeseSpreadSpeed = 9999;
+            }
+        } else {
+            Ed.uGreenCheeseSpreadSpeed = 0;
+        }
+        // SDL_Log("Green cheese spread speed: %u",Ed.uGreenCheeseSpreadSpeed);
+
+        // YAMS setzen, es werden 1 - 8 verschiedene YAM-Explosionen unterstützt
+        Y = 0;
+        nYams = -1;
+        while ((nYams == -1) && (Y < 8)) {
+            pResult = memsearch(RndSegments.pElements,RndSegments.uElementsLen,uYamSearch[Y],5); // 0x12 = 1 * 9 * uint16 = 18
+            if (pResult != NULL) {
+                nYams = Y + 1;
+            } else {
+                Y++;
+            }
+        }
+        if (nYams != -1) {
+            pResult = pResult + 5;
+            Ed.uMaxYamExplosionIndex = nYams - 1;
+            for (Y = 0; Y < nYams; Y++) {
+                for (I = 0; I < 9; I++) {
+                    uValue = Get16BitValueBigEndian(pResult);
+                    Ed.YamExplosions[Y].uElement[I] = ConvertRocksnDiamonds(uValue);
+                    pResult = pResult + 2;
+                }
+            }
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+Name:           ConvertRocksnDiamonds
+------------------------------------------------------------------------------
+Beschreibung: Konvertiert ein einzelnes RocksnDiamonds-Element in ein aktuelles Element.
+Parameter
+      Eingang: uRocksnDiamondsElement, uint16_t, RocksnDiamonds-Element, das konvertiert werden soll
+Rückgabewert:  uint16_t, konvertiertes, aktuelles Levelelement
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+uint16_t ConvertRocksnDiamonds(uint16_t uRocksnDiamondsElement) {
+    uint16_t uElement;
+
+    // FONT_BLUE A-Z
+    if ((uRocksnDiamondsElement >= 0x0099) && (uRocksnDiamondsElement <= 0x00B2)) {
+        uElement = EMERALD_FONT_BLUE_A + uRocksnDiamondsElement - 0x0099;
+    } else if ((uRocksnDiamondsElement >= 0x0088) && (uRocksnDiamondsElement <= 0x0091)) {
+        uElement = EMERALD_FONT_GREEN_0 + uRocksnDiamondsElement - 0x0088;
+    } else if ((uRocksnDiamondsElement >= 0x02EC) && (uRocksnDiamondsElement <= 0x02F5)) {
+        uElement = EMERALD_FONT_GREEN_STEEL_0 + uRocksnDiamondsElement - 0x02EC;
+    } else if ((uRocksnDiamondsElement >= 0x02FD) && (uRocksnDiamondsElement <= 0x0316)) {
+        uElement = EMERALD_FONT_BLUE_STEEL_A + uRocksnDiamondsElement - 0x02FD;
+    } else {
+        switch (uRocksnDiamondsElement) {
+            case (0x0000):
+                uElement = EMERALD_SPACE;
+                break;
+            case (0x0001):
+                uElement = EMERALD_EARTH;
+                break;
+            case (0x0002):
+                uElement = EMERALD_WALL_CORNERED;
+                break;
+            case (0x0003):
+                uElement = EMERALD_WALL_ROUND;
+                break;
+            case (0x0004):
+                uElement = EMERALD_STONE;
+                break;
+            case (0x0006):
+                uElement = EMERALD_EMERALD;
+                break;
+            case (0x0007):
+                uElement = EMERALD_DOOR_END_NOT_READY;
+                break;
+
+            case (0x0009):
+                uElement = EMERALD_BEETLE_UP;
+                break;
+            case (0x000A):
+                uElement = EMERALD_MINE_UP;
+                break;
+            case (0x000B):
+                uElement = EMERALD_YAM;
+                break;
+            case (0x000C):
+                uElement = EMERALD_ALIEN;
+                break;
+            case (0x000D):
+                uElement = EMERALD_STEEL;
+                break;
+            case (0x000E):
+                uElement = EMERALD_SAPPHIRE;
+                break;
+            case (0x000F):
+                uElement = EMERALD_GREEN_CHEESE;
+                break;
+            case (0x0010):
+                uElement = EMERALD_QUICKSAND;
+                break;
+            case (0x0011):
+                uElement = EMERALD_QUICKSAND_STONE;
+                break;
+            case (0x0012):
+                uElement = EMERALD_GREEN_DROP;
+                break;
+            case (0x0013):
+                uElement = EMERALD_BOMB;
+                break;
+            case (0x0014):
+                uElement = EMERALD_MAGIC_WALL;
+                break;
+
+            case (0x0016):
+                uElement = EMERALD_ACIDPOOL_TOP_MID;
+                break;
+            case (0x0017):
+            case (0x0018):
+                uElement = EMERALD_GREEN_CHEESE;
+                break;
+            case (0x0019):
+                uElement = EMERALD_NUT;
+                break;
+
+            case (0x001C):
+                uElement = EMERALD_DYNAMITE_ON;
+                break;
+            case (0x001D):
+                uElement = EMERALD_WALL_CORNERED;
+                break;
+            case (0x001E):
+                uElement = EMERALD_WHEEL;
+                break;
+
+            case (0x0020):
+                uElement = EMERALD_KEY_RED;
+                break;
+            case (0x0021):
+                uElement = EMERALD_KEY_YELLOW;
+                break;
+            case (0x0022):
+                uElement = EMERALD_KEY_GREEN;
+                break;
+            case (0x0023):
+                uElement = EMERALD_KEY_BLUE;
+                break;
+            case (0x0024):
+                uElement = EMERALD_DOOR_RED;
+                break;
+            case (0x0025):
+                uElement = EMERALD_DOOR_YELLOW;
+                break;
+            case (0x0026):
+                uElement = EMERALD_DOOR_GREEN;
+                break;
+            case (0x0027):
+                uElement = EMERALD_DOOR_BLUE;
+                break;
+            case (0x0028):
+                uElement = EMERALD_DOOR_GREY_RED;
+                break;
+            case (0x0029):
+                uElement = EMERALD_DOOR_GREY_YELLOW;
+                break;
+            case (0x002A):
+                uElement = EMERALD_DOOR_GREY_GREEN;
+                break;
+            case (0x002B):
+                uElement = EMERALD_DOOR_GREY_BLUE;
+                break;
+            case (0x002C):
+                uElement = EMERALD_DYNAMITE_OFF;
+                break;
+
+            case (0x002E):
+                uElement = EMERALD_WALL_INVISIBLE;
+                break;
+
+            case (0x0031):
+                uElement = EMERALD_WALL_WITH_EMERALD;
+                break;
+            case (0x0032):
+                uElement = EMERALD_WALL_WITH_SAPPHIRE;
+                break;
+            case (0x0033):
+            case (0x0034):
+                uElement = EMERALD_GREEN_CHEESE;
+                break;
+
+            case (0x0037):
+                uElement = EMERALD_WALL_GROW_LEFT_RIGHT;
+                break;
+            case (0x0038):
+            case (0x0039):
+                uElement = EMERALD_EMERALD;
+                break;
+            case (0x003A):
+            case (0x003B):
+                uElement = EMERALD_WALL_WITH_EMERALD;
+                break;
+            case (0x003C):
+                uElement = EMERALD_YAM;
+                break;
+            case (0x003D):
+                uElement = EMERALD_MAGIC_WALL;
+                break;
+            case (0x003E):
+                uElement = EMERALD_STEEL_INVISIBLE;
+                break;
+
+            case (0x0046):
+                uElement = EMERALD_BEETLE_RIGHT;
+                break;
+            case (0x0047):
+                uElement = EMERALD_BEETLE_UP;
+                break;
+            case (0x0048):
+                uElement = EMERALD_BEETLE_LEFT;
+                break;
+            case (0x0049):
+                uElement = EMERALD_BEETLE_DOWN;
+                break;
+            case (0x004A):
+                uElement = EMERALD_MINE_RIGHT;
+                break;
+            case (0x004B):
+                uElement = EMERALD_MINE_UP;
+                break;
+            case (0x004C):
+                uElement = EMERALD_MINE_LEFT;
+                break;
+            case (0x004D):
+                uElement = EMERALD_MINE_DOWN;
+                break;
+            case (0x004E):
+                uElement = EMERALD_BEETLE_UP;
+                break;
+            case (0x004F):
+                uElement = EMERALD_MINE_UP;
+                break;
+            case (0x0050):
+                uElement = EMERALD_MAN;
+                break;
+            case (0x0051):  // Player 2
+                uElement = EMERALD_SPACE;
+                break;
+            case (0x0054):
+                uElement = EMERALD_BEETLE_RIGHT;
+                break;
+            case (0x0055):
+                uElement = EMERALD_BEETLE_UP;
+                break;
+            case (0x0056):
+                uElement = EMERALD_BEETLE_LEFT;
+                break;
+            case (0x0057):
+                uElement = EMERALD_BEETLE_DOWN;
+                break;
+            case (0x0058):
+                uElement = EMERALD_MINE_RIGHT;
+                break;
+            case (0x0059):
+                uElement = EMERALD_MINE_UP;
+                break;
+            case (0x005A):
+                uElement = EMERALD_MINE_LEFT;
+                break;
+            case (0x005B):
+                uElement = EMERALD_MINE_DOWN;
+                break;
+
+            case (0x0060):
+            case (0x0061):
+                uElement = EMERALD_EMERALD;
+                break;
+            case (0x0062):
+            case (0x0063):
+                uElement = EMERALD_WALL_WITH_EMERALD;
+                break;
+            case (0x0064):
+                uElement = EMERALD_ACIDPOOL_TOP_LEFT;
+                break;
+            case (0x0065):
+                uElement = EMERALD_ACIDPOOL_TOP_RIGHT;
+                break;
+            case (0x0066):
+                uElement = EMERALD_ACIDPOOL_BOTTOM_LEFT;
+                break;
+            case (0x0067):
+                uElement = EMERALD_ACIDPOOL_BOTTOM_MID;
+                break;
+            case (0x0068):
+                uElement = EMERALD_ACIDPOOL_BOTTOM_RIGHT;
+                break;
+            case (0x0069):
+                uElement = EMERALD_WALL_CORNERED;
+                break;
+            case (0x006A):
+                uElement = EMERALD_STONE;
+                break;
+            case (0x006B):
+                uElement = EMERALD_DOOR_END_READY;
+                break;
+            case (0x006E):
+                uElement = EMERALD_MOLE_UP;
+                break;
+
+            case (0x0071):
+                uElement = EMERALD_FONT_BLUE_ARROW_LEFT;
+                break;
+            case (0x0072):
+                uElement = EMERALD_FONT_BLUE_ARROW_RIGHT;
+                break;
+            case (0x0073):
+                uElement = EMERALD_FONT_BLUE_ARROW_UP;
+                break;
+            case (0x0074):
+                uElement = EMERALD_FONT_BLUE_ARROW_DOWN;
+                break;
+
+            case (0x0078):
+                uElement = EMERALD_SPACE;
+                break;
+            case (0x0079):
+                uElement = EMERALD_FONT_BLUE_EXCLAMATION;
+                break;
+            case (0x007A):
+                uElement = EMERALD_FONT_BLUE_DOUBLE_QUOTE;
+                break;
+            case (0x007B): // #
+            case (0x007C): // $
+            case (0x007D): // %
+            case (0x0082): // *
+            case (0x0095): // =
+            case (0x00B7): // _
+            case (0x00BC): // °
+            case (0x00BD): // TM
+            case (0x00BE): // Block/Cursor
+                uElement = EMERALD_SPACE;
+                break;
+            case (0x007E): // &
+                uElement = EMERALD_FONT_BLUE_PLUS;
+                break;
+            case (0x007F):
+                uElement = EMERALD_FONT_BLUE_APOSTROPHE;
+                break;
+            case (0x0080):
+                uElement = EMERALD_FONT_BLUE_BRACE_OPEN;
+                break;
+            case (0x0081):
+                uElement = EMERALD_FONT_BLUE_BRACE_CLOSE;
+                break;
+            case (0x0083):
+                uElement = EMERALD_FONT_BLUE_PLUS;
+                break;
+            case (0x0084):
+                uElement = EMERALD_FONT_BLUE_COMMA;
+                break;
+            case (0x0085):
+                uElement = EMERALD_FONT_BLUE_MINUS;
+                break;
+            case (0x0086):
+                uElement = EMERALD_FONT_BLUE_DOT;
+                break;
+            case (0x0087):
+                uElement = EMERALD_FONT_BLUE_SLASH;
+                break;
+
+            case (0x0092):
+                uElement = EMERALD_FONT_BLUE_DOUBLE_DOT;
+                break;
+            case (0x0093):
+                uElement = EMERALD_FONT_BLUE_SEMICOLON;
+                break;
+            case (0x0094):
+                uElement = EMERALD_FONT_BLUE_ARROW_LEFT;
+                break;
+
+            case (0x0096):
+                uElement = EMERALD_FONT_BLUE_ARROW_RIGHT;
+                break;
+            case (0x0097):
+                uElement = EMERALD_FONT_BLUE_QUESTION_MARK;
+                break;
+            case (0x0098):
+                uElement = EMERALD_FONT_BLUE_PLATE;
+                break;
+
+            case (0x00B3):
+                uElement = EMERALD_FONT_BLUE_BRACE_OPEN;
+                break;
+            case (0x00B4):
+                uElement = EMERALD_FONT_BLUE_SLASH;
+                break;
+            case (0x00B5):
+                uElement = EMERALD_FONT_BLUE_BRACE_CLOSE;
+                break;
+
+            case (0x00B8):
+                uElement = EMERALD_FONT_BLUE_COPYRIGHT;
+                break;
+            case (0x00B9):
+                uElement = EMERALD_FONT_BLUE_AE;
+                break;
+            case (0x00BA):
+                uElement = EMERALD_FONT_BLUE_OE;
+                break;
+            case (0x00BB):
+                uElement = EMERALD_FONT_BLUE_UE;
+                break;
+
+            case (0x00C5):
+                uElement = EMERALD_FONT_BLUE_PLATE;
+                break;
+            case (0x00C6):
+                uElement = EMERALD_FONT_BLUE_ARROW_UP;
+                break;
+            case (0x00C7):
+                uElement = EMERALD_FONT_BLUE_ARROW_DOWN;
+                break;
+
+            case (0x00CA):
+                uElement = EMERALD_WALL_GROW_ALL;
+                break;
+            case (0x00CB):
+                uElement = EMERALD_DOOR_RED;
+                break;
+            case (0x00CC):
+                uElement = EMERALD_DOOR_YELLOW;
+                break;
+            case (0x00CD):
+                uElement = EMERALD_DOOR_GREEN;
+                break;
+            case (0x00CE):
+                uElement = EMERALD_DOOR_BLUE;
+                break;
+
+            case (0x00D3):
+                uElement = EMERALD_STONE;
+                break;
+            case (0x00D4):
+                uElement = EMERALD_EARTH;
+                break;
+
+            case (0x00D6):
+                uElement = EMERALD_EMERALD;
+                break;
+
+            case (0x00D7):
+            case (0x00EC):
+            case (0x00ED):
+                uElement = EMERALD_WALL_CORNERED;
+                break;
+
+            case (0x00D9):
+                uElement = EMERALD_DOOR_END_NOT_READY;
+                break;
+
+            case (0x00DB):
+                uElement = EMERALD_DOOR_ONLY_RIGHT_WALL;
+                break;
+            case (0x00DC):
+                uElement = EMERALD_DOOR_ONLY_DOWN_WALL;
+                break;
+            case (0x00DD):
+                uElement = EMERALD_DOOR_ONLY_LEFT_WALL;
+                break;
+            case (0x00DE):
+                uElement = EMERALD_DOOR_ONLY_UP_WALL;
+                break;
+
+            case (0x00E3):
+                uElement = EMERALD_MINE_UP;
+                break;
+            case (0x00E4):
+                uElement = EMERALD_REMOTEBOMB;
+                break;
+            case (0x00E5):
+                uElement = EMERALD_SWITCH_REMOTEBOMB_IGNITION;
+                break;
+            case (0x00E6):
+                uElement = EMERALD_DYNAMITE_OFF;
+                break;
+            case (0x00E7):
+                uElement = EMERALD_PIPE_UP_DOWN;
+                break;
+            case (0x00E8):
+                uElement = EMERALD_PIPE_LEFT_RIGHT;
+                break;
+            case (0x00E9):
+                uElement = EMERALD_PIPE_LEFT_RIGHT_UP_DOWN;
+                break;
+            case (0x00EA):
+                uElement = EMERALD_BEETLE_UP;
+                break;
+
+            case (0x00D8):
+            case (0x00EE):
+            case (0x00EF):
+            case (0x00F0):
+            case (0x00F1):
+            case (0x00F2):
+            case (0x00F3):
+            case (0x00F4):
+            case (0x00F5):
+            case (0x00F6):
+            case (0x00F7):
+                uElement = EMERALD_STEEL;
+                break;
+            case (0x00F8):
+            case (0x00F9):
+                uElement = EMERALD_WALL_CORNERED;
+                break;
+            case (0x00FA):
+                uElement = EMERALD_DOOR_GREY_RED;
+                break;
+            case (0x00FB):
+                uElement = EMERALD_DOOR_GREY_YELLOW;
+                break;
+            case (0x00FC):
+                uElement = EMERALD_DOOR_GREY_GREEN;
+                break;
+            case (0x00FD):
+                uElement = EMERALD_DOOR_GREY_BLUE;
+                break;
+            case (0x00FE):
+                uElement = EMERALD_DYNAMITE_OFF;
+                break;
+            case (0x00FF):
+                uElement = EMERALD_DYNAMITE_ON;
+                break;
+            case (0x0100):
+                uElement = EMERALD_PERL;
+                break;
+            case (0x0101):
+                uElement = EMERALD_CRYSTAL;
+                break;
+            case (0x0102):
+                uElement = EMERALD_WALL_WITH_PERL;
+                break;
+            case (0x0103):
+                uElement = EMERALD_WALL_WITH_CRYSTAL;
+                break;
+            case (0x0104):
+                uElement = EMERALD_DOOR_WHITE;
+                break;
+            case (0x0105):
+                uElement = EMERALD_DOOR_GREY_WHITE;
+                break;
+            case (0x0106):
+                uElement = EMERALD_KEY_WHITE;
+                break;
+            case (0x0107):
+                uElement = EMERALD_SHIELD_COIN;
+                break;
+            case (0x0108):
+                uElement = EMERALD_TIME_COIN;
+                break;
+            case (0x0109):
+                uElement = EMERALD_SWITCHDOOR_OPEN;
+                break;
+            case (0x010A):
+                uElement = EMERALD_SWITCHDOOR_CLOSED;
+                break;
+            case (0x010B):
+            case (0x010C):
+                uElement = EMERALD_SWITCH_SWITCHDOOR;
+                break;
+
+            case (0x010F):
+            case (0x0110):
+            case (0x0111):
+                uElement = EMERALD_CONVEYORBELT_RED;
+                break;
+            case (0x0112):
+            case (0x0113):
+            case (0x0114):
+                uElement = EMERALD_CONVEYORBELT_SWITCH_RED;
+                break;
+            case (0x0115):
+            case (0x0116):
+            case (0x0117):
+                uElement = EMERALD_CONVEYORBELT_YELLOW;
+                break;
+            case (0x0118):
+            case (0x0119):
+            case (0x011A):
+                uElement = EMERALD_CONVEYORBELT_SWITCH_YELLOW;
+                break;
+            case (0x011B):
+            case (0x011C):
+            case (0x011D):
+                uElement = EMERALD_CONVEYORBELT_GREEN;
+                break;
+            case (0x011E):
+            case (0x011F):
+            case (0x0120):
+                uElement = EMERALD_CONVEYORBELT_SWITCH_GREEN;
+                break;
+            case (0x0121):
+            case (0x0122):
+            case (0x0123):
+                uElement = EMERALD_CONVEYORBELT_BLUE;
+                break;
+            case (0x0124):
+            case (0x0125):
+            case (0x0126):
+                uElement = EMERALD_CONVEYORBELT_SWITCH_BLUE;
+                break;
+            case (0x0127):
+                uElement = EMERALD_MINE_EARTH;
+                break;
+
+            case (0x0129):
+            case (0x012A):
+                uElement = EMERALD_LIGHT_SWITCH;
+                break;
+            case (0x012B):
+                uElement = EMERALD_STEEL_WARNING;
+                break;
+            case (0x012C):
+                uElement = EMERALD_STEEL_RADIOACTIVE;
+                break;
+            case (0x012D):
+                uElement = EMERALD_STEEL_STOP;
+                break;
+            case (0x012E):
+                uElement = EMERALD_STEEL_WHEELCHAIR;
+                break;
+            case (0x012F):
+                uElement = EMERALD_STEEL_PARKING;
+                break;
+            case (0x0130):
+                uElement = EMERALD_STEEL_FORBIDDEN;
+                break;
+            case (0x0132):
+                uElement = EMERALD_STEEL_GIVE_WAY;
+                break;
+            case (0x0133):
+                uElement = EMERALD_STEEL_NO_ENTRY;
+                break;
+            case (0x0134):
+                uElement = EMERALD_STEEL_EXIT;
+                break;
+            case (0x0135):
+                uElement = EMERALD_STEEL_YING;
+                break;
+
+            case (0x0137):
+                uElement = EMERALD_MOLE_LEFT;
+                break;
+            case (0x0138):
+                uElement = EMERALD_MOLE_RIGHT;
+                break;
+            case (0x0139):
+                uElement = EMERALD_MOLE_UP;
+                break;
+            case (0x013A):
+                uElement = EMERALD_MOLE_DOWN;
+                break;
+            case (0x013B):
+                uElement = EMERALD_STEEL_ROUND;
+                break;
+            case (0x013C):
+                uElement = EMERALD_EARTH_INVISIBLE;
+                break;
+            case (0x0141):
+                uElement = EMERALD_SHIELD_COIN;
+                break;
+            case (0x0142):
+            case (0x0143):
+                uElement = EMERALD_DOOR_TIME;
+                break;
+
+            case (0x0145):
+                uElement = EMERALD_WHEEL_TIMEDOOR;
+                break;
+
+            case (0x0158):
+                uElement = EMERALD_PIPE_LEFT_RIGHT_UP_DOWN;
+                break;
+            case (0x0159):
+                uElement = EMERALD_PIPE_UP_DOWN;
+                break;
+            case (0x015A):
+                uElement = EMERALD_PIPE_LEFT_RIGHT;
+                break;
+            case (0x015B):
+                uElement = EMERALD_PIPE_LEFT_UP_DOWN;
+                break;
+            case (0x015C):
+                uElement = EMERALD_PIPE_RIGHT_UP_DOWN;
+                break;
+            case (0x015D):
+                uElement = EMERALD_PIPE_LEFT_RIGHT_UP;
+                break;
+            case (0x015E):
+                uElement = EMERALD_PIPE_LEFT_RIGHT_DOWN;
+                break;
+            case (0x015F):
+                uElement = EMERALD_PIPE_LEFT_UP;
+                break;
+            case (0x0160):
+                uElement = EMERALD_PIPE_LEFT_DOWN;
+                break;
+            case (0x0161):
+                uElement = EMERALD_PIPE_RIGHT_UP;
+                break;
+            case (0x0162):
+                uElement = EMERALD_PIPE_RIGHT_DOWN;
+                break;
+
+            case (0x0164):
+                uElement = EMERALD_MINE_EARTH;
+                break;
+
+            case (0x0268):
+                uElement = EMERALD_KEY_RED;
+                break;
+            case (0x0269):
+                uElement = EMERALD_KEY_YELLOW;
+                break;
+            case (0x026A):
+                uElement = EMERALD_KEY_GREEN;
+                break;
+            case (0x026B):
+                uElement = EMERALD_KEY_BLUE;
+                break;
+            case (0x026C):
+                uElement = EMERALD_MESSAGE_1;
+                break;
+            case (0x026D):
+                uElement = EMERALD_MESSAGE_2;
+                break;
+            case (0x026E):
+                uElement = EMERALD_MESSAGE_3;
+                break;
+            case (0x026F):
+                uElement = EMERALD_MESSAGE_4;
+                break;
+
+            case (0x02C7):
+            case (0x02C8):
+                uElement = EMERALD_YAM;
+                break;
+            case (0x02C9):
+                uElement = EMERALD_WALL_GROW_LEFT_RIGHT;
+                break;
+
+            case (0x02DD):
+                uElement = EMERALD_FONT_BLUE_STEEL_EXCLAMATION;
+                break;
+            case (0x02DE):
+                uElement = EMERALD_FONT_BLUE_STEEL_DOUBLE_QUOTE;
+                break;
+            case (0x02DF):
+            case (0x02E0):
+            case (0x02E1):
+            case (0x02E2):
+            case (0x02E6):
+                uElement = EMERALD_STEEL;
+                break;
+            case (0x02E3):
+                uElement = EMERALD_FONT_BLUE_STEEL_APOSTROPHE;
+                break;
+            case (0x02E4):
+                uElement = EMERALD_FONT_BLUE_STEEL_BRACE_OPEN;
+                break;
+            case (0x02E5):
+                uElement = EMERALD_FONT_BLUE_STEEL_BRACE_CLOSE;
+                break;
+
+            case (0x02E7):
+                uElement = EMERALD_FONT_BLUE_STEEL_PLUS;
+                break;
+            case (0x02E8):
+                uElement = EMERALD_FONT_BLUE_STEEL_COMMA;
+                break;
+            case (0x02E9):
+                uElement = EMERALD_FONT_BLUE_STEEL_MINUS;
+                break;
+            case (0x02EA):
+                uElement = EMERALD_FONT_BLUE_STEEL_DOT;
+                break;
+            case (0x02EB):
+                uElement = EMERALD_FONT_BLUE_STEEL_SLASH;
+                break;
+
+            case (0x02F6):
+                uElement = EMERALD_FONT_BLUE_STEEL_DOUBLE_DOT;
+                break;
+            case (0x02F7):
+                uElement = EMERALD_FONT_BLUE_STEEL_SEMICOLON;
+                break;
+            case (0x02F8):
+                uElement = EMERALD_FONT_BLUE_STEEL_ARROW_LEFT;
+                break;
+            case (0x02F9):
+                uElement = EMERALD_STEEL;
+                break;
+            case (0x02FA):
+                uElement = EMERALD_FONT_BLUE_STEEL_ARROW_RIGHT;
+                break;
+            case (0x02FB):
+                uElement = EMERALD_FONT_BLUE_STEEL_QUESTION_MARK;
+                break;
+            case (0x02FC):
+                uElement = EMERALD_FONT_BLUE_STEEL_PLATE;
+                break;
+
+            case (0x0317):
+                uElement = EMERALD_FONT_BLUE_STEEL_BRACE_OPEN;
+                break;
+            case (0x0318):
+                uElement = EMERALD_FONT_BLUE_STEEL_SLASH;
+                break;
+            case (0x0319):
+                uElement = EMERALD_FONT_BLUE_STEEL_BRACE_CLOSE;
+                break;
+            case (0x031A):
+                uElement = EMERALD_STEEL;
+                break;
+            case (0x031B):
+                uElement = EMERALD_STEEL;
+                break;
+            case (0x031C):
+                uElement = EMERALD_FONT_BLUE_STEEL_COPYRIGHT;
+                break;
+            case (0x031D):
+                uElement = EMERALD_FONT_BLUE_STEEL_AE;
+                break;
+            case (0x031E):
+                uElement = EMERALD_FONT_BLUE_STEEL_OE;
+                break;
+            case (0x031F):
+                uElement = EMERALD_FONT_BLUE_STEEL_UE;
+                break;
+            case (0x0320):
+            case (0x0321):
+            case (0x0322):
+                uElement = EMERALD_STEEL;
+                break;
+
+            case (0x0329):
+                uElement = EMERALD_FONT_BLUE_STEEL_PLATE;
+                break;
+            case (0x032A):
+                uElement = EMERALD_FONT_BLUE_STEEL_ARROW_UP;
+                break;
+            case (0x032B):
+                uElement = EMERALD_FONT_BLUE_STEEL_ARROW_DOWN;
+                break;
+
+            case (0x0336):
+                uElement = EMERALD_DOOR_END_NOT_READY_STEEL;
+                break;
+            case (0x0337):
+                uElement = EMERALD_DOOR_END_READY_STEEL;
+                break;
+            case (0x0338):
+                uElement = EMERALD_STEEL_STRIPE_LEFT;
+                break;
+            case (0x0339):
+                uElement = EMERALD_STEEL_STRIPE_RIGHT;
+                break;
+            case (0x033A):
+                uElement = EMERALD_STEEL_STRIPE_TOP;
+                break;
+            case (0x033B):
+                uElement = EMERALD_STEEL_STRIPE_BOTTOM;
+                break;
+            case (0x033C):
+                uElement = EMERALD_STEEL_STRIPE_TOP_BOTTOM;
+                break;
+            case (0x033D):
+                uElement = EMERALD_STEEL_STRIPE_LEFT_RIGHT;
+                break;
+            case (0x033E):
+                uElement = EMERALD_STEEL_STRIPE_LEFT_TOP;
+                break;
+            case (0x033F):
+                uElement = EMERALD_STEEL_STRIPE_RIGHT_TOP;
+                break;
+            case (0x0340):
+                uElement = EMERALD_STEEL_STRIPE_LEFT_BOTTOM;
+                break;
+            case (0x0341):
+                uElement = EMERALD_STEEL_STRIPE_RIGHT_BOTTOM;
+                break;
+            case (0x0342):
+                uElement = EMERALD_STEEL_STRIPE_CORNER_LEFT_TOP;
+                break;
+            case (0x0343):
+                uElement = EMERALD_STEEL_STRIPE_CORNER_RIGHT_TOP;
+                break;
+            case (0x0344):
+                uElement = EMERALD_STEEL_STRIPE_CORNER_LEFT_BOTTOM;
+                break;
+            case (0x0345):
+                uElement = EMERALD_STEEL_STRIPE_CORNER_RIGHT_BOTTOM;
+                break;
+            case (0x0346):
+                uElement = EMERALD_STEEL_MODERN_LEFT_END;
+                break;
+            case (0x0347):
+                uElement = EMERALD_STEEL_MODERN_RIGHT_END;
+                break;
+            case (0x0348):
+                uElement = EMERALD_STEEL_MODERN_UP_END;
+                break;
+            case (0x0349):
+                uElement = EMERALD_STEEL_MODERN_DOWN_END;
+                break;
+            case (0x034A):
+                uElement = EMERALD_STEEL_MODERN_LEFT_RIGHT;
+                break;
+            case (0x034B):
+                uElement = EMERALD_STEEL_MODERN_UP_DOWN;
+                break;
+            case (0x034C):
+                uElement = EMERALD_STEEL_MODERN_MIDDLE;
+                break;
+            case (0x034D):
+                uElement = EMERALD_STEEL_MODERN_MIDDLE;
+                break;
+            case (0x034E):
+            case (0x034F):
+                uElement = EMERALD_SWITCH_SWITCHDOOR;
+                break;
+            case (0x0350):
+                uElement = EMERALD_WHEEL_TIMEDOOR;
+                break;
+
+            case (0x0352):
+                uElement = EMERALD_MINE_EARTH;
+                break;
+
+            case (0x0354):
+                uElement = EMERALD_STEEL_GROW_LEFT_RIGHT;
+                break;
+            case (0x0355):
+                uElement = EMERALD_STEEL_GROW_UP_DOWN;
+                break;
+            case (0x0356):
+                uElement = EMERALD_STEEL_GROW_ALL;
+                break;
+            case (0x0357):
+                uElement = EMERALD_DOOR_END_NOT_READY;
+                break;
+            case (0x0358):
+                uElement = EMERALD_DOOR_END_READY;
+                break;
+            case (0x0359):
+                uElement = EMERALD_DOOR_END_NOT_READY_STEEL;
+                break;
+            case (0x035A):
+                uElement = EMERALD_DOOR_END_READY_STEEL;
+                break;
+            case (0x035B):
+                uElement = EMERALD_DOOR_GREY_NOKEY;
+                break;
+            case (0x035C):
+                uElement = EMERALD_MAGIC_WALL;
+                break;
+            case (0x035D):
+                uElement = EMERALD_QUICKSAND;
+                break;
+            case (0x035E):
+                uElement = EMERALD_QUICKSAND_STONE;
+                break;
+            default:
+                SDL_Log("%s: warning, unhandled element: 0X%02X",__FUNCTION__,uRocksnDiamondsElement);
+                uElement = EMERALD_FONT_BLUE_STEEL_QUESTION_MARK;
+                break;
+        }
+    }
+    return uElement;
 }

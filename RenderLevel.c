@@ -13,6 +13,7 @@
 extern PLAYFIELD Playfield;
 extern uint8_t ge_uBeamColors[];
 extern CONFIG Config;
+extern VIDEO Video;
 uint8_t g_uCheeseRandom[MAX_CHEESE_RANDOM_NUMBERS];
 uint8_t ge_ExitDoorSequence[8] = {0,1,2,3,4,3,2,1};
 uint32_t g_TreasureChestTicks = 0; // Zum Animieren der Schatztruhen
@@ -64,17 +65,16 @@ Name:           RenderPipeElement
 ------------------------------------------------------------------------------
 Beschreibung: Rendert Pipe-Elemente.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               uPipeElement, uint16_t, Röhren-Element
+      Eingang: uPipeElement, uint16_t, Röhren-Element
                uX, uint32_t, X-Position im Level
                uY, uint32_t, Y-Position im Level
                nXpos, int32_t , Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                nYpos, int32_t , Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
 
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: Playfield.x, ge_ExitDoorSequence[], g_uCheeseRandom[]
+Seiteneffekte: Playfield.x, ge_ExitDoorSequence[], g_uCheeseRandom[], Video.x
 ------------------------------------------------------------------------------*/
-int32_t RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32_t uX, uint32_t uY, int32_t nXpos, int32_t nYpos) {
+int32_t RenderPipeElement(uint16_t uPipeElement, uint32_t uX, uint32_t uY, int32_t nXpos, int32_t nYpos) {
     int32_t nErrorCode;
     uint32_t uTextureIndex;
     SDL_Rect DestR;                     // Zum Kopieren in den Renderer
@@ -123,7 +123,7 @@ int32_t RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32
     DestR.y = uY * FONT_H - (nYpos % FONT_H) + Playfield.uShiftLevelYpix;
     DestR.w = FONT_W;
     DestR.h = FONT_H;
-    nErrorCode = SDL_RenderCopy(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR);
+    nErrorCode = SDL_RenderCopy(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR);
     if (nErrorCode != 0) {
         SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
     }
@@ -136,17 +136,16 @@ Name:           RenderLevel
 ------------------------------------------------------------------------------
 Beschreibung: Kopiert den sichtbaren Teil des Levels in den Renderer
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               pnXpos, int32_t *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
+      Eingang: pnXpos, int32_t *, Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int32_t *, Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
                nAnimationCount, int32_t, 0 - 15 für Animationsstufe
       Ausgang: pnXpos, int32_t *, ggf. korrigierte Pixel-Positionierung X (obere linke Ecke des Levelausschnitts)
                pnYpos, int32_t *, ggf. korrigierte Pixel-Positionierung Y (obere linke Ecke des Levelausschnitts)
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Playfield.x, Config.x, g_TreasureChestTicks, g_TreasureChestOpenTicks, g_bTreasureChestOpen
-
+               Video.x
 ------------------------------------------------------------------------------*/
-int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
+int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
     int32_t nErrorCode;
     uint32_t uX;
     uint32_t uY;
@@ -200,7 +199,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
     uResY = ((Config.uResY + FONT_H) / FONT_H) * FONT_H;
 
     // Die Eingangsparameter "grob" prüfen, damit nichts Schlimmes passiert
-    if ((pRenderer == NULL) || (Playfield.pLevel == NULL)) {
+    if ((Video.pRenderer == NULL) || (Playfield.pLevel == NULL)) {
         SDL_Log("%s: bad input parameters",__FUNCTION__);
         return -1;
     }
@@ -223,7 +222,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
             I = uUpperLeftLevelIndex + uY * Playfield.uLevel_X_Dimension + uX;
             if (I < Playfield.uLevel_XY_Dimension) {
                 if (Playfield.pPipeLevel[I] != EMERALD_SPACE) {
-                    nErrorCode = RenderPipeElement(pRenderer,Playfield.pPipeLevel[I],uX,uY,*pnXpos,*pnYpos);
+                    nErrorCode = RenderPipeElement(Playfield.pPipeLevel[I],uX,uY,*pnXpos,*pnYpos);
                 }
             }
         }
@@ -732,42 +731,42 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     uVerticalBeamColor = (Playfield.pStatusAnimation[I] >> 4) & 0x3;
                     uHorizontalBeamColor = Playfield.pStatusAnimation[I] & 0x03;
                     // Horizontale Linien zeichnen
-                    SDL_SetRenderDrawColor(pRenderer,
+                    SDL_SetRenderDrawColor(Video.pRenderer,
                                            ge_uBeamColors[uHorizontalBeamColor * 3 + 0],        // rot
                                            ge_uBeamColors[uHorizontalBeamColor * 3 + 1],        // grün
                                            ge_uBeamColors[uHorizontalBeamColor * 3 + 2],        // blau
                                            SDL_ALPHA_OPAQUE); // Farbe für Line setzen
-                    SDL_RenderDrawLine(pRenderer,
+                    SDL_RenderDrawLine(Video.pRenderer,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix + 2,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix + FONT_W,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix + 2
                                         );
-                    SDL_RenderDrawLine(pRenderer,
+                    SDL_RenderDrawLine(Video.pRenderer,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix + FONT_H - 3,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix + FONT_W,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix + FONT_H - 3
                                         );
                     // Vertikale Linien zeichnen
-                    SDL_SetRenderDrawColor(pRenderer,
+                    SDL_SetRenderDrawColor(Video.pRenderer,
                                            ge_uBeamColors[uVerticalBeamColor * 3 + 0],        // rot
                                            ge_uBeamColors[uVerticalBeamColor * 3 + 1],        // grün
                                            ge_uBeamColors[uVerticalBeamColor * 3 + 2],        // blau
                                            SDL_ALPHA_OPAQUE); // Farbe für Line setzen
-                    SDL_RenderDrawLine(pRenderer,
+                    SDL_RenderDrawLine(Video.pRenderer,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix + 2,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix + 2,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix + FONT_H
                                         );
-                    SDL_RenderDrawLine(pRenderer,
+                    SDL_RenderDrawLine(Video.pRenderer,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix + FONT_W - 3,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix,
                                        uX * FONT_W - (*pnXpos % FONT_W) + Playfield.uShiftLevelXpix + FONT_W - 3,
                                        uY * FONT_H - (*pnYpos % FONT_H) + Playfield.uShiftLevelYpix + FONT_H
                                         );
-                    SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE); // Zum Schluss wieder schwarz setzen
+                    SDL_SetRenderDrawColor(Video.pRenderer,0,0,0, SDL_ALPHA_OPAQUE); // Zum Schluss wieder schwarz setzen
                     break;
                 case (EMERALD_LIGHTBARRIER_RED_SWITCH):
                     if (Playfield.bLightBarrierRedOn) {
@@ -3057,7 +3056,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs_0 + Playfield.uShiftLevelYpix;
                 DestR.w = FONT_W * fScaleW_0;
                 DestR.h = FONT_H * fScaleH_0;
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex_0),NULL,&DestR,fAngle_0 + fAngleOffs_0,NULL, Flip_0) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex_0),NULL,&DestR,fAngle_0 + fAngleOffs_0,NULL, Flip_0) != 0) {
                     SDL_Log("%s: SDL_RenderCopyEx(extended) failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
                 }
@@ -3069,7 +3068,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
                 DestR.w = FONT_W * fScaleW;
                 DestR.h = FONT_H * fScaleH;
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
                     SDL_Log("%s: SDL_RenderCopyEx(standard) failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
                 }
@@ -3277,7 +3276,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
                 DestR.w = FONT_W * fScaleW;
                 DestR.h = FONT_H * fScaleH;
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
                     SDL_Log("%s: SDL_RenderCopyEx(standard,2) failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
                 }
@@ -3313,7 +3312,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                 DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
                 DestR.w = FONT_W * fScaleW;
                 DestR.h = FONT_H * fScaleH;
-                if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
                     SDL_Log("%s: SDL_RenderCopyEx(standard,2) failed: %s",__FUNCTION__,SDL_GetError());
                     nErrorCode = -1;
                 }
@@ -3324,7 +3323,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
                     DestR.y = uY * FONT_H - (*pnYpos % FONT_H) + nYoffs + Playfield.uShiftLevelYpix;
                     DestR.w = FONT_W * fScaleW;
                     DestR.h = FONT_H * fScaleH;
-                    if (SDL_RenderCopyEx(pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
+                    if (SDL_RenderCopyEx(Video.pRenderer,GetTextureByIndex(uTextureIndex),NULL,&DestR,fAngle + fAngleOffs,NULL, Flip) != 0) {
                         SDL_Log("%s: SDL_RenderCopyEx(standard,2) failed: %s",__FUNCTION__,SDL_GetError());
                         nErrorCode = -1;
                     }
@@ -3333,7 +3332,7 @@ int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, i
         }
     }
     if (nErrorCode == 0) {
-        if (ShowPanel(pRenderer) != 0) {
+        if (ShowPanel() != 0) {
             SDL_Log("%s: ShowPanel() failed",__FUNCTION__);
         }
     }

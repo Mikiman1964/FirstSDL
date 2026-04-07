@@ -9,6 +9,7 @@
 
 ASTEROID_LAYER AsteroidLayer[MAX_ASTEROIDLAYERS];
 extern CONFIG Config;
+extern VIDEO Video;
 
 /*----------------------------------------------------------------------------
 Name:           InitAsteroidLayer
@@ -134,14 +135,13 @@ Name:           MoveAsteroids
 ------------------------------------------------------------------------------
 Beschreibung: Bewegt die Asteroiden.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer des Windows
-               pAsteroidTexture, SDL_Texture *, Zeiger auf Texture des Asteroiden
+      Eingang: pAsteroidTexture, SDL_Texture *, Zeiger auf Texture des Asteroiden
 
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
-Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS],Config.x
+Seiteneffekte: AsteroidLayer[MAX_ASTEROIDLAYERS],Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t MoveAsteroids(SDL_Renderer *pRenderer,SDL_Texture *pAsteroidTexture) {
+int32_t MoveAsteroids(SDL_Texture *pAsteroidTexture) {
     SDL_Rect DestR_Asteroid;
     int32_t nLayer;
     int32_t nAsteroid;
@@ -185,8 +185,7 @@ int32_t MoveAsteroids(SDL_Renderer *pRenderer,SDL_Texture *pAsteroidTexture) {
                     //SDL_Log("Ready at x:%d   y: %d",AsteroidLayer[nLayer].Asteroid[nAsteroid].nXpos,AsteroidLayer[nLayer].Asteroid[nAsteroid].nYpos);
                 }
                 // Asteroid in Renderer kopieren
-                // SDL_RenderCopy(pRenderer,pAsteroidTexture,NULL,&DestR_Asteroid);
-                if (SDL_RenderCopyEx(pRenderer, pAsteroidTexture, NULL, &DestR_Asteroid, AsteroidLayer[nLayer].Asteroid[nAsteroid].dAngleRotate, NULL, SDL_FLIP_NONE) == 0) {
+                if (SDL_RenderCopyEx(Video.pRenderer, pAsteroidTexture, NULL, &DestR_Asteroid, AsteroidLayer[nLayer].Asteroid[nAsteroid].dAngleRotate, NULL, SDL_FLIP_NONE) == 0) {
                     nRet = 0; // Alles OK
                 } else {
                     SDL_Log("%s: SDL_RenderCopyEx() failed: %s",__FUNCTION__,SDL_GetError());

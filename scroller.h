@@ -30,7 +30,7 @@ typedef struct
 
 
 int32_t InitScroller(SCROLLER *pScroller, uint32_t uScrollSpeedPixel, uint32_t uXStart, uint32_t uXEnd, int32_t nYpos, uint8_t *pszScrolltext, float fXfreq, float fYfreq, float fYamplitude, float fScale, bool bSinus, bool bSwellFont);
-int32_t DoScroller(SDL_Renderer *pRenderer, SCROLLER *pScroller);
+int32_t DoScroller(SCROLLER *pScroller);
 void FreeScroller(SCROLLER *pScroller);
 
 #endif // SCROLLER_H_INCLUDED

@@ -39,16 +39,19 @@ void GetMd5HashFromString(char *pszMd5String,uint8_t *puMd5Hash);
 void GetActualTimestamp(char *pszTimestamp);
 int32_t randn(int32_t low,int32_t high);
 void InitXorShift(void);
+uint32_t GetRainbowColors(uint16_t uWert);
 uint32_t xorshift128(void); // https://de.wikipedia.org/wiki/Xorshift
 void DumpMem(uint8_t *pcMem, int32_t nLen);
 uint8_t *ReadFile(const char *pszFilename,uint32_t *puLen);
 int32_t WriteFile(const char *pszFilename,uint8_t *pcData, uint32_t uLen,bool bAppend);
 int32_t CheckAndCreateDir(char *pszDirectoryName);
+uint16_t Get16BitValueBigEndian(uint8_t *pMemory);
 uint8_t *BinToBase64(uint8_t *pcBinary, uint32_t uBinaryLen, uint32_t *puBase64Len, bool bNewLine);
 int32_t GetLineFeedCount(char *pszText);
 int32_t GetLineLen(char *pszText, int32_t nCursorPos);
 float myrandom(void);
 char* get_file_extension(char *filename);
+void* memsearch(const void* haystack, size_t haystack_len, const void* needle, size_t needle_len);
 /*
 Copyright (c) 2012, Cameron Harper
 All rights reserved.

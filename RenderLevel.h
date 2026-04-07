@@ -8,7 +8,7 @@
 
 void FillCheeseRandomNumbers(void);
 void SetTreasureChestStart(void);
-int32_t RenderPipeElement(SDL_Renderer *pRenderer, uint16_t uPipeElement, uint32_t uX, uint32_t uY, int32_t nXpos, int32_t nYpos);
-int32_t RenderLevel(SDL_Renderer *pRenderer, int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount);
+int32_t RenderPipeElement(uint16_t uPipeElement, uint32_t uX, uint32_t uY, int32_t nXpos, int32_t nYpos);
+int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount);
 
 #endif // RENDERLEVEL_H_INCLUDED

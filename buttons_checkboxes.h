@@ -41,7 +41,7 @@ typedef struct {
 void InitCheckboxes(void);
 int32_t RegisterCheckbox(CHECKBOX *pCheckbox, bool bActive, char *pszText, int32_t nXpos, int32_t nYpos, bool bRadio, bool bUse);
 int32_t DeRegisterCheckbox(CHECKBOX *pCheckbox);
-int32_t ShowCheckboxes(SDL_Renderer *pRenderer, int32_t nDimm, bool bAbsolute);
+int32_t ShowCheckboxes(int32_t nDimm, bool bAbsolute);
 
 void InitButtons(void);
 void FreeButton(char *pszLabel);
@@ -51,7 +51,7 @@ int32_t GetFreeButtonIndex(void);
 int32_t CreateButton(char *pszLabel, char *pszText,uint32_t uXpos, int32_t uYpos, bool bActive, bool bWaitRelease);
 int32_t SetButtonActivity(char *pszLabel, bool bActive);
 int32_t SetButtonPosition(char *pszLabel, uint32_t uXpos, uint32_t uYpos);
-int32_t ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute);
-int32_t ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute);
+int32_t ShowButtons(bool bAbsolute);
+int32_t ShowOtherButtons(bool bAbsolute);
 bool IsButtonPressed(char *pszLabel);
 #endif // BUTTONS_CHECKBOXES_H_INCLUDED

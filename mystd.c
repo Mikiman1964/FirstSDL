@@ -40,6 +40,73 @@ void InitXorShift(void) {
 
 
 /*----------------------------------------------------------------------------
+Name:           GetRainbowColors
+------------------------------------------------------------------------------
+Beschreibung: Berechnung eines Regenbogen-Farbverlaufs.
+              Als Eingabe dient ein Wert zwischen 0 und 254, der die Position
+              im Regenbogen angibt.
+              0 = oberer Bereich des Regenbogens (rot)
+              254 = unterer Bereich des Regenbogens (violett)
+              Quelle: https://www.mikrocontroller.net/topic/238304
+              Benutzername: kbuchegg: Karl-Heinz Buchegger
+              Bei ungültigen Eingabewerten wird der Regenbogen umgebrochen, d.h.
+              er fängt wieder am Anfang an.
+              Quelle:
+              https://www.mikrocontroller.net/topic/238304
+              Karl-Heinz BuchEgg
+Parameter
+      Eingang: uWert, uint16_t, Position im Regenbogen (0 ... 254)
+      Ausgang: -
+      Rückgabewert: uint32_t, RGB (höchtes Byte unbesetzt = NN)
+                    NNRRGGBB
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+uint32_t GetRainbowColors(uint16_t uWert) {
+    int32_t nRed, nGreen, nBlue;
+    int32_t nPhase;
+    int32_t nLevel;
+    uint32_t uRGB = 0;
+
+    uWert = uWert % 254;
+    nPhase = uWert / 51;
+    nLevel = uWert % 51;
+    switch (nPhase) {
+        case 0:
+            nRed = 255;
+            nGreen = nLevel * 5;
+            nBlue = 0;
+            break;
+        case 1:
+            nRed = 255 - nLevel * 5;
+            nGreen = 255;
+            nBlue = 0;
+            break;
+        case 2:
+            nRed = 0;
+            nGreen = 255;
+            nBlue = nLevel * 5;
+            break;
+        case 3:
+            nRed = 0;
+            nGreen = 255 - nLevel * 5;
+            nBlue = 255;
+            break;
+        case 4:
+            nRed = nLevel * 5;
+            nGreen = 0;
+            nBlue  = 255;
+            break;
+        default:
+            nRed = nGreen = nBlue = 255;
+    }
+    uRGB = uRGB | ((uint8_t)nRed) << 16;
+    uRGB = uRGB | ((uint8_t)nGreen) << 8;
+    uRGB = uRGB | (uint8_t)nBlue;
+    return uRGB;
+}
+
+
+/*----------------------------------------------------------------------------
 Name:           DynStringInit
 ------------------------------------------------------------------------------
 Beschreibung: Initialisiert ein neues String-Objekt. Der zurückgegebene Speicher
@@ -598,6 +665,23 @@ int32_t CheckAndCreateDir(char *pszDirectoryName) {
 }
 
 
+/*----------------------------------------------------------------------------
+Name:           Get16BitValueBigEndian
+------------------------------------------------------------------------------
+Beschreibung:  Liest einen 16-Bit-Wert im BIGENDIAN-Format aus dem Speicher.
+      Eingang: pMemory, uint8_t *, Zeiger auf Speicher
+Rückgabewert:  uint16_t, 16-Bit-Wert, im Fehlerfall 0xFFFF
+Seiteneffekte: -
+------------------------------------------------------------------------------*/
+uint16_t Get16BitValueBigEndian(uint8_t *pMemory) {
+    if (pMemory != NULL) {
+        return (uint16_t)pMemory[0] << 8 | (uint16_t)pMemory[1];
+    } else {
+        return 0xFFFF;
+    }
+}
+
+
 // Für Base64
 uint8_t g_cBase64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 /*----------------------------------------------------------------------------
@@ -818,3 +902,25 @@ char* get_file_extension(char *filename) {
     }
     return dot + 1; // Extension ohne Punkt
 }
+
+// Vom Copiloten
+void* memsearch(const void* haystack, size_t haystack_len, const void* needle, size_t needle_len) {
+    if (!haystack || !needle || needle_len == 0 || haystack_len < needle_len)
+        return NULL;
+
+    const uint8_t* h = (const uint8_t*)haystack;
+    const uint8_t* n = (const uint8_t*)needle;
+    for (size_t i = 0; i <= haystack_len - needle_len; i++) {
+        if (h[i] == n[0]) {
+            size_t j = 1;
+            while (j < needle_len && h[i + j] == n[j]) {
+                j++;
+            }
+            if (j == needle_len) {
+                return (void*)(h + i); // Treffer
+            }
+        }
+    }
+    return NULL; // Nichts gefunden
+}
+

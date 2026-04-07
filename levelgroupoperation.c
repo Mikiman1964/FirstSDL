@@ -649,12 +649,12 @@ Name:           LevelgroupOperaton_RenameGroupname
 Beschreibung: Benennt den Levelgruppennamen um und bietet hierfür eine Eingabe
               an.
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int32_t LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
+int32_t LevelgroupOperaton_RenameGroupname(void) {
     int32_t nErrorCode = 0;
     int32_t nColorDimm;
     uint8_t uMusicVolume;
@@ -723,9 +723,9 @@ int32_t LevelgroupOperaton_RenameGroupname(SDL_Renderer *pRenderer) {
             bChangeLevelgroupname = true;
         }
         if (nErrorCode == 0) {
-            nErrorCode = RenderMenuElements(pRenderer);
+            nErrorCode = RenderMenuElements();
         }
-        RenderPresentAndClear(pRenderer);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);
@@ -787,12 +787,12 @@ Name:           LevelgroupOperaton_Password
 Beschreibung: Setzt oder lösct ein Levelgruppenpasswort. Falls ein Passwort
               gesetzt werden muss, wird hierfür eine Eingabe angeboten.
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int32_t LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
+int32_t LevelgroupOperaton_Password(void) {
     int32_t nErrorCode = 0;
     int32_t nColorDimm;
     uint32_t I;
@@ -867,9 +867,9 @@ int32_t LevelgroupOperaton_Password(SDL_Renderer *pRenderer) {
                 bChangeLevelgroupPassword = (strlen(szPassword) > 0);
             }
             if (nErrorCode == 0) {
-                nErrorCode = RenderMenuElements(pRenderer);
+                nErrorCode = RenderMenuElements();
             }
-            RenderPresentAndClear(pRenderer);
+            RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
             if ((!bPrepareExit) && (nColorDimm < 100)) {
                 nColorDimm = nColorDimm + 4;
                 SetAllTextureColors(nColorDimm);
@@ -952,14 +952,14 @@ Name:           LevelgroupOperaton_AskPassword
 Beschreibung: Falls eine Levelgruppe passwortgeschützt ist, kommt die folgende
               Abfrage.
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK
                        -1 = Fehler
                        -2 = Kennwort falsch
 Seiteneffekte: SelectedLevelgroup.x, Inputstates.x, MainMenu.x
 ------------------------------------------------------------------------------*/
-int32_t LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
+int32_t LevelgroupOperaton_AskPassword(void) {
     int32_t nErrorCode = 0;
     int32_t nColorDimm;
     uint32_t I;
@@ -1022,9 +1022,9 @@ int32_t LevelgroupOperaton_AskPassword(SDL_Renderer *pRenderer) {
                 bPrepareExit = true;
             }
             if (nErrorCode == 0) {
-                nErrorCode = RenderMenuElements(pRenderer);
+                nErrorCode = RenderMenuElements();
             }
-            RenderPresentAndClear(pRenderer);
+            RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
             if ((!bPrepareExit) && (nColorDimm < 100)) {
                 nColorDimm = nColorDimm + 4;
                 SetAllTextureColors(nColorDimm);
@@ -1073,13 +1073,13 @@ Name:           LevelgroupOperaton_LevelImport
 ------------------------------------------------------------------------------
 Beschreibung: Bietet eine Dateiauswahl für den Levelimport an.
 Parameter
-      Eingang: SDL_Renderer *, pRenderer, Zeiger auf Renderer
+      Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
 Seiteneffekte: Inputstates.x, MainMenu.x, ImportLevelFileList[].x, Ed.x, Video.x,
                g_szImportLevelType[]
 ------------------------------------------------------------------------------*/
-int32_t LevelgroupOperaton_LevelImport(SDL_Renderer *pRenderer) {
+int32_t LevelgroupOperaton_LevelImport(void) {
     int32_t nErrorCode = 0;
     int32_t nColorDimm;
     int32_t nNewLevelCount = 0;
@@ -1125,17 +1125,17 @@ int32_t LevelgroupOperaton_LevelImport(SDL_Renderer *pRenderer) {
         UpdateInputStates();
 
         if (nErrorCode == 0) {
-            nErrorCode = RenderMenuElements(pRenderer);
+            nErrorCode = RenderMenuElements();
         }
         // Import-Dateien auflisten
         for (I = 0; I < IMPORT_MAX_FILES_IN_LIST; I++) {
             if (MainMenu.uImportFileList[I] != 0xFFFF) {
-                PrintLittleFont(pRenderer,40 + Video.uXoffs,37 + I * 20,0,ImportLevelFileList[MainMenu.uImportFileList[I]].szShowFilename,K_ABSOLUTE,1);
-                PrintLittleFont(pRenderer,1000 + Video.uXoffs,37 + I * 20,0,g_szImportLevelType[ImportLevelFileList[I].uLevelType],K_ABSOLUTE,1);
-                PrintLittleFont(pRenderer,842 + Video.uXoffs,37 + I * 20,0,ImportLevelFileList[MainMenu.uImportFileList[I]].szFileSize,K_ABSOLUTE,1);
+                PrintLittleFont(40 + Video.uXoffs,37 + I * 20,0,ImportLevelFileList[MainMenu.uImportFileList[I]].szShowFilename,K_ABSOLUTE,1);
+                PrintLittleFont(1000 + Video.uXoffs,37 + I * 20,0,g_szImportLevelType[ImportLevelFileList[I].uLevelType],K_ABSOLUTE,1);
+                PrintLittleFont(842 + Video.uXoffs,37 + I * 20,0,ImportLevelFileList[MainMenu.uImportFileList[I]].szFileSize,K_ABSOLUTE,1);
             }
         }
-        nErrorCode = ImportMenuSelectFile(pRenderer,&uBeamPosition);
+        nErrorCode = ImportMenuSelectFile(&uBeamPosition);
         if ((uBeamPosition != 0xFFFFFFFF) && (!bPrepareExit)) {
             // Dateiname wurde ausgewählt
             strcpy(szFullFilename,IMPORT_DIRECTORYNAME);
@@ -1148,12 +1148,15 @@ int32_t LevelgroupOperaton_LevelImport(SDL_Renderer *pRenderer) {
                 case (IMPORT_LEVELTYPE_EMERALDMINE_KINGSOFT):
                     nErrorCode = LevelConverterFromEmeraldMineKingsoft(szFullFilename);
                     break;
+                case (IMPORT_LEVELTYPE_ROCKSNDIAMONDS):
+                    nErrorCode = LevelConverterFromRocksnDiamonds(szFullFilename);
+                    break;
                 default:
                     nErrorCode = -1;
                     break;
             }
             if (nErrorCode == 0) {
-                // Ab hier befindet sich das konvertierte Bitmap-Level in Ed.x
+                // Ab hier befindet sich das konvertierte Level in Ed.x
                 if (SetLevelBorder(Ed.pLevel,false,false) == 0) { // 1. false = Level nicht auf EMERALD_SPACE setzen, 2. false = Nur auf EMERALD_STEEL setzen, wenn noch kein kompatibles Stahl-Element
                     Ed.uReplicatorRedObject = EMERALD_SPACE;
                     Ed.uReplicatorGreenObject = EMERALD_SPACE;
@@ -1223,11 +1226,11 @@ int32_t LevelgroupOperaton_LevelImport(SDL_Renderer *pRenderer) {
             }
             WaitNoKey();
         }
-        ShowButtons(pRenderer,K_ABSOLUTE);
+        ShowButtons(K_ABSOLUTE);
         if ( (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES)) || (InputStates.bQuit) ) {
             bPrepareExit = true;
         }
-        RenderPresentAndClear(pRenderer);
+        RenderPresentAndClear(EMERALD_DEFAULT_GAMESPEED);
         if ((!bPrepareExit) && (nColorDimm < 100)) {
             nColorDimm = nColorDimm + 4;
             SetAllTextureColors(nColorDimm);

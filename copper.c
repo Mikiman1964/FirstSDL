@@ -19,6 +19,7 @@ COPPERSEGMENT PrecalculatedSegments[COPPER_PRECALCULATED_SEGMENTS];     // Vorbe
 COLORFLOW ColorFlow[(COPPER_COLORLINES_PER_SEGMENT * 2) - 1];           // Vorberechneter Farbverlauf (dunkel -> hell -> dunkel) für aktuelles Color-Pattern
 
 extern CONFIG Config;
+extern VIDEO Video;
 
 uint8_t g_ColorPatterns[] = {
 //                           R    G    B
@@ -202,14 +203,13 @@ Name:           DoCopper
 ------------------------------------------------------------------------------
 Beschreibung: Führt die Coppersimulation auf und ruft das Segmentscrolling auf.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               bScroll, bool, true = Scrollen, false = nicht scrollen
+      Eingang: bScroll, bool, true = Scrollen, false = nicht scrollen
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: VisibleCopperSegments[], g_ColorPatterns[]
-               g_nColorPattern, g_bReady, uCopperVisibleSegments, Config.x
+               g_nColorPattern, g_bReady, uCopperVisibleSegments, Config.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t DoCopper(SDL_Renderer *pRenderer,bool bScroll) {
+int32_t DoCopper(bool bScroll) {
     int32_t nSegment;
     int32_t nLine;
     int32_t nRed;
@@ -243,9 +243,9 @@ int32_t DoCopper(SDL_Renderer *pRenderer,bool bScroll) {
             nRed = VisibleCopperSegments[nSegment].CopperLine[nLine].nRed;
             nGreen = VisibleCopperSegments[nSegment].CopperLine[nLine].nGreen;
             nBlue = VisibleCopperSegments[nSegment].CopperLine[nLine].nBlue;
-            if (SDL_SetRenderDrawColor(pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0) {  // Farbe für Line setzen
+            if (SDL_SetRenderDrawColor(Video.pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0) {  // Farbe für Line setzen
                 nYpos = nSegment * COPPER_COLORLINES_PER_SEGMENT + nLine;
-                if (SDL_RenderDrawLine(pRenderer, 0, nYpos, Config.uResX - 1, nYpos) != 0) {
+                if (SDL_RenderDrawLine(Video.pRenderer, 0, nYpos, Config.uResX - 1, nYpos) != 0) {
                     nRet = -1;
                     SDL_Log("%s: SDL_RenderDrawLine() failed: %sd",__FUNCTION__,SDL_GetError());
                 }
@@ -256,7 +256,7 @@ int32_t DoCopper(SDL_Renderer *pRenderer,bool bScroll) {
         }
     }
     if (nRet == 0) {
-        if (SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE) != 0) {  // Muss am Ende stehen, damit Hintergrund wieder dunkel wird
+        if (SDL_SetRenderDrawColor(Video.pRenderer,0,0,0, SDL_ALPHA_OPAQUE) != 0) {  // Muss am Ende stehen, damit Hintergrund wieder dunkel wird
             nRet = -1;
             SDL_Log("%s: SDL_SetRenderDrawColor() failed: %s",__FUNCTION__,SDL_GetError());
         }

@@ -36,7 +36,7 @@ typedef struct {
 
 
 void InitAsteroidLayer(void);
-int32_t MoveAsteroids(SDL_Renderer *pRenderer,SDL_Texture *pAsteroidTexture);
+int32_t MoveAsteroids(SDL_Texture *pAsteroidTexture);
 int32_t SetAsteroidDeflection(int32_t nLayer, int32_t nAsteroid, float fXangleSpeed, float fYangleSpeed, int32_t nXmaxDeflection, int32_t nYmaxDeflection);
 int32_t SwitchDrunkenAsteroids(bool bOnOff);
 

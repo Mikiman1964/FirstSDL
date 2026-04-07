@@ -30,6 +30,6 @@ int32_t InitVisibibleCopperSegments(void);
 void CalculateColorFlow(int32_t nMaxRed, int32_t nMaxGreen, int32_t nMaxBlue);
 void PrecalculateSegments(int32_t nMaxRed, int32_t nMaxGreen, int32_t nMaxBlue);
 void ScrollVisibleSegments(void);
-int32_t DoCopper(SDL_Renderer *pRenderer,bool bScroll);
+int32_t DoCopper(bool bScroll);
 void FreeCopper(void);
 #endif // COPPER_H_INCLUDED

@@ -2,6 +2,7 @@
 #define MYSDL_H_INCLUDED
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 #define DEFAULT_WINDOW_W                        1280    // Ist auch gleichzeitig die
 #define DEFAULT_WINDOW_H                        768     // Mindestanforderung an die Auflösung
@@ -36,7 +37,8 @@
 
 
 #define VSYNC_DETECTION_FRAMES                  20     // Anzahl Frames, um V-Sync zu detektieren.
-#define VSYNC_WARNING_MESSAGE                   "WARNING: NO Y-SYNC DETECTED"
+#define VSYNC_WARNING_MESSAGE                   "WARNING: NO V-SYNC DETECTED"
+#define VSYNC_NOUSAGE_MESSAGE                   "USING NO V-SYNC"
 
 
 typedef struct {
@@ -65,11 +67,12 @@ typedef struct {
 
 
 typedef struct {
+    uint32_t uFrameCounter;                                                 // wird in RenderPresentAndClear() erhöht
     SDL_DisplayMode DesktopDisplayMode;                                     // Desktop-Display-Einstellungen beim Start des Programms
     uint32_t uXoffs;                                                        // X-Offset für die Zentrierung von Elementen
     uint32_t uYoffs;                                                        // Y-Offset für die Zentrierung von Elementen
-    bool bMustUseFullScreen;                                                // FullScreen muss aufgrund falscher Framerate verwendet werden
-    SDL_Window *pWindow;
+    SDL_Window *pWindow;                                                    // Zeiger auf Fenster-Handle
+    SDL_Renderer *pRenderer;                                                // Renderer für das Window
     // brauchbare Display-Modes
     int32_t nUsableDisplayModeCount;                                        // Anzahl der nutzbaren Display-Modes, Xres >= 1280, Yres >= 768, refreshrate = 60 Hz
     USABLEDISPLAYMODES *pUsableModes;                                       // X- und Y- Auflösung und Index
@@ -95,21 +98,21 @@ int32_t GetUsableDisplayModes(uint32_t uDisplay);
 int32_t GetShowableDisplayModes(void);
 int32_t GetDesktopDisplayMode(void);
 SDL_Renderer *CreateRenderer(SDL_Window * pWindow);
-int32_t RenderPresentAndClear(SDL_Renderer *pRenderer);
-int32_t LoadTextures(SDL_Renderer *pRenderer);
-int32_t CopyTexture(SDL_Renderer *pRenderer, uint32_t uTextureIndex, int32_t nXpos, int32_t nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle);
-int32_t CopyColorRect(SDL_Renderer *pRenderer, int32_t nRed, int32_t nGreen, int32_t nBlue, int32_t nXpos, int32_t nYpos, uint32_t uW, uint32_t uH, bool bAbsolute);
+int32_t RenderPresentAndClear(uint32_t uSpeed);
+int32_t LoadTextures(void);
+int32_t CopyTexture(uint32_t uTextureIndex, int32_t nXpos, int32_t nYpos, uint32_t uTextureW, uint32_t uTextureH, float fScaleW, float fScaleH, float fAngle);
+int32_t CopyColorRect(int32_t nRed, int32_t nGreen, int32_t nBlue, int32_t nXpos, int32_t nYpos, uint32_t uW, uint32_t uH, bool bAbsolute);
 void FreeTextures(void);
 SDL_Texture *GetTextureByIndex(int32_t nIndex);
 int32_t SetAllTextureColors(uint8_t uIntensityProzent);
-int32_t PrintLittleFont(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText,bool bAbsolute,float fSizeFactor);
+int32_t PrintLittleFont(int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText,bool bAbsolute,float fSizeFactor);
 void GetMessageWindowSize(uint32_t *puWinW,uint32_t *puWinH, uint32_t *puLines, char *pszText);
-int32_t CreateMessageWindow(SDL_Renderer *pRenderer, int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText, int32_t *pnXpos, int32_t *pnYpos);
-int32_t DrawBeam(SDL_Renderer *pRenderer,uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute);
-int32_t DrawGrid(SDL_Renderer *pRenderer, uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace);
+int32_t CreateMessageWindow(int32_t nXpos, int32_t nYpos, uint32_t uFont, char *pszText, int32_t *pnXpos, int32_t *pnYpos);
+int32_t DrawBeam(uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint32_t uGreen, uint32_t uBlue, uint8_t uTransp, bool bAbsolute);
+int32_t DrawGrid(uint32_t uXpos, uint32_t uYpos, uint32_t uWidth, uint32_t uHeight, uint8_t uRed, uint8_t uGreen, uint8_t uBlue, uint8_t uAlpha, uint32_t uGridSpace);
 void RestoreDesktop(void);
 int32_t SetWindowDisplayMode(int32_t nWidth, int32_t nHeight, Uint32 uFormat, int32_t nRefreshRate);
 int32_t CenterWindow(uint32_t uWidth, uint32_t uHeight);
 void MeasureFps(void);
-bool IsVsync(SDL_Renderer *pRenderer,float fCheckFramerate);
+bool IsVsync(float fCheckFramerate);
 #endif // MYSDL_H_INCLUDED

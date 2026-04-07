@@ -114,14 +114,13 @@ Name:           ShowCheckboxes
 Beschreibung: Zeigt alle registrierten Checkboxen an. Funktion muss in
               einer Event-Hauptschleife zyklisch aufgerufen werden.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-               nDimm, int32_t, Helligkeit der Checkboxen
+      Eingang: nDimm, int32_t, Helligkeit der Checkboxen
                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int32_t , 0 = OK, sonst Fehler
 Seiteneffekte: Checkboxes[], InputStates.x, Video.x
 ------------------------------------------------------------------------------*/
-int32_t ShowCheckboxes(SDL_Renderer *pRenderer, int32_t nDimm, bool bAbsolute) {
+int32_t ShowCheckboxes(int32_t nDimm, bool bAbsolute) {
     int32_t nErrorCode = 0;
     int32_t nI;
     uint32_t uXoffs;
@@ -153,20 +152,20 @@ int32_t ShowCheckboxes(SDL_Renderer *pRenderer, int32_t nDimm, bool bAbsolute) {
                 Rect.y = pC->nYpos + uYoffs;
                 bOldPressed = pC->bPressed;    // Bisheriger gedrückter Zustand
                 nErrorCode = -1;
-                if (SDL_SetRenderDrawColor(pRenderer,0,(255 * nDimm) / 100,0,255) == 0) {
-                    if (SDL_RenderDrawRect(pRenderer,&Rect) == 0) {
-                        nErrorCode = PrintLittleFont(pRenderer,pC->nXpos + 25,pC->nYpos + 3,0,pC->szText,bAbsolute,1);
+                if (SDL_SetRenderDrawColor(Video.pRenderer,0,(255 * nDimm) / 100,0,255) == 0) {
+                    if (SDL_RenderDrawRect(Video.pRenderer,&Rect) == 0) {
+                        nErrorCode = PrintLittleFont(pC->nXpos + 25,pC->nYpos + 3,0,pC->szText,bAbsolute,1);
                         if (nErrorCode == 0) {
                             // Kreuz bzw. kleines Quadrat malen, wenn aktiv
                             if (pC->bActive) {
                                 if (pC->bRadio) {
                                     RectSmall.x = pC->nXpos + 5 + uXoffs;
                                     RectSmall.y = pC->nYpos + 5 + uYoffs;
-                                    nErrorCode = SDL_RenderFillRect(pRenderer,&RectSmall);
+                                    nErrorCode = SDL_RenderFillRect(Video.pRenderer,&RectSmall);
                                 } else {
-                                    nErrorCode = SDL_RenderDrawLine(pRenderer, pC->nXpos + uXoffs, pC->nYpos + uYoffs, pC->nXpos + 19 + uXoffs, pC->nYpos + 19 + uYoffs);
+                                    nErrorCode = SDL_RenderDrawLine(Video.pRenderer, pC->nXpos + uXoffs, pC->nYpos + uYoffs, pC->nXpos + 19 + uXoffs, pC->nYpos + 19 + uYoffs);
                                     if (nErrorCode == 0) {
-                                        nErrorCode = SDL_RenderDrawLine(pRenderer, pC->nXpos + 19 + uXoffs, pC->nYpos + uYoffs, pC->nXpos + uXoffs, pC->nYpos + 19 + uYoffs);
+                                        nErrorCode = SDL_RenderDrawLine(Video.pRenderer, pC->nXpos + 19 + uXoffs, pC->nYpos + uYoffs, pC->nXpos + uXoffs, pC->nYpos + 19 + uYoffs);
                                     }
                                 }
                             }
@@ -480,13 +479,12 @@ Name:           ShowButtons
 Beschreibung: Zeigt alle erzeugten und aktiven Buttons an. Funktion muss in
               einer Event-Hauptschleife zyklisch aufgerufen werden.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
+      Eingang: bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, Video.x
 ------------------------------------------------------------------------------*/
-int32_t ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
+int32_t ShowButtons(bool bAbsolute) {
     int32_t nErrorCode;
     uint32_t I;
     uint32_t uXpos;
@@ -524,10 +522,9 @@ int32_t ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
             if  (InputStates.bLeftMouseButton && bButtonArea) {
                 // Buttonfläche erzeugen
                 Buttons[I].bPressed = true;
-                nErrorCode = CopyColorRect(pRenderer,106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
-                nErrorCode = PrintLittleFont(pRenderer,uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
-                ShowOtherButtons(pRenderer,bAbsolute);
-                // SDL_RenderPresent(pRenderer);   // Renderer anzeigen
+                nErrorCode = CopyColorRect(106 * fIntensityProzent,104 * fIntensityProzent,100 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
+                nErrorCode = PrintLittleFont(uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
+                ShowOtherButtons(bAbsolute);
                 if (Buttons[I].bWaitRelease) {
                     WaitNoKey();
                 }
@@ -541,22 +538,22 @@ int32_t ShowButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
                 }
             } else {
                 // Buttonfläche erzeugen
-                nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
+                nErrorCode = CopyColorRect(212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
             }
             // Weißer Button-Rand oben und links zeichnen
-            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uYoffs); // oben
-            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uXoffs, uYpos + uButtonH + 1 + uYoffs); // links
+            SDL_SetRenderDrawColor(Video.pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uYoffs); // oben
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uXoffs, uYpos + uButtonH + 1 + uYoffs); // links
             // Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // rechts
+            SDL_SetRenderDrawColor(Video.pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // unten
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uButtonW + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + 1 + uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs); // rechts
-            SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
-            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
+            SDL_SetRenderDrawColor(Video.pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + 1 + uYoffs); // unten
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uButtonW + 1 + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs); // rechts
+            SDL_SetRenderDrawColor(Video.pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
+            nErrorCode = PrintLittleFont(uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
         }
     }
     return nErrorCode;
@@ -568,13 +565,12 @@ Name:           ShowOtherButtons
 ------------------------------------------------------------------------------
 Beschreibung: Zeigt alle erzeugten und aktiven Buttons während einer Haltephase (WaitNoKey) an.
 Parameter
-      Eingang: pRenderer, SDL_Renderer *, Zeiger auf Renderer
-                bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
+      Eingang: bAbsolute, bool, true = absolute Koordinaten, d.h. es erfolgt keine Umrechnung
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Buttons[].x, InputStates.x, g_uIntensityProzent, Video.x
 ------------------------------------------------------------------------------*/
-int32_t ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
+int32_t ShowOtherButtons(bool bAbsolute) {
     int32_t nErrorCode;
     uint32_t I;
     uint32_t uXpos;
@@ -601,21 +597,21 @@ int32_t ShowOtherButtons(SDL_Renderer *pRenderer, bool bAbsolute) {
             uButtonW = strlen(Buttons[I].pszText) * FONT_LITTLE_COURIER_W + FONT_LITTLE_COURIER_W;
             uButtonH = BUTTON_H;
             // Buttonfläche erzeugen
-            nErrorCode = CopyColorRect(pRenderer,212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
+            nErrorCode = CopyColorRect(212 * fIntensityProzent,208 * fIntensityProzent,200 * fIntensityProzent,uXpos + uXoffs,uYpos + uYoffs,uButtonW,uButtonH,K_ABSOLUTE);
             // Weißer Button-Rand oben und links zeichnen
-            SDL_SetRenderDrawColor(pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uYoffs); // oben
-            SDL_RenderDrawLine(pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uXoffs, uYpos + uButtonH + 1 + uYoffs); // links
+            SDL_SetRenderDrawColor(Video.pRenderer,255 * fIntensityProzent,255 * fIntensityProzent,255 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uYoffs); // oben
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uXoffs, uYpos + uYoffs, uXpos + uXoffs, uYpos + uButtonH + 1 + uYoffs); // links
             // Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // rechts
+            SDL_SetRenderDrawColor(Video.pRenderer,128 * fIntensityProzent,128 * fIntensityProzent,128 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // unten
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uButtonW + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + uYoffs); // rechts
             // Dunkel-Grauen Button-Rand unten und rechts zeichnen
-            SDL_SetRenderDrawColor(pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
-            SDL_RenderDrawLine(pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + 1 + uYoffs); // unten
-            SDL_RenderDrawLine(pRenderer, uXpos + uButtonW + 1 + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs); // rechts
-            SDL_SetRenderDrawColor(pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
-            nErrorCode = PrintLittleFont(pRenderer,uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
+            SDL_SetRenderDrawColor(Video.pRenderer,64 * fIntensityProzent,64 * fIntensityProzent,64 * fIntensityProzent, SDL_ALPHA_OPAQUE);  // Farbe für Line setzen
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs, uXpos + uButtonW + uXoffs, uYpos + uButtonH + 1 + uYoffs); // unten
+            SDL_RenderDrawLine(Video.pRenderer, uXpos + uButtonW + 1 + uXoffs, uYpos + 1 + uYoffs, uXpos + uButtonW + 1 + uXoffs, uYpos + uButtonH + 1 + uYoffs); // rechts
+            SDL_SetRenderDrawColor(Video.pRenderer,0,0,0, SDL_ALPHA_OPAQUE);  // Farbe auf schwarz zurücksetzen
+            nErrorCode = PrintLittleFont(uXpos + 4 + uXoffs,uYpos + 2 + uYoffs,1,Buttons[I].pszText,K_ABSOLUTE,1);
         }
     }
     return nErrorCode;
