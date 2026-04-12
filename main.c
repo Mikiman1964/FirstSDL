@@ -50,14 +50,13 @@ int main(int argc, char *argv[]) {
     // | = Ö
     // { = Ä
     // } = Ü
-    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - MARCH 2026. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - APRIL 2026. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS15, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
 
    uint8_t szMessage3[] = {"HALLO SASCHIMANN, ICH HABE NOCHMAL EIN BISSCHEN AN DIESEM SCH|NEN DEMO WEITER GEBAUT. ES SOLLTE DURCH DEN COPPER-EFFEKT NUN NOCH HYPNOTISCHER AUF DEN ZUSEHER WIRKEN. ICH WERDE IN N{CHSTER\
  ZEIT MAL SCHAUEN, OB ICH DAS SPIEL WEITER PORTIERE, BIS JETZT GEHT ES GANZ GUT VON DER HAND. BIS DENN ERSTMAL     9  8  7  6  5  4  3  2  1  0                                                    "};
-
 
     uint32_t uLastKeyTime = 0;
     uint32_t uCurrentTicks;
@@ -75,7 +74,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     float fScroller3NeueSteigung;
     bool bAsteroidsStarted = false;
     uint32_t uAsteroidsTimer;
-    uint32_t uCubeTimer;
+    uint32_t uVectorObjectsTimer;
     uint32_t X;
     int32_t nMenuChoose;
     uint32_t uCopperTimer;
@@ -102,7 +101,6 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     InitCheckboxes();
     InitLevelgroups();
     InitAsteroidLayer();
-    InitCubes();
     if (InitVisibibleCopperSegments() != 0) {
         return -1;
     }
@@ -156,6 +154,9 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         return EmeraldMineMainMenu();  // Emerald-Mine-Hauptmenü mit Spiel, macht selbst RestoreDesktop() und räumt Speicher auf;
     }
     // Ab hier SDL2-Demo
+    if (InitVectorObjects() != 0) {
+        return -1;
+    }
     if (SetMusic(3) != 0) {                  // Mit MOD 3 class_cracktro#15 starten
         RestoreDesktop();
         return -1;
@@ -187,7 +188,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
     }
     uAsteroidsTimer = SDL_GetTicks();
     uCopperTimer = SDL_GetTicks();
-    uCubeTimer = SDL_GetTicks();
+    uVectorObjectsTimer = SDL_GetTicks();
     //////////////////////////////////////////////////////////////// Hauptschleife START
     bRun = true;
     bPrepareExit = false;
@@ -307,8 +308,10 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         if ((bScroller2Started) && (nBallonSize < 360)) {
                 nBallonSize++;
         }
-        if (uCurrentTicks - uCubeTimer > 4000) {
-            DoCubes();
+
+
+        if (uCurrentTicks - uVectorObjectsTimer > 4000) {
+            DoVectorObject();
         }
 
 
@@ -334,6 +337,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         }
     }
     //////////////////////////////////////////////////////////////// Hauptschleife ENDE
+    FreeAllVectorObjects();
     FreeScroller(&Scroller1);
     FreeScroller(&Scroller2);
     FreeScroller(&Scroller3);

@@ -8,7 +8,7 @@
     <y>1050</y>
   </resolution>
   <fullscreen>0</fullscreen>
-  <use_vsync>0</use_vsync>
+  <use_vsync>1</use_vsync>
   <game_speed>14</game_speed>
 </screen>
 <start_dynamite_with_space>1</start_dynamite_with_space>

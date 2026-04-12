@@ -3,57 +3,70 @@
 
 #include <stdint.h>
 
-#define MAX_CUBES                   20
-#define CUBE_SIZE                   600
+#define MAX_VECTOR_OBJECTS                  20
+#define VECTOR_OBJECT_SIZE                  600
 
-#define CUBE_MOVE_RIGHT_DOWN        0
-#define CUBE_MOVE_RIGHT_UP          1
-#define CUBE_MOVE_LEFT_UP           2
-#define CUBE_MOVE_LEFT_DOWN         3
+#define VECTOROBJECT_MOVE_RIGHT_DOWN        0
+#define VECTOROBJECT_MOVE_RIGHT_UP          1
+#define VECTOROBJECT_MOVE_LEFT_UP           2
+#define VECTOROBJECT_MOVE_LEFT_DOWN         3
 
-
-
-// Hauptsächlich on deepseek
 
 // 3D-Punkt Struktur
 typedef struct {
-    float x, y, z;
-} Point3D;
+    float fX, fY, fZ;
+} POINT3D;
 
 
 // 2D-Punkt Struktur (für Bildschirmprojektion)
 typedef struct {
-    int32_t x, y;
-} Point2D;
+    int32_t nX, nY;
+} POINT2D;
 
 
-// Cube-Daten
 typedef struct {
-    // Größe des Würfels
+    // Anzahl Punkte
+    int32_t nPointCount;
+    // Anzahl Kanten
+    int32_t nEdgeCount;
+    // Punkte
+    POINT3D *pPoints3D;
+    POINT2D *pPoints2D; // Für Bildschirmprojektion
+    // Kanten
+    int32_t *pEdges;
+
+    // Größe des Objekts
     int32_t nSize;
     // Farbe des Würfels
     int32_t nRed;
     int32_t nGreen;
     int32_t nBlue;
     // Rotationswinkel
-    float dAngleX;
-    float dAngleY;
-    float dAngleZ;
+    float fAngleX;
+    float fAngleY;
+    float fAngleZ;
     // Position des Würfels, Offset zum Mittelpunkt
     int32_t nXoffs;
     int32_t nYoffs;
     // Bewegungsstatus
     uint8_t uMovingState;
-} CUBE;
+} VECTOROBJ;
+
+
+
+int32_t InitVectorObjects(void);
+VECTOROBJ *CreateVectorObject(int32_t nPointCount, int32_t nEdgeCount);
+void FreeVectorObject(VECTOROBJ *pV);
+int32_t SetVectorObjectPointsEdges(VECTOROBJ *pV, POINT3D *pPoints3D, int32_t Edges[][2]);
+int32_t DrawVectorObject(VECTOROBJ *pV);
+int32_t DoVectorObject(void);
+void FreeAllVectorObjects(void);
 
 
 // Prototypen
-Point3D rotateX(Point3D p, float angle);
-Point3D rotateY(Point3D p, float angle);
-Point3D rotateZ(Point3D p, float angle);
-Point2D project(Point3D p, int32_t nWidth, int32_t nHeight);
-int32_t DrawCube(CUBE Cube);
-void InitCubes(void);
-int32_t DoCubes(void);
+POINT3D RotateX(POINT3D p, float fAngle);
+POINT3D RotateY(POINT3D p, float fAngle);
+POINT3D RotateZ(POINT3D p, float fAngle);
+POINT2D Project(POINT3D p, int32_t nWidth, int32_t nHeight);
 
 #endif // VECTOROBJ_H_INCLUDED

@@ -15,7 +15,7 @@ Für V 1.15
 * V-SYNC ein-/ausschaltbar
 * Gamespeed mit F3/F4 einstellbar, wenn V-SYNC nicht aktiv
 * Fire beendet auch Settings-Menü
-* Vektor-Würfel im SDL2-Demo
+* Vektor-Objekte im SDL2-Demo
 */
 
 #include "gfx/textures.h"
