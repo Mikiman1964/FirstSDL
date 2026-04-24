@@ -10,9 +10,10 @@ extern VIDEO Video;
 extern CONFIG Config;
 VECTOROBJ *Cube[MAX_VECTOR_OBJECTS];
 VECTOROBJ *Rhombus[MAX_VECTOR_OBJECTS];
-bool g_bObjectCube;
+VECTOROBJ *Star[MAX_VECTOR_OBJECTS];
+uint32_t g_uObject;
 uint32_t g_uObjectChangeTime;
-
+float g_SizeSin = 0.0;
 
 // Würfel-Eckpunkte (8 Punkte, Seitenlänge 2, Zentrum bei 0,0,0)
 POINT3D CubePoints[8] = {
@@ -65,6 +66,43 @@ int32_t RhombusEdges[24][2] = {
 };
 /////////////////////////////////////////////////////////////////////////////
 
+POINT3D StarPoints[20] = {
+// Pentagramm, 5-Eck, oben
+    {0, 1.5, 0.25},              // 0, Ecke 1
+    {0.3368, 0.4635, 0.25},      // 1, Innenecke 1
+    {1.4266, 0.4635, 0.25},      // 2, Ecke 2
+    {0.5449, -0.1771, 0.25},     // 3, Innenecke 2
+    {0.8817, -1.2135, 0.25},     // 4, Ecke 3
+    {0, -0.5729, 0.25},          // 5, Innenecke 3
+    {-0.8817, -1.2135, 0.25},    // 6, Ecke 4
+    {-0.5449, -0.1771, 0.25},    // 7, Innenecke 4
+    {-1.4266, 0.4635, 0.25},     // 8, Ecke 5
+    {-0.3368, 0.4635, 0.25},     // 9, Innenecke 5
+// Pentagramm, 5-Eck, unten
+    {0, 1.5, -0.25},             // 10, Ecke 1
+    {0.3368, 0.4635, -0.25},     // 11, Innenecke 1
+    {1.4266, 0.4635, -0.25},     // 12, Ecke 2
+    {0.5449, -0.1771, -0.25},    // 13, Innenecke 2
+    {0.8817, -1.2135, -0.25},    // 14, Ecke 3
+    {0, -0.5729, -0.25},         // 15, Innenecke 3
+    {-0.8817, -1.2135, -0.25},   // 16, Ecke 4
+    {-0.5449, -0.1771, -0.25},   // 17, Innenecke 4
+    {-1.4266, 0.4635, -0.25},    // 18, Ecke 5
+    {-0.3368, 0.4635, -0.25}     // 19, Innenecke 5
+};
+
+int32_t StarEdges[30][2] = {
+    // Pentagramm-Verbindungen 2D, oben
+    {0,1}, {1,2}, {2,3}, {3,4}, {4,5}, {5,6}, {6,7}, {7,8}, {8,9}, {9,0},
+    // Pentagramm-Verbindungen 2D, unten
+    {10,11}, {11,12}, {12,13}, {13,14}, {14,15}, {15,16}, {16,17}, {17,18}, {18,19}, {19,10},
+    // Pentagramm-Streben zwischen oben und unten
+    {0,10}, {1,11}, {2,12}, {3,13}, {4,14}, {5,15}, {6,16}, {7,17}, {8,18}, {9,19}
+};
+
+
+
+
 
 /*----------------------------------------------------------------------------
 Name:           InitVectorObjects
@@ -75,9 +113,10 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Cube[].x, Rhombus[].x,
-               CubePoints[],CubeEdges[],
-               RhombusPoints[],RhombusEdges
+Seiteneffekte: Cube[].x, Rhombus[].x, Star[].x,
+               CubePoints[], CubeEdges[],
+               RhombusPoints[], RhombusEdges[],
+               StarPoints[], StarEdges[],
                Config.x, g_bObjectCube, g_uObjectChangeTime
 ------------------------------------------------------------------------------*/
 int32_t InitVectorObjects(void) {
@@ -87,12 +126,14 @@ int32_t InitVectorObjects(void) {
     for (I = 0; I < MAX_VECTOR_OBJECTS; I++) {
         Cube[I] = NULL;
         Rhombus[I] = NULL;
+        Star[I] = NULL;
     }
     nErrorCode = 0;
     for (I = 0; (I < MAX_VECTOR_OBJECTS) && (nErrorCode == 0); I++) {
         Cube[I] = CreateVectorObject(8,12);
         Rhombus[I] = CreateVectorObject(10,24);
-        if ((Cube[I] != NULL) && (Rhombus[I] != NULL)) {
+        Star[I] = CreateVectorObject(20,30);
+        if ((Cube[I] != NULL) && (Rhombus[I] != NULL) && (Star[I] != NULL)) {
             // Größe des Objekts
             Cube[I]->nSize = VECTOR_OBJECT_SIZE;
             // Farben
@@ -128,11 +169,29 @@ int32_t InitVectorObjects(void) {
             Rhombus[I]->uMovingState = VECTOROBJECT_MOVE_LEFT_DOWN;
             // Punkte und Kanten übergeben
             nErrorCode = SetVectorObjectPointsEdges(Rhombus[I],RhombusPoints,RhombusEdges);
+
+            // Größe des Objekts
+            Star[I]->nSize = VECTOR_OBJECT_SIZE;
+            // Farben
+            Star[I]->nRed = 0;
+            Star[I]->nGreen = 0;
+            Star[I]->nBlue = 0;
+            // Rotationswinkel
+            Star[I]->fAngleX = (float)I * 0.004;
+            Star[I]->fAngleY = (float)I * 0.004;
+            Star[I]->fAngleZ = (float)I * 0.004;
+            // Position, Offset vom Mittelpunkt
+            Star[I]->nXoffs = Config.uResX + 400;
+            Star[I]->nYoffs = -400;
+            // Bewegungsstatus
+            Star[I]->uMovingState = VECTOROBJECT_MOVE_LEFT_DOWN;
+            // Punkte und Kanten übergeben
+            nErrorCode = SetVectorObjectPointsEdges(Star[I],StarPoints,StarEdges);
         } else {
             nErrorCode = -1;
         }
     }
-    g_bObjectCube = true;
+    g_uObject = 0; // 0 = Cube
     g_uObjectChangeTime = SDL_GetTicks();
     return nErrorCode;
 }
@@ -212,7 +271,7 @@ Parameter
       Eingang: pV, VECTOROBJ *, Zeiger auf Vektorobjekt
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: Cube[].x, Rhombus[].x
+Seiteneffekte: Cube[].x, Rhombus[].x, Star[].x
 ------------------------------------------------------------------------------*/
 void FreeAllVectorObjects(void) {
     uint32_t I;
@@ -220,6 +279,7 @@ void FreeAllVectorObjects(void) {
     for (I = 0; I < MAX_VECTOR_OBJECTS; I++) {
         FreeVectorObject(Cube[I]);
         FreeVectorObject(Rhombus[I]);
+        FreeVectorObject(Star[I]);
     }
 }
 
@@ -347,40 +407,59 @@ int32_t DoVectorObject(void) {
     int32_t nErrorCode = 0;
     int32_t nSizeForAll;
     uint32_t uRGB;
+    int32_t nLastXoffs;
+    int32_t nLastYoffs;
 
-    if (g_bObjectCube) {
+    if (g_uObject == 0) {
         pV = Cube;
-    } else {
+    } else if (g_uObject == 1) {
         pV = Rhombus;
+    } else {
+        pV = Star;
     }
 
-    nSizeForAll = VECTOR_OBJECT_SIZE - cos(pV[0]->fAngleX * 2) * (VECTOR_OBJECT_SIZE - 10);
-    // Prüfen, ob Objekt (Würfel/Rhombus) gewechselt werden soll
+    nSizeForAll = VECTOR_OBJECT_SIZE - cos(g_SizeSin) * (VECTOR_OBJECT_SIZE - 10);
+    g_SizeSin = g_SizeSin + 0.01;
+
+    // Prüfen, ob Vektor-Objekt gewechselt werden soll
     if ((SDL_GetTicks() - g_uObjectChangeTime > 10000) && (nSizeForAll <= 10)) {
-        g_bObjectCube = !g_bObjectCube;
+        g_uObject++;
+        if (g_uObject > VECTOROBJECT_STAR) {
+            g_uObject = VECTOROBJECT_CUBE;
+        }
         g_uObjectChangeTime = SDL_GetTicks();
-        if (g_bObjectCube) {
-            pV = Cube;
-            for (c = 0; (c < MAX_VECTOR_OBJECTS) && (nErrorCode == 0); c++) {
-                pV[c]->nXoffs = Rhombus[0]->nXoffs;
-                pV[c]->nYoffs = Rhombus[0]->nYoffs;
-                pV[c]->nSize = nSizeForAll;
-            }
-        } else {
-            pV = Rhombus;
-            for (c = 0; (c < MAX_VECTOR_OBJECTS) && (nErrorCode == 0); c++) {
-                pV[c]->nXoffs= Cube[0]->nXoffs;
-                pV[c]->nYoffs= Cube[0]->nYoffs;
-                pV[c]->nSize = nSizeForAll;
-            }
+        // Position vom vorigen Objekt merken
+        nLastXoffs = pV[0]->nXoffs;
+        nLastYoffs = pV[0]->nYoffs;
+        switch (g_uObject) {
+            case (VECTOROBJECT_CUBE):
+                pV = Cube;
+                break;
+            case (VECTOROBJECT_RHOMBUS):
+                pV = Rhombus;
+                break;
+            case (VECTOROBJECT_STAR):
+                pV = Star;
+                break;
+        }
+        // Position des letzten Objekts dem Neuen zuweisen
+        for (c = 0; (c < MAX_VECTOR_OBJECTS) && (nErrorCode == 0); c++) {
+            pV[c]->nXoffs = nLastXoffs;
+            pV[c]->nYoffs = nLastYoffs;
+            pV[c]->nSize = nSizeForAll;
         }
     }
     for (c = 0; (c < MAX_VECTOR_OBJECTS) && (nErrorCode == 0); c++) {
         nErrorCode = DrawVectorObject(pV[c]);
         // Rotation
-        pV[c]->fAngleX = pV[c]->fAngleX + 0.01;
-        pV[c]->fAngleY = pV[c]->fAngleY + 0.01;
-        pV[c]->fAngleZ = pV[c]->fAngleZ + 0.005;
+        if (g_uObject == VECTOROBJECT_STAR) {
+            pV[c]->fAngleX = pV[c]->fAngleX + 0.03;
+            pV[c]->fAngleZ = pV[c]->fAngleZ + 0.005;
+        } else {
+            pV[c]->fAngleX = pV[c]->fAngleX + 0.01;
+            pV[c]->fAngleY = pV[c]->fAngleY + 0.01;
+            pV[c]->fAngleZ = pV[c]->fAngleZ + 0.005;
+        }
         // Größe
         pV[c]->nSize = nSizeForAll;
         // Farben

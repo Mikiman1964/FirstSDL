@@ -3,13 +3,18 @@
 
 #include <stdint.h>
 
-#define MAX_VECTOR_OBJECTS                  20
-#define VECTOR_OBJECT_SIZE                  600
+#define MAX_VECTOR_OBJECTS                  15
+#define VECTOR_OBJECT_SIZE                  500
 
 #define VECTOROBJECT_MOVE_RIGHT_DOWN        0
 #define VECTOROBJECT_MOVE_RIGHT_UP          1
 #define VECTOROBJECT_MOVE_LEFT_UP           2
 #define VECTOROBJECT_MOVE_LEFT_DOWN         3
+
+
+#define VECTOROBJECT_CUBE                   0
+#define VECTOROBJECT_RHOMBUS                1
+#define VECTOROBJECT_STAR                   2
 
 
 // 3D-Punkt Struktur
