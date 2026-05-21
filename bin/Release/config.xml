@@ -4,11 +4,11 @@
   <!--primary display is num 0, second display 1-->
   <display_num>0</display_num>
   <resolution>
-    <x>1680</x>
-    <y>1050</y>
+    <x>1280</x>
+    <y>960</y>
   </resolution>
   <fullscreen>0</fullscreen>
-  <use_vsync>0</use_vsync>
+  <use_vsync>1</use_vsync>
   <game_speed>11</game_speed>
 </screen>
 <start_dynamite_with_space>1</start_dynamite_with_space>
