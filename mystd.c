@@ -567,7 +567,7 @@ Parameter
       Eingang: pszText, char *, Zeiger auf Text
                nCursorPos, int32_t, Cursorposition im Text
       Ausgang: -
-Rückgabewert:  int32_t, Anzahl LineFeeds
+Rückgabewert:  int32_t, aktuelle Zeilenlänge
 Seiteneffekte:
 ------------------------------------------------------------------------------*/
 int32_t GetLineLen(char *pszText, int32_t nCursorPos) {

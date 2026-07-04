@@ -7,15 +7,9 @@ TODO
 * Leveleditor: Dynamit Phase 2,3 und 4 ergänzen
 * Leveleditor: Fehlende Steel-Stripe-Elemente ergänzen
 
-Für V 1.15
-* Levelkonverter: Rocks'n'Diamonds-Level werden teilweise unterstützt
-* Renderer-Handle nun in Struktur Video.x
-* Video.bMustUseFullScreen entfernt
-* Framerate wird im Setup-Menü angezeigt
-* V-SYNC ein-/ausschaltbar
-* Gamespeed mit F3/F4 einstellbar, wenn V-SYNC nicht aktiv
-* Fire beendet auch Settings-Menü
-* Vektor-Objekte im SDL2-Demo
+Für V 1.16
+* Levelnummer kann nun schnell geändert werden, wenn Pfeiltaste gedrückt gehalten wird. Funktion GetMainMenuButton() überarbeitet, die Funktionen
+GetPlayerListButton() und GetLevelgroupListButton() dafür entfernt.
 */
 
 #include "gfx/textures.h"

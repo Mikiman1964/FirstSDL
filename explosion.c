@@ -847,7 +847,7 @@ uint32_t CheckExplosionElement(uint16_t uElement, uint32_t uCoordinate) {
         case (EMERALD_GREEN_CHEESE_GOES):
         case (EMERALD_YELLOW_CHEESE_GOES):
         case (EMERALD_DYNAMITE_OFF):
-        case (EMERALD_DYNAMITE_ON):
+        // case (EMERALD_DYNAMITE_ON): // Ab 1.15: Nicht mehr DC3 kompatibel, aber mit Emerald Mine/RnD: Für Wonder Mine Level 66
         case (EMERALD_DOOR_RED_WOOD):
         case (EMERALD_DOOR_YELLOW_WOOD):
         case (EMERALD_DOOR_BLUE_WOOD):

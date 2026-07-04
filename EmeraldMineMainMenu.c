@@ -55,112 +55,75 @@ Beschreibung: Prüft, welcher Gfx-Button im EmeraldMinemainMenü gedrückt ist.
 Parameter
       Eingang: -
       Ausgang: -
-Rückgabewert:  int32_t, 0 = kein Button gedrückt,
-                        1 = EMERALD_STEEL_ARROW_DOWN_PRESSED,
-                        2 = EMERALD_STEEL_ARROW_UP_PRESSED
-                        3 = EMERALD_STEEL_SETTINGS_PRESSED
-                        4 = EMERALD_STEEL_EXIT_PRESSED
-Seiteneffekte: InputStates.x, MainMenu.x
+Rückgabewert:  int32_t, GFX_BUTTON_NONE
+                        GFX_BUTTON_LEVEL_DOWN
+                        GFX_BUTTON_LEVEL_UP
+                        GFX_BUTTON_SETTINGS
+                        GFX_BUTTON_EXIT
+                        GFX_BUTTON_PLAYER_DOWN
+                        GFX_BUTTON_PLAYER_UP
+                        GFX_BUTTON_LEVELGROUP_DOWN
+                        GFX_BUTTON_LEVELGROUP_UP
+
+Seiteneffekte: InputStates.x, MainMenu.x, Names.x, g_LevelgroupFilesCount
 ------------------------------------------------------------------------------*/
 int32_t GetMainMenuButton(void) {
     int32_t nButton;
-
-    nButton = 0;
-    if (InputStates.bLeftMouseButton) {
-        // Beide Level-Buttons auf selber Y-Position
-        if ((InputStates.nMouseYpos_Absolute >= 192) && (InputStates.nMouseYpos_Absolute < 224)) {
-            if ((InputStates.nMouseXpos_Relative >= 352) && (InputStates.nMouseXpos_Relative < 384)) {
-                nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
-            } else if ((InputStates.nMouseXpos_Relative >= 384) && (InputStates.nMouseXpos_Relative < 416)) {
-                nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
-            }
-        }
-        // Settings- und Exit-Button
-        else if ((MainMenu.nState == 0) && ((InputStates.nMouseYpos_Absolute >= 0) && (InputStates.nMouseYpos_Absolute < 32))) {
-            if ((InputStates.nMouseXpos_Relative >= 0) && (InputStates.nMouseXpos_Relative < 32)) {
-                nButton = EMERALD_STEEL_SETTINGS_PRESSED;
-            } else if ((InputStates.nMouseXpos_Relative >= 1248) && (InputStates.nMouseXpos_Relative < 1280)) {
-                nButton = EMERALD_STEEL_EXIT_PRESSED;
-            }
-        }
-    }
-    return nButton;
-}
-
-
-/*----------------------------------------------------------------------------
-Name:           GetPlayerListButton
-------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Spielerlisten-Button (down/up) gedrückt ist.
-Parameter
-      Eingang: -
-      Ausgang: -
-Rückgabewert:  int32_t, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
-Seiteneffekte: InputStates.x
-------------------------------------------------------------------------------*/
-int32_t GetPlayerListButton(void) {
-    int32_t nButton;
     bool bMouseInNamesArea;
+    bool bMouseInLevelgroupArea;
+    nButton = GFX_BUTTON_NONE;
 
     bMouseInNamesArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 1088) &&
                          (InputStates.nMouseYpos_Absolute >= 448) && (InputStates.nMouseYpos_Absolute < (448 + MAX_NAMES_IN_LIST * FONT_H)));
-    nButton = 0;
-    if (Names.uNameCount > MAX_NAMES_IN_LIST) {
-        if (InputStates.bLeftMouseButton) {
+    bMouseInLevelgroupArea = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 896) &&
+                          (InputStates.nMouseYpos_Absolute >= 608) && (InputStates.nMouseYpos_Absolute < (608 + MainMenu.uMaxLevelgroupsInList * FONT_H)));
+
+    if (InputStates.bLeftMouseButton) {
+        // Start Levelbuttons (up/down)
+        // Beide Level-Buttons auf selber Y-Position
+        if ((InputStates.nMouseYpos_Absolute >= 192) && (InputStates.nMouseYpos_Absolute < 224)) {
+            if ((InputStates.nMouseXpos_Relative >= 352) && (InputStates.nMouseXpos_Relative < 384)) {
+                nButton = GFX_BUTTON_LEVEL_DOWN;
+            } else if ((InputStates.nMouseXpos_Relative >= 384) && (InputStates.nMouseXpos_Relative < 416)) {
+                nButton = GFX_BUTTON_LEVEL_UP;
+            }
+        } else if ((MainMenu.nState == 0) && ((InputStates.nMouseYpos_Absolute >= 0) && (InputStates.nMouseYpos_Absolute < 32))) {
+        // Settings- und Exit-Button
+            if ((InputStates.nMouseXpos_Relative >= 0) && (InputStates.nMouseXpos_Relative < 32)) {
+                nButton = GFX_BUTTON_SETTINGS;
+            } else if ((InputStates.nMouseXpos_Relative >= 1248) && (InputStates.nMouseXpos_Relative < 1280)) {
+                nButton = GFX_BUTTON_EXIT;
+            }
+        } else if (Names.uNameCount > MAX_NAMES_IN_LIST) {
+        // Start Spielerliste (up/down)
             if  ((InputStates.nMouseXpos_Relative >= 1088) && (InputStates.nMouseXpos_Relative < (1088 + FONT_W))) {
-                // Button Levelgruppen Pfeil hoch
                 if ( (InputStates.nMouseYpos_Absolute >= 448) && (InputStates.nMouseYpos_Absolute < (448 + FONT_H))) {
-                    nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
+                    nButton = GFX_BUTTON_PLAYER_UP;
                 } else if ( (InputStates.nMouseYpos_Absolute >= 544) && (InputStates.nMouseYpos_Absolute < (544 + FONT_H))) {
-                // Button Levelgruppen Pfeil runter
-                    nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
+                    nButton = GFX_BUTTON_PLAYER_DOWN;
                 }
             }
-        } else if (bMouseInNamesArea) {
-            if (InputStates.nMouseWheelY < 0) {
-                nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
-            } else if (InputStates.nMouseWheelY > 0) {
-                nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
-            }
-        }
-
-    }
-    return nButton;
-}
-
-
-/*----------------------------------------------------------------------------
-Name:           GetLevelgroupListButton
-------------------------------------------------------------------------------
-Beschreibung: Prüft, ob ein Levelgruppen-Button (down/up) gedrückt ist.
-Parameter
-      Eingang: -
-      Ausgang: -
-Rückgabewert:  int32_t, 0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
-Seiteneffekte: InputStates.x, g_LevelgroupFilesCount, MainMenu.x
-------------------------------------------------------------------------------*/
-int32_t GetLevelgroupListButton(void) {
-    int32_t nButton;
-    bool bMouseInLevelgroup;
-
-    bMouseInLevelgroup = ((InputStates.nMouseXpos_Relative >= 32) && (InputStates.nMouseXpos_Relative < 896) &&
-                          (InputStates.nMouseYpos_Absolute >= 608) && (InputStates.nMouseYpos_Absolute < (608 + MainMenu.uMaxLevelgroupsInList * FONT_H)));
-    nButton = 0;
-    if (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList) {
-        if (InputStates.bLeftMouseButton) {
+        } else if (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList) {
+        // Start Levelgruppe (up/down)
             if  ((InputStates.nMouseXpos_Relative >= 896) && (InputStates.nMouseXpos_Relative < (896 + FONT_W))) {
                 if ( (InputStates.nMouseYpos_Absolute >= 608) && (InputStates.nMouseYpos_Absolute < (608 + FONT_H))) { // Button Levelgruppen Pfeil hoch?
-                    nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
+                    nButton = GFX_BUTTON_LEVELGROUP_UP;
                 } else if ( (InputStates.nMouseYpos_Absolute >= 704) && (InputStates.nMouseYpos_Absolute < (704 + FONT_H))) { // Button Levelgruppen Pfeil runter?
-                    nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
+                    nButton = GFX_BUTTON_LEVELGROUP_DOWN;
                 }
             }
-        } else if (bMouseInLevelgroup) {
-            if (InputStates.nMouseWheelY < 0) {
-                nButton = EMERALD_STEEL_ARROW_DOWN_PRESSED;
-            } else if (InputStates.nMouseWheelY > 0) {
-                nButton = EMERALD_STEEL_ARROW_UP_PRESSED;
-            }
+        }
+    } else if ((bMouseInNamesArea) && (Names.uNameCount > MAX_NAMES_IN_LIST)) {
+        if (InputStates.nMouseWheelY < 0) {
+            nButton = GFX_BUTTON_PLAYER_DOWN;
+        } else if (InputStates.nMouseWheelY > 0) {
+            nButton = GFX_BUTTON_PLAYER_UP;
+        }
+    } else if ((bMouseInLevelgroupArea) && (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList)) {
+        if (InputStates.nMouseWheelY < 0) {
+            nButton = GFX_BUTTON_LEVELGROUP_DOWN;
+        } else if (InputStates.nMouseWheelY > 0) {
+            nButton = GFX_BUTTON_LEVELGROUP_UP;
         }
     }
     return nButton;
@@ -976,7 +939,7 @@ Name:           ScrollLevelGroups
 Beschreibung: Scrollt die Levelgruppen im Hauptmenü.
 Parameter
       Eingang: nButton, int32_t, Levelgruppenlisten-Button, der gedrückt wurde
-                        0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
+                        GFX_BUTTON_LEVELGROUP_DOWN, GFX_BUTTON_LEVELGROUP_UP
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: MainMenu.x, g_LevelgroupFilesCount
@@ -985,7 +948,7 @@ void ScrollLevelGroups(int32_t nButton) {
     uint32_t I;
 
     if (g_LevelgroupFilesCount > MainMenu.uMaxLevelgroupsInList) {
-        if (nButton == EMERALD_STEEL_ARROW_UP_PRESSED) {            // Button Levelgruppen Pfeil hoch?
+        if (nButton == GFX_BUTTON_LEVELGROUP_UP) {            // Button Levelgruppen Pfeil hoch?
             if (MainMenu.pLevelgroupList[0] > 0) {
                 for (I = 0; I < MainMenu.uMaxLevelgroupsInList; I++) {
                     if (MainMenu.pLevelgroupList[I] != 0xFF) {
@@ -993,7 +956,7 @@ void ScrollLevelGroups(int32_t nButton) {
                     }
                 }
             }
-        } else if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {   // Button Levelgruppen Pfeil runter?
+        } else if (nButton == GFX_BUTTON_LEVELGROUP_DOWN) {   // Button Levelgruppen Pfeil runter?
             if (MainMenu.pLevelgroupList[MainMenu.uMaxLevelgroupsInList - 1] < (g_LevelgroupFilesCount - 1)) {
                 for (I = 0; I < MainMenu.uMaxLevelgroupsInList; I++) {
                     if (MainMenu.pLevelgroupList[I] != 0xFF) {
@@ -1012,7 +975,7 @@ Name:           ScrollPlayernames
 Beschreibung: Scrollt die Playernamen im Hauptmenü.
 Parameter
       Eingang: nButton, int32_t, Playerlisten-Button, der gedrückt wurde
-                        0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
+                        GFX_BUTTON_PLAYER_DOWN, GFX_BUTTON_PLAYER_UP
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: MainMenu.x, Names.x
@@ -1021,7 +984,7 @@ void ScrollPlayernames(int32_t nButton) {
     uint32_t I;
 
     if (Names.uNameCount > MAX_NAMES_IN_LIST) {
-        if (nButton == EMERALD_STEEL_ARROW_UP_PRESSED) {  // Button Levelgruppen Pfeil hoch?
+        if (nButton == GFX_BUTTON_PLAYER_UP) {  // Button Levelgruppen Pfeil hoch?
             if (MainMenu.uNamesList[0] > 0) {
                 for (I = 0; I < MAX_NAMES_IN_LIST; I++) {
                     if (MainMenu.uNamesList[I] != 0xFF) {
@@ -1029,7 +992,7 @@ void ScrollPlayernames(int32_t nButton) {
                     }
                 }
             }
-        } else if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {   // Button Levelgruppen Pfeil runter?
+        } else if (nButton == GFX_BUTTON_PLAYER_DOWN) {   // Button Levelgruppen Pfeil runter?
             if (MainMenu.uNamesList[MAX_NAMES_IN_LIST - 1] < (Names.uNameCount - 1)) {
                 for (I = 0; I < MAX_NAMES_IN_LIST; I++) {
                     if (MainMenu.uNamesList[I] != 0xFF) {
@@ -1506,10 +1469,6 @@ int32_t EmeraldMineMainMenu(void) {
     int32_t nColorDimm;
     int32_t nButton;
     int32_t nLastButton;
-    int32_t nPlayerlistButton;
-    int32_t nLastPlayerlistButton;
-    int32_t nLevelgrouplistButton;
-    int32_t nLastLevelgrouplistButton;
     int32_t nNewHighscoreIndex;
     char szText[256];
     char szLastPlayername[EMERALD_PLAYERNAME_LEN + 1];                       // Aktuellen Spielernamen merken
@@ -1572,12 +1531,8 @@ int32_t EmeraldMineMainMenu(void) {
     bStartEditor =  false;
     bStartSettings = false;
     bShowHighscores = false;
-    nButton = 0;   // 0 = nicht gedrückt, 1 = down, 2 = up
-    nLastButton = 0;
-    nPlayerlistButton = 0;
-    nLastPlayerlistButton = 0;
-    nLevelgrouplistButton = 0;
-    nLastLevelgrouplistButton = 0;
+    nButton = GFX_BUTTON_NONE;
+    nLastButton = GFX_BUTTON_NONE;
     nNewHighscoreIndex = -1;
     uScrollFastCounter = 0;
     if (GetLevelgroupFiles() == 0) {    // Wenn das nicht funktioniert, kann nicht weitergemacht werden!
@@ -1598,7 +1553,15 @@ int32_t EmeraldMineMainMenu(void) {
                         }
                         UpdateManKey(); // Ruft UpdateInputStates() auf
                         MeasureFps();
-                        if (((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (nButton == EMERALD_STEEL_EXIT_PRESSED)) && (nColorDimm == 100) && (MainMenu.nState == 0)) {
+                        nLastButton = nButton;
+                        nButton = GetMainMenuButton();
+                        // Für das schnelle Scrollen der Levelgruppen, Playerliste und Levelnummer
+                        if ((nLastButton != GFX_BUTTON_NONE) && (nLastButton == nButton)) {
+                            uScrollFastCounter++;
+                        } else {
+                            uScrollFastCounter = 0;
+                        }
+                        if (((InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (nButton == GFX_BUTTON_EXIT)) && (nColorDimm == 100) && (MainMenu.nState == 0)) {
                             bPrepareExit = true;
                             bEndGame = true;        // Spiel beenden
                         } else if ( (MainMenu.nState == 0) && (Actualplayer.bValid) && (nColorDimm == 100) && (SelectedLevelgroup.bOK) && ((ManKey.bFire) || (InputStates.pKeyboardArray[SDL_SCANCODE_SPACE])) ) {
@@ -1618,7 +1581,7 @@ int32_t EmeraldMineMainMenu(void) {
                         } else if ( (MainMenu.nState == 0) && (nColorDimm == 100) && (SelectedLevelgroup.bOK) && (IsButtonPressed(BUTTONLABEL_LEVELEDITOR) )) {
                             bPrepareExit = true;    // Highscores zeigen
                             bStartEditor =  true;
-                        } else if (nButton == EMERALD_STEEL_SETTINGS_PRESSED) {
+                        } else if (nButton == GFX_BUTTON_SETTINGS) {
                             bPrepareExit = true;    // zu den Einstellungen
                             bStartSettings = true;
                         }
@@ -1777,49 +1740,27 @@ int32_t EmeraldMineMainMenu(void) {
                                 if (nErrorCode == 0) {
                                     nErrorCode = MenuSelectName();
                                 }
-                                nLastPlayerlistButton = nPlayerlistButton;
-                                nPlayerlistButton = GetPlayerListButton();
-                                nLastLevelgrouplistButton = nLevelgrouplistButton;
-                                nLevelgrouplistButton = GetLevelgroupListButton();
-                                // Für das schnelle Scrollen der Levelgruppen- und Player-Liste
-                                if ( ((nLastPlayerlistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) && (nPlayerlistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED)) ||
-                                     ((nLastPlayerlistButton == EMERALD_STEEL_ARROW_UP_PRESSED) && (nPlayerlistButton == EMERALD_STEEL_ARROW_UP_PRESSED)) ||
-                                     ((nLastLevelgrouplistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) && (nLevelgrouplistButton == EMERALD_STEEL_ARROW_DOWN_PRESSED)) ||
-                                     ((nLastLevelgrouplistButton == EMERALD_STEEL_ARROW_UP_PRESSED) && (nLevelgrouplistButton == EMERALD_STEEL_ARROW_UP_PRESSED)) ) {
-                                    uScrollFastCounter++;
-                                } else {
-                                    uScrollFastCounter = 0;
-                                }
-                                if ( ((nLastPlayerlistButton == 0) || (uScrollFastCounter > 10)) && (nPlayerlistButton != 0) ) {
-                                    ScrollPlayernames(nPlayerlistButton);
-                                }
-                                if ( ((nLastLevelgrouplistButton == 0) || (uScrollFastCounter > 10)) && (nLevelgrouplistButton != 0) ) {
-                                    ScrollLevelGroups(nLevelgrouplistButton);
+                                if ( ((nButton == GFX_BUTTON_PLAYER_DOWN) || (nButton == GFX_BUTTON_PLAYER_UP)) && ((nLastButton == 0) || (uScrollFastCounter > 20)) ) {
+                                    ScrollPlayernames(nButton);
+                                } else if ( ((nButton == GFX_BUTTON_LEVELGROUP_DOWN) || (nButton == GFX_BUTTON_LEVELGROUP_UP)) && ((nLastButton == 0) || (uScrollFastCounter > 20)) ) {
+                                    ScrollLevelGroups(nButton);
+                                } else if ( ((nButton == GFX_BUTTON_LEVEL_DOWN) || (nButton == GFX_BUTTON_LEVEL_UP)) && ((nLastButton == 0) || (uScrollFastCounter > 20)) ) {
+                                    if (Actualplayer.bValid) {
+                                        if ((nButton == GFX_BUTTON_LEVEL_DOWN) && (Actualplayer.uLevel > 0)) {
+                                            Actualplayer.uLevel--;
+                                        } else if ((nButton == GFX_BUTTON_LEVEL_UP) && (Actualplayer.uLevel < Actualplayer.uHandicap)) {
+                                            Actualplayer.uLevel++;
+                                        }
+                                    }
+                                    SetMenuText(MainMenu.pMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
+                                    sprintf(szText,"%u       ",Actualplayer.uLevel);
                                 }
                             }
                             SetMenuText(MainMenu.pMenuScreen,"                         ",13,4,EMERALD_FONT_GREEN);
                             SetMenuText(MainMenu.pMenuScreen,SelectedLevelgroup.szLevelgroupname,13,4,EMERALD_FONT_GREEN);
                             SetDynamicMenuElements();
                         }
-                        nLastButton = nButton;
-                        nButton = GetMainMenuButton();
-                        if ((nLastButton == 0) && (Actualplayer.bValid)) {
-                            if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {
-                                if (Actualplayer.uLevel > 0) {
-                                    Actualplayer.uLevel--;
-                                }
-                            } else if (nButton == EMERALD_STEEL_ARROW_UP_PRESSED) {
-                                if (Actualplayer.uLevel < Actualplayer.uHandicap) {
-                                    Actualplayer.uLevel++;
-                                }
-                            }
-                            if (nButton != 0) {
-                                SetMenuText(MainMenu.pMenuScreen,Actualplayer.szPlayername,7,5,EMERALD_FONT_GREEN);
-                                sprintf(szText,"%u       ",Actualplayer.uLevel);
-                            }
-                        }
-                        nLastButton = nButton;
-                        // if (nButton != 0) SDL_Log("Button:%d",nButton);
+
 
                         if ((!bPrepareExit) && (nColorDimm < 100)) {
                             nColorDimm = nColorDimm + 4;

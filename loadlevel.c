@@ -2027,6 +2027,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
     for (nI = 0; (nI <= nMaxIndex) && (nErrorCode == 0); nI++) {
         uElement = pLevel[nI];
         switch (uElement) {
+            /* Auskommentiert: Element darf ab V 1.15 als Einzelelement gesetzt sein
             case (EMERALD_ACIDPOOL_TOP_LEFT):
                 if ((nI + nXdim) <= nMaxIndex) {     // Schließt folgende Prüfung (I + 1) mit ein
                     if (pLevel[nI + nXdim] == EMERALD_ACIDPOOL_BOTTOM_LEFT) {
@@ -2040,6 +2041,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                     nErrorCode = -1;
                 }
                 break;
+            */
             case (EMERALD_ACIDPOOL_TOP_MID):
                 if ((nI - 1) >= 0) {
                     if ((pLevel[nI - 1] == EMERALD_ACIDPOOL_TOP_MID) || (pLevel[nI - 1] == EMERALD_ACIDPOOL_TOP_LEFT)) {
@@ -2061,6 +2063,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                     nErrorCode = -1;
                 }
                 break;
+            /* Auskommentiert: Element darf ab V 1.15 als Einzelelement gesetzt sein
             case (EMERALD_ACIDPOOL_TOP_RIGHT):
                 if ((nI - 1) >= 0) {
                     if (pLevel[nI - 1] == EMERALD_ACIDPOOL_TOP_MID) {
@@ -2078,6 +2081,7 @@ int32_t CheckAcidPools(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                     nErrorCode = -1;
                 }
                 break;
+            */
             /* Auskommentiert: Element darf ab V 1.14 als Einzelelement gesetzt sein
             case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
                 if ((nI - nXdim) >= 0) {
@@ -2506,6 +2510,7 @@ int32_t GetLevelgroupFiles(void) {
                                         if (levelgrouphash != NULL) {
                                             // Stimmt der berechnete Hash mit dem Gelesenen?
                                             GetMd5HashFromString(levelgrouphash->txt,uLevelgroupMd5Hash);
+                                            //if ((memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) || true) {
                                             if (memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) {
                                                 strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,szFullFilename); // Maximale Länge wurde bereits geprüft
                                                 if ((strlen(levelgroupname->txt) > 0) && (strlen(levelgroupname->txt) <= EMERALD_GROUPNAME_LEN)) {
@@ -2898,7 +2903,7 @@ int32_t ReadNamesFile(void) {
 
     nErrorCode = -1;
     memset(&Names,0,sizeof(Names));       // löscht auch letzten Spieler
-    pData = ReadFile(EMERALD_NAMES_FILENAME,&uDataLen);     // Levelgruppen-Datei einlesen
+    pData = ReadFile(EMERALD_NAMES_FILENAME,&uDataLen);     // "names.dat" einlesen
     if (pData != NULL) {
         if (uDataLen == sizeof(Names)) {
             memcpy((uint8_t*)&Names,pData,uDataLen);

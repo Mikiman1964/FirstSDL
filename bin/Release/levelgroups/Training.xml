@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>TRAINING</groupname>
-<create_timestamp>20260117_200548</create_timestamp>
+<create_timestamp>20260626_182030</create_timestamp>
 <levelcount>60</levelcount>
 <level000>
   <title>FIRST CONTACT</title>
   <author>MIK</author>
-  <version>01.14</version>
+  <version>01.15</version>
   <quicksave_allowed>1</quicksave_allowed>
   <values>
     <emeralds_to_collect>185</emeralds_to_collect>
@@ -1116,9 +1116,9 @@
   <leveldata_md5_hash>7C12EDD77B074AD654784CDDA338E995</leveldata_md5_hash>
 </level005>
 <level006>
-  <title>SEA OF STEEL (TEST)</title>
+  <title>SEA OF STEEL</title>
   <author>RHR</author>
-  <version>01.13</version>
+  <version>01.15</version>
   <quicksave_allowed>1</quicksave_allowed>
   <values>
     <emeralds_to_collect>341</emeralds_to_collect>
@@ -1296,11 +1296,13 @@
 <level007>
   <title>ABWAERTS</title>
   <author>LEE KING</author>
-  <version>00.00</version>
+  <version>01.15</version>
+  <quicksave_allowed>1</quicksave_allowed>
   <values>
     <emeralds_to_collect>0</emeralds_to_collect>
     <score_time_factor>5</score_time_factor>
     <speed_cheese_spread>0</speed_cheese_spread>
+    <speed_yellow_cheese_spread>0</speed_yellow_cheese_spread>
     <speed_grass_spread>0</speed_grass_spread>
   </values>
   <leveldimension>
@@ -1322,7 +1324,10 @@
     <stoning_mine>0</stoning_mine>
     <stoning_alien>1</stoning_alien>
     <stoning_yam>5</stoning_yam>
+    <stoning_slime>0</stoning_slime>
     <timecoin>5</timecoin>
+    <shieldcoin>0</shieldcoin>
+    <treasurechest>0</treasurechest>
   </scores>
   <times>
     <to_play>2400</to_play>
@@ -1331,6 +1336,7 @@
     <light>0</light>
     <timedoor>0</timedoor>
     <timecoin>95</timecoin>
+    <shieldcoin>0</shieldcoin>
   </times>
   <inventory>
     <dynamite>0</dynamite>
@@ -1387,6 +1393,24 @@
       <next_direction>left</next_direction>
     </yellow>
   </conveyorbelts>
+  <treasurechests>
+    <tc1>128</tc1>
+    <tc1_warn>1</tc1_warn>
+    <tc2>128</tc2>
+    <tc2_warn>1</tc2_warn>
+    <tc3>128</tc3>
+    <tc3_warn>1</tc3_warn>
+    <tc4>128</tc4>
+    <tc4_warn>1</tc4_warn>
+    <tc5>128</tc5>
+    <tc5_warn>1</tc5_warn>
+    <tc6>128</tc6>
+    <tc6_warn>1</tc6_warn>
+    <tc7>128</tc7>
+    <tc7_warn>1</tc7_warn>
+    <tc8>128</tc8>
+    <tc8_warn>1</tc8_warn>
+  </treasurechests>
   <messages>
     <m1></m1>
     <m2></m2>
@@ -8942,5 +8966,5 @@
   <leveldata_md5_hash>A37830D99BEA758CD8B8E81FCC5F6B3C</leveldata_md5_hash>
 </level059>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>0356A45CA839F6DC7A8ACE82CDE95095</levelgroup_md5_hash>
+<levelgroup_md5_hash>983A943918B69A1BA9090C011B1D9C2E</levelgroup_md5_hash>
 </levelgroup>

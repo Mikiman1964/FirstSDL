@@ -11,6 +11,7 @@ extern CONFIG Config;
 VECTOROBJ *Cube[MAX_VECTOR_OBJECTS];
 VECTOROBJ *Rhombus[MAX_VECTOR_OBJECTS];
 VECTOROBJ *Star[MAX_VECTOR_OBJECTS];
+VECTOROBJ *Star2[MAX_VECTOR_OBJECTS];
 uint32_t g_uObject;
 uint32_t g_uObjectChangeTime;
 float g_SizeSin = 0.0;
@@ -101,6 +102,39 @@ int32_t StarEdges[30][2] = {
 };
 
 
+/////////////////////////////////////////////////////////////////////////////
+// Stern von ChatGpt
+
+POINT3D Star2Points[21] = {
+// Basisring mit z = 0
+    {12, 0, 0},                 // P0
+    {7.482,  9.381, 0},         // P1
+    {-2.670, 11.701, 0},        // P2
+    {-10.812, 5.207, 0},        // P3
+    {-10.812,-5.207, 0},        // P4
+    {-2.670,-11.701, 0},        // P5
+    { 7.482,-9.381, 0},         // P6
+// Spitzen oben
+    {30.000,  0.000, 12.5},     // P7
+    {18.706, 23.454, 12.5},     // P8
+    {-6.676, 29.247, 12.5},     // P9
+    {-27.030, 13.017, 12.5},    // P10
+    {-27.030,-13.017, 12.5},    // P11
+    {-6.676,-29.247, 12.5},     // P12
+    {18.706,-23.454, 12.5},     // P13
+// Spitzen oben
+    {30.000,  0.000, -12.5},
+    {18.706, 23.454, -12.5},
+    {-6.676, 29.247, -12.5},
+    {-27.030, 13.017, -12.5},
+    {-27.030,-13.017, -12.5},
+    {-6.676,-29.247, -12.5},
+    {18.706,-23.454, -12.5}
+};
+
+int32_t Star2Edges[1][2] = {
+    {0,1}
+};
 
 
 
@@ -113,10 +147,11 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
-Seiteneffekte: Cube[].x, Rhombus[].x, Star[].x,
+Seiteneffekte: Cube[].x, Rhombus[].x, Star[].x, Star2[].x,
                CubePoints[], CubeEdges[],
                RhombusPoints[], RhombusEdges[],
                StarPoints[], StarEdges[],
+               Star2Points[], Star2Edges[],
                Config.x, g_bObjectCube, g_uObjectChangeTime
 ------------------------------------------------------------------------------*/
 int32_t InitVectorObjects(void) {
@@ -133,7 +168,8 @@ int32_t InitVectorObjects(void) {
         Cube[I] = CreateVectorObject(8,12);
         Rhombus[I] = CreateVectorObject(10,24);
         Star[I] = CreateVectorObject(20,30);
-        if ((Cube[I] != NULL) && (Rhombus[I] != NULL) && (Star[I] != NULL)) {
+        Star2[I] = CreateVectorObject(21,1);
+        if ((Cube[I] != NULL) && (Rhombus[I] != NULL) && (Star[I] != NULL) && (Star2[I] != NULL)) {
             // Größe des Objekts
             Cube[I]->nSize = VECTOR_OBJECT_SIZE;
             // Farben
@@ -187,6 +223,24 @@ int32_t InitVectorObjects(void) {
             Star[I]->uMovingState = VECTOROBJECT_MOVE_LEFT_DOWN;
             // Punkte und Kanten übergeben
             nErrorCode = SetVectorObjectPointsEdges(Star[I],StarPoints,StarEdges);
+
+            // Größe des Objekts
+            Star2[I]->nSize = VECTOR_OBJECT_SIZE;
+            // Farben
+            Star2[I]->nRed = 0;
+            Star2[I]->nGreen = 0;
+            Star2[I]->nBlue = 0;
+            // Rotationswinkel
+            Star2[I]->fAngleX = (float)I * 0.004;
+            Star2[I]->fAngleY = (float)I * 0.004;
+            Star2[I]->fAngleZ = (float)I * 0.004;
+            // Position, Offset vom Mittelpunkt
+            Star2[I]->nXoffs = Config.uResX + 400;
+            Star2[I]->nYoffs = -400;
+            // Bewegungsstatus
+            Star2[I]->uMovingState = VECTOROBJECT_MOVE_LEFT_DOWN;
+            // Punkte und Kanten übergeben
+            nErrorCode = SetVectorObjectPointsEdges(Star2[I],Star2Points,Star2Edges);
         } else {
             nErrorCode = -1;
         }
@@ -280,6 +334,7 @@ void FreeAllVectorObjects(void) {
         FreeVectorObject(Cube[I]);
         FreeVectorObject(Rhombus[I]);
         FreeVectorObject(Star[I]);
+        FreeVectorObject(Star2[I]);
     }
 }
 
@@ -414,13 +469,14 @@ int32_t DoVectorObject(void) {
         pV = Cube;
     } else if (g_uObject == 1) {
         pV = Rhombus;
-    } else {
+    } else if (g_uObject == 2) {
         pV = Star;
+    } else {
+        pV = Star2;
     }
 
     nSizeForAll = VECTOR_OBJECT_SIZE - cos(g_SizeSin) * (VECTOR_OBJECT_SIZE - 10);
     g_SizeSin = g_SizeSin + 0.01;
-
     // Prüfen, ob Vektor-Objekt gewechselt werden soll
     if ((SDL_GetTicks() - g_uObjectChangeTime > 10000) && (nSizeForAll <= 10)) {
         g_uObject++;
@@ -441,6 +497,9 @@ int32_t DoVectorObject(void) {
             case (VECTOROBJECT_STAR):
                 pV = Star;
                 break;
+            case (VECTOROBJECT_STAR2):
+                pV = Star2;
+                break;
         }
         // Position des letzten Objekts dem Neuen zuweisen
         for (c = 0; (c < MAX_VECTOR_OBJECTS) && (nErrorCode == 0); c++) {
@@ -452,7 +511,7 @@ int32_t DoVectorObject(void) {
     for (c = 0; (c < MAX_VECTOR_OBJECTS) && (nErrorCode == 0); c++) {
         nErrorCode = DrawVectorObject(pV[c]);
         // Rotation
-        if (g_uObject == VECTOROBJECT_STAR) {
+        if ((g_uObject == VECTOROBJECT_STAR) || (g_uObject == VECTOROBJECT_STAR2)) {
             pV[c]->fAngleX = pV[c]->fAngleX + 0.03;
             pV[c]->fAngleZ = pV[c]->fAngleZ + 0.005;
         } else {

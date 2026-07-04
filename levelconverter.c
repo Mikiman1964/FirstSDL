@@ -1360,7 +1360,7 @@ int32_t LevelConverterFromEmeraldMineKingsoft(char *pszFilename) {
         return -1;
     }
     pFileData = ReadFile(pszFilename,&uFileLen);
-    if ((pFileData != NULL) && (uFileLen == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE)) {
+    if ((pFileData != NULL) && ((uFileLen == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE) || (uFileLen == IMPORT_EMERALDMINE_KINGSOFT2_LEVELSIZE))) {
         Ed.uLevel_X_Dimension = IMPORT_EMERALDMINE_KINGSOFT_X_DIM;
         Ed.uLevel_Y_Dimension = IMPORT_EMERALDMINE_KINGSOFT_Y_DIM;
         Ed.uLevel_XY_Dimension = Ed.uLevel_X_Dimension * Ed.uLevel_Y_Dimension;
@@ -2577,7 +2577,7 @@ int32_t GetLevelFileList(char *pszDirectoryName, LEVELFILESLIST *pLevelFileList,
 
                     if (strcasecmp(szFileExtension,"BMP")  == 0) {
                         pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_DC3;
-                    } else if (Fileinfo.st_size == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE) {
+                    } else if ((Fileinfo.st_size == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE) ||  (Fileinfo.st_size == IMPORT_EMERALDMINE_KINGSOFT2_LEVELSIZE)) {
                         pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_EMERALDMINE_KINGSOFT;
                     } else if ((strcasecmp(szFileExtension,"RND")  == 0) || (strcasecmp(szFileExtension,"level")  == 0)) {
                         pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_ROCKSNDIAMONDS;

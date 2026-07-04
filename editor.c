@@ -5653,14 +5653,14 @@ int32_t PreEditorMenu(void) {
                     break;
                 case (11):
                     // SDL_Log("%s:   level list up",__FUNCTION__);
-                    nScrollLevelTitles = ScrollLevelTitleList(EMERALD_STEEL_ARROW_UP_PRESSED);
+                    nScrollLevelTitles = ScrollLevelTitleList(GFX_BUTTON_ARROW_UP);
                     if ((nScrollLevelTitles != 0)) {
                         nSelectedBeamPosition++;
                     }
                     break;
                 case (12):
                     // SDL_Log("%s:   level list down",__FUNCTION__);
-                    nScrollLevelTitles = ScrollLevelTitleList(EMERALD_STEEL_ARROW_DOWN_PRESSED);
+                    nScrollLevelTitles = ScrollLevelTitleList(GFX_BUTTON_ARROW_DOWN);
                     if ((nScrollLevelTitles != 0)) {
                         nSelectedBeamPosition--;
                     }
@@ -5788,30 +5788,30 @@ Name:           ScrollLevelTitleList
 Beschreibung: Scrollt die Levelnamen im Pre-Editor-Menü.
 Parameter
       Eingang: nButton, int32_t, Levelnamenlisten-Button, der gedrückt wurde
-                        0 = kein Button gedrückt, 1 = EMERALD_STEEL_ARROW_DOWN_PRESSED, 2 = EMERALD_STEEL_ARROW_UP_PRESSED
+                        0 = kein Button gedrückt, GFX_BUTTON_ARROW_DOWN, GFX_BUTTON_ARROW_UP
       Ausgang: -
-Rückgabewert:  int32_t, 0 = nicht gescrollt
-                        1 = runter gescrollt
-                        2 = hoch gescrollt
+Rückgabewert:  int32_t, GFX_BUTTON_ARROW_NONE (0)
+                        GFX_BUTTON_ARROW_DOWN (1)
+                        GFX_BUTTON_ARROW_UP (2)
 Seiteneffekte: SelectedLevelgroup, MainMenu.x
 ------------------------------------------------------------------------------*/
 int32_t ScrollLevelTitleList(int32_t nButton) {
     uint32_t I;
-    int32_t nScroll = 0;
+    int32_t nScroll = GFX_BUTTON_ARROW_NONE;
 
     if (SelectedLevelgroup.uLevelCount > MainMenu.uMaxLevelTitlesInList) {
-        if (nButton == EMERALD_STEEL_ARROW_UP_PRESSED) {            // Button Levelnamenlisten Pfeil hoch?
+        if (nButton == GFX_BUTTON_ARROW_UP) {            // Button Levelnamenlisten Pfeil hoch?
             if (MainMenu.puLevelTitleList[0] > 0) {
-                nScroll = EMERALD_STEEL_ARROW_UP_PRESSED;
+                nScroll = GFX_BUTTON_ARROW_UP;
                 for (I = 0; I < MainMenu.uMaxLevelTitlesInList; I++) {
                     if (MainMenu.puLevelTitleList[I] != 0xFFFF) {
                         MainMenu.puLevelTitleList[I]--;
                     }
                 }
             }
-        } else if (nButton == EMERALD_STEEL_ARROW_DOWN_PRESSED) {   // Button Levelnamenlisten Pfeil runter?
+        } else if (nButton == GFX_BUTTON_ARROW_DOWN) {   // Button Levelnamenlisten Pfeil runter?
             if (MainMenu.puLevelTitleList[MainMenu.uMaxLevelTitlesInList - 1] < (SelectedLevelgroup.uLevelCount - 1)) {
-                nScroll = EMERALD_STEEL_ARROW_DOWN_PRESSED;
+                nScroll = GFX_BUTTON_ARROW_DOWN;
                 for (I = 0; I < MainMenu.uMaxLevelTitlesInList; I++) {
                     if (MainMenu.puLevelTitleList[I] != 0xFFFF) {
                         MainMenu.puLevelTitleList[I]++;

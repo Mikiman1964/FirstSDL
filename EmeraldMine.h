@@ -19,7 +19,7 @@
 
 #define PANEL_H                                     32            // Spiel-Anzeige (Time, Score usw.)
 
-#define EMERALD_VERSION                             "01.15"       // Version
+#define EMERALD_VERSION                             "01.16"       // Version
 
 #define EMERALD_VERSION_LEN                         5             // Maximale Versionslänge, z.B "01.00"
 #define EMERALD_TITLE_LEN                           32            // Maximale Titellänge

@@ -7,7 +7,7 @@ extern PLAYFIELD Playfield;
 /*----------------------------------------------------------------------------
 Name:           ControlRedReplicator
 ------------------------------------------------------------------------------
-Beschreibung: Steuert den roten Repliktor
+Beschreibung: Steuert den roten Replikator
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -
@@ -28,7 +28,7 @@ void ControlRedReplicator(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlYellowReplicator
 ------------------------------------------------------------------------------
-Beschreibung: Steuert den gelben Repliktor
+Beschreibung: Steuert den gelben Replikator
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -
@@ -49,7 +49,7 @@ void ControlYellowReplicator(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlGreenReplicator
 ------------------------------------------------------------------------------
-Beschreibung: Steuert den grünen Repliktor
+Beschreibung: Steuert den grünen Replikator
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -
@@ -70,7 +70,7 @@ void ControlGreenReplicator(uint32_t I) {
 /*----------------------------------------------------------------------------
 Name:           ControlBlueReplicator
 ------------------------------------------------------------------------------
-Beschreibung: Steuert den blauen Repliktor
+Beschreibung: Steuert den blauen Replikator
 Parameter
       Eingang: I, uint32_t, Position der oberen Mittelteils des Replikators
       Ausgang: -

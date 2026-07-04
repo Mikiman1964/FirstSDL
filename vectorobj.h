@@ -15,6 +15,7 @@
 #define VECTOROBJECT_CUBE                   0
 #define VECTOROBJECT_RHOMBUS                1
 #define VECTOROBJECT_STAR                   2
+#define VECTOROBJECT_STAR2                  3
 
 
 // 3D-Punkt Struktur

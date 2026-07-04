@@ -7,10 +7,20 @@
 #include "loadlevel.h"
 #include "mySDL.h"
 
-#define EMERALD_STEEL_ARROW_DOWN_PRESSED    1
-#define EMERALD_STEEL_ARROW_UP_PRESSED      2
-#define EMERALD_STEEL_SETTINGS_PRESSED      3
-#define EMERALD_STEEL_EXIT_PRESSED          4
+// Rückgabewerte für GetMainMenuButton()
+#define GFX_BUTTON_NONE                     0
+#define GFX_BUTTON_LEVEL_DOWN               1
+#define GFX_BUTTON_LEVEL_UP                 2
+#define GFX_BUTTON_SETTINGS                 3
+#define GFX_BUTTON_EXIT                     4
+#define GFX_BUTTON_PLAYER_DOWN              5
+#define GFX_BUTTON_PLAYER_UP                6
+#define GFX_BUTTON_LEVELGROUP_DOWN          7
+#define GFX_BUTTON_LEVELGROUP_UP            8
+
+#define GFX_BUTTON_ARROW_NONE               0
+#define GFX_BUTTON_ARROW_DOWN               1
+#define GFX_BUTTON_ARROW_UP                 2
 
 #define MAX_NAMES_IN_LIST                   4
 #define MIN_LEVELGROUPS_IN_LIST             4
@@ -50,8 +60,6 @@ typedef struct {
 void PreInitMainMenu(void);
 int32_t InitMainMenu(bool bCenterDefault);
 int32_t GetMainMenuButton(void);
-int32_t GetPlayerListButton(void);
-int32_t GetLevelgroupListButton(void);
 int32_t EmeraldMineMainMenu(void);
 int32_t ShowAuthorAndLevelname(uint32_t uLevel);
 int32_t DimmMainMenu(bool bDimmUp);
