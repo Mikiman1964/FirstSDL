@@ -28,6 +28,11 @@ void ControlCrystal(uint32_t I) {
         // SDL_Log("%s: ack double control",__FUNCTION__);
         return;
     }
+    if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
+        Playfield.pLevel[I] = EMERALD_SPACE;    // Kristall ist in Magic Wall eingetaucht und wird zu Space
+        Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
+        return;
+    }
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_BLITZ) {
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
     }

@@ -10,9 +10,6 @@
 #include "xm_internal.h"
 #include <inttypes.h>
 
-#include "modplay.h"
-extern AUDIOPLAYER Audioplayer;
-
 /* ----- Static functions ----- */
 
 static float xm_waveform(xm_waveform_type_t, uint8_t);
@@ -1412,17 +1409,8 @@ static void xm_sample(xm_context_t* ctx, float* left, float* right) {
 
 void xm_generate_samples(xm_context_t* ctx, float* output, size_t numsamples) {
 	ctx->generated_samples += numsamples;
-    float sampleLeft;
-    float sampleRight;
 
 	for(size_t i = 0; i < numsamples; i++) {
-        if (Audioplayer.uMusicVolumePercent < 100) {
-            xm_sample(ctx, &sampleLeft, &sampleRight);
-            output[2 * i] = sampleLeft * Audioplayer.uMusicVolumePercent / 100;
-            output[2 * i + 1] = sampleRight * Audioplayer.uMusicVolumePercent / 100;
-        } else {
-            xm_sample(ctx, output + (2 * i), output + (2 * i + 1));
-        }
-
-	}
+        xm_sample(ctx, output + (2 * i), output + (2 * i + 1));
+    }
 }

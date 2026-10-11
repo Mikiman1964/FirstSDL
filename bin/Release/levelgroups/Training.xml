@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <levelgroup>
 <groupname>TRAINING</groupname>
-<create_timestamp>20260626_182030</create_timestamp>
+<create_timestamp>20260926_142813</create_timestamp>
 <levelcount>60</levelcount>
 <level000>
   <title>FIRST CONTACT</title>
@@ -8823,7 +8823,7 @@
 <level059>
   <title>DE BOND LEVEL 20 (MODIFIED)</title>
   <author>DE BOND - CONVERT BY TEDDY</author>
-  <version>01.14</version>
+  <version>01.16</version>
   <quicksave_allowed>1</quicksave_allowed>
   <values>
     <emeralds_to_collect>40</emeralds_to_collect>
@@ -8966,5 +8966,5 @@
   <leveldata_md5_hash>A37830D99BEA758CD8B8E81FCC5F6B3C</leveldata_md5_hash>
 </level059>
 <password_md5_hash></password_md5_hash>
-<levelgroup_md5_hash>983A943918B69A1BA9090C011B1D9C2E</levelgroup_md5_hash>
+<levelgroup_md5_hash>61E4FFC030FFD4154085587658DD3344</levelgroup_md5_hash>
 </levelgroup>

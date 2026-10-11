@@ -1434,7 +1434,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_RED_TOP_LEFT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_ON_1;     // Replikator, rot, an, oben links, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_ON_2;     // Replikator, rot, an, oben links, Animationsschritt 2
@@ -1447,7 +1447,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_RED_TOP_MID):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_ON_1;     // Replikator, rot, an, mitte, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_ON_2;     // Replikator, rot, an, mitte, Animationsschritt 2
@@ -1460,7 +1460,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_ON_1;     // Replikator, rot, an, oben rechts, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_ON_2;     // Replikator, rot, an, oben rechts, Animationsschritt 2
@@ -1488,7 +1488,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
 
         case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_1;     // Replikator, grün, an, oben links, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_2;     // Replikator, grün, an, oben links, Animationsschritt 2
@@ -1501,7 +1501,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_GREEN_TOP_MID):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_1;     // Replikator, grün, an, mitte, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_2;     // Replikator, grün, an, mitte, Animationsschritt 2
@@ -1514,7 +1514,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_1;     // Replikator, grün, an, oben rechts, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_2;     // Replikator, grün, an, oben rechts, Animationsschritt 2
@@ -1541,7 +1541,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_ON_1;     // Replikator, blau, an, oben links, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_ON_2;     // Replikator, blau, an, oben links, Animationsschritt 2
@@ -1554,7 +1554,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_BLUE_TOP_MID):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_ON_1;     // Replikator, blau, an, mitte, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_ON_2;     // Replikator, blau, an, mitte, Animationsschritt 2
@@ -1567,7 +1567,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_ON_1;     // Replikator, blau, an, oben rechts, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_ON_2;     // Replikator, blau, an, oben rechts, Animationsschritt 2
@@ -1594,7 +1594,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_ON_1;     // Replikator, gelb, an, oben links, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_ON_2;     // Replikator, gelb, an, oben links, Animationsschritt 2
@@ -1607,7 +1607,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_ON_1;     // Replikator, gelb, an, mitte, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_ON_2;     // Replikator, gelb, an, mitte, Animationsschritt 2
@@ -1620,7 +1620,7 @@ uint32_t GetTextureIndexByElement(uint16_t uElement,int32_t nAnimationCount,floa
             break;
         case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
             if (bReplicatorOn) {
-                if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                if (uReplicatorAnimation <= 3) {
                     uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_ON_1;     // Replikator, gelb, an, oben rechts, Animationsschritt 1
                 } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                     uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_ON_2;     // Replikator, gelb, an, oben rechts, Animationsschritt 2

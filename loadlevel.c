@@ -1728,7 +1728,7 @@ int32_t CheckReplicators(uint16_t *pLevel, int32_t nXdim, int32_t nYdim) {
                 }
                 break;
             case (EMERALD_REPLICATOR_RED_TOP_MID):
-                if ((I - 1) >= 0) {
+                if ((nI - 1) >= 0) {
                     if (pLevel[nI - 1] == EMERALD_REPLICATOR_RED_TOP_LEFT) {
                         if ((nI + 1) <= nMaxIndex) {
                             if (pLevel[nI + 1] != EMERALD_REPLICATOR_RED_TOP_RIGHT) {
@@ -2510,7 +2510,7 @@ int32_t GetLevelgroupFiles(void) {
                                         if (levelgrouphash != NULL) {
                                             // Stimmt der berechnete Hash mit dem Gelesenen?
                                             GetMd5HashFromString(levelgrouphash->txt,uLevelgroupMd5Hash);
-                                            //if ((memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) || true) {
+                                            // if ((memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) || true) {
                                             if (memcmp(uLevelgroupMd5Hash,uCalculatedLevelgroupMd5Hash,16) == 0) {
                                                 strcpy(LevelgroupFiles[g_LevelgroupFilesCount].szFilename,szFullFilename); // Maximale Länge wurde bereits geprüft
                                                 if ((strlen(levelgroupname->txt) > 0) && (strlen(levelgroupname->txt) <= EMERALD_GROUPNAME_LEN)) {
@@ -2676,7 +2676,7 @@ int32_t SelectLevelgroup(uint8_t *puLevelgroupMd5Hash, bool bReadWriteHighscores
     nErrorCode = -1;
     memset(&SelectedLevelgroup,0,sizeof(SelectedLevelgroup));                   // setzt SelectedLevelgroup.bOK auch auf false
     uLevelgroupIndex = GetLevelgroupIndexByHash(puLevelgroupMd5Hash);
-    if ((uLevelgroupIndex >= 0) && (uLevelgroupIndex < g_LevelgroupFilesCount)) {
+    if (uLevelgroupIndex < g_LevelgroupFilesCount) {
         pXml = ReadFile(LevelgroupFiles[uLevelgroupIndex].szFilename,&uXmlLen);     // Levelgruppen-Datei einlesen
         if (pXml != NULL) {
             xml = ezxml_parse_str((char*)pXml,strlen((char*)pXml));

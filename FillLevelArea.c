@@ -31,16 +31,16 @@ Name:           PushFillstack
 ------------------------------------------------------------------------------
 Beschreibung: Legt eine Koordinate auf dem Fillstack ab.
 Parameter
-      Eingang: nX, int32_t, X-Position
-               nY, int32_t, Y-Position
+      Eingang: uX, uint32_t, X-Position
+               uY, uint32_t, Y-Position
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Fillstack.x
 ------------------------------------------------------------------------------*/
-int32_t PushFillstack(int32_t nX, int32_t nY) {
+int32_t PushFillstack(uint32_t uX, uint32_t uY) {
     if (Fillstack.uP < FILLSTACK_SIZE) {
-        Fillstack.Koords[Fillstack.uP].nX = nX;
-        Fillstack.Koords[Fillstack.uP].nY = nY;
+        Fillstack.Koords[Fillstack.uP].uX = uX;
+        Fillstack.Koords[Fillstack.uP].uY = uY;
         Fillstack.uP++;
         if (Fillstack.uP > Fillstack.uMaxP) {
             Fillstack.uMaxP = Fillstack.uP;
@@ -58,17 +58,17 @@ Name:           PopFillstack
 ------------------------------------------------------------------------------
 Beschreibung: Holt eine Koordinate aus dem Fillstack ab.
 Parameter
-      Eingang: pnX, int32_t *, X-Position
-               pnY, int32_t *, Y-Position
+      Eingang: puX, uint32_t *, X-Position
+               puY, uint32_t *, Y-Position
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: Fillstack.x
 ------------------------------------------------------------------------------*/
-int32_t PopFillstack(int32_t *pnX, int32_t *pnY) {
-    if ((pnX != NULL) && (pnY != NULL) && (Fillstack.uP > 0)) {
+int32_t PopFillstack(uint32_t *puX, uint32_t *puY) {
+    if ((puX != NULL) && (puY != NULL) && (Fillstack.uP > 0)) {
         Fillstack.uP--;
-        *pnX = Fillstack.Koords[Fillstack.uP].nX;
-        *pnY = Fillstack.Koords[Fillstack.uP].nY;
+        *puX = Fillstack.Koords[Fillstack.uP].uX;
+        *puY = Fillstack.Koords[Fillstack.uP].uY;
         return 0;
     } else {
         SDL_Log("%s: Heap Underflow",__FUNCTION__);
@@ -108,39 +108,39 @@ Beschreibung: Füllt einen (begrenzten) Levelbereich mit einem bestimmten Elemen
                         }
                     }
 Parameter
-      Eingang: nX, int32_t, X-Position im Level
-               nY, int32_t, Y-Position im Level
+      Eingang: uX, uint32_t, X-Position im Level
+               uY, uint32_t, Y-Position im Level
                uFillElement, uint16_t, Element, mit dem gefüllt werden soll
                uGroundElement, uint16_t, Grund-Element, dass ersetzt werden soll
 Rückgabewert:  int32_t, 0 = alles OK, sonst Fehler
 Seiteneffekte: Ed.x
 ------------------------------------------------------------------------------*/
-int32_t FillLevelArea(int32_t nX,int32_t nY,uint16_t uFillElement,uint16_t uGroundElement) {
+int32_t FillLevelArea(uint32_t uX,uint32_t uY,uint16_t uFillElement,uint16_t uGroundElement) {
     int32_t nErrorCode;
 
     InitFillStack();
-    nErrorCode = PushFillstack(nX,nY);
+    nErrorCode = PushFillstack(uX,uY);
     while ((Fillstack.uP > 0) && (nErrorCode == 0)) {
-        nErrorCode = PopFillstack(&nX,&nY);
+        nErrorCode = PopFillstack(&uX,&uY);
         if (nErrorCode != 0) {
             return -1;
         }
-        if (!((nX > 0) && (nX < (Ed.uLevel_X_Dimension - 1)) && (nY > 0) && (nY < (Ed.uLevel_Y_Dimension - 1)))) {
+        if (!((uX > 0) && (uX < (Ed.uLevel_X_Dimension - 1)) && (uY > 0) && (uY < (Ed.uLevel_Y_Dimension - 1)))) {
             continue;
         }
-        if (Ed.pLevel[Ed.uLevel_X_Dimension * nY + nX] == uFillElement) {
+        if (Ed.pLevel[Ed.uLevel_X_Dimension * uY + uX] == uFillElement) {
             continue;
         }
-        if (Ed.pLevel[Ed.uLevel_X_Dimension * nY + nX] == uGroundElement) {
-            Ed.pLevel[Ed.uLevel_X_Dimension * nY + nX] = uFillElement;
+        if (Ed.pLevel[Ed.uLevel_X_Dimension * uY + uX] == uGroundElement) {
+            Ed.pLevel[Ed.uLevel_X_Dimension * uY + uX] = uFillElement;
         } else {
             continue;
         }
         nErrorCode = -1;
-        if (PushFillstack(nX + 1,nY) == 0) {
-            if (PushFillstack(nX - 1,nY) == 0) {
-                if (PushFillstack(nX,nY + 1) == 0) {
-                    if (PushFillstack(nX,nY - 1) == 0) {
+        if (PushFillstack(uX + 1,uY) == 0) {
+            if (PushFillstack(uX - 1,uY) == 0) {
+                if (PushFillstack(uX,uY + 1) == 0) {
+                    if (PushFillstack(uX,uY - 1) == 0) {
                         nErrorCode = 0;
                     }
                 }

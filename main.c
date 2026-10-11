@@ -14,7 +14,7 @@
 #include "highscores.h"
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
-#include "modplay.h"
+#include "musicplayer.h"
 #include "quicksaveloadgame.h"
 #include "sound.h"
 #include "mySDL.h"
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     // | = Ö
     // { = Ä
     // } = Ü
-    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - JULY 2026. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
+    uint8_t szMessage1[] = {"PROGRAMMED BY #MIK# IN SEPTEMBER 2022 - October 2026. MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU). PLEASE WAIT FOR THE ASTEROIDS. PRESS D TO TOGGLE DRUNKEN ASTEROID MODE ....  \
 MOD 1 > ECHOING, BY BANANA (CHRISTOF M}HLAN, 1988)   MOD 2 > CIRCUS TIME 2, BY VOYCE/DELIGHT, 1993    MOD 3 > CLASS15, BY MAKTONE (MARTIN NORDELL, 1999)   MOD 4 > GLOBAL TRASH 3 V2, BY JESPER KYD, 1991   MOD 5 > CLASS11.TIME FLIES, BY MAKTONE   \
 MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE   MOD 8 > BREWERY, BY MAKTONE   MOD 9 > CLASS05, BY MAKTONE, 1999   MOD 0 > SOFTWORLD, BY OXYGENER/MAKTONE            "};
     uint8_t szMessage2[] = {"PRESS ESC OR LEFT MOUSEBUTTON TO EXIT !   PRESS 1,2,3,4,5,6,7,8,9 OR 0 TO CHANGE MUSIC !   CHECK THE MOUSE WHEEL TOO ..... PRESS A / B TO CHANGE TEXTURES ..... FONT AND GAME GFX BY PETER ELZNER ... COPPER-EFFECT INSPIRED BY WORLD OF WONDERS      "};
@@ -234,7 +234,19 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
             }
             uLastKeyTime = SDL_GetTicks();
         }
-
+        /*
+        if (InputStates.pKeyboardArray[SDL_SCANCODE_KP_MINUS]) {
+            if (Audioplayer.uMusicVolumePercent > 0) {
+                Audioplayer.uMusicVolumePercent--;
+                SDL_Log("Set Volume to :%u",Audioplayer.uMusicVolumePercent);
+            }
+        } else if (InputStates.pKeyboardArray[SDL_SCANCODE_KP_PLUS]) {
+            if (Audioplayer.uMusicVolumePercent < 100) {
+                Audioplayer.uMusicVolumePercent++;
+                SDL_Log("Set Volume to :%u",Audioplayer.uMusicVolumePercent);
+            }
+        }
+        */
         DoCopper(bCopperScoll);
         uCurrentTicks = SDL_GetTicks();
         if (uCurrentTicks - uScroller1Timer > 0) {
@@ -327,7 +339,7 @@ MOD 6 > 2000AD:CRACKTRO:IV, BY MAKTONE   MOD 7 > 2000AD:CRACKTRO02, BY MAKTONE  
         // MOD wechseln
         CheckMusicSwitch(InputStates.pKeyboardArray);
         if (Audioplayer.nNextMusicIndex != 0) {
-            if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) == 0) {    // Etwas warten, bis Callback-Funktion nicht mehr aufgerufen wird
+            if (SDL_GetQueuedAudioSize(Audioplayer.audio_device) == 0) {    // Warten, bis letzter Puffer abgespielt worden ist
                 if (SetMusic(Audioplayer.nNextMusicIndex) != 0) {
                     return -1;
                 }

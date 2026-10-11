@@ -134,7 +134,7 @@ int32_t DoScroller(SCROLLER *pScroller) {
     for (I = 0; I < pScroller->uScrollerBufferLen; I++) {
        if (pScroller->bSinus) {
             if (pScroller->bSwellFont) {
-                fScaleW = pScroller->fScale * abs(sin(pScroller->pfAngles[I]));
+                fScaleW = pScroller->fScale * fabs(sin(pScroller->pfAngles[I]));
                 fScaleH = fScaleW;
             } else {
                 fScaleW = pScroller->fScale;

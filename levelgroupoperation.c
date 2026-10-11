@@ -7,7 +7,7 @@
 #include "levelgroupoperation.h"
 #include "loadlevel.h"
 #include "md5.h"
-#include "modplay.h"
+#include "musicplayer.h"
 #include "mySDL.h"
 
 extern CLIPBOARD Clipboard;

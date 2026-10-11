@@ -7,8 +7,8 @@
 
 // Für die iterative Füllroutine
 typedef struct {
-    int32_t nX;
-    int32_t nY;
+    uint32_t uX;
+    uint32_t uY;
 } KOORDS;
 
 
@@ -19,9 +19,9 @@ typedef struct {
 } FILLSTACK;
 
 void InitFillStack(void);
-int32_t PushFillstack(int32_t nX, int32_t nY);
-int32_t PopFillstack(int32_t *pnX, int32_t *pnY);
-int32_t FillLevelArea(int32_t nX,int32_t nY,uint16_t uFillElement,uint16_t uGroundElement);
+int32_t PushFillstack(uint32_t uX, uint32_t uY);
+int32_t PopFillstack(uint32_t *puX, uint32_t *puY);
+int32_t FillLevelArea(uint32_t uX, uint32_t uY,uint16_t uFillElement,uint16_t uGroundElement);
 
 
 #endif // FILLLEVELAREA_H_INCLUDED

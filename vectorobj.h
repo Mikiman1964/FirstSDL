@@ -32,9 +32,9 @@ typedef struct {
 
 typedef struct {
     // Anzahl Punkte
-    int32_t nPointCount;
+    uint32_t uPointCount;
     // Anzahl Kanten
-    int32_t nEdgeCount;
+    uint32_t uEdgeCount;
     // Punkte
     POINT3D *pPoints3D;
     POINT2D *pPoints2D; // Für Bildschirmprojektion
@@ -61,7 +61,7 @@ typedef struct {
 
 
 int32_t InitVectorObjects(void);
-VECTOROBJ *CreateVectorObject(int32_t nPointCount, int32_t nEdgeCount);
+VECTOROBJ *CreateVectorObject(uint32_t uPointCount, uint32_t uEdgeCount);
 void FreeVectorObject(VECTOROBJ *pV);
 int32_t SetVectorObjectPointsEdges(VECTOROBJ *pV, POINT3D *pPoints3D, int32_t Edges[][2]);
 int32_t DrawVectorObject(VECTOROBJ *pV);

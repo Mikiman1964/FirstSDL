@@ -28,7 +28,7 @@ void ShowConfigFile(void) {
     SDL_Log("Editor zoom:                    %d",Config.bEditorZoom);
     SDL_Log("Game music:                     %d",Config.bGameMusic);
     SDL_Log("Show highscores:                %d",Config.bShowHighscores);
-    SDL_Log("Display:                        %u",Config.uDisplay);
+    SDL_Log("Display:                        %d",Config.nDisplay);
     SDL_Log("X-Resolution:                   %u",Config.uResX);
     SDL_Log("Y-Resolution:                   %u",Config.uResY);
     SDL_Log("Last levelgroup hash:           %s",szMd5String);
@@ -98,7 +98,7 @@ int32_t WriteDefaultConfigFile(void) {
     Config.bEditorZoom = false;                     // Editor läuft mit 16x16 Pixeln
     Config.bGameMusic = true;                       // true = Modfiles in den Gamemenüs abspielen
     Config.bShowHighscores = true;                  // true = Highscores zeigen, wenn genug Punkte
-    Config.uDisplay = 0;                            // Ersten Montitor ansprechen
+    Config.nDisplay = 0;                            // Ersten Montitor ansprechen
     Config.uResX = DEFAULT_WINDOW_W;                // Standard-Auflösung X bzw. Fensterbreite
     Config.uResY = DEFAULT_WINDOW_H;                // Auflösung Y bzw. Fensterhöhe
     memset(Config.uLevelgroupMd5Hash,0,16);         // MD5-Hash auf "00000000000000000000000000000000" setzen
@@ -146,7 +146,7 @@ int32_t WriteConfigFile(void) {
     strcat(szXML,"<configuration>\n");
     strcat(szXML,"<screen>\n");
     strcat(szXML,"  <!--primary display is num 0, second display 1-->\n");
-    sprintf(szString,"  <display_num>%u</display_num>\n",Config.uDisplay);
+    sprintf(szString,"  <display_num>%u</display_num>\n",Config.nDisplay);
     strcat(szXML,szString);
     strcat(szXML,"  <resolution>\n");
     sprintf(szString,"    <x>%d</x>\n",Config.uResX);
@@ -363,11 +363,11 @@ int32_t ReadConfigFile(void) {
                                         Config.uResY = strtol(y->txt,NULL,10);
                                         display = ezxml_child(screen,"display_num");
                                         if (display != NULL) {
-                                            Config.uDisplay = strtol(display->txt,NULL,10);
-                                            if (Config.uDisplay > 1) {
-                                                Config.uDisplay = 1;
+                                            Config.nDisplay = strtol(display->txt,NULL,10);
+                                            if (Config.nDisplay > 1) {
+                                                Config.nDisplay = 1;
                                             }
-                                            Config.uDisplayUse = Config.uDisplay; // Wird später ggf. noch angepasst
+                                            Config.nDisplayUse = Config.nDisplay; // Wird später ggf. noch angepasst
                                             highscores = ezxml_child(xml,"show_highscores");
                                             if (highscores != NULL) {
                                                 Config.bShowHighscores = (strtol(highscores->txt,NULL,10) == 1);

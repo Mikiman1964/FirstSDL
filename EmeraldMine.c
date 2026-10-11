@@ -10,6 +10,20 @@ TODO
 Für V 1.16
 * Levelnummer kann nun schnell geändert werden, wenn Pfeiltaste gedrückt gehalten wird. Funktion GetMainMenuButton() überarbeitet, die Funktionen
 GetPlayerListButton() und GetLevelgroupListButton() dafür entfernt.
+* Panel_832.bmp entfernt
+* Bugfix: Wenn Sapphire durch MagicWall fällt und dann Explosion auslöst, gibt es eine Daueranimation über MW und Sapphire ist noch vorhanden. Fehler in ElementGoesMagicWall()
+* Datentyp "short" gegen "int16_t" ersetzt
+* Musicplayer: Lautstärkeänderung funktioniert nun mit allen Formaten. War vorher nun für MOD-Files. PlayMusic() füllt den Ausgabepuffer möglichst voll.
+  Sid-Player überarbeitet: tinysid -> sidplayer, tinysid hat nicht alle sids abgespielt, MP3-Files abspielbar -> minimp3.h
+  Dateien umbenannt: modplay.c/modplay.h in musicplayer.c/musicplayer.h
+* bin2c erzeugte ein schlechtes Headerfile (z.B. "music_compressed.h"), wenn Zeile ohne Rest gefüllt.
+* RenderMOD() löscht nicht mehr den Puffer vor Befüllung
+* Bugfix in GetFontElementByChar(): case-Zweige falsch
+* Bugfix in CheckReplicators(): if-Abfrage mit I statt nI.
+* Bugfix in randf(): fabs() statt abs().
+* Doppelte Scrollgeschwindigkeit im Hauptmenü.
+* End-Gong funktionierte mit Fast-Game-Speed nicht.
+* Stern im Levelname wird jetzt in GetFontElementByChar() als "Platte" verarbeitet.
 */
 
 #include "gfx/textures.h"
@@ -39,7 +53,7 @@ GetPlayerListButton() und GetLevelgroupListButton() dafür entfernt.
 #include "man.h"
 #include "megabomb.h"
 #include "mine.h"
-#include "modplay.h"
+#include "musicplayer.h"
 #include "mole.h"
 #include "mySDL.h"
 #include "mystd.h"
@@ -60,7 +74,7 @@ GetPlayerListButton() und GetLevelgroupListButton() dafür entfernt.
 #include "yam.h"
 
 PLAYFIELD Playfield;
-int32_t g_nGameSpeed;
+uint32_t g_uGameSpeed;
 extern CONFIG Config;
 extern GAMESOUND GameSound;
 extern INPUTSTATES InputStates;
@@ -250,7 +264,7 @@ Parameter
       Ausgang: -
 
 Rückgabewert:  int32_t, 0 = kein Fehler, sonst Fehler
-Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x, g_nGameSpeed, Video.x
+Seiteneffekte: Playfield.x, InputStates.x, ManKey.x, GameSound.x, g_uGameSpeed, Video.x
 ------------------------------------------------------------------------------*/
 int32_t RunGame(uint32_t uLevel) {
     bool bLevelRun;
@@ -391,7 +405,7 @@ int32_t RunGame(uint32_t uLevel) {
                     }
                 }
             }
-            if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= (15 * (g_nGameSpeed + 1)))) {
+            if ((ManKey.uDirection == MANKEY_NONE) && ((Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount) <= (15 * (g_uGameSpeed + 1)))) {
                 // SDL_Log("%s: use buffered key: dir: %u   dif:%u",__FUNCTION__,ManKey.uLastActiveDirection,Playfield.uFrameCounter - ManKey.uLastDirectionFrameCount);
                 uKey = ManKey.uLastActiveDirection;
             } else {
@@ -408,7 +422,7 @@ int32_t RunGame(uint32_t uLevel) {
         }
         if (!bPause) {
             // SDL_Log("Y: %u",Playfield.uManYpos);
-            for (I = 0; I < (g_nGameSpeed + 1); I++) {
+            for (I = 0; I < (g_uGameSpeed + 1); I++) {
                 ScrollAndCenterLevel(uManDirection);
                 CheckRunningWheel();
                 CheckRunningMagicWall();
@@ -453,7 +467,7 @@ int32_t RunGame(uint32_t uLevel) {
             }
         }
         if (!bPause) {
-            if (g_nGameSpeed == GAMESPEED_FAST) {
+            if (g_uGameSpeed == GAMESPEED_FAST) {
                 nCheckLevelCount = nCheckLevelCount + 2;
             } else {
                 nCheckLevelCount++;
@@ -1840,13 +1854,13 @@ Name:           SetGameSpeed
 Beschreibung: Setzt die Spielgeschwindigkeit. Die Geschwindigkeit sollte/darf nur
               außerhalb eines Animationsablaufes geändert werden.
 Parameter
-      Eingang: nGameSpeed, int32_t, zur Zeit sind folgende Geschwindigkeiten möglich:
+      Eingang: uGameSpeed, uint32_t, zur Zeit sind folgende Geschwindigkeiten möglich:
                     GAMESPEED_NORMAL (2 Pixel / Frame)
                     GAMESPEED_FAST   (4 Pixel / Frame)
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: g_nGameSpeed
+Seiteneffekte: g_uGameSpeed
 ------------------------------------------------------------------------------*/
-void SetGameSpeed(int32_t nGameSpeed) {
-    g_nGameSpeed = nGameSpeed;
+void SetGameSpeed(uint32_t uGameSpeed) {
+    g_uGameSpeed = uGameSpeed;
 }

@@ -52,7 +52,7 @@ struct ezxml_root {       // additional data for the root tag
     char **ent;           // general entities (ampersand sequences)
     char ***attr;         // default attributes
     char ***pi;           // processing instructions
-    short standalone;     // non-zero if <?xml standalone="yes"?>
+    int16_t standalone;     // non-zero if <?xml standalone="yes"?>
     char err[EZXML_ERRL]; // error string
 };
 
@@ -318,7 +318,7 @@ void ezxml_proc_inst(ezxml_root_t root, char *s, size_t len)
 }
 
 // called when the parser finds an internal doctype subset
-short ezxml_internal_dtd(ezxml_root_t root, char *s, size_t len)
+int16_t ezxml_internal_dtd(ezxml_root_t root, char *s, size_t len)
 {
     char q, *c, *t, *n = NULL, *v, **ent, **pe;
     int i, j;
@@ -670,7 +670,7 @@ ezxml_t ezxml_parse_file(const char *file)
 // Encodes ampersand sequences appending the results to *dst, reallocating *dst
 // if length excedes max. a is non-zero for attribute encoding. Returns *dst
 char *ezxml_ampencode(const char *s, size_t len, char **dst, size_t *dlen,
-                      size_t *max, short a)
+                      size_t *max, int16_t a)
 {
     const char *e;
 
@@ -961,7 +961,7 @@ ezxml_t ezxml_set_attr(ezxml_t xml, const char *name, const char *value)
 }
 
 // sets a flag for the given tag and returns the tag
-ezxml_t ezxml_set_flag(ezxml_t xml, short flag)
+ezxml_t ezxml_set_flag(ezxml_t xml, int16_t flag)
 {
     if (xml) xml->flags |= flag;
     return xml;

@@ -17,7 +17,7 @@
 #include "man.h"
 #include "md5.h"
 #include "miniz.h"
-#include "modplay.h"
+#include "musicplayer.h"
 #include "mystd.h"
 #include "mySDL.h"
 #include "scroller.h"
@@ -1976,7 +1976,7 @@ void SetCompleteReplicator(uint16_t uReplicatorElement,uint32_t uLevelPosX, uint
         switch (uReplicatorPosition) {
             case (REPLICATOR_TOP_LEFT):
                 // prüfen, ob Replikator anhand der Cursor-Position ins Level gezeichnet werden kann
-                if ((uLevelPosX >= 0) && (uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY >= 0) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
+                if ((uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = uReplicatorElements[0];
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 1] = uReplicatorElements[1];
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 2] = uReplicatorElements[2];
@@ -1985,7 +1985,7 @@ void SetCompleteReplicator(uint16_t uReplicatorElement,uint32_t uLevelPosX, uint
                 }
                 break;
             case (REPLICATOR_TOP_MID):
-                if ((uLevelPosX >= 1) && (uLevelPosX <= Ed.uLevel_X_Dimension - 2) && (uLevelPosY >= 0) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
+                if ((uLevelPosX >= 1) && (uLevelPosX <= Ed.uLevel_X_Dimension - 2) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX - 1] = uReplicatorElements[0];
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = uReplicatorElements[1];
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 1] = uReplicatorElements[2];
@@ -1994,7 +1994,7 @@ void SetCompleteReplicator(uint16_t uReplicatorElement,uint32_t uLevelPosX, uint
                 }
                 break;
             case (REPLICATOR_TOP_RIGHT):
-                if ((uLevelPosX >= 2) && (uLevelPosX <= Ed.uLevel_X_Dimension - 1) && (uLevelPosY >= 0) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
+                if ((uLevelPosX >= 2) && (uLevelPosX <= Ed.uLevel_X_Dimension - 1) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX - 2] = uReplicatorElements[0];
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX - 1] = uReplicatorElements[1];
                     Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = uReplicatorElements[2];
@@ -2003,7 +2003,7 @@ void SetCompleteReplicator(uint16_t uReplicatorElement,uint32_t uLevelPosX, uint
                 }
                 break;
             case (REPLICATOR_BOTTOM_LEFT):
-                if ((uLevelPosX >= 0) && (uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY >= 1) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 1)) {
+                if ((uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY >= 1) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 1)) {
                     Ed.pLevel[(uLevelPosY - 1) * Ed.uLevel_X_Dimension + uLevelPosX + 0] = uReplicatorElements[0];
                     Ed.pLevel[(uLevelPosY - 1) * Ed.uLevel_X_Dimension + uLevelPosX + 1] = uReplicatorElements[1];
                     Ed.pLevel[(uLevelPosY - 1) * Ed.uLevel_X_Dimension + uLevelPosX + 2] = uReplicatorElements[2];
@@ -2043,7 +2043,7 @@ Seiteneffekte: Ed.x
 void SetAcidPool(uint16_t uElement, uint32_t uLevelPosX, uint32_t uLevelPosY) {
     switch (uElement) {
         case (EMERALD_ACIDPOOL_TOP_LEFT):
-            if ((uLevelPosX >= 0) && (uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY >= 1) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
+            if ((uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY >= 1) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 2)) {
                 Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_TOP_LEFT;
                 Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 1] = EMERALD_ACIDPOOL_TOP_MID;
                 Ed.pLevel[(uLevelPosY + 1) * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_BOTTOM_LEFT;
@@ -2051,7 +2051,7 @@ void SetAcidPool(uint16_t uElement, uint32_t uLevelPosX, uint32_t uLevelPosY) {
             }
             break;
         case (EMERALD_ACIDPOOL_BOTTOM_LEFT):
-            if ((uLevelPosX >= 0) && (uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY >= 2) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 1)) {
+            if ((uLevelPosX <= Ed.uLevel_X_Dimension - 3) && (uLevelPosY >= 2) && (uLevelPosY <= Ed.uLevel_Y_Dimension - 1)) {
                 Ed.pLevel[(uLevelPosY - 1) * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_TOP_LEFT;
                 Ed.pLevel[(uLevelPosY - 1) * Ed.uLevel_X_Dimension + uLevelPosX + 1] = EMERALD_ACIDPOOL_TOP_MID;
                 Ed.pLevel[uLevelPosY * Ed.uLevel_X_Dimension + uLevelPosX + 0] = EMERALD_ACIDPOOL_BOTTOM_LEFT;

@@ -927,6 +927,7 @@ typedef struct {
     uint32_t        uDynamiteStatusAnim;                        // Status/Animation für manuell gezündetes Dynamit
     uint32_t        uPlayTimeStart;                             // Zeitpunkt, wann Level gestartet wurde
     uint32_t        uPlayTimeEnd;                               // Zeitpunkt, wann Level beendet wurde
+    uint32_t        uLastGongTime;                              // Letzter Zeitpunkt, wann End-Gong abgespielt wurde
     YAMEXPLOSION    YamExplosions[EMERALD_MAX_YAM_EXPLOSIONS];
 } PLAYFIELD;
 
@@ -945,5 +946,5 @@ void ControlTimeDoor(uint32_t I);
 void PostControlSwitchDoors(void);
 void PostControlBombExplosions(void);
 int32_t CheckGameDirectorys(void);
-void SetGameSpeed(int32_t nGameSpeed);
+void SetGameSpeed(uint32_t uGameSpeed);
 #endif // EMERALD_MINE_H_INCLUDED

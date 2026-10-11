@@ -6,12 +6,13 @@
 #include "mystd.h"
 
 
-int32_t g_nPrecalculatedSegmentCount;                                       // Zählt die bereits durchgescrollten vorberechneten Segmente
-int32_t g_nColorPattern;
+uint32_t g_uPrecalculatedSegmentCount;                                       // Zählt die bereits durchgescrollten vorberechneten Segmente
+uint32_t g_uColorPattern;
+uint32_t uCopperVisibleSegments;
 bool g_bReady;
 
 
-uint32_t uCopperVisibleSegments;
+
 
 
 COPPERSEGMENT *VisibleCopperSegments;                                    // Die sichtbaren Segmente;
@@ -43,7 +44,7 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  int32_t, 0 = Alles OK, sonst Fehler
-Seiteneffekte: g_nPrecalculatedSegmentCount, g_nColorPattern, g_bReady,
+Seiteneffekte: g_uPrecalculatedSegmentCount, g_uColorPattern, g_bReady,
                VisibleCopperSegments, uCopperVisibleSegments, Config.x
 ------------------------------------------------------------------------------*/
 int32_t InitVisibibleCopperSegments(void) {
@@ -51,8 +52,8 @@ int32_t InitVisibibleCopperSegments(void) {
 
     nErrorCode = -1;
     uCopperVisibleSegments = ((Config.uResY + 20) / COPPER_COLORLINES_PER_SEGMENT);     // sichtbare Segmente
-    g_nPrecalculatedSegmentCount = 0;   // Zählt die bereits durchgescrollten vorberechneten Segmente
-    g_nColorPattern = 0;                // Aktuelle Scroll-Farbe (Maximalwerte)
+    g_uPrecalculatedSegmentCount = 0;   // Zählt die bereits durchgescrollten vorberechneten Segmente
+    g_uColorPattern = 0;                // Aktuelle Scroll-Farbe (Maximalwerte)
     g_bReady = true;                    // Es wurden alle vorberechneten Segmente durchgescrollt bzw. Neustart
     VisibleCopperSegments = malloc(sizeof(COPPERSEGMENT) * uCopperVisibleSegments);
     if (VisibleCopperSegments != NULL) {
@@ -131,25 +132,25 @@ Rückgabewert:  -
 Seiteneffekte: ColorFlow[], PrecalculatedSegments[]
 ------------------------------------------------------------------------------*/
 void PrecalculateSegments(int32_t nMaxRed, int32_t nMaxGreen, int32_t nMaxBlue) {
-    int32_t nSegment;
+    uint32_t uSegment;
     int32_t nTakeColorsFromColorFlow;
     int32_t nLine;
 
     memset(&PrecalculatedSegments,0,sizeof(PrecalculatedSegments));
     CalculateColorFlow(nMaxRed,nMaxGreen,nMaxBlue);
-    nSegment = 0;
+    uSegment = 0;
     nTakeColorsFromColorFlow = 1;
     // Zunächst aufsteigene Segmente berechnen
     do {
         for (nLine = 0; nLine < nTakeColorsFromColorFlow; nLine++) {
-            // SDL_Log("%s   segment: %d     Copperline: %d    ColorFlow: %d",__FUNCTION__,nSegment,COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine,nLine);
-            PrecalculatedSegments[nSegment].CopperLine[COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine].nRed = ColorFlow[nLine].nRed;
-            PrecalculatedSegments[nSegment].CopperLine[COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine].nGreen = ColorFlow[nLine].nGreen;
-            PrecalculatedSegments[nSegment].CopperLine[COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine].nBlue = ColorFlow[nLine].nBlue;
+            // SDL_Log("%s   segment: %d     Copperline: %d    ColorFlow: %d",__FUNCTION__,uSegment,COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine,nLine);
+            PrecalculatedSegments[uSegment].CopperLine[COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine].nRed = ColorFlow[nLine].nRed;
+            PrecalculatedSegments[uSegment].CopperLine[COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine].nGreen = ColorFlow[nLine].nGreen;
+            PrecalculatedSegments[uSegment].CopperLine[COPPER_COLORLINES_PER_SEGMENT - nTakeColorsFromColorFlow + nLine].nBlue = ColorFlow[nLine].nBlue;
         }
         nTakeColorsFromColorFlow++;
-        nSegment++;
-    } while (nSegment < COPPER_COLORLINES_PER_SEGMENT);
+        uSegment++;
+    } while (uSegment < COPPER_COLORLINES_PER_SEGMENT);
 
     // Ab hier absteigende Segmente  berechnen
     nTakeColorsFromColorFlow = 1;
@@ -157,15 +158,15 @@ void PrecalculateSegments(int32_t nMaxRed, int32_t nMaxGreen, int32_t nMaxBlue) 
         for (nLine = 0; nLine < COPPER_COLORLINES_PER_SEGMENT; nLine++) {
 
             if (nLine + nTakeColorsFromColorFlow < ((COPPER_COLORLINES_PER_SEGMENT * 2) - 1)) {
-                // SDL_Log("%s   segment: %d      ColorFlow: %d",__FUNCTION__,nSegment,nLine + nTakeColorsFromColorFlow);
-                PrecalculatedSegments[nSegment].CopperLine[nLine].nRed = ColorFlow[nLine + nTakeColorsFromColorFlow].nRed;
-                PrecalculatedSegments[nSegment].CopperLine[nLine].nGreen = ColorFlow[nLine + nTakeColorsFromColorFlow].nGreen;
-                PrecalculatedSegments[nSegment].CopperLine[nLine].nBlue = ColorFlow[nLine + nTakeColorsFromColorFlow].nBlue;
+                // SDL_Log("%s   segment: %d      ColorFlow: %d",__FUNCTION__,uSegment,nLine + nTakeColorsFromColorFlow);
+                PrecalculatedSegments[uSegment].CopperLine[nLine].nRed = ColorFlow[nLine + nTakeColorsFromColorFlow].nRed;
+                PrecalculatedSegments[uSegment].CopperLine[nLine].nGreen = ColorFlow[nLine + nTakeColorsFromColorFlow].nGreen;
+                PrecalculatedSegments[uSegment].CopperLine[nLine].nBlue = ColorFlow[nLine + nTakeColorsFromColorFlow].nBlue;
             }
         }
         nTakeColorsFromColorFlow++;
-        nSegment++;
-    } while (nSegment < COPPER_PRECALCULATED_SEGMENTS);
+        uSegment++;
+    } while (uSegment < COPPER_PRECALCULATED_SEGMENTS);
 }
 
 
@@ -179,20 +180,20 @@ Parameter
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: VisibleCopperSegments[], PrecalculatedSegments[],
-                g_nPrecalculatedSegmentCount, g_bReady, uCopperVisibleSegments
+                g_uPrecalculatedSegmentCount, g_bReady, uCopperVisibleSegments
 ------------------------------------------------------------------------------*/
 void ScrollVisibleSegments(void) {
-    int32_t nSegment;
+    uint32_t uSegment;
 
     // Sichtbare Segmente scrollen
-    for (nSegment = 0; nSegment < uCopperVisibleSegments - 1; nSegment++) {
-        VisibleCopperSegments[nSegment] = VisibleCopperSegments[nSegment + 1];
+    for (uSegment = 0; uSegment < uCopperVisibleSegments - 1; uSegment++) {
+        VisibleCopperSegments[uSegment] = VisibleCopperSegments[uSegment + 1];
     }
     // und neues vorberechnetes Segment unten einfügen
-    VisibleCopperSegments[nSegment] = PrecalculatedSegments[g_nPrecalculatedSegmentCount];
-    g_nPrecalculatedSegmentCount++;
-    if (g_nPrecalculatedSegmentCount > COPPER_PRECALCULATED_SEGMENTS - 1) {
-        g_nPrecalculatedSegmentCount = 0;
+    VisibleCopperSegments[uSegment] = PrecalculatedSegments[g_uPrecalculatedSegmentCount];
+    g_uPrecalculatedSegmentCount++;
+    if (g_uPrecalculatedSegmentCount > COPPER_PRECALCULATED_SEGMENTS - 1) {
+        g_uPrecalculatedSegmentCount = 0;
         g_bReady = true;              // Es wurden alle Segemente durchgescrollt.
     }
 }
@@ -207,10 +208,10 @@ Parameter
       Ausgang: -
 Rückgabewert:  int32_t, 0 = OK, sonst Fehler
 Seiteneffekte: VisibleCopperSegments[], g_ColorPatterns[]
-               g_nColorPattern, g_bReady, uCopperVisibleSegments, Config.x, Video.x
+               g_uColorPattern, g_bReady, uCopperVisibleSegments, Config.x, Video.x
 ------------------------------------------------------------------------------*/
 int32_t DoCopper(bool bScroll) {
-    int32_t nSegment;
+    uint32_t uSegment;
     int32_t nLine;
     int32_t nRed;
     int32_t nGreen;
@@ -222,29 +223,29 @@ int32_t DoCopper(bool bScroll) {
         return 0;
     }
     if (g_bReady) {
-        nRed = g_ColorPatterns[0 + g_nColorPattern * 3];
-        nGreen = g_ColorPatterns[1 + g_nColorPattern * 3];
-        nBlue = g_ColorPatterns[2 + g_nColorPattern * 3];
+        nRed = g_ColorPatterns[0 + g_uColorPattern * 3];
+        nGreen = g_ColorPatterns[1 + g_uColorPattern * 3];
+        nBlue = g_ColorPatterns[2 + g_uColorPattern * 3];
         if ((nRed | nGreen | nBlue) == 0) {     // Endekennung ?
-            g_nColorPattern = 0;
-            nRed = g_ColorPatterns[0 + g_nColorPattern * 3];
-            nGreen = g_ColorPatterns[1 + g_nColorPattern * 3];
-            nBlue = g_ColorPatterns[2 + g_nColorPattern * 3];
+            g_uColorPattern = 0;
+            nRed = g_ColorPatterns[0 + g_uColorPattern * 3];
+            nGreen = g_ColorPatterns[1 + g_uColorPattern * 3];
+            nBlue = g_ColorPatterns[2 + g_uColorPattern * 3];
         }
-        g_nColorPattern++;
+        g_uColorPattern++;
         PrecalculateSegments(nRed,nGreen,nBlue);
         g_bReady = false;
     }
     ScrollVisibleSegments();
     // Copperzeilen erzeugen/malen
     nRet = 0;
-    for (nSegment = 0; (nSegment < uCopperVisibleSegments) && (nRet == 0); nSegment++) {
+    for (uSegment = 0; (uSegment < uCopperVisibleSegments) && (nRet == 0); uSegment++) {
         for (nLine = 0; (nLine < COPPER_COLORLINES_PER_SEGMENT) && (nRet == 0); nLine++) {
-            nRed = VisibleCopperSegments[nSegment].CopperLine[nLine].nRed;
-            nGreen = VisibleCopperSegments[nSegment].CopperLine[nLine].nGreen;
-            nBlue = VisibleCopperSegments[nSegment].CopperLine[nLine].nBlue;
+            nRed = VisibleCopperSegments[uSegment].CopperLine[nLine].nRed;
+            nGreen = VisibleCopperSegments[uSegment].CopperLine[nLine].nGreen;
+            nBlue = VisibleCopperSegments[uSegment].CopperLine[nLine].nBlue;
             if (SDL_SetRenderDrawColor(Video.pRenderer,nRed,nGreen,nBlue, SDL_ALPHA_OPAQUE) == 0) {  // Farbe für Line setzen
-                nYpos = nSegment * COPPER_COLORLINES_PER_SEGMENT + nLine;
+                nYpos = uSegment * COPPER_COLORLINES_PER_SEGMENT + nLine;
                 if (SDL_RenderDrawLine(Video.pRenderer, 0, nYpos, Config.uResX - 1, nYpos) != 0) {
                     nRet = -1;
                     SDL_Log("%s: SDL_RenderDrawLine() failed: %sd",__FUNCTION__,SDL_GetError());

@@ -31,8 +31,8 @@ typedef struct {
     char        cJoystickFireButton;                                            // 'A', 'B', 'X' oder 'Y'
     char        cJoystickStartDynamiteButton;                                   // 'A', 'B', 'X' oder 'Y'
     char        cJoystickExitButton;                                            // 'A', 'B', 'X' oder 'Y'
-    uint32_t    uDisplay;                                                       // Ab 0 gezählt (eingestellt)
-    uint32_t    uDisplayUse;                                                    // Ab 0 gezählt (Dieses wird vervendet)
+    int32_t     nDisplay;                                                       // Ab 0 gezählt (eingestellt)
+    int32_t     nDisplayUse;                                                    // Ab 0 gezählt (Dieses wird vervendet)
     uint32_t    uKeyboardScancodeLeft;                                          // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_LEFT
     uint32_t    uKeyboardScancodeRight;                                         // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_RIGHT
     uint32_t    uKeyboardScancodeUp;                                            // SDL_SCANCODE für Links, Standard ist SDL_SCANCODE_UP

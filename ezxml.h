@@ -27,7 +27,7 @@
 
 #ifndef _EZXML_H
 #define _EZXML_H
-
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -53,7 +53,7 @@ struct ezxml {
     ezxml_t ordered; // next tag, same section and depth, in original order
     ezxml_t child;   // head of sub tag list, NULL if none
     ezxml_t parent;  // parent tag, NULL if current tag is root tag
-    short flags;     // additional information
+    int16_t flags;   // additional information
 };
 
 // Given a string of xml data and its length, parses it and creates an ezxml
@@ -135,7 +135,7 @@ ezxml_t ezxml_set_attr(ezxml_t xml, const char *name, const char *value);
     ezxml_set_attr(ezxml_set_flag(xml, EZXML_DUP), strdup(name), strdup(value))
 
 // sets a flag for the given tag and returns the tag
-ezxml_t ezxml_set_flag(ezxml_t xml, short flag);
+ezxml_t ezxml_set_flag(ezxml_t xml, int16_t flag);
 
 // removes a tag along with its subtags without freeing its memory
 ezxml_t ezxml_cut(ezxml_t xml);

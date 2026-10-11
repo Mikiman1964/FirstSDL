@@ -2569,12 +2569,7 @@ int32_t GetLevelFileList(char *pszDirectoryName, LEVELFILESLIST *pLevelFileList,
                             }
                         }
                     }
-                    if (Fileinfo.st_size < 9999999999) {    // String darf nicht größer als 10-stellig werden
-                        sprintf(pLevelFileList[I].szFileSize,"%u",(uint32_t)Fileinfo.st_size);
-                    } else {
-                        strcpy(pLevelFileList[I].szFileSize,"VERY BIG");
-                    }
-
+                    sprintf(pLevelFileList[I].szFileSize,"%u",(uint32_t)Fileinfo.st_size);// Fileinfo.st_size kann aufgrund des Datentyps nie größer als 9-stellig werden
                     if (strcasecmp(szFileExtension,"BMP")  == 0) {
                         pLevelFileList[I].uLevelType = IMPORT_LEVELTYPE_DC3;
                     } else if ((Fileinfo.st_size == IMPORT_EMERALDMINE_KINGSOFT_LEVELSIZE) ||  (Fileinfo.st_size == IMPORT_EMERALDMINE_KINGSOFT2_LEVELSIZE)) {
@@ -2724,6 +2719,8 @@ int32_t LevelConverterFromRocksnDiamonds(char *pszFilename) {
                     }
                 }
             }
+        } else {
+            SDL_Log("%s: GetRndSegments() failed",__FUNCTION__);
         }
     }
 
@@ -2801,18 +2798,23 @@ int32_t GetRndSegments(uint8_t *pMemory, uint32_t uMemorySize) {
                     if (pReadPointer + 4 < pEndPointer) {
                         uSegmentLen = GetSegmentLen(pReadPointer);
                         pReadPointer = pReadPointer + 4;    // Länge überspringen und Pointer auf Segmentstart setzen
-                        // SDL_Log("Segmentname: %s  Len: %u",szSegmentName,uSegmentLen);
+                        SDL_Log("Segmentname: %s  Len: %u",szSegmentName,uSegmentLen);
                         CheckSegment(szSegmentName,pReadPointer,uSegmentLen);
                         pReadPointer = pReadPointer + uSegmentLen;
                     }
                 } else {
                     pEndPointer = 0; // leerer Segmentname -> Abbruch
+                    SDL_Log("%s: empty segment name",__FUNCTION__);
                 }
             }
             if (RndSegments.bAllSegmentsFound) {
                 nErrorCode = 0;
             }
+        } else {
+            SDL_Log("%s: no header found",__FUNCTION__);
         }
+    } else {
+        SDL_Log("%s: bad memory pointer",__FUNCTION__);
     }
     return nErrorCode;
 }

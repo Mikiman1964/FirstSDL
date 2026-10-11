@@ -29,7 +29,7 @@ void ControlSaphir(uint32_t I) {
         return;
     }
     if ((Playfield.pStatusAnimation[I] & 0xFF000000) == EMERALD_ANIM_SINK_IN_MAGIC_WALL) {
-        Playfield.pLevel[I] = EMERALD_SPACE;    // Emerald ist in Magic Wall eingetaucht und wird zu Space
+        Playfield.pLevel[I] = EMERALD_SPACE;    // Saphir ist in Magic Wall eingetaucht und wird zu Space
         Playfield.pStatusAnimation[I] = EMERALD_ANIM_STAND;
         return;
     }

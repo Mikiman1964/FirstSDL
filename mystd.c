@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <dirent.h>
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -331,7 +332,7 @@ Rückgabewert:  float, Zufallswert
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 float randf(float low, float high) {
-    return  myrandom() * abs(low - high) + low;
+    return  myrandom() * fabs(low - high) + low;
 }
 
 

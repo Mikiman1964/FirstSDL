@@ -257,29 +257,29 @@ Name:           CreateVectorObject
 Beschreibung: Erstellt ein Vektorobjekt.
 
 Parameter
-      Eingang: nPointCount, int32_t, Anzahl der 3D-Punkte
-               nEdgeCount, int32_t_ Anzahl der Kanten
+      Eingang: uPointCount, uint32_t, Anzahl der 3D-Punkte
+               uEdgeCount, uint32_t_ Anzahl der Kanten
       Ausgang: -
 Rückgabewert:  VECTOROBJ *, NULL = Fehler, sonst Zeiger auf Vektorobjekt
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-VECTOROBJ *CreateVectorObject(int32_t nPointCount, int32_t nEdgeCount) {
+VECTOROBJ *CreateVectorObject(uint32_t uPointCount, uint32_t uEdgeCount) {
     VECTOROBJ *pV;
 
     pV = NULL;
-    if ((nPointCount >= 1) && (nEdgeCount >= 0)) {
+    if ((uPointCount >= 1) && (uEdgeCount > 0)) {
         // Eigentliches Objekt erzeugen
         pV = malloc(sizeof(VECTOROBJ));
         if (pV != NULL) {
             memset(pV,0,sizeof(VECTOROBJ));
-            pV->pPoints3D = malloc(sizeof(POINT3D) * nPointCount);
-            pV->pPoints2D = malloc(sizeof(POINT2D) * nPointCount);
-            if (nEdgeCount > 0) {
-                pV->pEdges = malloc(sizeof(int32_t) * 2 * nEdgeCount); // *2 wegen 2 Werte pro Kante
+            pV->pPoints3D = malloc(sizeof(POINT3D) * uPointCount);
+            pV->pPoints2D = malloc(sizeof(POINT2D) * uPointCount);
+            if (uEdgeCount > 0) {
+                pV->pEdges = malloc(sizeof(int32_t) * 2 * uEdgeCount); // *2 wegen 2 Werte pro Kante
             }
             if ((pV->pPoints3D) && (pV->pPoints2D)) {
-                pV->nPointCount = nPointCount;
-                pV->nEdgeCount = nEdgeCount;
+                pV->uPointCount = uPointCount;
+                pV->uEdgeCount = uEdgeCount;
                 // Default ist weißes Objekt
                 pV->nRed = 255;
                 pV->nGreen = 255;
@@ -358,13 +358,13 @@ int32_t SetVectorObjectPointsEdges(VECTOROBJ *pV, POINT3D *pPoints3D, int32_t Ed
 
     nErrorCode = -1;
     if ((pV != NULL) && (pPoints3D != NULL)) {
-        if (((pV->nEdgeCount > 0) && (pV->pEdges != NULL)) || (pV->nEdgeCount == 0)) {
+        if (((pV->uEdgeCount > 0) && (pV->pEdges != NULL)) || (pV->uEdgeCount == 0)) {
             //3D-Punkte in Vektorobjekt kopieren
-            for (I = 0; I < pV->nPointCount; I++) {
+            for (I = 0; I < pV->uPointCount; I++) {
                 pV->pPoints3D[I] = pPoints3D[I];
             }
             // Kanten in Vektorobjekt kopieren
-            for (I = 0; I < pV->nEdgeCount; I++) {
+            for (I = 0; I < pV->uEdgeCount; I++) {
                 pV->pEdges[I * 2 + 0] = Edges[I][0];
                 pV->pEdges[I * 2 + 1] = Edges[I][1];
             }
@@ -392,7 +392,7 @@ int32_t DrawVectorObject(VECTOROBJ *pV) {
 
     if (pV != NULL) {
         // Alle 3D-Punkte rotieren und projizieren
-        for (I = 0; I < pV->nPointCount; I++) {
+        for (I = 0; I < pV->uPointCount; I++) {
             POINT3D p = pV->pPoints3D[I];
             p = RotateX(p, pV->fAngleX);
             p = RotateY(p, pV->fAngleY);
@@ -401,7 +401,7 @@ int32_t DrawVectorObject(VECTOROBJ *pV) {
         }
         // Alle Kanten zeichnen
         nErrorCode = 0;
-        for (I = 0; (I < pV->nEdgeCount) && (nErrorCode == 0); I++) {
+        for (I = 0; (I < pV->uEdgeCount) && (nErrorCode == 0); I++) {
             int32_t v1 = pV->pEdges[I * 2 + 0];
             int32_t v2 = pV->pEdges[I * 2 + 1];
             // Farbe für Line setzen

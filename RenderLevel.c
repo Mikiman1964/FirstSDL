@@ -1332,7 +1332,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_RED_TOP_LEFT):
                     if (Playfield.bReplicatorRedOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_ON_1;     // Replikator, rot, an, oben links, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_RED_LEFT_TOP_ON_2;     // Replikator, rot, an, oben links, Animationsschritt 2
@@ -1345,7 +1345,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_RED_TOP_MID):
                     if (Playfield.bReplicatorRedOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_ON_1;     // Replikator, rot, an, mitte, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_RED_MIDDLE_TOP_ON_2;     // Replikator, rot, an, mitte, Animationsschritt 2
@@ -1358,7 +1358,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_RED_TOP_RIGHT):
                     if (Playfield.bReplicatorRedOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_ON_1;     // Replikator, rot, an, oben rechts, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_RED_RIGHT_TOP_ON_2;     // Replikator, rot, an, oben rechts, Animationsschritt 2
@@ -1385,7 +1385,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_GREEN_TOP_LEFT):
                     if (Playfield.bReplicatorGreenOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_1;     // Replikator, grün, an, oben links, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_GREEN_LEFT_TOP_ON_2;     // Replikator, grün, an, oben links, Animationsschritt 2
@@ -1398,7 +1398,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_GREEN_TOP_MID):
                     if (Playfield.bReplicatorGreenOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_1;     // Replikator, grün, an, mitte, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_GREEN_MIDDLE_TOP_ON_2;     // Replikator, grün, an, mitte, Animationsschritt 2
@@ -1411,7 +1411,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_GREEN_TOP_RIGHT):
                     if (Playfield.bReplicatorGreenOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_1;     // Replikator, grün, an, oben rechts, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_GREEN_RIGHT_TOP_ON_2;     // Replikator, grün, an, oben rechts, Animationsschritt 2
@@ -1438,7 +1438,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_BLUE_TOP_LEFT):
                     if (Playfield.bReplicatorBlueOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_ON_1;     // Replikator, blau, an, oben links, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_BLUE_LEFT_TOP_ON_2;     // Replikator, blau, an, oben links, Animationsschritt 2
@@ -1451,7 +1451,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_BLUE_TOP_MID):
                     if (Playfield.bReplicatorBlueOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_ON_1;     // Replikator, blau, an, mitte, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_BLUE_MIDDLE_TOP_ON_2;     // Replikator, blau, an, mitte, Animationsschritt 2
@@ -1464,7 +1464,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_BLUE_TOP_RIGHT):
                     if (Playfield.bReplicatorBlueOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_ON_1;     // Replikator, blau, an, oben rechts, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_BLUE_RIGHT_TOP_ON_2;     // Replikator, blau, an, oben rechts, Animationsschritt 2
@@ -1491,7 +1491,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_YELLOW_TOP_LEFT):
                     if (Playfield.bReplicatorYellowOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_ON_1;     // Replikator, gelb, an, oben links, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_YELLOW_LEFT_TOP_ON_2;     // Replikator, gelb, an, oben links, Animationsschritt 2
@@ -1504,7 +1504,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_YELLOW_TOP_MID):
                     if (Playfield.bReplicatorYellowOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_ON_1;     // Replikator, gelb, an, mitte, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_YELLOW_MIDDLE_TOP_ON_2;     // Replikator, gelb, an, mitte, Animationsschritt 2
@@ -1517,7 +1517,7 @@ int32_t RenderLevel(int32_t *pnXpos, int32_t *pnYpos, int32_t nAnimationCount) {
                     break;
                 case (EMERALD_REPLICATOR_YELLOW_TOP_RIGHT):
                     if (Playfield.bReplicatorYellowOn) {
-                        if ((uReplicatorAnimation >= 0) && (uReplicatorAnimation <= 3)) {
+                        if (uReplicatorAnimation <= 3) {
                             uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_ON_1;     // Replikator, gelb, an, oben rechts, Animationsschritt 1
                         } else if ((uReplicatorAnimation >= 4) && (uReplicatorAnimation <= 7)) {
                             uTextureIndex = TEX_REPLICATOR_YELLOW_RIGHT_TOP_ON_2;     // Replikator, gelb, an, oben rechts, Animationsschritt 2

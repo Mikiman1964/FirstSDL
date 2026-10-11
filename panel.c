@@ -16,7 +16,7 @@ extern PLAYFIELD Playfield;
 extern VIDEO Video;
 extern INPUTSTATES InputStates;
 extern CONFIG Config;
-extern int32_t g_nGameSpeed;
+extern uint32_t g_uGameSpeed;
 
 /*----------------------------------------------------------------------------
 Name:           CheckPlayTime
@@ -30,10 +30,10 @@ Parameter
       Eingang: -
       Ausgang: -
 Rückgabewert:  -
-Seiteneffekte: Playfield.x, g_nGameSpeed
+Seiteneffekte: Playfield.x, g_uGameSpeed
 ------------------------------------------------------------------------------*/
 void CheckPlayTime(void) {
-    if (g_nGameSpeed == GAMESPEED_FAST) {
+    if (g_uGameSpeed == GAMESPEED_FAST) {
         Playfield.uFrameCounter = Playfield.uFrameCounter + 2;
     } else {
         Playfield.uFrameCounter++;
@@ -61,6 +61,7 @@ int32_t ShowPanel(void) {
     char szNumber[8];
     uint32_t uRemainingSeconds;
     uint32_t uWarnRecWidth;
+    uint32_t uTicks;
 
     // Totalscore muss 5-stellig bleiben
     if (Playfield.uTotalScore > 99999) {
@@ -89,9 +90,14 @@ int32_t ShowPanel(void) {
         } else {
             uWarnRecWidth = 108;
         }
+        uTicks = SDL_GetTicks();
+        if (uTicks - Playfield.uLastGongTime > 1000) {
+            PreparePlaySound(SOUND_END_BELL,0);
+            Playfield.uLastGongTime = uTicks;
+        }
+
         if ((Playfield.uFrameCounter % Video.DesktopDisplayMode.refresh_rate) == 0) {
             nErrorCode = CopyColorRect(255,0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
-            PreparePlaySound(SOUND_END_BELL,0);
         } else {
             nErrorCode = CopyColorRect(255 - 4 * (Playfield.uFrameCounter % 60),0,0,6,Config.uResY - 26,uWarnRecWidth,20,K_ABSOLUTE);
         }

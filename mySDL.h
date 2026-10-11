@@ -42,15 +42,15 @@
 
 
 typedef struct {
-    int32_t nW;
-    int32_t nH;
+    uint32_t uW;
+    uint32_t uH;
     int32_t nModeIndex;
 } USABLEDISPLAYMODES;
 
 
 typedef struct {
-    int32_t nW;
-    int32_t nH;
+    uint32_t uW;
+    uint32_t uH;
     int32_t nModeIndex;
 } SHOWABLEDISPLAYMODES;
 
@@ -74,10 +74,10 @@ typedef struct {
     SDL_Window *pWindow;                                                    // Zeiger auf Fenster-Handle
     SDL_Renderer *pRenderer;                                                // Renderer für das Window
     // brauchbare Display-Modes
-    int32_t nUsableDisplayModeCount;                                        // Anzahl der nutzbaren Display-Modes, Xres >= 1280, Yres >= 768, refreshrate = 60 Hz
+    uint32_t uUsableDisplayModeCount;                                        // Anzahl der nutzbaren Display-Modes, Xres >= 1280, Yres >= 768, refreshrate = 60 Hz
     USABLEDISPLAYMODES *pUsableModes;                                       // X- und Y- Auflösung und Index
     // Anzeigbare Display-Modes
-    int32_t nShowableDisplayModeCount;                                      // Anzahl der anzeigbaren Display-Modes
+    uint32_t uShowableDisplayModeCount;                                      // Anzahl der anzeigbaren Display-Modes
     SHOWABLEDISPLAYMODES ShowableDisplayModes[MAX_SHOWABLE_DISPLAYMODES];   // X- und Y- Auflösung und Index
     FPS Fps;
     bool bVsync;                                                            // V-Sync mit 60 Hz erkannt
@@ -92,8 +92,8 @@ typedef struct {
 } RGBCOLOR;
 
 // Prototypen
-SDL_Window *InitSDL_Window(int32_t nWindowW, int32_t nWindowH, const char * pszWindowTitle);
-int32_t GetClosestWindowSize(int32_t nWindowW, int32_t nWindowH);
+SDL_Window *InitSDL_Window(uint32_t uWindowW, uint32_t uWindowH, const char * pszWindowTitle);
+int32_t GetClosestWindowSize(uint32_t uWindowW, uint32_t uWindowH);
 int32_t GetUsableDisplayModes(uint32_t uDisplay);
 int32_t GetShowableDisplayModes(void);
 int32_t GetDesktopDisplayMode(void);

@@ -86,13 +86,9 @@ void ElementGoesMagicWall(uint32_t I, uint32_t uDestElement) {
         // Damit ungültiges Feld später auf richtiges Element gesetzt werden kann
         Playfield.pInvalidElement[I + 2 * Playfield.uLevel_X_Dimension] = uDestElement;
         Playfield.pStatusAnimation[I + 2 * Playfield.uLevel_X_Dimension] = EMERALD_ANIM_DOWN_SELF | EMERALD_ANIM_CLEAN_UP_DOUBLESPEED;
-        // Aktuelles Element auf Animation "unten"
-        Playfield.pStatusAnimation[I] = EMERALD_ANIM_DOWN;
         // Magic Wall auf neues Element initialisieren
         Playfield.pInvalidElement[I + Playfield.uLevel_X_Dimension] = uDestElement;
         Playfield.pStatusAnimation[I + Playfield.uLevel_X_Dimension] = EMERALD_ANIM_SAG_OUT_MAGIC_WALL | EMERALD_ANIM_AVOID_DOUBLE_CONTROL;
-    } else {
-        // SDL_Log("%s: Magic wall is not free for element %x with StatusAnim: %x",__FUNCTION__,uDestElement,Playfield.pStatusAnimation[I]);
     }
 }
 

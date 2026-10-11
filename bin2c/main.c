@@ -66,10 +66,12 @@ int main(int argc, char *argv[]) {
                     strcpy(szStringLine,"   ");     // 3 Spaces zum Einrücken
                 }
             }
-            if ((uCharacters > 0) && (bOK)) {
-                // Restliche Zeile schreiben
-                strcat(szStringLine,"\n");
-                bOK = (fwrite(szStringLine,1,strlen(szStringLine),Writefile) == strlen(szStringLine));
+            if (bOK) {
+				if (uCharacters > 0) {
+					// Restliche Zeile schreiben
+					strcat(szStringLine,"\n");
+					bOK = (fwrite(szStringLine,1,strlen(szStringLine),Writefile) == strlen(szStringLine));
+				}
                 // Ende schreiben
                 if (bOK) {
                     strcpy(szString,"};\n");

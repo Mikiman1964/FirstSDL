@@ -12,7 +12,7 @@
 #include "KeyboardMouse.h"
 #include "loadlevel.h"
 #include "man.h"
-#include "modplay.h"
+#include "musicplayer.h"
 #include "mySDL.h"
 #include "mystd.h"
 #include "quicksaveloadgame.h"
@@ -153,29 +153,29 @@ Seiteneffekte: -
 ------------------------------------------------------------------------------*/
 int32_t SetMenuText(uint16_t *pMenuScreen, char *pszText, int32_t nXpos, int32_t nYpos,uint32_t uFont) {
     int32_t nErrorCode;
-    uint32_t uXdim;
-    uint32_t uYdim;
-    uint32_t uStringLen;
+    int32_t nXdim;
+    int32_t nYdim;
+    int32_t nStringLen;
 
     nErrorCode = -1;
-    uXdim = DEFAULT_WINDOW_W / FONT_W;
-    uYdim = DEFAULT_WINDOW_H / FONT_H;
+    nXdim = DEFAULT_WINDOW_W / FONT_W;
+    nYdim = DEFAULT_WINDOW_H / FONT_H;
     if ((pMenuScreen != NULL) && (pszText != NULL)) {
-        uStringLen = (uint32_t)strlen(pszText);
+        nStringLen = strlen(pszText);
         // bei "ungültiger" X-Position eine horizontale Zentrierung berechnen
-        if ((nXpos < 0) || (nXpos >= (uXdim - 1))) {
-            nXpos = (uXdim / 2) - (uStringLen / 2);
+        if ((nXpos < 0) || (nXpos >= (nXdim - 1))) {
+            nXpos = (nXdim / 2) - (nStringLen / 2);
             if (nXpos< 0) {
                 nXpos = 0;
             }
         }
        // bei "ungültiger" Y-Position eine vertikale Zentrierung berechnen
-       if ((nYpos < 0) && (nYpos >= (uYdim - 1))) {
-            nYpos = uYdim / 2;
+       if ((nYpos < 0) && (nYpos >= (nYdim - 1))) {
+            nYpos = nYdim / 2;
        }
-        while ( (*pszText != 0) && (nXpos < (uXdim - 1)) ) {
+        while ( (*pszText != 0) && (nXpos < (nXdim - 1)) ) {
             if (nXpos > 0) {
-                pMenuScreen[nYpos * uXdim + nXpos] = GetFontElementByChar(*pszText,uFont);
+                pMenuScreen[nYpos * nXdim + nXpos] = GetFontElementByChar(*pszText,uFont);
             }
             nXpos++;
             pszText++;
@@ -298,8 +298,8 @@ uint16_t GetFontElementByChar(char sign,uint32_t uFont) {
                         uElement = EMERALD_FONT_GREEN_ARROW_RIGHT;
                         break;
                     case (EMERALD_FONT_GREEN_STEEL):
-                        break;
                         uElement = EMERALD_FONT_GREEN_STEEL_ARROW_RIGHT;
+                        break;
                     default:
                         uElement = EMERALD_FONT_BLUE_ARROW_RIGHT;
                         break;
@@ -317,8 +317,8 @@ uint16_t GetFontElementByChar(char sign,uint32_t uFont) {
                         uElement = EMERALD_FONT_GREEN_ARROW_LEFT;
                         break;
                     case (EMERALD_FONT_GREEN_STEEL):
-                        break;
                         uElement = EMERALD_FONT_GREEN_STEEL_ARROW_LEFT;
+                        break;
                     default:
                         uElement = EMERALD_FONT_BLUE_ARROW_LEFT;
                         break;
@@ -496,6 +496,7 @@ uint16_t GetFontElementByChar(char sign,uint32_t uFont) {
                 }
                 break;
             case ('@'):
+            case ('*'):
                 switch (uFont) {
                     case (EMERALD_FONT_BLUE):
                         uElement = EMERALD_FONT_BLUE_PLATE;
@@ -636,9 +637,6 @@ uint16_t GetFontElementByChar(char sign,uint32_t uFont) {
                 break;
             case ('#'): // Man
                 uElement = EMERALD_MAN;
-                break;
-            case ('*'):
-                uElement = EMERALD_SPACE;
                 break;
         }
     }
@@ -1478,6 +1476,8 @@ int32_t EmeraldMineMainMenu(void) {
     GAME MUSIC BY MAKTONE, VOYCE/DELIGHT AND JESPER KYD.  \
     MODPLAYER BY MICHAL PROCHAZKA (WWW.PROCHAZKAML.EU).  \
     XMPLAYER BY ROMAIN DALMASO/DAN SPENCER.  \
+    SIDPLAYER BY CHRISTIAN BAUER.  \
+    MINIMP3 BY LIEFF.  \
     DATA (DE)COMPRESSOR 'MINIZ' BY RICH GELDREICH AND TENACIOUS SOFTWARE LLC.  \
     XML READER 'EZXML' BY AARON VOISINE.  \
     BASE64 DECODER BY CAMERON HARPER.  \
@@ -1491,7 +1491,7 @@ int32_t EmeraldMineMainMenu(void) {
     InitMainMenu(WINDOW_FULL_SIZE);
     uScrollerLeftPosX = Video.uXoffs + FONT_W;
     uScrollerRightPosX = Video.uXoffs + DEFAULT_WINDOW_W - FONT_W;
-    if (InitScroller(&Scroller,1,uScrollerLeftPosX,uScrollerRightPosX,0,szMessage, 0,0,0,1,false,false) != 0) {
+    if (InitScroller(&Scroller,2,uScrollerLeftPosX,uScrollerRightPosX,0,szMessage, 0,0,0,1,false,false) != 0) {
         return -1;
     }
     Scroller.nYpos = FONT_H * 12;   // Scroller in 13. Zeile (ab 0 gezählt) von oben
@@ -1675,7 +1675,7 @@ int32_t EmeraldMineMainMenu(void) {
                                     SetButtonPosition(BUTTONLABEL_HIGHSCORES,1139 + Video.uXoffs,550);
                                     uScrollerLeftPosX = Video.uXoffs + FONT_W;
                                     uScrollerRightPosX = Video.uXoffs + DEFAULT_WINDOW_W - FONT_W;
-                                    if (InitScroller(&Scroller,1,uScrollerLeftPosX,uScrollerRightPosX,0,szMessage, 0,0,0,1,false,false) != 0) {
+                                    if (InitScroller(&Scroller,2,uScrollerLeftPosX,uScrollerRightPosX,0,szMessage, 0,0,0,1,false,false) != 0) {
                                         return -1;
                                     }
                                     Scroller.nYpos = FONT_H * 12;   // Scroller in 13. Zeile (ab 0 gezählt) von oben
@@ -1854,21 +1854,21 @@ Name:           RotateColors
 Beschreibung: Rotiert eine Farbenpalette nach oben, d.h. zu "kleineren" Speicheradressen.
 Parameter
       Eingang: pColors, RGBCOLOR *, Farbpalette
-               nCount, int32_t, Anzahl Farben in der Palette
-               nCycles, int32_t, Anzahl Rotierungen
+               uCount, uint32_t, Anzahl Farben in der Palette
+               uCycles, uint32_t, Anzahl Rotierungen
       Ausgang: -
 Rückgabewert:  -
 Seiteneffekte: -
 ------------------------------------------------------------------------------*/
-void RotateColors(RGBCOLOR *pColors,int32_t nCount,int32_t nCycles) {
+void RotateColors(RGBCOLOR *pColors,uint32_t uCount,uint32_t uCycles) {
     RGBCOLOR TmpColor;
     uint32_t I,C;
 
     if (pColors != NULL) {
-        for (C = 0; C < nCycles; C++) {
+        for (C = 0; C < uCycles; C++) {
             // Farbe scrollen
             TmpColor = pColors[0];
-            for (I = 0; I < (nCount - 1); I++) {
+            for (I = 0; I < (uCount - 1); I++) {
                 pColors[I] = pColors[I + 1];
             }
             pColors[I] = TmpColor;
@@ -2040,8 +2040,8 @@ int32_t SettingsMenu(void) {
     int32_t nColorDimm = 0;
     int32_t nXpos;
     int32_t nYpos;
-    int32_t nRec1PixelCount;
-    int32_t nRec2PixelCount;
+    uint32_t uRec1PixelCount;
+    uint32_t uRec2PixelCount;
     int32_t nScanCodeIndex;
     uint8_t uMusicVolume = 0;
     uint32_t I, II;
@@ -2274,18 +2274,18 @@ int32_t SettingsMenu(void) {
     if (RegisterCheckbox(&Checkbox_UseVsync,Config.bUseVSync,"USE V-SYNC",980,210,false,CHK_USE) != 0) {
         return -1;
     }
-    bActive = (Config.uDisplay == 0);   // Primary Display
+    bActive = (Config.nDisplay == 0);   // Primary Display
     if (RegisterCheckbox(&Checkbox_Display1,bActive,"DISPLAY 1 (RESTART APP)",980,166,true,(nDisplays > 1)) != 0) {
         return -1;
     }
-    bActive = (Config.uDisplay == 1);   // Secondary Display
+    bActive = (Config.nDisplay == 1);   // Secondary Display
     if (RegisterCheckbox(&Checkbox_Display2,bActive,"DISPLAY 2 (RESTART APP)",980,188,true,(nDisplays > 1)) != 0) {
         return -1;
     }
-    if ((Video.nShowableDisplayModeCount > 0 ) && (Video.nShowableDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES)) {
-        for (I = 0; I < Video.nShowableDisplayModeCount; I++) {
-            bActive = ((Video.ShowableDisplayModes[I].nW == Config.uResX) && (Video.ShowableDisplayModes[I].nH == Config.uResY));
-            sprintf(szText,"%d X %d",Video.ShowableDisplayModes[I].nW,Video.ShowableDisplayModes[I].nH);
+    if ((Video.uShowableDisplayModeCount > 0 ) && (Video.uShowableDisplayModeCount <= MAX_SHOWABLE_DISPLAYMODES)) {
+        for (I = 0; I < Video.uShowableDisplayModeCount; I++) {
+            bActive = ((Video.ShowableDisplayModes[I].uW == Config.uResX) && (Video.ShowableDisplayModes[I].uH == Config.uResY));
+            sprintf(szText,"%d X %d",Video.ShowableDisplayModes[I].uW,Video.ShowableDisplayModes[I].uH);
             if (RegisterCheckbox(&Checkbox_Resolution[I],bActive,szText,980,260 + I * 22,true,CHK_USE) != 0) {
                 return -1;
             }
@@ -2294,17 +2294,17 @@ int32_t SettingsMenu(void) {
         return -1;
     }
 
-    nRec1PixelCount = 2 * COLOR_REC_1_W + 2 * (COLOR_REC_1_H - 2);
+    uRec1PixelCount = 2 * COLOR_REC_1_W + 2 * (COLOR_REC_1_H - 2);
     // Rahmen von Rechteck 1 mit Farben füllen
-    for (I = 0; I < nRec1PixelCount; I++) {
+    for (I = 0; I < uRec1PixelCount; I++) {
         uRainbowColor = GetRainbowColors(I % 254);
         RgbColorsRec1[I].uBlue = uRainbowColor;
         RgbColorsRec1[I].uGreen = uRainbowColor >> 8;
         RgbColorsRec1[I].uRed = uRainbowColor >> 16;
         RgbColorsRec1[I].uAlpha = 0xFF;
     }
-    nRec2PixelCount = 2 * COLOR_REC_2_W + 2 * (COLOR_REC_2_H - 2);
-    for (I = 0; I < nRec2PixelCount; I++) {
+    uRec2PixelCount = 2 * COLOR_REC_2_W + 2 * (COLOR_REC_2_H - 2);
+    for (I = 0; I < uRec2PixelCount; I++) {
         uRainbowColor = GetRainbowColors(I % 254);
         RgbColorsRec2[I].uBlue = uRainbowColor;
         RgbColorsRec2[I].uGreen = uRainbowColor >> 8;
@@ -2744,20 +2744,20 @@ int32_t SettingsMenu(void) {
             nErrorCode = WriteConfigFile();
         }
         ////////////////// RADIO RESOLUTION ////////////////////////////
-        for (I = 0; I < Video.nShowableDisplayModeCount; I++) {
+        for (I = 0; I < Video.uShowableDisplayModeCount; I++) {
             if (Checkbox_Resolution[I].bChanged) {
                 Checkbox_Resolution[I].bChanged = false;
                 Checkbox_Resolution[I].bActive = true;
                 // SDL_Log("Resolution Checkbox :%d ticked",I);
-                for (II = 0; II < Video.nShowableDisplayModeCount; II++) {
+                for (II = 0; II < Video.uShowableDisplayModeCount; II++) {
                     if (II != I) {
                         Checkbox_Resolution[II].bActive = false;
                     }
                 }
                 // Auflösung wurde geändert
-                if ((Config.uResX != Video.ShowableDisplayModes[I].nW) || (Config.uResY != Video.ShowableDisplayModes[I].nH)) {
-                    Config.uResX = Video.ShowableDisplayModes[I].nW;
-                    Config.uResY = Video.ShowableDisplayModes[I].nH;
+                if ((Config.uResX != Video.ShowableDisplayModes[I].uW) || (Config.uResY != Video.ShowableDisplayModes[I].uH)) {
+                    Config.uResX = Video.ShowableDisplayModes[I].uW;
+                    Config.uResY = Video.ShowableDisplayModes[I].uH;
                     // SDL_Log("Resolution changed to %d X %d",Video.ShowableDisplayModes[I].nW,Video.ShowableDisplayModes[I].nH);
                     // Fenstergröße ändern
                     if (Config.bFullScreen) {
@@ -3057,14 +3057,14 @@ int32_t SettingsMenu(void) {
             Checkbox_Display1.bChanged = false;
             Checkbox_Display1.bActive = true;
             Checkbox_Display2.bActive = false;
-            Config.uDisplay = 0;
+            Config.nDisplay = 0;
             nErrorCode = WriteConfigFile();
         }
         if (Checkbox_Display2.bChanged) {
             Checkbox_Display2.bChanged = false;
             Checkbox_Display2.bActive = true;
             Checkbox_Display1.bActive = false;
-            Config.uDisplay = 1;
+            Config.nDisplay = 1;
             nErrorCode = WriteConfigFile();
         }
         if (IsButtonPressed(BUTTONLABEL_EXIT_HIGHSCORES) || (InputStates.pKeyboardArray[SDL_SCANCODE_ESCAPE]) || (InputStates.bQuit) || (ManKey.bFire)) {
@@ -3131,11 +3131,11 @@ int32_t SettingsMenu(void) {
                 if (nErrorCode == 0) {
                     if (bShowRec1) {
                         // Farbe für Rahmen 1 scrollen
-                        RotateColors(RgbColorsRec1,nRec1PixelCount,5);
+                        RotateColors(RgbColorsRec1,uRec1PixelCount,5);
                         nErrorCode = ShowRec(RgbColorsRec1,nXpos,nYpos,COLOR_REC_1_W,COLOR_REC_1_H,nColorDimm);
                     } else {
                         // Farbe für Rahmen 2 scrollen
-                        RotateColors(RgbColorsRec2,nRec2PixelCount,5);
+                        RotateColors(RgbColorsRec2,uRec2PixelCount,5);
                         nErrorCode = ShowRec(RgbColorsRec2,nXpos,nYpos,COLOR_REC_2_W,COLOR_REC_2_H,nColorDimm);
                     }
                 }
@@ -3230,7 +3230,7 @@ int32_t SettingsMenu(void) {
     DeRegisterCheckbox(&Checkbox_UseVsync);
     DeRegisterCheckbox(&Checkbox_Display1);
     DeRegisterCheckbox(&Checkbox_Display2);
-    for (I = 0; I < Video.nShowableDisplayModeCount; I++) {
+    for (I = 0; I < Video.uShowableDisplayModeCount; I++) {
         DeRegisterCheckbox(&Checkbox_Resolution[I]);
     }
     DetectJoystickAndGameController();

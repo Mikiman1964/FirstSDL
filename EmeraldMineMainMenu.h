@@ -81,7 +81,7 @@ int32_t EvaluateGame(int32_t *pnNewHighscoreIndex, uint32_t *puLevelPlayed);
 uint16_t GetFontElementByChar(char sign, uint32_t uFont);
 int32_t RenderSettingsbutton(void);
 int32_t SettingsMenu(void);
-void RotateColors(RGBCOLOR *pColors, int32_t nCount, int32_t nCycles);
+void RotateColors(RGBCOLOR *pColors, uint32_t uCount, uint32_t uCycles);
 void CleanUpMemoryAndSDL(void);
 int32_t ShowControllersAndJoysticks(void);
 int32_t ShowRec(RGBCOLOR *pColors, int32_t nXpos, int32_t nYpos, int32_t nWidth, int32_t nHeight, int32_t nDimm);
